@@ -266,6 +266,7 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 		if (res == CURLE_OK)
 		{
 			bool foundError = false;
+			bool foundNew = false;
 
 			// Proceed XML result!
 			tinyxml2::XMLDocument doc;
@@ -446,6 +447,9 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 						}
 						else
 						{
+							// New call
+							foundNew = true;
+
 							// Add the new Call to the Call box
 							char buffer[80];
 
@@ -467,7 +471,6 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 							call_dialogs[dialog]->setBoxText(text);
 							call_dialogs[dialog]->setID(dialog);
 							call_dialogs[dialog]->startCall();
-
 						}
 					}
 				}
@@ -490,7 +493,10 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 				}
 
 				// Update Call List
-				main_dialog->updateCall();
+				if (foundNew)
+				{
+					main_dialog->updateCall();
+				}
 			}
 		}
 		else
@@ -666,7 +672,7 @@ void MainDialog::createWindow(bool reconnect, wxString error, bool taskbar)
 		sizerBtns->Add(available, flags);
 
 		// ToolTip for second Checkbox
-		wxToolTip* tipSound = new wxToolTip("You will hear a notification sound after an incoming call.");
+		wxToolTip* tipSound = new wxToolTip("You will hear a notification sound on an incoming call.");
 
 		tipSound->SetDelay(500);
 		tipSound->Enable(true);
@@ -727,6 +733,9 @@ void MainDialog::createWindow(bool reconnect, wxString error, bool taskbar)
 
 	// Set the Icon
 	SetIcon(wxIcon("calladmin_icon", wxBITMAP_TYPE_ICO_RESOURCE));
+
+	// Update Call List
+	updateCall();
 }
 
 
