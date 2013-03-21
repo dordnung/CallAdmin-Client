@@ -232,8 +232,10 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 	wxString result;
 
 	// Page
-	//std::string pager = (page + "?from=" + (std::string)last.c_str() + "&key=" + key + "&sort=asc");
-	std::string pager = (page + "?from=0" + "&key=" + key + "&sort=asc");
+	std::string pager = (page + "?from=" + (std::string)last.c_str() + "&key=" + key + "&sort=asc");
+	
+	// Activate for testing:
+	//pager = (page + "?from=0" + "&key=" + key + "&sort=asc");
 
 	if (main_dialog->wantStore())
 	{
