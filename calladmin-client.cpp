@@ -77,6 +77,9 @@
 // Path to the APP
 #include <wx/stdpaths.h>
 
+// Sound Notification
+#include <wx/sound.h>
+
 // Header
 #include "calladmin-client.h"
 
@@ -229,7 +232,8 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 	wxString result;
 
 	// Page
-	std::string pager = (page + "?from=" + (std::string)last.c_str() + "&key=" + key + "&sort=asc");
+	//std::string pager = (page + "?from=" + (std::string)last.c_str() + "&key=" + key + "&sort=asc");
+	std::string pager = (page + "?from=0" + "&key=" + key + "&sort=asc");
 
 	if (main_dialog->wantStore())
 	{
@@ -660,6 +664,19 @@ void MainDialog::createWindow(bool reconnect, wxString error, bool taskbar)
 		sizerBtns->Add(available, flags);
 
 		// ToolTip for second Checkbox
+		wxToolTip* tipSound = new wxToolTip("You will hear a notification sound on an incoming call.");
+
+		tipSound->SetDelay(500);
+		tipSound->Enable(true);
+
+		// The sound Checkbox
+		sound = new wxCheckBox(this, wxID_ANY, "Sound on Call");
+		sound->SetValue(true);
+		sound->SetToolTip(tipSound);
+
+		sizerBtns->Add(sound, flags);
+
+		// ToolTip for third Checkbox
 		wxToolTip* specAvailable = new wxToolTip("You will only receive calls but you will not be stored in the database");
 
 		specAvailable->SetDelay(500);
@@ -1178,6 +1195,7 @@ void CallDialog::startCall()
 	// Border and Center
     wxSizerFlags flags;
 	wxStaticText* text;
+	wxTextCtrl* text2;
 
 	// Border and Centre
     flags.Border(wxALL, 10);
@@ -1205,29 +1223,48 @@ void CallDialog::startCall()
 	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
 
 
+	wxSizer* const sizerClient = new wxBoxSizer(wxHORIZONTAL);
+
 	// Player reported Player
-	text = new wxStaticText(this, wxID_ANY, client + " (" + clientID + ")");
+	text = new wxStaticText(this, wxID_ANY, client);
 
 	text->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
+	// Steamid
+	text2 = new wxTextCtrl(this, wxID_ANY, clientID, wxDefaultPosition, wxSize(220, -1), wxTE_CENTRE|wxTE_READONLY);
+
+	text2->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+
 
 	// Add it
-	sizerTop->Add(text, flags);
+	sizerClient->Add(text, flags);
+	sizerClient->Add(text2, 0, wxEXPAND | wxALL, 10);
+	sizerTop->Add(sizerClient, flags.Align(wxALIGN_CENTER_HORIZONTAL));
 
 	text = new wxStaticText(this, wxID_ANY, "reported Player");
 
 	text->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-
 	// Add it
 	sizerTop->Add(text, flags);
 
-	text = new wxStaticText(this, wxID_ANY, target + " (" + targetID + ")");
+
+	wxSizer* const sizerClient2 = new wxBoxSizer(wxHORIZONTAL);
+
+	// Target
+	text = new wxStaticText(this, wxID_ANY, target);
 
 	text->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
+	// Steamid
+	text2 = new wxTextCtrl(this, wxID_ANY, targetID, wxDefaultPosition, wxSize(220, -1), wxTE_CENTRE|wxTE_READONLY);
+
+	text2->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+
 	// Add it
-	sizerTop->Add(text, flags);
+	sizerClient2->Add(text, flags);
+	sizerClient2->Add(text2, 0, wxEXPAND | wxALL, 10);
+	sizerTop->Add(sizerClient2, flags.Align(wxALIGN_CENTER_HORIZONTAL));
 
 
 	// Static line
@@ -1272,6 +1309,17 @@ void CallDialog::startCall()
 
 	// Add Buttons to Box
     sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+
+	// Play Sound
+	if (main_dialog->wantSound())
+	{
+		wxSound* soundfile = new wxSound("calladmin_sound", true);
+
+		if (soundfile != NULL && soundfile->IsOk())
+		{
+			soundfile->Play(wxSOUND_ASYNC);
+		}
+	}
 
 	// Auto Size
     SetSizerAndFit(sizerTop, true);

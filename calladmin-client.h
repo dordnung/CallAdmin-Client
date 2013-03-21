@@ -80,6 +80,7 @@ class MainDialog: public wxDialog
 private:
 	wxCheckBox* store;
 	wxCheckBox* available;
+	wxCheckBox* sound;
 
 	wxListBox* callBox;
 
@@ -90,6 +91,7 @@ public:
 
 	bool isAvailable() {return (available != NULL && available->IsChecked());}
 	bool wantStore() {return (store != NULL && !store->IsChecked());}
+	bool wantSound() {return (sound != NULL && sound->IsChecked());}
 
 	void updateCall();
 

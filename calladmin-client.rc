@@ -29,6 +29,9 @@
 // Call Admin Icon
 calladmin_icon ICON "calladmin-client.ico"
 
+// Call Admin Sound
+calladmin_sound WAVE "calladmin-client.wav"
+
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 VS_VERSION_INFO VERSIONINFO
