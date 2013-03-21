@@ -666,7 +666,7 @@ void MainDialog::createWindow(bool reconnect, wxString error, bool taskbar)
 		sizerBtns->Add(available, flags);
 
 		// ToolTip for second Checkbox
-		wxToolTip* tipSound = new wxToolTip("You will hear a notification sound on an incoming call.");
+		wxToolTip* tipSound = new wxToolTip("You will hear a notification sound after an incoming call.");
 
 		tipSound->SetDelay(500);
 		tipSound->Enable(true);
