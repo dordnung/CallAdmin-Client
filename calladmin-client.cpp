@@ -1151,13 +1151,25 @@ void ConfigDialog::OnSet(wxCommandEvent& WXUNUSED(event))
 
 	CSimpleIniA config;
 
+	// Read config file
+	wxString path = wxStandardPaths::Get().GetExecutablePath();
+
+	size_t start = path.find_last_of("\\");
+
+	if (start < 0)
+	{
+		start = path.find_last_of("/");
+	}
+
+	path = path.replace(start, path.size(), "/calladmin-client_settings.ini");
+
 	config.SetValue("settings", "step", (wxString() << step));
 	config.SetValue("settings", "timeout", (wxString() << timeout));
 	config.SetValue("settings", "attempts", (wxString() << maxAttempts));
 	config.SetValue("settings", "page", page.c_str());
 	config.SetValue("settings", "key", key.c_str());
 
-	config.SaveFile("calladmin-client_settings.ini");
+	config.SaveFile(((std::string)path).c_str());
 
 	config_dialog = NULL;
 
@@ -1433,7 +1445,7 @@ void TaskBarIcon::OnMenuAutoStart(wxCommandEvent& event)
             wxString appPath = wxStandardPaths::Get().GetExecutablePath();
 
 			// Close to Taskbar on Autostart
-			appPath = "\"" + appPath + "\"" + "-taskbar";
+			appPath = "\"" + appPath + "\"" + " -taskbar";
 
 			// Write in
             RegSetValueExW(hkRegistry, L"CallAdmin-Client", 0, REG_SZ, (BYTE*)appPath.wc_str(), (wcslen(appPath.wc_str()) + 1) * sizeof(wchar_t));
@@ -1628,7 +1640,19 @@ bool parseConfig()
 	// Read Config file ;)
 	CSimpleIniA config;
 
-	SI_Error rc = config.LoadFile("calladmin-client_settings.ini");
+	// Read config file
+	wxString path = wxStandardPaths::Get().GetExecutablePath();
+
+	size_t start = path.find_last_of("\\");
+
+	if (start < 0)
+	{
+		start = path.find_last_of("/");
+	}
+
+	path = path.replace(start, path.size(), "/calladmin-client_settings.ini");
+
+	SI_Error rc = config.LoadFile(((std::string)path).c_str());
 
 	// Was parsing good?
 	if (rc != SI_OK)
