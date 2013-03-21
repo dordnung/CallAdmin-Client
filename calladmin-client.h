@@ -85,7 +85,7 @@ private:
 	wxListBox* callBox;
 
 public:
-	MainDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title) {}
+	MainDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX) {}
 
 	void createWindow(bool reconnect, wxString error, bool taskbar = false);
 
@@ -163,7 +163,7 @@ private:
 	int ID;
 
 public:
-	CallDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title) {};
+	CallDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX) {};
 
 	// Privat -> set Methods
 	void setIP(wxString IP) {fullIP = IP;}

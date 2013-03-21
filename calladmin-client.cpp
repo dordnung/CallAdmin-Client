@@ -834,7 +834,7 @@ END_EVENT_TABLE()
 
 
 // Create Error Window
-ErrorDialog::ErrorDialog(const wxString& title, int error, wxString errorMessage, wxString type) : wxDialog(NULL, wxID_ANY, title)
+ErrorDialog::ErrorDialog(const wxString& title, int error, wxString errorMessage, wxString type) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX)
 {
 	// Create Box
     wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
@@ -980,7 +980,7 @@ END_EVENT_TABLE()
 
 
 // Create Error Window
-ConfigDialog::ConfigDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title)
+ConfigDialog::ConfigDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX)
 {
 	// Create Box
     wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
