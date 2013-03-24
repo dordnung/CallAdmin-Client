@@ -5,6 +5,24 @@
     <ClCompile Include="..\tinyxml2\tinyxml2.cpp">
       <Filter>TinyXML2</Filter>
     </ClCompile>
+    <ClCompile Include="..\config.cpp">
+      <Filter>Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\error.cpp">
+      <Filter>Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\call.cpp">
+      <Filter>Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\opensteam.cpp">
+      <Filter>Steam</Filter>
+    </ClCompile>
+    <ClCompile Include="..\taskbar.cpp">
+      <Filter>Taskbar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\main.cpp">
+      <Filter>Dialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../calladmin-client.h" />
@@ -13,6 +31,24 @@
     </ClInclude>
     <ClInclude Include="..\simpleINI\SimpleIni.h">
       <Filter>SimpleINI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\config.h">
+      <Filter>Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\error.h">
+      <Filter>Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\call.h">
+      <Filter>Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\opensteam.h">
+      <Filter>Steam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\taskbar.h">
+      <Filter>Taskbar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\main.h">
+      <Filter>Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -24,6 +60,15 @@
     </Filter>
     <Filter Include="SimpleINI">
       <UniqueIdentifier>{60ad7fa6-bdaa-4a39-b446-e769a44e878d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dialogs">
+      <UniqueIdentifier>{2149f6a4-1176-488e-a8d4-fef78fc4cb4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Steam">
+      <UniqueIdentifier>{d7fa3297-b19f-4680-9320-97d98a545907}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Taskbar">
+      <UniqueIdentifier>{87b022da-4e5b-4a1b-80d7-79a852aa6c96}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

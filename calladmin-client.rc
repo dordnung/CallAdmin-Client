@@ -27,10 +27,14 @@
 #include "wx/msw/wx.rc"
 
 // Call Admin Icon
-calladmin_icon ICON "calladmin-client.ico"
+calladmin_icon ICON "calladmin_icon.ico"
+
+// Call Admin Avatar
+calladmin_avatar BITMAP "calladmin_avatar.bmp"
 
 // Call Admin Sound
-calladmin_sound WAVE "calladmin-client.wav"
+calladmin_sound WAVE "calladmin_sound.wav"
+
 
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 

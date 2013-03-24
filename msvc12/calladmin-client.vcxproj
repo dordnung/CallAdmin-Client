@@ -37,10 +37,10 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>$(WX_PATH)\include;../;$(WX_PATH)\lib\vc_lib\mswu;$(CURL_PATH);../tinyxml2;../simpleini;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WX_PATH)\include;../;$(WX_PATH)\lib\vc_lib\mswu;$(STEAMWORKS_PATH)\include;$(CURL_PATH);../tinyxml2;../simpleini;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <ObjectFileName>bin\calladmin-client\</ObjectFileName>
       <ProgramDataBaseFileName>bin\calladmin-client.pdb</ProgramDataBaseFileName>
@@ -55,16 +55,18 @@
       <AdditionalIncludeDirectories>$(WX_PATH)\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>libcurl_a.lib;wxmsw29u_adv.lib;wxmsw29u_core.lib;wxbase29u.lib;wxpng.lib;wxzlib.lib;kernel32.lib;user32.lib;gdi32.lib;winmm.lib;winspool.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>steamclient.lib;libcurl_a.lib;wxmsw29u_adv.lib;wxmsw29u_core.lib;wxbase29u.lib;wxpng.lib;wxjpeg.lib;wxzlib.lib;kernel32.lib;user32.lib;gdi32.lib;winmm.lib;winspool.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\calladmin-client.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(WX_PATH)\lib\vc_lib;$(CURL_PATH);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(WX_PATH)\lib\vc_lib;$(STEAMWORKS_PATH)\libs;$(CURL_PATH);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>bin\calladmin-client.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <IgnoreSpecificDefaultLibraries>msvcrt;</IgnoreSpecificDefaultLibraries>
     </Link>
     <Bscmake>
       <OutputFile>bin\calladmin-client.bsc</OutputFile>
@@ -73,11 +75,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="../calladmin-client.cpp" />
+    <ClCompile Include="..\call.cpp" />
+    <ClCompile Include="..\config.cpp" />
+    <ClCompile Include="..\error.cpp" />
+    <ClCompile Include="..\main.cpp" />
+    <ClCompile Include="..\opensteam.cpp" />
+    <ClCompile Include="..\taskbar.cpp" />
     <ClCompile Include="..\tinyxml2\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../calladmin-client.h" />
+    <ClInclude Include="..\call.h" />
+    <ClInclude Include="..\config.h" />
+    <ClInclude Include="..\error.h" />
+    <ClInclude Include="..\main.h" />
+    <ClInclude Include="..\opensteam.h" />
     <ClInclude Include="..\simpleINI\SimpleIni.h" />
+    <ClInclude Include="..\taskbar.h" />
     <ClInclude Include="..\tinyxml2\tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
