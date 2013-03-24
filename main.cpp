@@ -49,19 +49,19 @@ MainDialog *main_dialog = NULL;
 // Button ID's for Main Dialog
 enum
 {
-    wxID_Exit = 4999,
-    wxID_Hide,
-    wxID_Reconnect,
+	wxID_Exit = 4999,
+	wxID_Hide,
+	wxID_Reconnect,
 	wxID_BoxClick,
 };
 
 
 // Button Events for Main Dialog
 BEGIN_EVENT_TABLE(MainDialog, wxDialog)
-    EVT_BUTTON(wxID_Exit, MainDialog::OnExit)
-    EVT_BUTTON(wxID_Hide, MainDialog::OnHide)
-    EVT_BUTTON(wxID_Reconnect, MainDialog::OnReconnect)
-    EVT_CLOSE(MainDialog::OnCloseWindow)
+	EVT_BUTTON(wxID_Exit, MainDialog::OnExit)
+	EVT_BUTTON(wxID_Hide, MainDialog::OnHide)
+	EVT_BUTTON(wxID_Reconnect, MainDialog::OnReconnect)
+	EVT_CLOSE(MainDialog::OnCloseWindow)
 	EVT_LISTBOX_DCLICK(wxID_BoxClick, MainDialog::OnBoxClick)
 END_EVENT_TABLE()
 
@@ -71,7 +71,7 @@ END_EVENT_TABLE()
 void MainDialog::createWindow(bool taskbar)
 {
 	// Border and Center
-    wxSizerFlags flags;
+	wxSizerFlags flags;
 	wxStaticText* text;
 
 	// Hole Body
@@ -88,12 +88,12 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// Create Box
-    wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
+	wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
 
 
 
 	// Border and Centre
-    flags.Border(wxALL, 10);
+	flags.Border(wxALL, 10);
 	flags.Centre();
 
 
@@ -165,7 +165,7 @@ void MainDialog::createWindow(bool taskbar)
 	sizerTop->Add(0, 0, 0, wxBOTTOM, 40);
 
 
-    wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer* const sizerChecks = new wxBoxSizer(wxHORIZONTAL);
 
 
@@ -227,7 +227,7 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// Exit
-    sizerBtns->Add(new wxButton(this, wxID_Exit, "Exit"), flags.Border(wxALL &~ wxBottom, 5));
+	sizerBtns->Add(new wxButton(this, wxID_Exit, "Exit"), flags.Border(wxALL &~ wxBottom, 5));
 
 
 	// If max attempts reached, add a reconnect button
@@ -239,7 +239,7 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// Add Checks to Box
-    sizerTop->Add(sizerChecks, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	sizerTop->Add(sizerChecks, flags.Align(wxALIGN_CENTER_HORIZONTAL));
 
 	// Add Buttons to Box
 	sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL &~ wxBottom, 5));
@@ -263,10 +263,10 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// Auto Size
-    SetSizerAndFit(sizerBody, true);
+	SetSizerAndFit(sizerBody, true);
 
 	// Centre to Screen
-    Centre();
+	Centre();
 
 
 
@@ -332,7 +332,7 @@ void MainDialog::OnReconnect(wxCommandEvent& WXUNUSED(event))
 		main_dialog->Restore();
 	}
 
-    // Start the Timer again
+	// Start the Timer again
 	timer->Start(step*1000);
 }
 

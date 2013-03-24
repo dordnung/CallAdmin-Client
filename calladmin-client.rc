@@ -52,22 +52,22 @@ VS_VERSION_INFO VERSIONINFO
 	FILESUBTYPE 0x0L
 
 BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "000004b0"
-        BEGIN
-            VALUE "Comments", "CallAdmin Client"
-            VALUE "FileDescription", "Client to receive calls from players"
-            VALUE "FileVersion", "1.0"
-            VALUE "InternalName", "CallAdmin Client"
-            VALUE "LegalCopyright", "Copyright (c) 2013, David Ordnung, Impact"
-            VALUE "OriginalFilename", "calladmin-client.exe"
-            VALUE "ProductName", "CallAdmin Client for Sourcemod"
-            VALUE "ProductVersion", "1.0"
-        END
-    END
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x0, 1200
-    END
+	BLOCK "StringFileInfo"
+	BEGIN
+		BLOCK "000004b0"
+		BEGIN
+			VALUE "Comments", "CallAdmin Client"
+			VALUE "FileDescription", "Client to receive calls from players"
+			VALUE "FileVersion", "1.0"
+			VALUE "InternalName", "CallAdmin Client"
+			VALUE "LegalCopyright", "Copyright (c) 2013, David Ordnung, Impact"
+			VALUE "OriginalFilename", "calladmin-client.exe"
+			VALUE "ProductName", "CallAdmin Client for Sourcemod"
+			VALUE "ProductVersion", "1.0"
+		END
+	END
+	BLOCK "VarFileInfo"
+	BEGIN
+		VALUE "Translation", 0x0, 1200
+	END
 END

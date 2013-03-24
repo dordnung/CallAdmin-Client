@@ -55,16 +55,16 @@ ConfigDialog *config_dialog = NULL;
 // Button ID's for Config Dialog
 enum
 {
-    wxID_SetConfig = 5011,
-    wxID_ExitConfig,
+	wxID_SetConfig = 5011,
+	wxID_ExitConfig,
 };
 
 
 // Button Events for Error Dialog
 BEGIN_EVENT_TABLE(ConfigDialog, wxDialog)
-    EVT_BUTTON(wxID_ExitConfig, ConfigDialog::OnExit)
+	EVT_BUTTON(wxID_ExitConfig, ConfigDialog::OnExit)
 	EVT_BUTTON(wxID_SetConfig, ConfigDialog::OnSet)
-    EVT_CLOSE(ConfigDialog::OnCloseWindow)
+	EVT_CLOSE(ConfigDialog::OnCloseWindow)
 END_EVENT_TABLE()
 
 
@@ -73,15 +73,15 @@ END_EVENT_TABLE()
 ConfigDialog::ConfigDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX)
 {
 	// Create Box
-    wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
+	wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
 
 
 	// Border and Center
-    wxSizerFlags flags;
+	wxSizerFlags flags;
 	wxStaticText* text;
 
 	// Border and Centre
-    flags.Border(wxALL, 10);
+	flags.Border(wxALL, 10);
 	flags.Centre();
 
 
@@ -104,7 +104,7 @@ ConfigDialog::ConfigDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, tit
 
 
 	// Ask for Page
-    wxSizer* const sizerPage = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer* const sizerPage = new wxBoxSizer(wxHORIZONTAL);
 
 	text = new wxStaticText(this, wxID_ANY, "Your page to the notice.php: ");
 	text->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
@@ -117,14 +117,14 @@ ConfigDialog::ConfigDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, tit
 	sizerPage->Add(pageText, flags);
 
 	// Add text and box
-    sizerTop->Add(sizerPage, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	sizerTop->Add(sizerPage, flags.Align(wxALIGN_CENTER_HORIZONTAL));
 
 
 
 
 
 	// Ask for Key
-    wxSizer* const sizerKey = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer* const sizerKey = new wxBoxSizer(wxHORIZONTAL);
 
 	text = new wxStaticText(this, wxID_ANY, "Your private access Key: ");
 	text->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
@@ -137,7 +137,7 @@ ConfigDialog::ConfigDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, tit
 	sizerKey->Add(keyText, flags);
 
 	// Add text and box
-    sizerTop->Add(sizerKey, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	sizerTop->Add(sizerKey, flags.Align(wxALIGN_CENTER_HORIZONTAL));
 
 
 
@@ -152,7 +152,7 @@ ConfigDialog::ConfigDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, tit
 
 
 	// Ask for Step
-    wxSizer* const sizerStep = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer* const sizerStep = new wxBoxSizer(wxHORIZONTAL);
 
 	text = new wxStaticText(this, wxID_ANY, "Time Intervall to search for new Calls: ");
 	text->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
@@ -163,14 +163,14 @@ ConfigDialog::ConfigDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, tit
 	sizerStep->Add(stepSlider, flags);
 
 	// Add text and box
-    sizerTop->Add(sizerStep, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	sizerTop->Add(sizerStep, flags.Align(wxALIGN_CENTER_HORIZONTAL));
 
 
 
 
 
 	// Ask for Timeout
-    wxSizer* const sizerTimeout = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer* const sizerTimeout = new wxBoxSizer(wxHORIZONTAL);
 
 	text = new wxStaticText(this, wxID_ANY, "Timeout for connection: ");
 	text->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
@@ -182,14 +182,14 @@ ConfigDialog::ConfigDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, tit
 	sizerTimeout->Add(timeoutSlider, flags);
 
 	// Add text and box
-    sizerTop->Add(sizerTimeout, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	sizerTop->Add(sizerTimeout, flags.Align(wxALIGN_CENTER_HORIZONTAL));
 
 
 
 
 
 	// Ask for Attempts
-    wxSizer* const sizerAttempts = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer* const sizerAttempts = new wxBoxSizer(wxHORIZONTAL);
 
 	text = new wxStaticText(this, wxID_ANY, "Max. auto. reconnect attempts: ");
 	text->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
@@ -201,7 +201,7 @@ ConfigDialog::ConfigDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, tit
 	sizerAttempts->Add(attemptsSlider, flags);
 
 	// Add text and box
-    sizerTop->Add(sizerAttempts, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	sizerTop->Add(sizerAttempts, flags.Align(wxALIGN_CENTER_HORIZONTAL));
 
 
 
@@ -212,22 +212,22 @@ ConfigDialog::ConfigDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, tit
 
 
 
-    wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
 
 	// Hide and Exit Button
 	sizerBtns->Add(new wxButton(this, wxID_SetConfig, "Create Config"), flags);
 	sizerBtns->Add(new wxButton(this, wxID_ExitConfig, "Exit"), flags);
 
 	// Add Buttons to Box
-    sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL));
 
 
 
 	// Auto Size
-    SetSizerAndFit(sizerTop, true);
+	SetSizerAndFit(sizerTop, true);
 
 	// Centre to Screen
-    Centre();
+	Centre();
 
 	// Show
 	Show(true);

@@ -71,15 +71,15 @@ public:
 
 protected:
 	// Button Events
-    void OnExit(wxCommandEvent& event);
-    void OnHide(wxCommandEvent& event);
-    void OnReconnect(wxCommandEvent& event);
+	void OnExit(wxCommandEvent& event);
+	void OnHide(wxCommandEvent& event);
+	void OnReconnect(wxCommandEvent& event);
 
 	void OnCloseWindow(wxCloseEvent& event);
 
 	void OnBoxClick(wxCommandEvent& event);
 
-    DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE()
 };
 
 

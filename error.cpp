@@ -42,8 +42,8 @@ ErrorDialog *error_dialog = NULL;
 // Button ID's for Error Dialog
 enum
 {
-    wxID_ExitError = 5003,
-    wxID_HideError,
+	wxID_ExitError = 5003,
+	wxID_HideError,
 	wxID_CloseError,
 };
 
@@ -51,10 +51,10 @@ enum
 
 // Button Events for Error Dialog
 BEGIN_EVENT_TABLE(ErrorDialog, wxDialog)
-    EVT_BUTTON(wxID_ExitError, ErrorDialog::OnExit)
+	EVT_BUTTON(wxID_ExitError, ErrorDialog::OnExit)
 	EVT_BUTTON(wxID_CloseError, ErrorDialog::OnClose)
-    EVT_BUTTON(wxID_HideError, ErrorDialog::OnHide)
-    EVT_CLOSE(ErrorDialog::OnCloseWindow)
+	EVT_BUTTON(wxID_HideError, ErrorDialog::OnHide)
+	EVT_CLOSE(ErrorDialog::OnCloseWindow)
 END_EVENT_TABLE()
 
 
@@ -63,14 +63,14 @@ END_EVENT_TABLE()
 ErrorDialog::ErrorDialog(const wxString& title, int error, wxString errorMessage, wxString type) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX)
 {
 	// Create Box
-    sizerTop = new wxBoxSizer(wxVERTICAL);
+	sizerTop = new wxBoxSizer(wxVERTICAL);
 
 	// Border and Center
-    wxSizerFlags flags;
+	wxSizerFlags flags;
 	wxStaticText* text;
 
 	// Border and Centre
-    flags.Border(wxALL, 10);
+	flags.Border(wxALL, 10);
 	flags.Centre();
 
 
@@ -82,7 +82,7 @@ ErrorDialog::ErrorDialog(const wxString& title, int error, wxString errorMessage
 	text->SetForegroundColour(wxColor("red"));
 
 	// Add it
-    sizerTop->Add(text, flags);
+	sizerTop->Add(text, flags);
 
 
 
@@ -121,23 +121,23 @@ ErrorDialog::ErrorDialog(const wxString& title, int error, wxString errorMessage
 
 
 
-    wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
 
 	// Hide and Exit Button
 	sizerBtns->Add(new wxButton(this, wxID_HideError, "Hide"), flags);
 	sizerBtns->Add(new wxButton(this, wxID_ExitError, "Exit"), flags);
-    sizerBtns->Add(new wxButton(this, wxID_CloseError, "Close"), flags);
+	sizerBtns->Add(new wxButton(this, wxID_CloseError, "Close"), flags);
 
 	// Add Buttons to Box
-    sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL));
 
 
 
 	// Auto Size
-    SetSizerAndFit(sizerTop, true);
+	SetSizerAndFit(sizerTop, true);
 
 	// Centre to Screen
-    Centre();
+	Centre();
 
 	// Show
 	Show(true);

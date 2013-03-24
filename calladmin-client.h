@@ -46,14 +46,14 @@ class CallAdmin : public wxApp
 {
 public:
 	// Where all began :)
-    virtual bool OnInit();
+	virtual bool OnInit();
 
 	// Where all end ;)
 	virtual ~CallAdmin();
 
 	// Command line arguments
 	virtual void OnInitCmdLine(wxCmdLineParser& parser);
-    virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
+	virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
 
 	// Start in Taskbar?
 	static bool start_taskbar;

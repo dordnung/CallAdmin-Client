@@ -36,18 +36,18 @@
 class TaskBarIcon : public wxTaskBarIcon
 {
 public:
-    TaskBarIcon() {}
+	TaskBarIcon() {}
 
 	// Taskbar Events
-    void OnLeftButtonDClick(wxTaskBarIconEvent&);
-    void OnMenuRestore(wxCommandEvent&);
-    void OnMenuExit(wxCommandEvent&);
-    void OnMenuUpdate(wxCommandEvent&);
+	void OnLeftButtonDClick(wxTaskBarIconEvent&);
+	void OnMenuRestore(wxCommandEvent&);
+	void OnMenuExit(wxCommandEvent&);
+	void OnMenuUpdate(wxCommandEvent&);
 	void OnMenuAutoStart(wxCommandEvent&);
 
-    virtual wxMenu *CreatePopupMenu();
+	virtual wxMenu *CreatePopupMenu();
 
-    DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE()
 };
 
 

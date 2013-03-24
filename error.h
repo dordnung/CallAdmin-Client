@@ -41,20 +41,20 @@ private:
 	wxSizer* sizerTop;
 
 public:
-    ErrorDialog(const wxString& title, int error, wxString errorMessage, wxString type);
+	ErrorDialog(const wxString& title, int error, wxString errorMessage, wxString type);
 
 	// Edit error dialog
 	void setErrorText(wxString text) {textError->SetLabelText(text); SetSizerAndFit(sizerTop);}
 	void setTrayText(wxString text) {textTray->SetLabelText(text); SetSizerAndFit(sizerTop);}
 
 protected:
-    void OnHide(wxCommandEvent& event);
-    void OnExit(wxCommandEvent& event);
+	void OnHide(wxCommandEvent& event);
+	void OnExit(wxCommandEvent& event);
 	void OnClose(wxCommandEvent& event);
 
 	void OnCloseWindow(wxCloseEvent& event);
 
-    DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE()
 };
 
 

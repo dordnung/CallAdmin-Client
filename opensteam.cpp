@@ -78,7 +78,7 @@ bool pipeThread::loadSteam()
 
 			return false;
 		}
-        
+		
 		// Create Pipe
 		pipe = steamClient->CreateSteamPipe();
 

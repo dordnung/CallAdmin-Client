@@ -134,7 +134,7 @@ protected:
 
 	void OnCloseWindow(wxCloseEvent& event);
 
-    DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE()
 };
 
 

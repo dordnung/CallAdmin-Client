@@ -45,8 +45,8 @@ CallDialog *call_dialogs[100] = {NULL};
 // Button ID's for Call Dialog
 enum
 {
-    wxID_CloseCall = 5100,
-    wxID_ConnectCall,
+	wxID_CloseCall = 5100,
+	wxID_ConnectCall,
 	wxID_CheckDone,
 	wxID_ContactClient,
 	wxID_ContactTarget
@@ -56,12 +56,12 @@ enum
 
 // Button Events for Call Dialog
 BEGIN_EVENT_TABLE(CallDialog, wxDialog)
-    EVT_BUTTON(wxID_ConnectCall, CallDialog::OnConnect)
+	EVT_BUTTON(wxID_ConnectCall, CallDialog::OnConnect)
 	EVT_BUTTON(wxID_CloseCall, CallDialog::OnClose)
 	EVT_BUTTON(wxID_CheckDone, CallDialog::OnCheck)
 	EVT_BUTTON(wxID_ContactClient, CallDialog::OnContactClient)
 	EVT_BUTTON(wxID_ContactTarget, CallDialog::OnContactTarget)
-    EVT_CLOSE(CallDialog::OnCloseWindow)
+	EVT_CLOSE(CallDialog::OnCloseWindow)
 END_EVENT_TABLE()
 
 
@@ -70,15 +70,15 @@ END_EVENT_TABLE()
 void CallDialog::startCall()
 {
 	// Create Box
-    sizerTop = new wxBoxSizer(wxVERTICAL);
+	sizerTop = new wxBoxSizer(wxVERTICAL);
 	
 	// Border and Center
-    wxSizerFlags flags;
+	wxSizerFlags flags;
 	wxStaticText* text;
 	wxTextCtrl* text2;
 
 	// Border and Centre
-    flags.Border(wxALL, 10);
+	flags.Border(wxALL, 10);
 	flags.Centre();
 
 
@@ -223,7 +223,7 @@ void CallDialog::startCall()
 
 
 
-    wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
 
 	// Takeover button
 	takeover = new wxButton(this, wxID_CheckDone, "Take Over");
@@ -236,13 +236,13 @@ void CallDialog::startCall()
 
 
 	// Add Buttons to Box
-    sizerTop->Add(sizerBtns, flags);
+	sizerTop->Add(sizerBtns, flags);
 
 	// Auto Size
-    SetSizerAndFit(sizerTop, true);
+	SetSizerAndFit(sizerTop, true);
 	
 	// Centre to Screen
-    Centre();
+	Centre();
 
 	// Show the Window
 	Show(true);
@@ -282,12 +282,12 @@ CSteamID* CallDialog::steamIDtoCSteamID(char* steamid)
 	}
 
 	// Wrong Format
-    if (authID == 0)
+	if (authID == 0)
 	{
-        return NULL;
+		return NULL;
 	}
 
-    uint64 uintID = (uint64)authID * 2;
+	uint64 uintID = (uint64)authID * 2;
 
 	// Convert to a uint64
 	uintID += 76561197960265728 + server;

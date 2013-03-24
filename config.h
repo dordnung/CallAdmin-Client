@@ -52,15 +52,15 @@ private:
 	wxTextCtrl* keyText;
 
 public:
-    ConfigDialog(const wxString& title);
+	ConfigDialog(const wxString& title);
 
 protected:
-    void OnSet(wxCommandEvent& event);
-    void OnExit(wxCommandEvent& event);
+	void OnSet(wxCommandEvent& event);
+	void OnExit(wxCommandEvent& event);
 
 	void OnCloseWindow(wxCloseEvent& event);
 
-    DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE()
 };
 
 

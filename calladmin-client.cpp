@@ -24,12 +24,6 @@
  */
 
 
-// libcurl is static
-#define CURL_STATICLIB
-
-// Use the Client Interface
-#define STEAMWORKS_CLIENT_INTERFACES
-
 // c++ libs
 #include <string>
 #include <sstream>
@@ -100,37 +94,37 @@ wxString last = "0";
 // We need something to print for a XML Error!
 wxString XMLErrorString[20] = 
 {
-    "XML_NO_ERROR",
+	"XML_NO_ERROR",
 
-    "XML_NO_ATTRIBUTE",
-    "XML_WRONG_ATTRIBUTE_TYPE",
+	"XML_NO_ATTRIBUTE",
+	"XML_WRONG_ATTRIBUTE_TYPE",
 
 	"XML_ERROR_FILE_NOT_FOUND",
-    "XML_ERROR_FILE_COULD_NOT_BE_OPENED",
-    "XML_ERROR_FILE_READ_ERROR",
-    "XML_ERROR_ELEMENT_MISMATCH",
-    "XML_ERROR_PARSING_ELEMENT",
-    "XML_ERROR_PARSING_ATTRIBUTE",
-    "XML_ERROR_IDENTIFYING_TAG",
-    "XML_ERROR_PARSING_TEXT",
-    "XML_ERROR_PARSING_CDATA",
-    "XML_ERROR_PARSING_COMMENT",
-    "XML_ERROR_PARSING_DECLARATION",
-    "XML_ERROR_PARSING_UNKNOWN",
-    "XML_ERROR_EMPTY_DOCUMENT",
-    "XML_ERROR_MISMATCHED_ELEMENT",
-    "XML_ERROR_PARSING",
+	"XML_ERROR_FILE_COULD_NOT_BE_OPENED",
+	"XML_ERROR_FILE_READ_ERROR",
+	"XML_ERROR_ELEMENT_MISMATCH",
+	"XML_ERROR_PARSING_ELEMENT",
+	"XML_ERROR_PARSING_ATTRIBUTE",
+	"XML_ERROR_IDENTIFYING_TAG",
+	"XML_ERROR_PARSING_TEXT",
+	"XML_ERROR_PARSING_CDATA",
+	"XML_ERROR_PARSING_COMMENT",
+	"XML_ERROR_PARSING_DECLARATION",
+	"XML_ERROR_PARSING_UNKNOWN",
+	"XML_ERROR_EMPTY_DOCUMENT",
+	"XML_ERROR_MISMATCHED_ELEMENT",
+	"XML_ERROR_PARSING",
 
-    "XML_CAN_NOT_CONVERT_TEXT",
-    "XML_NO_TEXT_NODE"
+	"XML_CAN_NOT_CONVERT_TEXT",
+	"XML_NO_TEXT_NODE"
 };
 
 
 // Help for the CMDLine
 static const wxCmdLineEntryDesc g_cmdLineDesc [] =
 {
-     {wxCMD_LINE_SWITCH, "taskbar", "taskbar", "Move GUI to taskbar on Start"},
-     {wxCMD_LINE_NONE}
+	 {wxCMD_LINE_SWITCH, "taskbar", "taskbar", "Move GUI to taskbar on Start"},
+	 {wxCMD_LINE_NONE}
 };
 
 
@@ -150,9 +144,9 @@ bool CallAdmin::start_taskbar = false;
 bool CallAdmin::OnInit()
 {
 	// Something went wrong
-    if (!wxApp::OnInit())
+	if (!wxApp::OnInit())
 	{
-        return false;
+		return false;
 	}
 
 	int y = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
@@ -206,7 +200,7 @@ bool CallAdmin::OnInit()
 	// Update Time
 	last = wxString() << std::time(0);
 
-    return true;
+	return true;
 }
 
 
@@ -221,19 +215,19 @@ CallAdmin::~CallAdmin()
 void CallAdmin::OnInitCmdLine(wxCmdLineParser& parser)
 {
 	// Add Help
-    parser.SetDesc(g_cmdLineDesc);
+	parser.SetDesc(g_cmdLineDesc);
 
 	// Start with -
-    parser.SetSwitchChars("-");
+	parser.SetSwitchChars("-");
 }
  
 
 // Find -tasbar
 bool CallAdmin::OnCmdLineParsed(wxCmdLineParser& parser)
 {
-    start_taskbar = parser.Found("taskbar");
+	start_taskbar = parser.Found("taskbar");
  
-    return true;
+	return true;
 }
 
 
@@ -743,16 +737,16 @@ std::wstring s2ws(wxString s)
 	int len;
 	int slength = (int)s.length() + 1;
 
-    len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0); 
+	len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0); 
 
-    wchar_t* buf = new wchar_t[len];
+	wchar_t* buf = new wchar_t[len];
 
-    MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
+	MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
 
-    std::wstring r(buf);
+	std::wstring r(buf);
 
-    delete[] buf;
-    return r;
+	delete[] buf;
+	return r;
 }
 
 
