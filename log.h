@@ -1,13 +1,16 @@
+#ifndef LOG_H
+#define LOG_H
+
 /**
  * -----------------------------------------------------
- * File        error.h
- * Authors     Impact, David <popoklopsi> Ordnung
+ * File        log.h
+ * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
- * Web         http://gugyclan.eu, http://popoklopsi.de
+ * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
  * 
- * CallAdmin Header File
- * Copyright (C) 2013 Impact, David <popoklopsi> Ordnung
+ * 
+ * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,37 +29,41 @@
 #pragma once
 
 
-// Wee need WX
-#include <wx/wx.h>
+// Precomp Header
+#include <wx/wxprec.h>
+
+
+// We need WX
+#ifndef WX_PRECOMP
+	#include <wx/wx.h>
+#endif
+
+#include <wx/listctrl.h>
+#include <wx/notebook.h>
 
 
 
-// Error Dialog Class
-class ErrorDialog: public wxDialog
+// Config Dialog Class
+class LogPanel: public wxPanel
 {
 private:
-	wxStaticText* textError;
-	wxStaticText* textTray;
-
-	wxSizer* sizerTop;
+	wxListBox* logBox;
 
 public:
-	ErrorDialog(const wxString& title, int error, wxString errorMessage, wxString type);
+	LogPanel(wxNotebook* note);
 
-	// Edit error dialog
-	void setErrorText(wxString text) {textError->SetLabelText(text); SetSizerAndFit(sizerTop);}
-	void setTrayText(wxString text) {textTray->SetLabelText(text); SetSizerAndFit(sizerTop);}
+	void addLog(wxString log);
 
 protected:
-	void OnHide(wxCommandEvent& event);
 	void OnExit(wxCommandEvent& event);
-	void OnClose(wxCommandEvent& event);
-
-	void OnCloseWindow(wxCloseEvent& event);
+	void OnHide(wxCommandEvent& event);
 
 	DECLARE_EVENT_TABLE()
 };
 
 
-// Error Dialog
-extern ErrorDialog *error_dialog;
+// Log a Action
+void LogAction(wxString action);
+
+
+#endif

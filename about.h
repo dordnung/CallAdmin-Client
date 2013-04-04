@@ -1,9 +1,9 @@
-#ifndef TASKBAR_H
-#define TASKBAR_H
+#ifndef ABOUT_H
+#define ABOUT_H
 
 /**
  * -----------------------------------------------------
- * File        taskbar.h
+ * File        about.h
  * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
@@ -32,40 +32,41 @@
 // Precomp Header
 #include <wx/wxprec.h>
 
+
 // We need WX
 #ifndef WX_PRECOMP
 	#include <wx/wx.h>
 #endif
-#include <wx/taskbar.h>
+
+#include <wx/statline.h>
+#include <wx/notebook.h>
 
 
 
-// Taskbar Class
-class TaskBarIcon : public wxTaskBarIcon
+// About Panel Class
+class AboutPanel: public wxPanel
 {
+private:
+	wxButton* downloadButton;
+	wxStaticText* currentText;
+
 public:
-	TaskBarIcon() {}
+	AboutPanel(wxNotebook* note);
 
-	// Taskbar Events
-	void OnLeftButtonDClick(wxTaskBarIconEvent&);
-	void OnMenuRestore(wxCommandEvent&);
-	void OnMenuExit(wxCommandEvent&);
-	void OnMenuUpdate(wxCommandEvent&);
+	void enableDownload(bool enable) {downloadButton->Enable(enable);}
+	void updateVersion(wxString cversion, wxColor color) {currentText->SetLabelText("Current version: " + cversion); currentText->SetForegroundColour(color);}
 
-	#if defined(__WXMSW__)
-		void OnMenuAutoStart(wxCommandEvent&);
-	#endif
-
-	// Show a information
-	void ShowMessage(wxString title, wxString message, wxWindow* parent);
-
-	virtual wxMenu *CreatePopupMenu();
+protected:
+	void OnExit(wxCommandEvent& event);
+	void OnUpdate(wxCommandEvent& event);
+	void OnDownload(wxCommandEvent& event);
+	void OnHide(wxCommandEvent& event);
 
 	DECLARE_EVENT_TABLE()
 };
 
 
-// Taskbar
-extern TaskBarIcon *m_taskBarIcon;
+// Extern Accessor
+extern AboutPanel* about;
 
 #endif

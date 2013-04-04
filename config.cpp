@@ -1,13 +1,13 @@
 /**
  * -----------------------------------------------------
  * File        config.cpp
- * Authors     Impact, David <popoklopsi> Ordnung
+ * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
- * Web         http://gugyclan.eu, http://popoklopsi.de
+ * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
  * 
- * CallAdmin Header File
- * Copyright (C) 2013 Impact, David <popoklopsi> Ordnung
+ * 
+ * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,116 +28,120 @@
 #include <sstream>
 
 // Include Project
-#include "simpleini/SimpleIni.h"
 #include "config.h"
+#include "call.h"
+#include "log.h"
 #include "main.h"
+#include "taskbar.h"
 #include "calladmin-client.h"
 
 // Wx
 #include <wx/statline.h>
 #include <wx/stdpaths.h>
-
+#include <wx/gbsizer.h>
 
 
 // Settings
-int step = 0;
-int timeout = 0;
-int maxAttempts = 0;
+int step = 5;
+int timeout = 3;
+int maxAttempts = 3;
+int lastCalls = 25;
 
-std::string page = "";
-std::string key = "";
-
-
-ConfigDialog *config_dialog = NULL;
+wxString page = "";
+wxString key = "";
 
 
+// The config
+wxConfig *g_config = NULL;
 
-// Button ID's for Config Dialog
+
+// Button ID's for Config Panel
 enum
 {
 	wxID_SetConfig = 5011,
 	wxID_ExitConfig,
+	wxID_HideConfig,
 };
 
 
-// Button Events for Error Dialog
-BEGIN_EVENT_TABLE(ConfigDialog, wxDialog)
-	EVT_BUTTON(wxID_ExitConfig, ConfigDialog::OnExit)
-	EVT_BUTTON(wxID_SetConfig, ConfigDialog::OnSet)
-	EVT_CLOSE(ConfigDialog::OnCloseWindow)
+// Button Events for Config Panel
+BEGIN_EVENT_TABLE(ConfigPanel, wxPanel)
+	EVT_BUTTON(wxID_ExitConfig, ConfigPanel::OnExit)
+	EVT_BUTTON(wxID_SetConfig, ConfigPanel::OnSet)
+	EVT_BUTTON(wxID_HideConfig, ConfigPanel::OnHide)
 END_EVENT_TABLE()
 
 
-
-// Create Error Window
-ConfigDialog::ConfigDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX)
+// Create Config Panel
+ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 {
+	// Create Config
+	g_config = new wxConfig("Call Admin");
+
 	// Create Box
 	wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
 
+	// Grid
+	wxGridBagSizer *gridSizer = new wxGridBagSizer(8, 8);
+	gridSizer->AddGrowableCol(0);
 
-	// Border and Center
+
+	// Flags and Text
 	wxSizerFlags flags;
 	wxStaticText* text;
 
 	// Border and Centre
-	flags.Border(wxALL, 10);
+	flags.Border(wxALL &~ wxBOTTOM, 10);
 	flags.Centre();
 
 
-
 	// Config
-	text = new wxStaticText(this, wxID_ANY, "Set up your Config");
+	text = new wxStaticText(this, wxID_ANY, "Set up your config");
 
-	text->SetFont(wxFont(18, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true));
-	text->SetForegroundColour(wxColor("blue"));
+	text->SetFont(wxFont(20, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
 	sizerTop->Add(text, flags);
 
 
 
+	// Add Grid
+	sizerTop->Add(gridSizer, 1, wxALL | wxEXPAND, 10);
+
+
 
 	// Static line
-	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
+	gridSizer->Add(new wxStaticLine(this, wxID_ANY), wxGBPosition(0, 0), wxGBSpan(1, 2), wxEXPAND | (wxALL &~ wxLEFT &~ wxRIGHT), 10);
 
 
 
 	// Ask for Page
-	wxSizer* const sizerPage = new wxBoxSizer(wxHORIZONTAL);
+	text = new wxStaticText(this, wxID_ANY, "Your url to the call admin directory: ");
+	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-	text = new wxStaticText(this, wxID_ANY, "Your page to the notice.php: ");
-	text->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-
-	sizerPage->Add(text, flags);
-
-	pageText = new wxTextCtrl(this, wxID_ANY, "http://yourpage.com/notice.php", wxDefaultPosition, wxSize(220, 20));
+	pageText = new wxTextCtrl(this, wxID_ANY, "http://yourpage.com/calladmin/", wxDefaultPosition, wxSize(300, -1));
 	pageText->SetMaxLength(256);
+	pageText->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-	sizerPage->Add(pageText, flags);
-
-	// Add text and box
-	sizerTop->Add(sizerPage, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	// Add to grid
+	gridSizer->Add(text, wxGBPosition(1, 0), wxDefaultSpan, 0, 10);
+    gridSizer->Add(pageText, wxGBPosition(1, 1), wxDefaultSpan, wxEXPAND);
 
 
 
 
 
 	// Ask for Key
-	wxSizer* const sizerKey = new wxBoxSizer(wxHORIZONTAL);
+	text = new wxStaticText(this, wxID_ANY, "Your private access key: ");
+	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-	text = new wxStaticText(this, wxID_ANY, "Your private access Key: ");
-	text->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-
-	sizerKey->Add(text, flags);
-
-	keyText = new wxTextCtrl(this, wxID_ANY, "accesskey", wxDefaultPosition, wxSize(120, 20));
+	keyText = new wxTextCtrl(this, wxID_ANY, "accesskey");
 	keyText->SetMaxLength(64);
+	keyText->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-	sizerKey->Add(keyText, flags);
-
-	// Add text and box
-	sizerTop->Add(sizerKey, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	// Add to Grid
+	gridSizer->Add(text, wxGBPosition(2, 0), wxDefaultSpan, 0, 10);
+    gridSizer->Add(keyText, wxGBPosition(2, 1), wxDefaultSpan, wxEXPAND);
 
 
 
@@ -145,69 +149,72 @@ ConfigDialog::ConfigDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, tit
 
 
 	// Static line
-	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
+	gridSizer->Add(new wxStaticLine(this, wxID_ANY), wxGBPosition(3, 0), wxGBSpan(1, 2), wxEXPAND | (wxALL &~ wxLEFT &~ wxRIGHT), 10);
 
 
 
 
 
 	// Ask for Step
-	wxSizer* const sizerStep = new wxBoxSizer(wxHORIZONTAL);
+	text = new wxStaticText(this, wxID_ANY, "Time intervall to search for calls (in seconds): ");
+	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-	text = new wxStaticText(this, wxID_ANY, "Time Intervall to search for new Calls: ");
-	text->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	stepSlider = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 5, 20, 5, "Time Inverall");
+	stepSlider->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-	sizerStep->Add(text, flags);
-
-	stepSlider = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(80, 22), wxSP_ARROW_KEYS | wxALIGN_RIGHT, 5, 20, 5, "Time Inverall");
-	sizerStep->Add(stepSlider, flags);
-
-	// Add text and box
-	sizerTop->Add(sizerStep, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	// Add to Grid
+	gridSizer->Add(text, wxGBPosition(4, 0), wxDefaultSpan, 0, 10);
+    gridSizer->Add(stepSlider, wxGBPosition(4, 1), wxDefaultSpan, wxEXPAND);
 
 
 
 
 
 	// Ask for Timeout
-	wxSizer* const sizerTimeout = new wxBoxSizer(wxHORIZONTAL);
+	text = new wxStaticText(this, wxID_ANY, "Timeout for connection (in seconds): ");
+	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-	text = new wxStaticText(this, wxID_ANY, "Timeout for connection: ");
-	text->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	timeoutSlider = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 1, 10, 3, "Timeout");
+	timeoutSlider->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-	sizerTimeout->Add(text, flags);
-
-	timeoutSlider = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(80, 22), wxSP_ARROW_KEYS | wxALIGN_RIGHT, 1, 10, 3, "Timout");
-
-	sizerTimeout->Add(timeoutSlider, flags);
-
-	// Add text and box
-	sizerTop->Add(sizerTimeout, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	// Add to Grid
+	gridSizer->Add(text, wxGBPosition(5, 0), wxDefaultSpan, 0, 10);
+    gridSizer->Add(timeoutSlider, wxGBPosition(5, 1), wxDefaultSpan, wxEXPAND);
 
 
 
 
 
 	// Ask for Attempts
-	wxSizer* const sizerAttempts = new wxBoxSizer(wxHORIZONTAL);
+	text = new wxStaticText(this, wxID_ANY, "Maximum auto. reconnect attempts: ");
+	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-	text = new wxStaticText(this, wxID_ANY, "Max. auto. reconnect attempts: ");
-	text->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	attemptsSlider = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 3, 10, 3, "Max Attempts");
+	attemptsSlider->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-	sizerAttempts->Add(text, flags);
+	// Add to Grid
+	gridSizer->Add(text, wxGBPosition(6, 0), wxDefaultSpan, 0, 10);
+    gridSizer->Add(attemptsSlider, wxGBPosition(6, 1), wxDefaultSpan, wxEXPAND);
 
-	attemptsSlider = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(80, 22), wxSP_ARROW_KEYS | wxALIGN_RIGHT, 3, 10, 3, "Max Attempts");
 
-	sizerAttempts->Add(attemptsSlider, flags);
 
-	// Add text and box
-	sizerTop->Add(sizerAttempts, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+
+	// Ask for Last Calls
+	text = new wxStaticText(this, wxID_ANY, "Number of last calls to load at start: ");
+	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+
+	callsSlider = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 0, 50, 25, "Load Calls");
+	callsSlider->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+
+	// Add to Grid
+	gridSizer->Add(text, wxGBPosition(7, 0), wxDefaultSpan, 0, 10);
+    gridSizer->Add(callsSlider, wxGBPosition(7, 1), wxDefaultSpan, wxEXPAND);
 
 
 
 
 	// Static line
-	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
+	gridSizer->Add(new wxStaticLine(this, wxID_ANY), wxGBPosition(8, 0), wxGBSpan(1, 2), wxEXPAND | (wxALL &~ wxLEFT &~ wxRIGHT), 10);
 
 
 
@@ -215,8 +222,11 @@ ConfigDialog::ConfigDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, tit
 	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
 
 	// Hide and Exit Button
-	sizerBtns->Add(new wxButton(this, wxID_SetConfig, "Create Config"), flags);
-	sizerBtns->Add(new wxButton(this, wxID_ExitConfig, "Exit"), flags);
+	sizerBtns->Add(new wxButton(this, wxID_HideConfig, "Hide"), flags.Border(wxALL &~ wxRIGHT, 5));
+	sizerBtns->Add(new wxButton(this, wxID_SetConfig, "Update Settings"), flags.Border(wxALL &~ wxLEFT &~ wxRIGHT, 5));
+	sizerBtns->Add(new wxButton(this, wxID_ExitConfig, "Exit"), flags.Border(wxALL &~ wxLEFT, 5));
+
+
 
 	// Add Buttons to Box
 	sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL));
@@ -226,60 +236,46 @@ ConfigDialog::ConfigDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, tit
 	// Auto Size
 	SetSizerAndFit(sizerTop, true);
 
-	// Centre to Screen
-	Centre();
 
-	// Show
-	Show(true);
-
-	// Set the Icon
-	SetIcon(wxIcon("calladmin_icon", wxBITMAP_TYPE_ICO_RESOURCE));
+	// Parse Config
+	parseConfig();
 }
 
 
 
 // Button Event -> Try to set new config
-void ConfigDialog::OnSet(wxCommandEvent& WXUNUSED(event))
+void ConfigPanel::OnSet(wxCommandEvent& WXUNUSED(event))
 {
 	// Read config values
 	timeout = timeoutSlider->GetValue();
 	step = stepSlider->GetValue();
 	maxAttempts = attemptsSlider->GetValue();
+	lastCalls = callsSlider->GetValue();
 
 	page = pageText->GetValue();
 	key = keyText->GetValue();
 
 
-	CSimpleIniA config;
-
-	// Read config file
-	wxString path = wxStandardPaths::Get().GetExecutablePath();
-
-	size_t start = path.find_last_of("\\");
-
-	if (start < 0)
-	{
-		start = path.find_last_of("/");
-	}
-
-
 	// Write to new config file
-	path = path.replace(start, path.size(), "/calladmin-client_settings.ini");
-
-	config.SetValue("settings", "step", (wxString() << step));
-	config.SetValue("settings", "timeout", (wxString() << timeout));
-	config.SetValue("settings", "attempts", (wxString() << maxAttempts));
-	config.SetValue("settings", "page", page.c_str());
-	config.SetValue("settings", "key", key.c_str());
-
-	config.SaveFile(((std::string)path).c_str());
+	g_config->Write("step", step);
+	g_config->Write("timeout", timeout);
+	g_config->Write("attempts", maxAttempts);
+	g_config->Write("lastcalls", lastCalls);
+	g_config->Write("page", page);
+	g_config->Write("key", key);
 
 
-	// Close Config dialog
-	config_dialog = NULL;
 
-	Destroy();
+	// Refresh main dialog
+	main_dialog->SetTitle("Call Admin Client");
+	main_dialog->setEventText("Enable new Settings...");
 
+	// Log Action
+	LogAction("Saved the config");
+
+
+	// Goto Main
+	notebook->SetSelection(0);
 
 	// Parse again
 	parseConfig();
@@ -289,45 +285,45 @@ void ConfigDialog::OnSet(wxCommandEvent& WXUNUSED(event))
 
 
 // Button Event -> Exit programm
-void ConfigDialog::OnExit(wxCommandEvent& WXUNUSED(event))
+void ConfigPanel::OnExit(wxCommandEvent& WXUNUSED(event))
 {
+	// Log Action
+	LogAction("Exit Call Admin");
+
 	exitProgramm();
 }
 
 
-
-// Window Event -> Close Window
-void ConfigDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
+// Button Event -> Hide to Taskbar
+void ConfigPanel::OnHide(wxCommandEvent& WXUNUSED(event))
 {
-	exitProgramm();
-}
+	// Log Action
+	LogAction("Hide to taskbar");
 
+	if (m_taskBarIcon != NULL)
+	{
+		m_taskBarIcon->ShowMessage("Call Admin", "Call Admin is now in the taskbar!", this);
+
+		main_dialog->Show(false);
+	}
+	else
+	{
+		main_dialog->Iconize(true);
+	}
+}
 
 
 // parse Config
-bool parseConfig()
+void ConfigPanel::parseConfig()
 {
 	bool foundConfigError = false;
 
-	// Read Config file ;)
-	CSimpleIniA config;
+	// Log Action
+	LogAction("Parse the config");
 
-	// Read config file
-	wxString path = wxStandardPaths::Get().GetExecutablePath();
-
-	size_t start = path.find_last_of("\\");
-
-	if (start < 0)
-	{
-		start = path.find_last_of("/");
-	}
-
-	path = path.replace(start, path.size(), "/calladmin-client_settings.ini");
-
-	SI_Error rc = config.LoadFile(((std::string)path).c_str());
 
 	// Was parsing good?
-	if (rc != SI_OK)
+	if (!g_config->Exists("step") || !g_config->Exists("timeout") || !g_config->Exists("attempts") || !g_config->Exists("lastcalls") || !g_config->Exists("page") || !g_config->Exists("key"))
 	{
 		foundConfigError = true;
 	}
@@ -336,76 +332,139 @@ bool parseConfig()
 		// Get files out of config
 		try
 		{
-			std::string stepS = config.GetValue("settings", "step", "5");
-			std::stringstream s(stepS);
+			step = g_config->ReadLong("step", 5l);
+			timeout = g_config->ReadLong("timeout", 3l);
+			maxAttempts = g_config->ReadLong("attempts", 5l);
+			lastCalls = g_config->ReadLong("lastcalls", 25l);
 
-			s >> step;
 
-			std::string timeoutS = config.GetValue("settings", "timeout", "3");
-			std::stringstream t(timeoutS);
+			g_config->Read("page", &page, "");
 
-			t >> timeout;
+			// Strip last /
+			int lastSlash = page.find_last_of("/");
+			int length = page.length() - 1;
 
-			std::string maxAttemptsS = config.GetValue("settings", "attempts", "5");
-			std::stringstream m(maxAttemptsS);
+			if (lastSlash == length)
+			{
+				// Delete it
+				page.RemoveLast();
+			}
 
-			m >> maxAttempts;
-
-			page = config.GetValue("settings", "page", "");
-			key = config.GetValue("settings", "key", "");
+			g_config->Read("key", &key, "");
 		}
 		catch(...) {foundConfigError = true;}
 		
-		if (!foundConfigError)
-		{
-			// Check invalid values
-			if (step < 5)
-			{
-				step = 5;
-			}
-
-			if (step > 20)
-			{
-				step = 20;
-			}
-
-			if (timeout < 1)
-			{
-				timeout = 1;
-			}
-
-			if (timeout > 10)
-			{
-				timeout = 10;
-			}
-
-			if (maxAttempts < 3)
-			{
-				maxAttempts = 3;
-			}
-
-			if (maxAttempts > 10)
-			{
-				maxAttempts = 10;
-			}
-
-			if (timeout >= step)
-			{
-				timeout = step - 1;
-			}
-
-			// Create main Dialog
-			main_dialog = new MainDialog("CallAdmin Welcome");
-	
-			main_dialog->createWindow(CallAdmin::start_taskbar);
-
-			// Start Timer
-			timer = new Timer();
-			timer->run(step*1000);
-
-			timer->setAttempts(0);
-		}
 	}
 
-	return !foundConfigError;
+	// Everything good?
+	if (!foundConfigError)
+	{
+		// Check invalid values
+		if (step < 5)
+		{
+			step = 5;
+		}
+
+		if (step > 20)
+		{
+			step = 20;
+		}
+
+		if (timeout < 1)
+		{
+			timeout = 1;
+		}
+
+		if (timeout > 10)
+		{
+			timeout = 10;
+		}
+
+		if (maxAttempts < 3)
+		{
+			maxAttempts = 3;
+		}
+
+		if (maxAttempts > 10)
+		{
+			maxAttempts = 10;
+		}
+
+		if (lastCalls < 0)
+		{
+			lastCalls = 0;
+		}
+
+		if (lastCalls > 50)
+		{
+			lastCalls = 50;
+		}
+
+		if (timeout >= step)
+		{
+			timeout = step - 1;
+		}
+
+
+		// Set Config Values
+		timeoutSlider->SetValue(timeout);
+		stepSlider->SetValue(step);
+		attemptsSlider->SetValue(maxAttempts);
+		callsSlider->SetValue(lastCalls);
+
+		pageText->SetValue(page);
+		keyText->SetValue(key);
+
+
+
+		// Calls are unimportant
+		for (int i=0; i < MAXCALLS; i++)
+		{
+			if (call_dialogs[i] != NULL)
+			{
+				// Stop Avatar Timer
+				if (call_dialogs[i]->avatarTimer != NULL && call_dialogs[i]->avatarTimer->IsRunning())
+				{
+					call_dialogs[i]->avatarTimer->Stop();
+				}
+
+				call_dialogs[i]->Destroy();
+				call_dialogs[i] = NULL;
+			}
+		}
+
+
+		// Timer... STOP!
+		if (timer != NULL)
+		{
+			timer->Stop();
+			timer = NULL;
+		}
+
+		// Log Action
+		LogAction("Loaded the config");
+
+
+		// Updated Main Interface
+		main_dialog->resetCalls();
+
+		// First Start again ;D
+		timerStarted = false;
+
+		// Start Timer
+		timer = new Timer();
+		timer->run(step*1000);
+
+		// Reset Attempts
+		timer->setAttempts(0);
+	}
+	else
+	{
+		// Refresh main dialog
+		main_dialog->SetTitle("Call Admin Client");
+		main_dialog->setEventText("Please configurate your settings...");
+
+		// Log Action
+		LogAction("Couldn't load/find the config");
+	}
 }

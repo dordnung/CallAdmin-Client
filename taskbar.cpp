@@ -1,13 +1,13 @@
 /**
  * -----------------------------------------------------
  * File        taskbar.cpp
- * Authors     Impact, David <popoklopsi> Ordnung
+ * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
- * Web         http://gugyclan.eu, http://popoklopsi.de
+ * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
  * 
- * CallAdmin Header File
- * Copyright (C) 2013 Impact, David <popoklopsi> Ordnung
+ * 
+ * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 // Includes Project
 #include "taskbar.h"
 #include "main.h"
-#include "error.h"
+#include "log.h"
 #include "config.h"
 #include "calladmin-client.h"
 
@@ -39,12 +39,20 @@
 TaskBarIcon *m_taskBarIcon = NULL;
 
 
+// unused warning -> disable
+#pragma warning(disable: 4100)
+
+
 // Taskbar ID's
 enum
 {
 	PU_RESTORE = 10001,
 	PU_UPDATE,
-	PU_AUTOSTART,
+
+	#if defined(__WXMSW__)
+		PU_AUTOSTART,
+	#endif
+
 	PU_EXIT,
 };
 
@@ -54,28 +62,22 @@ enum
 BEGIN_EVENT_TABLE(TaskBarIcon, wxTaskBarIcon)
 	EVT_MENU(PU_RESTORE, TaskBarIcon::OnMenuRestore)
 	EVT_MENU(PU_UPDATE, TaskBarIcon::OnMenuUpdate)
-	EVT_MENU(PU_AUTOSTART, TaskBarIcon::OnMenuAutoStart)
+
+	#if defined(__WXMSW__)
+		EVT_MENU(PU_AUTOSTART, TaskBarIcon::OnMenuAutoStart)
+	#endif
+
 	EVT_MENU(PU_EXIT, TaskBarIcon::OnMenuExit)
 	EVT_TASKBAR_LEFT_DCLICK (TaskBarIcon::OnLeftButtonDClick)
 END_EVENT_TABLE()
 
 
-// Restore all dialogs
+// Restore main dialog
 void TaskBarIcon::OnMenuRestore(wxCommandEvent&)
 {
 	if (main_dialog != NULL)
 	{
 		main_dialog->Show(true);
-	}
-
-	if (error_dialog != NULL)
-	{
-		error_dialog->Show(true);
-	}
-
-	if (config_dialog != NULL)
-	{
-		config_dialog->Show(true);
 	}
 }
 
@@ -85,37 +87,45 @@ void TaskBarIcon::OnMenuExit(wxCommandEvent&)
 	exitProgramm();
 }
 
-// Append/Remove to Autostart
-void TaskBarIcon::OnMenuAutoStart(wxCommandEvent& event)
-{
-	// Registry Key
-	HKEY hkRegistry;
 
-	// Open Key
-	if (RegOpenKeyExA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run\\", 0, KEY_WRITE, &hkRegistry) == ERROR_SUCCESS)
+#if defined(__WXMSW__)
+	// Append/Remove to Autostart
+	void TaskBarIcon::OnMenuAutoStart(wxCommandEvent& event)
 	{
-		// He checked it
-		if (event.IsChecked())
+		// Registry Key
+		HKEY hkRegistry;
+
+		// Open Key
+		if (RegOpenKeyExA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run\\", 0, KEY_WRITE, &hkRegistry) == ERROR_SUCCESS)
 		{
-			// Get App Path
-			wxString appPath = wxStandardPaths::Get().GetExecutablePath();
+			// He checked it
+			if (event.IsChecked())
+			{
+				// Get App Path
+				wxString appPath = wxStandardPaths::Get().GetExecutablePath();
 
-			// Close to Taskbar on Autostart
-			appPath = "\"" + appPath + "\"" + " -taskbar";
+				// Close to Taskbar on Autostart
+				appPath = "\"" + appPath + "\"" + " -taskbar";
 
-			// Write in
-			RegSetValueExW(hkRegistry, L"CallAdmin-Client", 0, REG_SZ, (BYTE*)appPath.wc_str(), (wcslen(appPath.wc_str()) + 1) * sizeof(wchar_t));
+				// Write in
+				RegSetValueExW(hkRegistry, L"CallAdmin-Client", 0, REG_SZ, (BYTE*)appPath.wc_str(), (wcslen(appPath.wc_str()) + 1) * sizeof(wchar_t));
+
+				LogAction("Added Call Admin to the auto start list");
+			}
+			else
+			{
+				// Remove it
+				RegDeleteValueA(hkRegistry, "CallAdmin-Client");
+
+				LogAction("Removed Call Admin from the auto start list");
+			}
+
+			// Close Key
+			RegCloseKey(hkRegistry);
 		}
-		else
-		{
-			// Remove it
-			RegDeleteValueA(hkRegistry, "CallAdmin-Client");
-		}
-
-		// Close Key
-		RegCloseKey(hkRegistry);
 	}
-}
+#endif
+
 
 // Check for update
 void TaskBarIcon::OnMenuUpdate(wxCommandEvent&)
@@ -124,47 +134,66 @@ void TaskBarIcon::OnMenuUpdate(wxCommandEvent&)
 }
 
 
+// Shows a Message
+void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow* parent)
+{
+	#if defined(__WXMSW__) && wxUSE_TASKBARICON_BALLOONS
+		m_taskBarIcon->ShowBalloon(title, message, 15000, wxICON_INFORMATION);
+	#else
+		// Not the taskbar message
+		if (message != "Call Admin is now in the taskbar!")
+		{
+			wxMessageBox(message, title, wxICON_INFORMATION|wxOK, parent);
+		}
+	#endif
+}
+
+
 
 // Create the Taskbar Menu
 wxMenu *TaskBarIcon::CreatePopupMenu()
 {
-	bool autoRun = false;
-
 	wxMenu *menu = new wxMenu();
 
 	menu->Append(PU_RESTORE, "Restore Windows");
 	menu->AppendSeparator();
 
+	#if defined(__WXMSW__)
+		// Check Auto run Key
+		HKEY hkRegistry;
+		bool autoRun = false;
 
-	// Check Auto run Key
-	HKEY hkRegistry;
-
-	// Open it
-	if (RegOpenKeyExA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run\\", 0, KEY_QUERY_VALUE, &hkRegistry) == ERROR_SUCCESS)
-	{
-		// Path in the registry
-		wchar_t wszPath[4096];
-		memset(wszPath, 0, sizeof(wszPath));
-
-		DWORD dwType, dwSize = sizeof(wszPath) - 1;
-
-		// Look for calladmin
-		if (RegQueryValueExW(hkRegistry, L"CallAdmin-Client", 0, &dwType, (unsigned char *)wszPath, &dwSize) == ERROR_SUCCESS)
+		// Open it
+		if (RegOpenKeyExA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run\\", 0, KEY_QUERY_VALUE, &hkRegistry) == ERROR_SUCCESS)
 		{
-			// Is Path the same?
-			if (wxString(wszPath).Contains(wxStandardPaths::Get().GetExecutablePath()))
-			{
-				// So it's on
-				autoRun = true;
-			}
-		}
+			// Path in the registry
+			wchar_t wszPath[4096];
+			memset(wszPath, 0, sizeof(wszPath));
 
-		// Close the Key
-		RegCloseKey(hkRegistry);
-	}
+			DWORD dwType, dwSize = sizeof(wszPath) - 1;
+
+			// Look for calladmin
+			if (RegQueryValueExW(hkRegistry, L"CallAdmin-Client", 0, &dwType, (unsigned char *)wszPath, &dwSize) == ERROR_SUCCESS)
+			{
+				// Is Path the same?
+				if (wxString(wszPath).Contains(wxStandardPaths::Get().GetExecutablePath()))
+				{
+					// So it's on
+					autoRun = true;
+				}
+			}
+
+			// Close the Key
+			RegCloseKey(hkRegistry);
+		}
+	#endif
 
 	menu->Append(PU_UPDATE, "Check For Update");
-	menu->Append(PU_AUTOSTART, "Start With Windows", wxEmptyString, wxITEM_CHECK)->Check(autoRun);
+
+	#if defined(__WXMSW__)
+		menu->Append(PU_AUTOSTART, "Start With Windows", wxEmptyString, wxITEM_CHECK)->Check(autoRun);
+	#endif
+
 	menu->AppendSeparator();
 
 	menu->Append(PU_EXIT, "Exit");
@@ -179,15 +208,5 @@ void TaskBarIcon::OnLeftButtonDClick(wxTaskBarIconEvent&)
 	if (main_dialog != NULL)
 	{
 		main_dialog->Show(true);
-	}
-
-	if (error_dialog != NULL)
-	{
-		error_dialog->Show(true);
-	}
-
-	if (config_dialog != NULL)
-	{
-		config_dialog->Show(true);
 	}
 }

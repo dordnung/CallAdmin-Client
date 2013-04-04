@@ -1,13 +1,13 @@
 /**
  * -----------------------------------------------------
  * File        main.cpp
- * Authors     Impact, David <popoklopsi> Ordnung
+ * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
- * Web         http://gugyclan.eu, http://popoklopsi.de
+ * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
  * 
- * CallAdmin Header File
- * Copyright (C) 2013 Impact, David <popoklopsi> Ordnung
+ * 
+ * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@
 // Include Project
 #include "main.h"
 #include "call.h"
+#include "log.h"
+#include "about.h"
 #include "taskbar.h"
 #include "config.h"
 #include "calladmin-client.h"
@@ -41,9 +43,12 @@
 #include <wx/listbox.h>
 #include <wx/tooltip.h>
 
-
 // Main Dialog
 MainDialog *main_dialog = NULL;
+
+
+// Notebook
+wxNotebook* notebook = NULL;
 
 
 // Button ID's for Main Dialog
@@ -70,6 +75,14 @@ END_EVENT_TABLE()
 // Create Main Window
 void MainDialog::createWindow(bool taskbar)
 {
+	// Create Notebook and panel
+	notebook = new wxNotebook(this, wxID_ANY);
+
+	panel = new wxPanel(notebook, wxID_ANY);
+
+	// Add Main Page
+	notebook->AddPage(panel, ("Main"));
+
 	// Border and Center
 	wxSizerFlags flags;
 	wxStaticText* text;
@@ -78,12 +91,18 @@ void MainDialog::createWindow(bool taskbar)
 	sizerBody = new wxBoxSizer(wxHORIZONTAL);
 
 
+	// Box Body
+	wxStaticBoxSizer* sizerBox = new wxStaticBoxSizer(new wxStaticBox(panel, wxID_ANY, wxT("Latest Calls")), wxHORIZONTAL);
+
+
 	// Box for all Calls
-	callBox = new wxListBox(this, wxID_BoxClick, wxDefaultPosition, wxSize(250, -1), 0, NULL, wxLB_HSCROLL);
-	callBox->SetFont(wxFont(11, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	callBox = new wxListBox(panel, wxID_BoxClick, wxDefaultPosition, wxSize(280, -1), 0, NULL, wxLB_HSCROLL | wxLB_SINGLE);
+	callBox->SetFont(wxFont(9, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+
 
 	// Add to Body
-	sizerBody->Add(callBox, 0, wxEXPAND | wxALL, 5);
+	sizerBox->Add(callBox, 0, wxEXPAND | wxALL, 5);
+	sizerBody->Add(sizerBox, 0, wxEXPAND | wxALL, 5);
 	
 
 
@@ -104,9 +123,9 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// Welcome Text
-	text = new wxStaticText(this, wxID_ANY, "The Admin Caller");
+	text = new wxStaticText(panel, wxID_ANY, "The Admin Caller");
 
-	text->SetFont(wxFont(30, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(30, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
 	sizerTop->Add(text, flags.Border(wxALL &~ wxTOP, 40));
@@ -123,13 +142,13 @@ void MainDialog::createWindow(bool taskbar)
 	
 
 	// Static line
-	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
+	sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 5);
 
 
 
 	// Steam Text
-	steamText = new wxStaticText(this, wxID_ANY, "Steam is currently not running");
-	steamText->SetFont(wxFont(16, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	steamText = new wxStaticText(panel, wxID_ANY, "Steam is currently not running");
+	steamText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 	steamText->SetForegroundColour(wxColor("red"));
 
 	// Add it
@@ -139,17 +158,17 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// Static line
-	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
-	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
+	sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 5);
+	sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 5);
 
 
 
 
 
 
-	eventText = new wxStaticText(this, wxID_ANY,  "Waiting for a new Event...");
+	eventText = new wxStaticText(panel, wxID_ANY,  "Waiting for a new event...");
 
-	eventText->SetFont(wxFont(16, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	eventText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 	eventText->SetForegroundColour(wxColor("blue"));
 
 	sizerTop->Add(eventText, flags);
@@ -158,7 +177,7 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// Static line
-	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
+	sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 5);
 
 
 	// Space
@@ -181,7 +200,7 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// The available Checkbox
-	available = new wxCheckBox(this, wxID_ANY, "I'm available");
+	available = new wxCheckBox(panel, wxID_ANY, "I'm available");
 	available->SetValue(true);
 	available->SetToolTip(tipAvailable);
 
@@ -197,14 +216,14 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// The sound Checkbox
-	sound = new wxCheckBox(this, wxID_ANY, "Sound on Call");
+	sound = new wxCheckBox(panel, wxID_ANY, "Sound on call");
 	sound->SetValue(true);
 	sound->SetToolTip(tipSound);
 
 	sizerChecks->Add(sound, flags.Border(wxALL, 5));
 
 	// ToolTip for third Checkbox
-	wxToolTip* specAvailable = new wxToolTip("You will only receive calls but you will not be stored in the database");
+	wxToolTip* specAvailable = new wxToolTip("You will only receive calls but you will not be stored in the trackers database");
 
 	specAvailable->SetDelay(500);
 	specAvailable->Enable(true);
@@ -214,7 +233,7 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// The store Checkbox
-	store = new wxCheckBox(this, wxID_ANY, "Spectate Only");
+	store = new wxCheckBox(panel, wxID_ANY, "Spectate only");
 	store->SetValue(false);
 	store->SetToolTip(specAvailable);
 
@@ -223,18 +242,18 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// Hide, Check and Exit Button
-	sizerBtns->Add(new wxButton(this, wxID_Hide, "Hide"), flags.Border(wxALL &~ wxBottom, 5));
+	sizerBtns->Add(new wxButton(panel, wxID_Hide, "Hide"), flags.Border(wxALL &~ wxBOTTOM &~ wxRIGHT, 5));
 
 
 	// Exit
-	sizerBtns->Add(new wxButton(this, wxID_Exit, "Exit"), flags.Border(wxALL &~ wxBottom, 5));
+	sizerBtns->Add(new wxButton(panel, wxID_Exit, "Exit"), flags.Border(wxTOP, 5));
 
 
 	// If max attempts reached, add a reconnect button
-	reconnectButton = new wxButton(this, wxID_Reconnect, "Reconnect");
+	reconnectButton = new wxButton(panel, wxID_Reconnect, "Reconnect");
 	reconnectButton->Enable(false);
 
-	sizerBtns->Add(reconnectButton, flags.Border(wxALL &~ wxBottom, 5));
+	sizerBtns->Add(reconnectButton, flags.Border(wxALL &~ wxBOTTOM &~ wxLEFT, 5));
 
 
 
@@ -242,17 +261,17 @@ void MainDialog::createWindow(bool taskbar)
 	sizerTop->Add(sizerChecks, flags.Align(wxALIGN_CENTER_HORIZONTAL));
 
 	// Add Buttons to Box
-	sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL &~ wxBottom, 5));
+	sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL &~ wxBOTTOM, 5));
 
 
 
 	// Author + Version Text
-	text = new wxStaticText(this, wxID_ANY, "v" + version + "  (c) Popoklopsi and Impact");
+	text = new wxStaticText(panel, wxID_ANY, "v" + version + "  (c) Popoklopsi and Impact");
 
-	text->SetFont(wxFont(8, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(8, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
-	sizerTop->Add(text, 0, wxALIGN_RIGHT, 0);
+	sizerTop->Add(text, flags.Align(wxALIGN_RIGHT).Border(wxALL &~ wxBOTTOM, 10));
 
 
 
@@ -260,14 +279,26 @@ void MainDialog::createWindow(bool taskbar)
 	sizerBody->Add(sizerTop, flags.Right());
 
 
-
-
 	// Auto Size
-	SetSizerAndFit(sizerBody, true);
+	panel->SetSizerAndFit(sizerBody, true);
 
-	// Centre to Screen
-	Centre();
 
+
+
+	// Add Config Page
+	notebook->AddPage(new ConfigPanel(notebook), ("Settings"));
+
+
+	// Add Log Page
+	notebook->AddPage(new LogPanel(notebook), ("Logging"));
+
+
+	// Add about Page
+	notebook->AddPage(new AboutPanel(notebook), ("About"));
+
+
+	// Log Action
+	LogAction("Start the main Window");
 
 
 	// Start in taskbar
@@ -275,7 +306,7 @@ void MainDialog::createWindow(bool taskbar)
 	{
 		main_dialog->Show(false);
 				
-		m_taskBarIcon->ShowBalloon("CallAdmin Started", "CallAdmin started in taskbar");
+		m_taskBarIcon->ShowMessage("Call Admin Started", "Call Admin started in taskbar", panel);
 	}
 	else
 	{
@@ -285,7 +316,24 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// Set the Icon
-	SetIcon(wxIcon("calladmin_icon", wxBITMAP_TYPE_ICO_RESOURCE));
+	#if defined(__WXMSW__)
+		SetIcon(wxIcon("calladmin_icon", wxBITMAP_TYPE_ICO_RESOURCE));
+	#else
+		wxLogNull nolog;
+
+		SetIcon(wxIcon(getAppPath("resources/calladmin_icon.ico"), wxBITMAP_TYPE_ICON));
+	#endif
+
+	// Fit Notebook
+	notebook->Fit();
+	
+	// Fit Main
+	this->Fit();
+
+
+	// Centre to Screen
+	Centre();
+
 
 	// Update Call List
 	updateCall();
@@ -296,9 +344,12 @@ void MainDialog::createWindow(bool taskbar)
 // Button Event -> Hide to Taskbar
 void MainDialog::OnHide(wxCommandEvent& WXUNUSED(event))
 {
+	// Log Action
+	LogAction("Hided Window");
+
 	if (m_taskBarIcon != NULL)
 	{
-		m_taskBarIcon->ShowBalloon("CallAdmin", "CallAdmin is now in the Taskbar!");
+		m_taskBarIcon->ShowMessage("Call Admin", "Call Admin is now in the taskbar!", this);
 
 		Show(false);
 	}
@@ -307,6 +358,7 @@ void MainDialog::OnHide(wxCommandEvent& WXUNUSED(event))
 		Iconize(true);
 	}
 }
+
 
 
 // Button Event -> Exit hole programm
@@ -319,13 +371,16 @@ void MainDialog::OnExit(wxCommandEvent& WXUNUSED(event))
 // Button Event -> Reconnect
 void MainDialog::OnReconnect(wxCommandEvent& WXUNUSED(event))
 {
+	// Log Action
+	LogAction("Reconnecting...");
+
 	// Reset attempts
 	timer->setAttempts(0);
 
 	if (main_dialog != NULL)
 	{
-		main_dialog->SetTitle("CallAdmin Welcome");
-		main_dialog->setEventText("Waiting for a new Event...");
+		main_dialog->SetTitle("Call Admin Client");
+		main_dialog->setEventText("Trying to reconnect...");
 		main_dialog->setReconnectButton(false);
 
 		main_dialog->Show(true);
@@ -340,12 +395,11 @@ void MainDialog::OnReconnect(wxCommandEvent& WXUNUSED(event))
 // Window Event -> Open Call
 void MainDialog::OnBoxClick(wxCommandEvent& WXUNUSED(event))
 {
-	int selection = callBox->GetCount() - callBox->GetSelection() - 1;
+	int selection = callBox->GetSelection();
 
 	if (call_dialogs[selection] != NULL)
 	{
 		call_dialogs[selection]->Show(true);
-
 	}
 }
 
@@ -357,7 +411,7 @@ void MainDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
 	{
 		Show(false);
 
-		m_taskBarIcon->ShowBalloon("CallAdmin", "CallAdmin is now in the Taskbar!");
+		m_taskBarIcon->ShowMessage("Call Admin", "Call Admin is now in the taskbar!", this);
 	}
 	else
 	{
@@ -371,11 +425,12 @@ void MainDialog::updateCall()
 {
 	callBox->Clear();
 
-	for (int i=99; i >= 0; i--)
+	for (int i=0; i < MAXCALLS; i++)
 	{
 		if (call_dialogs[i] != NULL)
 		{
-			callBox->Append(call_dialogs[i]->getBoxText());
+			callBox->SetSelection(callBox->Append(wxString::FromUTF8(call_dialogs[i]->getBoxText())));
+			callBox->Thaw();
 		}
 	}
 }

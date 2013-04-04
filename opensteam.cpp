@@ -1,13 +1,13 @@
 /**
  * -----------------------------------------------------
  * File        opensteam.cpp
- * Authors     Impact, David <popoklopsi> Ordnung
+ * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
- * Web         http://gugyclan.eu, http://popoklopsi.de
+ * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
  * 
- * CallAdmin Header File
- * Copyright (C) 2013 Impact, David <popoklopsi> Ordnung
+ * 
+ * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,16 @@
 
 #include "opensteam.h"
 #include "main.h"
+#include "log.h"
 #include "calladmin-client.h"
+
+
+// Alloca
+#if defined(__WXMSW__)
+	#define ALLOCA _alloca
+#else
+	#define ALLOCA alloca
+#endif
 
 
 
@@ -37,7 +46,7 @@ std::string steamid = "";
 bool steamConnected = false;
 
 // Var to send messages
-HSteamPipe pipe = 0;
+HSteamPipe pipeSteam = 0;
 HSteamUser clientUser = 0;
 ISteamFriends013* steamFriends = NULL;
 ISteamClient012* steamClient = NULL;
@@ -80,9 +89,9 @@ bool pipeThread::loadSteam()
 		}
 		
 		// Create Pipe
-		pipe = steamClient->CreateSteamPipe();
+		pipeSteam = steamClient->CreateSteamPipe();
 
-		if (!pipe || pipe == -1 || TestDestroy())
+		if (!pipeSteam || pipeSteam == -1 || TestDestroy())
 		{
 			// Clean Steam
 			::cleanSteam();
@@ -91,8 +100,8 @@ bool pipeThread::loadSteam()
 		}
 	
 		// Connect User
-		clientUser = steamClient->ConnectToGlobalUser(pipe);
-	
+		clientUser = steamClient->ConnectToGlobalUser(pipeSteam);
+		
 		if (!clientUser || TestDestroy())
 		{
 			// Clean Steam
@@ -102,7 +111,7 @@ bool pipeThread::loadSteam()
 		}
 
 		// Load SteamFriends
-		steamFriends = (ISteamFriends013*)steamClient->GetISteamFriends(clientUser, pipe, STEAMFRIENDS_INTERFACE_VERSION_013);
+		steamFriends = (ISteamFriends013*)steamClient->GetISteamFriends(clientUser, pipeSteam, STEAMFRIENDS_INTERFACE_VERSION_013);
 
 		if(!steamFriends || TestDestroy())
 		{
@@ -113,7 +122,7 @@ bool pipeThread::loadSteam()
 		}
 
 		// Load Steam User
-		steamUser = (ISteamUser016*)steamClient->GetISteamUser(clientUser, pipe, STEAMUSER_INTERFACE_VERSION_016);
+		steamUser = (ISteamUser016*)steamClient->GetISteamUser(clientUser, pipeSteam, STEAMUSER_INTERFACE_VERSION_016);
 
 		if(!steamUser || TestDestroy())
 		{
@@ -124,7 +133,7 @@ bool pipeThread::loadSteam()
 		}
 
 		// Load Steam Utils
-		steamUtils = (ISteamUtils005*)steamClient->GetISteamUtils(pipe, STEAMUTILS_INTERFACE_VERSION_005);
+		steamUtils = (ISteamUtils005*)steamClient->GetISteamUtils(pipeSteam, STEAMUTILS_INTERFACE_VERSION_005);
 
 		if(!steamUtils || TestDestroy())
 		{
@@ -150,12 +159,15 @@ void* pipeThread::Entry()
 		// Clean Steam
 		::cleanSteam();
 
-		steamConnected = false;
-
-		if (main_dialog != NULL)
+		if (main_dialog != NULL && steamConnected)
 		{
-			main_dialog->setSteamStatus("Steam is currently not running", (wxString)"red");
+			main_dialog->setSteamStatus("Steam is currently not running", wxColour("red"));
+
+			LogAction("Disonnected from Steam");
 		}
+
+
+		steamConnected = false;
 
 		// Steamid not known
 		steamid = "";
@@ -163,16 +175,46 @@ void* pipeThread::Entry()
 	else
 	{
 		// Connected :)
-		steamConnected = true;
 		steamid = steamUser->GetSteamID().Render(); 
 
-		main_dialog->setSteamStatus("Steam is currently running", wxColour(34, 139, 34));
+		// Only if disconnected before
+		if (!steamConnected)
+		{
+			main_dialog->setSteamStatus("Steam is currently running", wxColour(34, 139, 34));
+
+			LogAction("Connected to Steam");
+		}
+
+		steamConnected = true;
 	}
 
 	return NULL;
 }
 
 
+
+// Init. Timer
+SecondTimer::SecondTimer(CSteamID *cid, CSteamID *tid, wxStaticBitmap* cAvatar, wxStaticBitmap* tAvatar) : wxTimer(this, -1) 
+{
+	clientsID = cid; 
+	targetsID = tid; 
+	attempts = 0; 
+	clientsAvatar = cAvatar; 
+	targetsAvatar = tAvatar; 
+
+	clientLoaded = targetLoaded = false;
+
+	// Invalid Steamid?
+	if (clientsID == NULL || !clientsID->IsValid())
+	{
+		clientLoaded = true;
+	}
+
+	if (targetsID == NULL || !targetsID->IsValid())
+	{
+		targetLoaded = true;
+	}
+}
 
 
 
@@ -222,7 +264,7 @@ bool SecondTimer::setAvatar(CSteamID *id, wxStaticBitmap* map)
 	if (avatar > 0)
 	{
 		// Buffer to store picture
-		uint8* rgbaBuffer = (uint8*)_alloca(4 * 184 * 184);
+		uint8* rgbaBuffer = (uint8*)ALLOCA(4 * 184 * 184);
 
 		uint32* size = new uint32(184);
 
@@ -257,6 +299,10 @@ bool SecondTimer::setAvatar(CSteamID *id, wxStaticBitmap* map)
 				// Set new Avatar
 				map->SetBitmap(wxBitmap(image));
 
+
+				LogAction("Loaded Avatar of " + (wxString)id->Render());
+
+
 				// It's loaded
 				return true;
 			}
@@ -272,15 +318,15 @@ bool SecondTimer::setAvatar(CSteamID *id, wxStaticBitmap* map)
 void cleanSteam()
 {
 	// Close Steam Stuff
-	if (pipe && pipe != -1 && clientUser && steamClient)
+	if (pipeSteam && pipeSteam != -1 && clientUser && steamClient)
 	{
-		steamClient->ReleaseUser(pipe, clientUser);
-		steamClient->BReleaseSteamPipe(pipe);
+		steamClient->ReleaseUser(pipeSteam, clientUser);
+		steamClient->BReleaseSteamPipe(pipeSteam);
 		steamClient->BShutdownIfAllPipesClosed();
 	}
 
 	// Reset
-	pipe = 0;
+	pipeSteam = 0;
 	clientUser = 0;
 	steamClient = NULL;
 	steamFriends = NULL;

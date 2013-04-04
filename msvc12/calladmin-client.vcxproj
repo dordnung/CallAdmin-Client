@@ -37,7 +37,7 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>$(WX_PATH)\include;../;$(WX_PATH)\lib\vc_lib\mswu;$(STEAMWORKS_PATH)\include;$(CURL_PATH);../tinyxml2;../simpleini;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WX_PATH)\include;../;$(WX_PATH)\lib\vc_lib\mswu;$(STEAMWORKS_PATH)\include;$(CURL_PATH);../tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>CURL_STATICLIB;STEAMWORKS_CLIENT_INTERFACES;WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -75,9 +75,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="../calladmin-client.cpp" />
+    <ClCompile Include="..\about.cpp" />
     <ClCompile Include="..\call.cpp" />
     <ClCompile Include="..\config.cpp" />
-    <ClCompile Include="..\error.cpp" />
+    <ClCompile Include="..\log.cpp" />
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\opensteam.cpp" />
     <ClCompile Include="..\taskbar.cpp" />
@@ -85,17 +86,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../calladmin-client.h" />
+    <ClInclude Include="..\about.h" />
     <ClInclude Include="..\call.h" />
     <ClInclude Include="..\config.h" />
-    <ClInclude Include="..\error.h" />
+    <ClInclude Include="..\log.h" />
     <ClInclude Include="..\main.h" />
     <ClInclude Include="..\opensteam.h" />
-    <ClInclude Include="..\simpleINI\SimpleIni.h" />
     <ClInclude Include="..\taskbar.h" />
     <ClInclude Include="..\tinyxml2\tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="../calladmin-client.rc" />
+    <ResourceCompile Include="..\resources\calladmin-client.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,13 +1,16 @@
+#ifndef OPENSTEAM_H
+#define OPENSTEAM_H
+
 /**
  * -----------------------------------------------------
  * File        opensteam.h
- * Authors     Impact, David <popoklopsi> Ordnung
+ * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
- * Web         http://gugyclan.eu, http://popoklopsi.de
+ * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
  * 
- * CallAdmin Header File
- * Copyright (C) 2013 Impact, David <popoklopsi> Ordnung
+ * 
+ * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +29,17 @@
 #pragma once
 
 
+// Precomp Header
+#include <wx/wxprec.h>
+
 // c++ libs
 #include <string>
 
 
-// Include WX WIDGETS
-#include <wx/wx.h>
+// We need WX
+#ifndef WX_PRECOMP
+	#include <wx/wx.h>
+#endif
 #include <wx/thread.h>
 
 
@@ -53,7 +61,7 @@ extern std::string steamid;
 extern bool steamConnected;
 
 // Var to send messages
-extern HSteamPipe pipe;
+extern HSteamPipe pipeSteam;
 extern HSteamUser clientUser;
 extern ISteamFriends013* steamFriends;
 extern ISteamClient012* steamClient;
@@ -102,7 +110,7 @@ private:
 
 public:
 	// Init Timer
-	SecondTimer(CSteamID *cid, CSteamID *tid, wxStaticBitmap* cAvatar, wxStaticBitmap* tAvatar) : wxTimer(this, -1) {clientsID = cid; targetsID = tid; attempts = 0; clientsAvatar = cAvatar; targetsAvatar = tAvatar; clientLoaded = targetLoaded = false;}
+	SecondTimer(CSteamID *cid, CSteamID *tid, wxStaticBitmap* cAvatar, wxStaticBitmap* tAvatar);
 
 	void startTimer() {Start(100);}
 	bool setAvatar(CSteamID *id, wxStaticBitmap* map);
@@ -117,3 +125,5 @@ void cleanSteam();
 
 // Threader
 extern pipeThread *pThread;
+
+#endif

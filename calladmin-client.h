@@ -1,13 +1,16 @@
+#ifndef CALLADMIN_CLIENT_H
+#define CALLADMIN_CLIENT_H
+
 /**
  * -----------------------------------------------------
  * File        calladmin-client.h
- * Authors     Impact, David <popoklopsi> Ordnung
+ * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
- * Web         http://gugyclan.eu, http://popoklopsi.de
+ * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
  * 
- * CallAdmin Header File
- * Copyright (C) 2013 Impact, David <popoklopsi> Ordnung
+ * 
+ * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,19 +29,40 @@
 #pragma once
 
 
+#define MAXCALLS 200
+
+
+// Precomp Header
+#include <wx/wxprec.h>
+
 // c++ libs
 #include <string>
 
-// Wee need WX
-#include <wx/wx.h>
+// We need WX
+#ifndef WX_PRECOMP
+	#include <wx/wx.h>
+#endif
+
 #include <wx/cmdline.h>
 #include <wx/timer.h>
+#include <wx/stdpaths.h>
 
+// Font
+#if defined(__WXMSW__)
+	#define FONT_FAMILY wxFONTFAMILY_SCRIPT
+	#define FONT_WEIGHT_BOLD wxFONTWEIGHT_BOLD
+#else
+	#define FONT_FAMILY wxFONTFAMILY_DEFAULT
+	#define FONT_WEIGHT_BOLD wxFONTWEIGHT_NORMAL
+#endif
 
 extern int avatarSize;
 
 // Version
 extern wxString version;
+
+// Timer already run?
+extern bool timerStarted;
 
 
 // App Class
@@ -80,14 +104,19 @@ public:
 };
 
 
-
+// Main methods
 void checkUpdate();
 void createReconnect(wxString error);
 void createError(int errorCode, wxString error, wxString type);
 void exitProgramm();
 
+wxString getAppPath(wxString file);
 
-std::wstring s2ws(wxString s);
+
+#if defined(__WXMSW__)
+	std::wstring s2ws(wxString s);
+#endif
+
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
 
 
@@ -97,3 +126,6 @@ DECLARE_APP(CallAdmin)
 
 // Timer
 extern Timer *timer;
+
+
+#endif

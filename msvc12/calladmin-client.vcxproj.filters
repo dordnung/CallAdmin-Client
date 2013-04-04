@@ -1,15 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="../calladmin-client.cpp" />
     <ClCompile Include="..\tinyxml2\tinyxml2.cpp">
       <Filter>TinyXML2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\config.cpp">
-      <Filter>Dialogs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\error.cpp">
-      <Filter>Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="..\call.cpp">
       <Filter>Dialogs</Filter>
@@ -23,20 +16,22 @@
     <ClCompile Include="..\main.cpp">
       <Filter>Dialogs</Filter>
     </ClCompile>
+    <ClCompile Include="../calladmin-client.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\config.cpp">
+      <Filter>Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\log.cpp">
+      <Filter>Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\about.cpp">
+      <Filter>Panel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="../calladmin-client.h" />
     <ClInclude Include="..\tinyxml2\tinyxml2.h">
       <Filter>TinyXML2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\simpleINI\SimpleIni.h">
-      <Filter>SimpleINI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\config.h">
-      <Filter>Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\error.h">
-      <Filter>Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="..\call.h">
       <Filter>Dialogs</Filter>
@@ -50,16 +45,22 @@
     <ClInclude Include="..\main.h">
       <Filter>Dialogs</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="../calladmin-client.rc" />
+    <ClInclude Include="../calladmin-client.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\config.h">
+      <Filter>Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\log.h">
+      <Filter>Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\about.h">
+      <Filter>Panel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TinyXML2">
       <UniqueIdentifier>{b833f0af-e32e-4318-a27a-53fde17dcc98}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SimpleINI">
-      <UniqueIdentifier>{60ad7fa6-bdaa-4a39-b446-e769a44e878d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Dialogs">
       <UniqueIdentifier>{2149f6a4-1176-488e-a8d4-fef78fc4cb4c}</UniqueIdentifier>
@@ -70,5 +71,19 @@
     <Filter Include="Taskbar">
       <UniqueIdentifier>{87b022da-4e5b-4a1b-80d7-79a852aa6c96}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{306b3bbf-1fe0-4b78-868a-9ef8e15482c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{28c468e4-c3fe-4524-94eb-8e5f0a815933}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Panel">
+      <UniqueIdentifier>{79060fd2-57f7-43e2-972e-105413197e02}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\resources\calladmin-client.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

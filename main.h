@@ -1,13 +1,16 @@
+#ifndef MAIN_H
+#define MAIN_H
+
 /**
  * -----------------------------------------------------
  * File        main.h
- * Authors     Impact, David <popoklopsi> Ordnung
+ * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
- * Web         http://gugyclan.eu, http://popoklopsi.de
+ * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
  * 
- * CallAdmin Header File
- * Copyright (C) 2013 Impact, David <popoklopsi> Ordnung
+ * 
+ * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +29,19 @@
 #pragma once
 
 
-// Wee need WX
-#include <wx/wx.h>
-#include <wx/listbox.h>
+// Precomp Header
+#include <wx/wxprec.h>
 
+// We need WX
+#ifndef WX_PRECOMP
+	#include <wx/wx.h>
+#endif
+
+#include <wx/listbox.h>
+#include <wx/notebook.h>
+
+// Main Notebook
+extern wxNotebook* notebook;
 
 
 // Main Dialog Class
@@ -41,6 +53,8 @@ private:
 	wxCheckBox* sound;
 
 	wxButton* reconnectButton;
+
+	wxPanel *panel;
 
 	wxListBox* callBox;
 	wxSizer* sizerBody;
@@ -60,14 +74,14 @@ public:
 	bool wantSound() {return (sound != NULL && sound->IsChecked());}
 
 	// Update Window
-	void setEventText(wxString text) {eventText->SetLabelText(text); SetSizerAndFit(sizerBody, false);}
+	void setEventText(wxString text) {eventText->SetLabelText(text); eventText->Refresh(); panel->SetSizerAndFit(sizerBody, false); notebook->Fit(); Fit();}
 	void setReconnectButton(bool enable=false) {reconnectButton->Enable(enable);}
 
-	void setSteamStatus(wxString text, wxString color) {steamText->SetLabelText(text); steamText->SetForegroundColour(wxColor(color)); SetSizerAndFit(sizerBody, false);}
-	void setSteamStatus(wxString text, wxColor color) {steamText->SetLabelText(text); steamText->SetForegroundColour(color); SetSizerAndFit(sizerBody, false);}
+	void setSteamStatus(wxString text, wxColor color) {steamText->SetLabelText(text); steamText->SetForegroundColour(color); panel->SetSizerAndFit(sizerBody, false); notebook->Fit(); Fit();}
 
 	// Update Call list
 	void updateCall();
+	void resetCalls() {callBox->Clear();}
 
 protected:
 	// Button Events
@@ -85,3 +99,5 @@ protected:
 
 // Main Dialog
 extern MainDialog *main_dialog;
+
+#endif

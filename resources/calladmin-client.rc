@@ -1,13 +1,13 @@
 /**
  * -----------------------------------------------------
  * File        calladmin-client.rc
- * Authors     Impact, David <popoklopsi> Ordnung
+ * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
- * Web         http://gugyclan.eu, http://popoklopsi.de
+ * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
  * 
- * CallAdmin Resource File
- * Copyright (C) 2013 Impact, David <popoklopsi> Ordnung
+ * 
+ * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include <winver.h>
 #include "wx/msw/wx.rc"
 
 // Call Admin Icon
@@ -32,6 +31,9 @@ calladmin_icon ICON "calladmin_icon.ico"
 // Call Admin Avatar
 calladmin_avatar BITMAP "calladmin_avatar.bmp"
 
+// Call Admin Banner
+calladmin_banner BITMAP "calladmin_banner.bmp"
+
 // Call Admin Sound
 calladmin_sound WAVE "calladmin_sound.wav"
 
@@ -39,8 +41,8 @@ calladmin_sound WAVE "calladmin_sound.wav"
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 VS_VERSION_INFO VERSIONINFO
-	FILEVERSION     1,0,0,0
-	PRODUCTVERSION  1,0,0,0
+	FILEVERSION     0,1,0,0
+	PRODUCTVERSION  0,1,0,0
 	FILEFLAGSMASK 0x17L
 	#if defined(_DEBUG)
 		FILEFLAGS 1
@@ -56,14 +58,14 @@ BEGIN
 	BEGIN
 		BLOCK "000004b0"
 		BEGIN
-			VALUE "Comments", "CallAdmin Client"
+			VALUE "Comments", "Call Admin Client"
 			VALUE "FileDescription", "Client to receive calls from players"
-			VALUE "FileVersion", "1.0"
-			VALUE "InternalName", "CallAdmin Client"
+			VALUE "FileVersion", "0.1"
+			VALUE "InternalName", "Call Admin Client"
 			VALUE "LegalCopyright", "Copyright (c) 2013, David Ordnung, Impact"
 			VALUE "OriginalFilename", "calladmin-client.exe"
-			VALUE "ProductName", "CallAdmin Client for Sourcemod"
-			VALUE "ProductVersion", "1.0"
+			VALUE "ProductName", "Call Admin Client for Sourcemod"
+			VALUE "ProductVersion", "0.1"
 		END
 	END
 	BLOCK "VarFileInfo"

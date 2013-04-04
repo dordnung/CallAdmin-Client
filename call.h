@@ -1,13 +1,16 @@
+#ifndef CALL_H
+#define CALL_H
+
 /**
  * -----------------------------------------------------
  * File        call.h
- * Authors     Impact, David <popoklopsi> Ordnung
+ * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
- * Web         http://gugyclan.eu, http://popoklopsi.de
+ * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
  * 
- * CallAdmin Header File
- * Copyright (C) 2013 Impact, David <popoklopsi> Ordnung
+ * 
+ * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,16 +29,21 @@
 #pragma once
 
 
+// Precomp Header
+#include <wx/wxprec.h>
+
 // c++ libs
 #include <string>
 #include <sstream>
 
-// wx
-#include <wx/wx.h>
+// We need WX
+#ifndef WX_PRECOMP
+	#include <wx/wx.h>
+#endif
 
 // Steam Class
 #include "opensteam.h"
-
+#include "calladmin-client.h"
 
 
 // Call Dialog Class
@@ -44,6 +52,7 @@ class CallDialog: public wxDialog
 private:
 
 	// We need information about a call ;)
+	wxString callID;
 	wxString fullIP;
 	wxString serverName;
 	wxString target;
@@ -64,10 +73,11 @@ private:
 
 	// take Over Button
 	wxButton* takeover;
+	wxButton* contactTrackers;
 
 	// And for the Steam API
-	CSteamID* clientCID;
-	CSteamID* targetCID;
+	CSteamID clientCID;
+	CSteamID targetCID;
 
 	// Item List
 	int ID;
@@ -76,8 +86,9 @@ public:
 	CallDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX) {};
 
 	// Privat -> set Methods
+	void setCallID(const char* ID) {callID = ID;}
 	void setIP(const char* IP) {fullIP = IP;}
-	void setName(const char* name) {serverName = name;}
+	void setName(wxString name) {serverName = name;}
 	void setTarget(const char* name) {target = name;}
 	void setTargetID(const char* steamidID) {targetID = steamidID; targetCID = steamIDtoCSteamID((char*)(steamidID));}
 	void setClient(const char* name) {client = name;}
@@ -85,13 +96,10 @@ public:
 	void setReason (const char* name) {reason = name;}
 	void setID(int num) {ID = num;}
 	void setTime(const char* time) {reportedAt = time;}
-	void setBoxText(const char* text) {boxText = text;}
-
-	// Take over the job
-	void setTakeOver(bool enable = true) {takeover->Enable(enable);}
+	void setBoxText(wxString text) {boxText = text;}
 
 	// Convert to community ID
-	CSteamID* steamIDtoCSteamID(char* steamid);
+	CSteamID steamIDtoCSteamID(char* steamid);
 
 	// Return time as a int
 	inline int getTime() const 
@@ -107,21 +115,23 @@ public:
 	// Timers
 	SecondTimer *avatarTimer;
 
-	// Methids for Details
-	const char* getTargetID() const {return targetID.c_str();}
-	const char* getClientID() const {return clientID.c_str();}
-	const char* getServer() {return serverName.c_str();}
-	const char* getBoxText() {return boxText.c_str();}
+	// Methods for Details
+	wxString getTarget() const {return target;}
+	wxString getClient() const {return client;}
+	
+	wxString getID() const {return callID;}
+	wxString getServer() {return serverName;}
+	wxString getBoxText() {return boxText;}
 
-	CSteamID* getClientCID() {return clientCID;}
-	CSteamID* getTargetCID() {return targetCID;}
+	CSteamID* getClientCID() {return &clientCID;}
+	CSteamID* getTargetCID() {return &targetCID;}
 
 
 	// Start the call
-	void startCall();
+	void startCall(bool show);
 
 	// Operator overloadings
-	friend bool operator==(const CallDialog& x, const CallDialog& y) { return (x.getTime() == y.getTime() && (std::string)x.getClientID() == (std::string)y.getClientID() && (std::string)y.getTargetID() == (std::string)y.getTargetID()); }
+	friend bool operator==(const CallDialog& x, const CallDialog& y) { return (x.getTime() == y.getTime() && (x.getID() == y.getID())); }
 	friend bool operator!=(const CallDialog& x, const CallDialog& y) { return !(x == y);}
 
 protected:
@@ -131,6 +141,7 @@ protected:
 	void OnCheck(wxCommandEvent& event);
 	void OnContactClient(wxCommandEvent& event);
 	void OnContactTarget(wxCommandEvent& event);
+	void OnContactTrackers(wxCommandEvent& event);
 
 	void OnCloseWindow(wxCloseEvent& event);
 
@@ -139,4 +150,6 @@ protected:
 
 
 // Call Dialogs
-extern CallDialog *call_dialogs[100];
+extern CallDialog *call_dialogs[MAXCALLS];
+
+#endif

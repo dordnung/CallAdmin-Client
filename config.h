@@ -1,13 +1,16 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
 /**
  * -----------------------------------------------------
  * File        config.h
- * Authors     Impact, David <popoklopsi> Ordnung
+ * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
- * Web         http://gugyclan.eu, http://popoklopsi.de
+ * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
  * 
- * CallAdmin Header File
- * Copyright (C) 2013 Impact, David <popoklopsi> Ordnung
+ * 
+ * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,46 +29,52 @@
 #pragma once
 
 
-// Wee need WX
-#include <wx/wx.h>
-#include <wx/spinctrl.h>
+// Precomp Header
+#include <wx/wxprec.h>
 
+// We need WX
+#ifndef WX_PRECOMP
+	#include <wx/wx.h>
+#endif
+
+#include <wx/spinctrl.h>
+#include <wx/notebook.h>
+#include <wx/config.h>
 
 
 // Settings
 extern int step;
 extern int timeout;
 extern int maxAttempts;
+extern int lastCalls;
 
-extern std::string page;
-extern std::string key;
+extern wxString page;
+extern wxString key;
 
 
 // Config Dialog Class
-class ConfigDialog: public wxDialog
+class ConfigPanel: public wxPanel
 {
 private:
 	wxSpinCtrl* stepSlider;
 	wxSpinCtrl* timeoutSlider;
 	wxSpinCtrl* attemptsSlider;
+	wxSpinCtrl* callsSlider;
 	wxTextCtrl* pageText;
 	wxTextCtrl* keyText;
 
 public:
-	ConfigDialog(const wxString& title);
+	ConfigPanel(wxNotebook* note);
 
 protected:
 	void OnSet(wxCommandEvent& event);
 	void OnExit(wxCommandEvent& event);
+	void OnHide(wxCommandEvent& event);
 
-	void OnCloseWindow(wxCloseEvent& event);
+	void parseConfig();
 
 	DECLARE_EVENT_TABLE()
 };
 
 
-// Parse Config
-bool parseConfig();
-
-// Config Dialog
-extern ConfigDialog *config_dialog;
+#endif
