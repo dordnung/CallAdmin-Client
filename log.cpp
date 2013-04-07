@@ -43,7 +43,7 @@ LogPanel* logPanel = NULL;
 // Button ID's for Log Panel
 enum
 {
-	wxID_ExitLog = 5030,
+	wxID_ExitLog = wxID_HIGHEST+500,
 	wxID_HideLog,
 };
 

@@ -44,6 +44,23 @@
 extern wxNotebook* notebook;
 
 
+
+
+// Event ID's for Main Dialog
+enum
+{
+	wxID_Exit = wxID_HIGHEST+100,
+	wxID_Hide,
+	wxID_Reconnect,
+	wxID_BoxClick,
+	wxID_CheckBox,
+	wxID_SteamChanged,
+	wxID_ThreadHandled,
+};
+
+
+
+
 // Main Dialog Class
 class MainDialog: public wxDialog
 {
@@ -92,6 +109,12 @@ protected:
 	void OnCloseWindow(wxCloseEvent& event);
 
 	void OnBoxClick(wxCommandEvent& event);
+
+	void OnCheckBox(wxCommandEvent& event);
+	void OnSteamChange(wxCommandEvent& event);
+
+	// Thread Event
+	void OnThread(wxCommandEvent& event);
 
 	DECLARE_EVENT_TABLE()
 };

@@ -40,7 +40,6 @@
 #ifndef WX_PRECOMP
 	#include <wx/wx.h>
 #endif
-#include <wx/thread.h>
 
 
 // Steamworks warning -> disable
@@ -60,6 +59,7 @@ extern std::string steamid;
 // Is Connected?
 extern bool steamConnected;
 
+
 // Var to send messages
 extern HSteamPipe pipeSteam;
 extern HSteamUser clientUser;
@@ -69,24 +69,35 @@ extern ISteamUser016* steamUser;
 extern ISteamUtils005* steamUtils;
 
 
+enum STEAM_ERROR_TYP
+{
+	STEAM_NO_ERROR = 0,
+	STEAM_DISABLED,
+	STEAM_ERROR,
+};
 
-// Thread Class for Steam pipe
-class pipeThread: public wxThread
+
+
+class steamThread : public wxThread
 {
 private:
-	// Steamid API Loader
 	CSteamAPILoader loader;
+	wxMutex steamLock;
+
+	// Last Steam Error
+	STEAM_ERROR_TYP lastError;
 
 public:
+	steamThread();
+	~steamThread();
 
-	// Create and Start
-	pipeThread() : wxThread(wxTHREAD_JOINABLE), loader(CSteamAPILoader::k_ESearchOrderSteamInstallFirst) {this->Create(); this->Run();}
+	virtual ExitCode Entry();
 
-	bool loadSteam();
+	STEAM_ERROR_TYP loadSteam();
+	void checkSteam();
 
-	virtual void* Entry();
-
-	wxMutex m_steamLock;
+	// Cleanup Steam
+	void cleanSteam();
 };
 
 
@@ -119,11 +130,8 @@ public:
 };
 
 
-// Cleanup Steam
-void cleanSteam();
 
-
-// Threader
-extern pipeThread *pThread;
+// Gobal Thread 
+extern steamThread* steamThreader;
 
 #endif

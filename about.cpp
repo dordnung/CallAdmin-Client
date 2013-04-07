@@ -47,7 +47,7 @@ AboutPanel* about = NULL;
 // Button ID's for about Panel
 enum
 {
-	wxID_ExitAbout = 5040,
+	wxID_ExitAbout = wxID_HIGHEST+300,
 	wxID_UpdateAbout,
 	wxID_DownloadAbout,
 	wxID_HideAbout,

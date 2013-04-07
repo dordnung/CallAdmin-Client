@@ -23,10 +23,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-
 #include "opensteam.h"
 #include "main.h"
 #include "log.h"
+#include "config.h"
 #include "calladmin-client.h"
 
 
@@ -42,8 +42,10 @@
 // Steamid
 std::string steamid = "";
 
+
 // Is Connected?
 bool steamConnected = false;
+
 
 // Var to send messages
 HSteamPipe pipeSteam = 0;
@@ -54,141 +56,287 @@ ISteamUser016* steamUser = NULL;
 ISteamUtils005* steamUtils = NULL;
 
 
-// Threader
-pipeThread *pThread = NULL;
+// Steam Thread
+steamThread *steamThreader = NULL;
 
 
 // The Thread Class
-bool pipeThread::loadSteam()
+steamThread::steamThread() : wxThread(wxTHREAD_DETACHED), loader(CSteamAPILoader::k_ESearchOrderSteamInstallFirst)
 {
-	if (!TestDestroy())
-	{
-		// Lock Steam
-		wxMutexLocker lockerSteam(m_steamLock);
+	// Reset
+	pipeSteam = 0;
+	clientUser = 0;
+	steamClient = NULL;
+	steamFriends = NULL;
+	steamUser = NULL;
+	steamUtils = NULL;
 
+	// No Last Error
+	lastError = STEAM_NO_ERROR;
+
+    this->Create();
+    this->Run();
+}
+
+
+// Destroy
+steamThread::~steamThread()
+{
+	cleanSteam();
+}
+
+
+STEAM_ERROR_TYP steamThread::loadSteam()
+{
+	if (!steamEnabled)
+	{
+		// Don't want Steam
+		return STEAM_DISABLED;
+	}
+	else
+	{
 		// Load Factore
 		CreateInterfaceFn factory = loader.GetSteam3Factory();
-
-		if (!factory || TestDestroy())
+		
+		if (!factory)
 		{
-			// Clean Steam
-			::cleanSteam();
-
-			return false;
+			return STEAM_ERROR;
 		}
 
 		// Load Steam Client
 		steamClient = (ISteamClient012*)factory(STEAMCLIENT_INTERFACE_VERSION_012, NULL);
-
-		if (!steamClient || TestDestroy())
+		
+		if (!steamClient)
 		{
-			// Clean Steam
-			::cleanSteam();
-
-			return false;
+			return STEAM_ERROR;
 		}
 		
 		// Create Pipe
 		pipeSteam = steamClient->CreateSteamPipe();
-
-		if (!pipeSteam || pipeSteam == -1 || TestDestroy())
+		
+		if (!pipeSteam || pipeSteam == -1)
 		{
-			// Clean Steam
-			::cleanSteam();
-
-			return false;
+			return STEAM_ERROR;
 		}
+
+
+		// Workaround for deadlock
+        steamClient->BReleaseSteamPipe(pipeSteam);
+        wxMilliSleep(5000);
+
+
+		// Create Pipe again
+		pipeSteam = steamClient->CreateSteamPipe();
+		
+		if (!pipeSteam || pipeSteam == -1)
+		{
+			return STEAM_ERROR;
+		}
+	
+
 	
 		// Connect User
 		clientUser = steamClient->ConnectToGlobalUser(pipeSteam);
 		
-		if (!clientUser || TestDestroy())
+		if (!clientUser)
 		{
-			// Clean Steam
-			::cleanSteam();
-
-			return false;
+			return STEAM_ERROR;
 		}
 
 		// Load SteamFriends
 		steamFriends = (ISteamFriends013*)steamClient->GetISteamFriends(clientUser, pipeSteam, STEAMFRIENDS_INTERFACE_VERSION_013);
 
-		if(!steamFriends || TestDestroy())
+		if (!steamFriends)
 		{
-			// Clean Steam
-			::cleanSteam();
-
-			return false;
+			return STEAM_ERROR;
 		}
 
 		// Load Steam User
 		steamUser = (ISteamUser016*)steamClient->GetISteamUser(clientUser, pipeSteam, STEAMUSER_INTERFACE_VERSION_016);
-
-		if(!steamUser || TestDestroy())
+		
+		if (!steamUser)
 		{
-			// Clean Steam
-			::cleanSteam();
-
-			return false;
+			return STEAM_ERROR;
 		}
 
 		// Load Steam Utils
 		steamUtils = (ISteamUtils005*)steamClient->GetISteamUtils(pipeSteam, STEAMUTILS_INTERFACE_VERSION_005);
 
-		if(!steamUtils || TestDestroy())
+		if (!steamUtils)
 		{
-			// Clean Steam
-			::cleanSteam();
-
-			return false;
+			return STEAM_ERROR;
 		}
 
-		return true;
+		// Everything is good :)
+		return STEAM_NO_ERROR;
 	}
-
-	return false;
 }
 
 
 // Thread started
-void* pipeThread::Entry()
+void steamThread::checkSteam()
 {
-	// No? Load it
-	if(TestDestroy() || !loadSteam())
+	for(; !TestDestroy(); Sleep(100))
 	{
-		// Clean Steam
-		::cleanSteam();
+		wxMutexLocker steamLocker(steamLock);
+		wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_SteamChanged);
 
-		if (main_dialog != NULL && steamConnected)
+		if (!pipeSteam || pipeSteam == -1 || !steamEnabled)
 		{
-			main_dialog->setSteamStatus("Steam is currently not running", wxColour("red"));
+			// Load Steam
+			STEAM_ERROR_TYP steamError = loadSteam();
 
-			LogAction("Disonnected from Steam");
+			// Handling
+			if (steamError != STEAM_NO_ERROR)
+			{
+				if (steamError == STEAM_ERROR)
+				{
+					// Only if connected before
+					if (main_dialog != NULL && steamConnected)
+					{
+						// Notice Main the changes
+						event.SetInt(1);
+
+						main_dialog->GetEventHandler()->AddPendingEvent(event);
+
+						LogAction("Disonnected from Steam");
+					}
+				}
+				else
+				{
+					// Disabled
+					if (main_dialog != NULL && lastError != STEAM_DISABLED)
+					{
+						// Notice Main the changes
+						event.SetInt(0);
+
+						main_dialog->GetEventHandler()->AddPendingEvent(event);
+
+						// clean
+						cleanSteam();
+					}
+				}
+
+				steamConnected = false;
+				steamid = "";
+
+				continue;
+			}
+			else
+			{
+				// Connected :)
+				steamid = steamUser->GetSteamID().Render(); 
+
+				// Notice Main the changes
+				event.SetInt(2);
+
+				main_dialog->GetEventHandler()->AddPendingEvent(event);
+
+				LogAction("Connected to Steam");
+
+				steamConnected = true;
+			}
+
+
+			lastError = steamError;
+		}
+
+		static unsigned int i = 0;
+
+		if (++i % 50 == 0)
+		{
+            // Check if logged in
+			if (steamUser)
+			{
+				if (!steamUser->BLoggedOn())
+				{
+					// Only if connected before
+					if (main_dialog != NULL && steamConnected)
+					{
+						// Notice Main the changes
+						event.SetInt(1);
+
+						main_dialog->GetEventHandler()->AddPendingEvent(event);
+
+						LogAction("Disonnected from Steam");
+					}
+
+					steamConnected = false;
+
+					// Clean Steam
+					cleanSteam();
+					steamid = "";
+
+					continue;
+				}
+			}
 		}
 
 
-		steamConnected = false;
+		CallbackMsg_t callbackMsg;
 
-		// Steamid not known
-		steamid = "";
+		while (Steam_BGetCallback(pipeSteam, &callbackMsg))
+        {
+			if (callbackMsg.m_iCallback == IPCFailure_t::k_iCallback)
+            {
+				// Only if connected before
+				if (main_dialog != NULL && steamConnected)
+				{
+					// Notice Main the changes
+					event.SetInt(1);
+
+					main_dialog->GetEventHandler()->AddPendingEvent(event);
+
+					LogAction("Disonnected from Steam");
+				}
+
+				steamConnected = false;
+				steamid = "";
+
+				// Clean Steam
+				cleanSteam();
+
+                break;
+			}
+
+            Steam_FreeLastCallback(pipeSteam);
+        }
 	}
-	else
+}
+
+
+
+// Clean Up Steam Stuff
+void steamThread::cleanSteam()
+{
+	// Close Steam Stuff
+	if (pipeSteam && pipeSteam != -1 && steamClient)
 	{
-		// Connected :)
-		steamid = steamUser->GetSteamID().Render(); 
-
-		// Only if disconnected before
-		if (!steamConnected)
+		if (clientUser)
 		{
-			main_dialog->setSteamStatus("Steam is currently running", wxColour(34, 139, 34));
-
-			LogAction("Connected to Steam");
+			steamClient->ReleaseUser(pipeSteam, clientUser);
 		}
 
-		steamConnected = true;
+		steamClient->BReleaseSteamPipe(pipeSteam);
 	}
 
-	return NULL;
+	// Reset
+	pipeSteam = 0;
+	clientUser = 0;
+	steamClient = NULL;
+	steamFriends = NULL;
+	steamUser = NULL;
+	steamUtils = NULL;
+}
+
+
+
+wxThread::ExitCode steamThread::Entry()
+{
+	// Check Steam
+	checkSteam();
+
+	return (wxThread::ExitCode)0;
 }
 
 
@@ -310,26 +458,4 @@ bool SecondTimer::setAvatar(CSteamID *id, wxStaticBitmap* map)
 	}
 
 	return false;
-}
-
-
-
-// Clean Up Steam Stuff
-void cleanSteam()
-{
-	// Close Steam Stuff
-	if (pipeSteam && pipeSteam != -1 && clientUser && steamClient)
-	{
-		steamClient->ReleaseUser(pipeSteam, clientUser);
-		steamClient->BReleaseSteamPipe(pipeSteam);
-		steamClient->BShutdownIfAllPipesClosed();
-	}
-
-	// Reset
-	pipeSteam = 0;
-	clientUser = 0;
-	steamClient = NULL;
-	steamFriends = NULL;
-	steamUser = NULL;
-	steamUtils = NULL;
 }

@@ -1,27 +1,27 @@
 /**
- * -----------------------------------------------------
- * File        calladmin-client.cpp
- * Authors     David <popoklopsi> Ordnung, Impact
- * License     GPLv3
- * Web         http://popoklopsi.de, http://gugyclan.eu
- * -----------------------------------------------------
- * 
- * 
- * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- */
+	* -----------------------------------------------------
+	* File        calladmin-client.cpp
+	* Authors     David <popoklopsi> Ordnung, Impact
+	* License     GPLv3
+	* Web         http://popoklopsi.de, http://gugyclan.eu
+	* -----------------------------------------------------
+	* 
+	* 
+	* Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
+	* 
+	* This program is free software: you can redistribute it and/or modify
+	* it under the terms of the GNU General Public License as published by
+	* the Free Software Foundation, either version 3 of the License, or
+	* any later version.
+	* 
+	* This program is distributed in the hope that it will be useful,
+	* but WITHOUT ANY WARRANTY; without even the implied warranty of
+	* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	* GNU General Public License for more details.
+	* 
+	* You should have received a copy of the GNU General Public License
+	* along with this program. If not, see <http://www.gnu.org/licenses/>
+	*/
 
 
 // c++ libs
@@ -78,13 +78,19 @@
 Timer *timer = NULL;
 
 
+
+// Attempts to Zero
+int attempts = 0;
+
+
 // Avatar Size
 int avatarSize = 184;
 
 
 // Version
-wxString version = "0.2B";
+wxString version = "0.3B";
 std::string updateURL = "http://popoklopsi.de/calladmin/version.txt";
+
 
 
 // We need something to print for a XML Error!
@@ -116,12 +122,16 @@ wxString XMLErrorString[20] =
 };
 
 
+
+
 // Help for the CMDLine
 static const wxCmdLineEntryDesc g_cmdLineDesc [] =
 {
-	 {wxCMD_LINE_SWITCH, "taskbar", "taskbar", "Move GUI to taskbar on Start"},
-	 {wxCMD_LINE_NONE}
+		{wxCMD_LINE_SWITCH, "taskbar", "taskbar", "Move GUI to taskbar on Start"},
+		{wxCMD_LINE_NONE}
 };
+
+
 
 
 // Timer already run?
@@ -136,6 +146,8 @@ IMPLEMENT_APP(CallAdmin)
 bool CallAdmin::start_taskbar = false;
 
 
+
+
 // App Started
 bool CallAdmin::OnInit()
 {
@@ -148,12 +160,16 @@ bool CallAdmin::OnInit()
 	// Check duplicate
 	static wxSingleInstanceChecker checkInstance("Call Admin - " + wxGetUserId());
 
-    if (checkInstance.IsAnotherRunning())
-    {
-        wxMessageBox("Call Admin is already running.", "Call Admin", wxOK | wxCENTRE | wxICON_EXCLAMATION);
+	if (checkInstance.IsAnotherRunning())
+	{
+		wxMessageBox("Call Admin is already running.", "Call Admin", wxOK | wxCENTRE | wxICON_EXCLAMATION);
 
-        return false;
-    }
+		return false;
+	}
+
+
+	// Create Config
+	g_config = new wxConfig("Call Admin");
 
 
 	int y = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
@@ -179,24 +195,10 @@ bool CallAdmin::OnInit()
 	// First set Steamid to not known
 	steamid = "";
 
-	// Reset
-	for (int i=0; i < MAXCALLS; i++)
-	{
-		call_dialogs[i] = NULL;
-	}
-
 	// Add Icon if available
 	if (wxTaskBarIcon::IsAvailable())
 	{
 		m_taskBarIcon = new TaskBarIcon();
-
-		#if defined(__WXMSW__)
-			m_taskBarIcon->SetIcon(wxIcon("calladmin_icon", wxBITMAP_TYPE_ICO_RESOURCE), "Call Admin Client");
-		#else
-			wxLogNull nolog;
-
-			m_taskBarIcon->SetIcon(wxIcon(getAppPath("resources/calladmin_icon.ico"), wxBITMAP_TYPE_ICON), "Call Admin Client");
-		#endif
 	}
 
 	// Reset Calls
@@ -215,11 +217,14 @@ bool CallAdmin::OnInit()
 }
 
 
+
+
 // Destroy
 CallAdmin::~CallAdmin()
 {
 	exitProgramm();
 }
+
 
 
 // Set Help text
@@ -233,6 +238,7 @@ void CallAdmin::OnInitCmdLine(wxCmdLineParser& parser)
 }
  
 
+
 // Find -tasbar
 bool CallAdmin::OnCmdLineParsed(wxCmdLineParser& parser)
 {
@@ -240,6 +246,7 @@ bool CallAdmin::OnCmdLineParsed(wxCmdLineParser& parser)
  
 	return true;
 }
+
 
 
 
@@ -261,40 +268,21 @@ void Timer::run(int milliSecs)
 // Timer executed
 void Timer::update(wxTimerEvent& WXUNUSED(event))
 {
-	bool firstRun = false;
-
 	// Check for Update
 	if (!timerStarted)
 	{
 		checkUpdate();
-
-		timerStarted = true;
-		firstRun = true;
 	}
 
-	// Delete old pipe Thread
-	if (pThread != NULL)
-	{
-		pThread->Delete();
-	}
 
 	// Check Steam
-	pThread = new pipeThread();
+	//checkSteam();
 
-
-	CURL *curl;
-	CURLcode res;
-
-	// Error
-	char ebuf[CURL_ERROR_SIZE];
-
-	// Response
-	std::ostringstream stream;
-	wxString result;
 	std::string pager;
 
+
 	// Page
-	if (firstRun)
+	if (!timerStarted)
 	{
 		pager = (page + "/notice.php?from=0&from_type=unixtime&key=" + key + "&sort=desc&limit=" + (wxString() << lastCalls));
 	}
@@ -310,28 +298,29 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 		pager = pager + "&store=1&steamid=" + steamid;
 	}
 
-	// Init Curl
-	curl = curl_easy_init();
+	// Get the Page
+	getPage(onNotice, pager);
+}
 
-	if (curl)
+
+
+
+void onNotice(char* error, wxString result, int WXUNUSED(x))
+{
+	bool firstRun = false;
+
+	// First Run?
+	if (!timerStarted)
 	{
-		// Configurate Curl
-		curl_easy_setopt(curl, CURLOPT_URL, pager.c_str());
-		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, ebuf);
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
-		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &stream);
+		timerStarted = true;
+		firstRun = true;
+	}
 
-		// Perform Curl
-		res = curl_easy_perform(curl);
-
-		// Get Result
-		result = stream.str();
-
+	// Valid result?
+	if (result != "")
+	{
 		// Everything good :)
-		if (res == CURLE_OK)
+		if ((wxString)error == "")
 		{
 			bool foundError = false;
 			bool foundNew = false;
@@ -362,7 +351,7 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 				else
 				{
 					// Create Parse Error
-					createError(0, XMLErrorString[parseError], "XML");
+					showError(XMLErrorString[parseError], "XML");
 				}
 			}
 
@@ -421,7 +410,7 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 							else
 							{
 								// API Errpr
-								createError(0, (wxString)node2->FirstChild()->Value(), "API");
+								showError((wxString)node2->FirstChild()->Value(), "API");
 							}
 
 							break;
@@ -430,7 +419,7 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 						// Row Count
 						if ((wxString)node2->Value() == "foundRows")
 						{
-							 continue;
+								continue;
 						}
 
 						int dialog = -1;
@@ -473,10 +462,10 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 						// Api is fine :)
 						int found = 0;
 
-						wxString isHandled = "0";
 
 						// Create the new CallDialog
-						call_dialogs[dialog] = new CallDialog("New Incoming Call");
+						CallDialog *newDialog = new CallDialog("New Incoming Call");
+
 
 						// Put in ALL needed DATA
 						for (tinyxml2::XMLNode *node3 = node2->FirstChild(); node3; node3 = node3->NextSibling())
@@ -484,60 +473,55 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 							if ((wxString)node3->Value() == "callID")
 							{
 								found++;
-								call_dialogs[dialog]->setCallID(node3->FirstChild()->Value());
+								newDialog->setCallID(node3->FirstChild()->Value());
 							}
 
 							if ((wxString)node3->Value() == "fullIP")
 							{
 								found++;
-								call_dialogs[dialog]->setIP(node3->FirstChild()->Value());
+								newDialog->setIP(node3->FirstChild()->Value());
 							}
 
 							if ((wxString)node3->Value() == "serverName")
 							{
 								found++;
-								call_dialogs[dialog]->setName(node3->FirstChild()->Value());
+								newDialog->setName(node3->FirstChild()->Value());
 							}
 
 							if ((wxString)node3->Value() == "targetName")
 							{
 								found++;
-								call_dialogs[dialog]->setTarget(node3->FirstChild()->Value());
+								newDialog->setTarget(node3->FirstChild()->Value());
 							}
 
 							if ((wxString)node3->Value() == "targetID")
 							{
 								found++;
-								call_dialogs[dialog]->setTargetID(node3->FirstChild()->Value());
+								newDialog->setTargetID(node3->FirstChild()->Value());
 							}
 
 							if ((wxString)node3->Value() == "targetReason")
 							{
 								found++;
-								call_dialogs[dialog]->setReason(node3->FirstChild()->Value());
+								newDialog->setReason(node3->FirstChild()->Value());
 							}
 
 							if ((wxString)node3->Value() == "clientName")
 							{
 								found++;
-								call_dialogs[dialog]->setClient(node3->FirstChild()->Value());
+								newDialog->setClient(node3->FirstChild()->Value());
 							}
 
 							if ((wxString)node3->Value() == "clientID")
 							{
 								found++;
-								call_dialogs[dialog]->setClientID(node3->FirstChild()->Value());
+								newDialog->setClientID(node3->FirstChild()->Value());
 							}
 
 							if ((wxString)node3->Value() == "reportedAt")
 							{
 								found++;
-								call_dialogs[dialog]->setTime(node3->FirstChild()->Value());
-							}
-
-							if ((wxString)node3->Value() == "callHandled")
-							{
-								isHandled = node3->FirstChild()->Value();
+								newDialog->setTime(node3->FirstChild()->Value());
 							}
 						}
 
@@ -552,7 +536,7 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 								if (call_dialogs[i] != NULL)
 								{
 									// Operator overloading :)
-									if ((*call_dialogs[i]) == (*call_dialogs[dialog]))
+									if ((*call_dialogs[i]) == (*newDialog))
 									{
 										findDuplicate = true;
 
@@ -567,8 +551,7 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 						if (found != 9 || findDuplicate)
 						{
 							// Something went wrong or duplicate
-							call_dialogs[dialog]->Destroy();
-							call_dialogs[dialog] = NULL;
+							newDialog->Destroy();
 						}
 						else
 						{
@@ -581,37 +564,39 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 							wxString text;
 
 							// But first we need a Time
-							time_t tt = (time_t)call_dialogs[dialog]->getTime();
+							time_t tt = (time_t)newDialog->getTime();
 
 							struct tm* dt = localtime(&tt);
 
 							strftime(buffer, sizeof(buffer), "%H:%M:%S", dt);
 
 
-							call_dialogs[dialog]->SetTitle("Call At " + (wxString)buffer);
+							newDialog->SetTitle("Call At " + (wxString)buffer);
 
 
-							text = (wxString)buffer + " - " + call_dialogs[dialog]->getServer();
+							text = (wxString)buffer + " - " + newDialog->getServer();
 
 							// Add the Text
-							call_dialogs[dialog]->setBoxText(text);
+							newDialog->setBoxText(text);
 
 							// Now START IT!
-							call_dialogs[dialog]->setID(dialog);
+							newDialog->setID(dialog);
 
 
 							// Don't show calls on first Run
 							if (firstRun)
 							{
 								foundRows--;
-								call_dialogs[dialog]->startCall(false);
+								newDialog->startCall(false);
 							}
 							else
 							{
 								// Log Action
 								LogAction("We have a new Call");
-								call_dialogs[dialog]->startCall(main_dialog->isAvailable());
+								newDialog->startCall(main_dialog->isAvailable());
 							}
+
+							call_dialogs[dialog] = newDialog;
 						}
 					}
 				}
@@ -649,6 +634,9 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 						if (soundfile != NULL && soundfile->IsOk())
 						{
 							soundfile->Play(wxSOUND_ASYNC);
+
+							// Clean
+							delete soundfile;
 						}
 					}
 				}
@@ -660,25 +648,87 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 			attempts++;
 
 			// Log Action
-			LogAction("New CURL Error: " + (std::string)ebuf);
+			LogAction("New CURL Error: " + (std::string)error);
 
 			// Max attempts reached?
 			if (attempts == maxAttempts)
 			{
-				// Close Dialogs and create reconnect main dialog
-				createReconnect("CURL Error " + (wxString() << res) + ": " + ebuf);
+				// Create reconnect main dialog
+				createReconnect("CURL Error: " + (std::string)error);
 			}
 			else
 			{
 				// Show the error to client
-				createError(res, ebuf, "CURL");
+				showError(error, "CURL");
 			}
 		}
-
-		// Clean Curl
-		curl_easy_cleanup(curl);
 	}
 }
+
+
+
+
+// Curl Thread started
+wxThread::ExitCode curlThread::Entry()
+{
+	if (!TestDestroy())
+	{
+		// Error
+		char ebuf[CURL_ERROR_SIZE];
+
+		// Event
+		wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_ThreadHandled);
+
+		// Response
+		std::ostringstream stream;
+
+		// Init Curl
+		CURL *curl = curl_easy_init();
+		
+		if (curl != NULL)
+		{
+			// Configurate Curl
+			curl_easy_setopt(curl, CURLOPT_URL, ((std::string)page).c_str());
+			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+			curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, ebuf);
+			curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout*2);
+			curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
+			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &stream);
+
+			// Perform Curl
+			CURLcode res = curl_easy_perform(curl);
+
+			// Everything good :)
+			if (res == CURLE_OK)
+			{
+				event.SetClientObject(new ThreadData(function, stream.str(), "", x));
+			}
+			else
+			{
+				// Error ):
+				event.SetClientObject(new ThreadData(function, stream.str(), ebuf, x));
+			}
+
+			// Clean Curl
+			curl_easy_cleanup(curl);
+
+			// Add Event Handler
+			main_dialog->GetEventHandler()->AddPendingEvent(event);
+
+			return (wxThread::ExitCode)0;
+		}
+
+		event.SetClientObject(new ThreadData(function, "", "", x));
+
+		// Add Event Handler
+		main_dialog->GetEventHandler()->AddPendingEvent(event);
+	}
+
+	return (wxThread::ExitCode)0;
+}
+
+
 
 
 // Curl receive data -> write to buffer
@@ -690,6 +740,18 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 	data->write((char*)buffer, count);
 
 	return count;
+}
+
+
+
+
+
+
+
+// Get Page
+void getPage(callback function, wxString page, int x)
+{
+	new curlThread(function, page, x);
 }
 
 
@@ -723,13 +785,14 @@ void createReconnect(wxString error)
 
 
 
+
 // Create an new Error Dialog
-void createError(int errorCode, wxString error, wxString type)
+void showError(wxString error, wxString type)
 {
 	// Log Action
-	LogAction(type + " Error " + (wxString() << errorCode) + ": " + error);
+	LogAction(type + " Error: " + error);
 
-	m_taskBarIcon->ShowMessage("An error occured", type + " Error " + (wxString() << errorCode) + ": " + error + "\nTry again... " + (wxString() << timer->getAttempts()) + "/" + (wxString() << maxAttempts), main_dialog);
+	m_taskBarIcon->ShowMessage("An error occured", type + " Error : " + error + "\nTry again... " + (wxString() << attempts) + "/" + (wxString() << maxAttempts), main_dialog);
 }
 
 
@@ -739,19 +802,18 @@ void createError(int errorCode, wxString error, wxString type)
 // Close Taskbar Icon and destroy all dialogs
 void exitProgramm()
 {
+	// We don't need Steam support
+	if (steamThreader != NULL)
+	{
+		steamThreader->Delete();
+		timer = NULL;
+	}
+
 	// Timer... STOP!
 	if (timer != NULL)
 	{
 		timer->Stop();
 		timer = NULL;
-	}
-
-	// Stop thread
-	if (pThread != NULL)
-	{
-		pThread->Delete();
-
-		pThread = NULL;
 	}
 
 	// Taskbar goodbye :)
@@ -785,10 +847,9 @@ void exitProgramm()
 			call_dialogs[i] = NULL;
 		}
 	}
-
-	// Last -> Clean Steam
-	cleanSteam();
 }
+
+
 
 
 
@@ -815,6 +876,8 @@ void exitProgramm()
 #endif
 
 
+
+
 // Get the Path of the App
 wxString getAppPath(wxString file)
 {
@@ -838,6 +901,10 @@ wxString getAppPath(wxString file)
 }
 
 
+
+
+
+
 // Check for a new Version
 void checkUpdate()
 {
@@ -846,88 +913,72 @@ void checkUpdate()
 
 	if (m_taskBarIcon != NULL)
 	{
-		CURL *curl;
-		CURLcode res;
+		getPage(onUpdate, updateURL);
+	}
+}
 
-		// Error
-		char ebuf[CURL_ERROR_SIZE];
 
-		// Response
-		std::ostringstream stream;
-		wxString result = "";
-		wxString newVersion;
 
-		// Init Curl
-		curl = curl_easy_init();
+// Handle Update Page
+void onUpdate(char* error, wxString result, int WXUNUSED(x))
+{
+	// Log Action
+	LogAction("Retriev information about new version");
 
-		if (curl)
+	wxString newVersion;
+
+	if (result != "")
+	{
+		// Everything good :)
+		if ((wxString)error == "")
 		{
-			// Configurate Curl
-			curl_easy_setopt(curl, CURLOPT_URL, updateURL.c_str());
-			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-			curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, ebuf);
-			curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
-			curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
-			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &stream);
-
-			// Perform Curl
-			res = curl_easy_perform(curl);
-
-			// Get Result
-			result = stream.str();
-
-			// Everything good :)
-			if (res == CURLE_OK)
+			if (result.length() > 30)
 			{
-				if (result.length() > 30)
-				{
-					// Maybe an Error Page?
-					m_taskBarIcon->ShowMessage("Update Check Failed", "Error: PAGE_TOO_LONG", main_dialog);
-				}
-				else
-				{
-					// Find version in brackets
-					int start = result.find_first_of("{") + 1;
-					int end = result.find_first_of("}");
-
-					newVersion = result.substr(start, end-start);
-				}
+				// Maybe an Error Page?
+				m_taskBarIcon->ShowMessage("Update Check Failed", "Error: PAGE_TOO_LONG", main_dialog);
 			}
 			else
 			{
-				// Log Action
-				LogAction("Update check failed: " + (wxString)ebuf);
+				// Find version in brackets
+				int start = result.find_first_of("{") + 1;
+				int end = result.find_first_of("}");
 
-				m_taskBarIcon->ShowMessage("Update Check Failed", "Error: " + (wxString)ebuf, main_dialog);
+				newVersion = result.substr(start, end-start);
 			}
 		}
-
-		// We get something
-		if (newVersion != "")
+		else
 		{
-			// Check Version
-			if (newVersion != version)
-			{
-				// Log Action
-				LogAction("Found a new Version: " + newVersion);
+			// Log Action
+			LogAction("Update check failed: " + (wxString)error);
 
-				// Update About Panel
-				about->enableDownload(true);
-				about->updateVersion(newVersion, wxColor("red"));
+			m_taskBarIcon->ShowMessage("Update Check Failed", "Error: " + (wxString)error, main_dialog);
+		}
+	}
 
-				// Goto About
-				notebook->SetSelection(3);
+	// We got something
+	if (newVersion != "")
+	{
+		// Check Version
+		if (newVersion != version)
+		{
+			// Log Action
+			LogAction("Found a new Version: " + newVersion);
 
-				m_taskBarIcon->ShowMessage("New Version", "New version " + newVersion + " is now available!", main_dialog);
-			}
-			else
-			{
-				// Log Action
-				LogAction("Version is up to date");
+			// Update About Panel
+			about->enableDownload(true);
+			about->updateVersion(newVersion, wxColor("red"));
 
-				m_taskBarIcon->ShowMessage("Up to Date", "Your Call Admin Client is up to date", main_dialog);
-			}
+			// Goto About
+			notebook->SetSelection(3);
+
+			m_taskBarIcon->ShowMessage("New Version", "New version " + newVersion + " is now available!", main_dialog);
+		}
+		else
+		{
+			// Log Action
+			LogAction("Version is up to date");
+
+			m_taskBarIcon->ShowMessage("Up to Date", "Your Call Admin Client is up to date", main_dialog);
 		}
 	}
 }

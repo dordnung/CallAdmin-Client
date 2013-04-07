@@ -51,14 +51,6 @@ MainDialog *main_dialog = NULL;
 wxNotebook* notebook = NULL;
 
 
-// Button ID's for Main Dialog
-enum
-{
-	wxID_Exit = 4999,
-	wxID_Hide,
-	wxID_Reconnect,
-	wxID_BoxClick,
-};
 
 
 // Button Events for Main Dialog
@@ -66,7 +58,14 @@ BEGIN_EVENT_TABLE(MainDialog, wxDialog)
 	EVT_BUTTON(wxID_Exit, MainDialog::OnExit)
 	EVT_BUTTON(wxID_Hide, MainDialog::OnHide)
 	EVT_BUTTON(wxID_Reconnect, MainDialog::OnReconnect)
+
+	EVT_CHECKBOX(wxID_CheckBox, MainDialog::OnCheckBox)
+
+	EVT_COMMAND(wxID_ThreadHandled, wxEVT_COMMAND_MENU_SELECTED, MainDialog::OnThread)
+	EVT_COMMAND(wxID_SteamChanged, wxEVT_COMMAND_MENU_SELECTED, MainDialog::OnSteamChange)
+
 	EVT_CLOSE(MainDialog::OnCloseWindow)
+
 	EVT_LISTBOX_DCLICK(wxID_BoxClick, MainDialog::OnBoxClick)
 END_EVENT_TABLE()
 
@@ -89,7 +88,6 @@ void MainDialog::createWindow(bool taskbar)
 
 	// Hole Body
 	sizerBody = new wxBoxSizer(wxHORIZONTAL);
-
 
 	// Box Body
 	wxStaticBoxSizer* sizerBox = new wxStaticBoxSizer(new wxStaticBox(panel, wxID_ANY, wxT("Latest Calls")), wxHORIZONTAL);
@@ -200,8 +198,8 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// The available Checkbox
-	available = new wxCheckBox(panel, wxID_ANY, "I'm available");
-	available->SetValue(true);
+	available = new wxCheckBox(panel, wxID_CheckBox, "I'm available");
+	available->SetValue(g_config->ReadBool("available", true));
 	available->SetToolTip(tipAvailable);
 
 	sizerChecks->Add(available , flags.Border(wxALL, 5));
@@ -216,8 +214,8 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// The sound Checkbox
-	sound = new wxCheckBox(panel, wxID_ANY, "Sound on call");
-	sound->SetValue(true);
+	sound = new wxCheckBox(panel, wxID_CheckBox, "Sound on call");
+	sound->SetValue(g_config->ReadBool("sound", true));
 	sound->SetToolTip(tipSound);
 
 	sizerChecks->Add(sound, flags.Border(wxALL, 5));
@@ -233,8 +231,8 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// The store Checkbox
-	store = new wxCheckBox(panel, wxID_ANY, "Spectate only");
-	store->SetValue(false);
+	store = new wxCheckBox(panel, wxID_CheckBox, "Spectate only");
+	store->SetValue(g_config->ReadBool("spectate", false));
 	store->SetToolTip(specAvailable);
 
 	sizerChecks->Add(store, flags.Border(wxALL, 5));
@@ -368,6 +366,17 @@ void MainDialog::OnExit(wxCommandEvent& WXUNUSED(event))
 }
 
 
+
+// Check Box Event -> Write To Config
+void MainDialog::OnCheckBox(wxCommandEvent& WXUNUSED(event))
+{
+	g_config->Write("available", available->IsChecked());
+	g_config->Write("sound", sound->IsChecked());
+	g_config->Write("spectate", store->IsChecked());
+}
+
+
+
 // Button Event -> Reconnect
 void MainDialog::OnReconnect(wxCommandEvent& WXUNUSED(event))
 {
@@ -375,7 +384,7 @@ void MainDialog::OnReconnect(wxCommandEvent& WXUNUSED(event))
 	LogAction("Reconnecting...");
 
 	// Reset attempts
-	timer->setAttempts(0);
+	attempts = 0;
 
 	if (main_dialog != NULL)
 	{
@@ -390,6 +399,49 @@ void MainDialog::OnReconnect(wxCommandEvent& WXUNUSED(event))
 	// Start the Timer again
 	timer->Start(step*1000);
 }
+
+
+
+// Thread Handled -> Call Function
+void MainDialog::OnThread(wxCommandEvent& event)
+{
+	// Get Content
+	ThreadData* data = (ThreadData*)event.GetClientObject();
+
+	// Get Function
+	callback function = data->getCallback();
+
+	// Call it
+	function(data->getError(), data->getContent(), data->getExtra());
+
+	// Delete data
+	delete data;
+}
+
+
+
+// Steam Changed -> Set Text
+void MainDialog::OnSteamChange(wxCommandEvent& event)
+{
+	// Get Status
+	int id = event.GetInt();
+
+	if (id == 0)
+	{
+		main_dialog->setSteamStatus("Steam support is disabled", wxColour("red"));
+	}
+
+	else if (id == 1)
+	{
+		main_dialog->setSteamStatus("Steam is currently not running", wxColour("red"));
+	}
+
+	else
+	{
+		main_dialog->setSteamStatus("Steam is currently running", wxColour(34, 139, 34));
+	}
+}
+
 
 
 // Window Event -> Open Call
@@ -430,7 +482,6 @@ void MainDialog::updateCall()
 		if (call_dialogs[i] != NULL)
 		{
 			callBox->SetSelection(callBox->Append(wxString::FromUTF8(call_dialogs[i]->getBoxText())));
-			callBox->Thaw();
 		}
 	}
 }

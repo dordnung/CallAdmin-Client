@@ -48,14 +48,14 @@
 #include "tinyxml2/tinyxml2.h"
 
 // Call Dialogs
-CallDialog *call_dialogs[MAXCALLS] = {NULL};
+CallDialog *call_dialogs[MAXCALLS];
 
 
 
 // Button ID's for Call Dialog
 enum
 {
-	wxID_CloseCall = 5100,
+	wxID_CloseCall = wxID_HIGHEST+200,
 	wxID_ConnectCall,
 	wxID_CheckDone,
 	wxID_ContactClient,
@@ -81,12 +81,13 @@ END_EVENT_TABLE()
 // start the Call
 void CallDialog::startCall(bool show)
 {
+	
 	// Create Box
 	sizerTop = new wxBoxSizer(wxVERTICAL);
 
 	// Panel
 	wxPanel* panel = new wxPanel(this, wxID_ANY);
-
+	
 	// Border and Center
 	wxSizerFlags flags;
 	wxStaticText* text;
@@ -112,7 +113,7 @@ void CallDialog::startCall(bool show)
 
 	struct tm* dt = localtime(&tt);
 
-	strftime(buffer, sizeof(buffer), "%H:%M:%S", dt);
+	strftime(buffer, sizeof(buffer), "%c", dt);
 
 
 	// New Call
@@ -167,6 +168,7 @@ void CallDialog::startCall(bool show)
 	
 	clientDetails->Add(text, flags);
 	
+	
 	if (steamConnected && steamFriends != NULL && getClientCID() != NULL && getClientCID()->IsValid())
 	{
 		if (steamFriends->GetFriendRelationship(*getClientCID()) == k_EFriendRelationshipFriend)
@@ -176,7 +178,7 @@ void CallDialog::startCall(bool show)
 
 			contactClient->SetToolTip(contactTooltip);
 
-			clientDetails->Add(contactClient, 0, wxALL &~ wxTOP, 5);
+			clientDetails->Add(contactClient, 0, wxALL &~ wxTOP | wxALIGN_CENTER_HORIZONTAL, 5);
 		}
 	}
 
@@ -184,7 +186,7 @@ void CallDialog::startCall(bool show)
 
 
 	// Steamid
-	text2 = new wxTextCtrl(panel, wxID_ANY, clientID, wxDefaultPosition, wxSize(220, -1), wxTE_CENTRE|wxTE_READONLY);
+	text2 = new wxTextCtrl(panel, wxID_ANY, clientID, wxDefaultPosition, wxSize(220, -1), wxTE_CENTRE | wxTE_READONLY);
 
 	text2->SetFont(wxFont(14, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
@@ -236,6 +238,7 @@ void CallDialog::startCall(bool show)
 
 	targetDetails->Add(text, flags);
 	
+	
 	if (steamConnected && steamFriends != NULL && getTargetCID() != NULL && getTargetCID()->IsValid())
 	{
 		if (steamFriends->GetFriendRelationship(*getTargetCID()) == k_EFriendRelationshipFriend)
@@ -245,14 +248,14 @@ void CallDialog::startCall(bool show)
 
 			contactTarget->SetToolTip(contactTooltip);
 
-			targetDetails->Add(contactTarget, 0, wxALL &~ wxTOP, 5);
+			targetDetails->Add(contactTarget, 0, wxALL &~ wxTOP | wxALIGN_CENTER_HORIZONTAL, 5);
 		}
 	}
 
 
 
 	// Steamid
-	text2 = new wxTextCtrl(panel, wxID_ANY, targetID, wxDefaultPosition, wxSize(220, -1), wxTE_CENTRE|wxTE_READONLY);
+	text2 = new wxTextCtrl(panel, wxID_ANY, targetID, wxDefaultPosition, wxSize(220, -1), wxTE_CENTRE | wxTE_READONLY);
 
 	text2->SetFont(wxFont(14, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
@@ -309,10 +312,10 @@ void CallDialog::startCall(bool show)
 
 
 	// Hide and Exit Button
-	sizerBtns->Add(new wxButton(panel, wxID_ConnectCall, "Connect"), flags);
-	sizerBtns->Add(new wxButton(panel, wxID_CloseCall, "Close"), flags);
-	sizerBtns->Add(takeover, flags);
-	sizerBtns->Add(contactTrackers, flags);
+	sizerBtns->Add(new wxButton(panel, wxID_ConnectCall, "Connect"), 0, wxALL &~ wxRIGHT, 5);
+	sizerBtns->Add(new wxButton(panel, wxID_CloseCall, "Close"), 0, wxALL &~ wxRIGHT &~ wxLEFT, 5);
+	sizerBtns->Add(takeover, 0, wxALL &~ wxRIGHT &~ wxLEFT, 5);
+	sizerBtns->Add(contactTrackers, 0, wxALL &~ wxLEFT, 5);
 
 
 
@@ -320,7 +323,7 @@ void CallDialog::startCall(bool show)
 	sizerTop->Add(sizerBtns, flags);
 	
 
-
+	
 	// Auto Size
 	panel->SetSizerAndFit(sizerTop, true);
 
@@ -344,6 +347,8 @@ void CallDialog::startCall(bool show)
 	// Show the Window
 	Show(show);
 }
+
+
 
 
 // We need the 64bit int id
@@ -395,11 +400,16 @@ CSteamID CallDialog::steamIDtoCSteamID(char* steamid)
 }
 
 
+
+
 // Button Event -> disable window
 void CallDialog::OnClose(wxCommandEvent& WXUNUSED(event))
 {
 	Show(false);
 }
+
+
+
 
 // Button Event -> Connect to Server
 void CallDialog::OnConnect(wxCommandEvent& WXUNUSED(event))
@@ -416,49 +426,235 @@ void CallDialog::OnConnect(wxCommandEvent& WXUNUSED(event))
 	Show(false);
 }
 
+
+
+
 // Mark it checked
 void CallDialog::OnCheck(wxCommandEvent& WXUNUSED(event))
 {
 	// Log Action
-	LogAction("Marked call " + callID + " as finished");
-
-	wxString error = "";
-
-	CURL *curl;
-	CURLcode res;
-
-	// curl error
-	char ebuf[CURL_ERROR_SIZE];
-
-	// Response
-	std::ostringstream stream;
-	wxString result;
+	LogAction("Marke call " + callID + " as finished");
 
 	// page
 	std::string pager = (std::string)(page + "/takeover.php?callid=" + callID + "&key=" + key);
 
-	// Init Curl
-	curl = curl_easy_init();
+	// Get Page
+	getPage(onChecked, pager, ID);
+}
 
-	if (curl)
+
+
+
+
+// Contact Client
+void CallDialog::OnContactClient(wxCommandEvent& WXUNUSED(event))
+{
+	// Log Action
+	LogAction("Contacted Client " + (wxString)getClientCID()->Render());
+
+	// Open Chat
+	#if defined(__WXMSW__)
+		ShellExecute(NULL, L"open", s2ws("steam://friends/message/" + (wxString() << getClientCID()->ConvertToUint64())).c_str(), NULL, NULL, SW_SHOWNORMAL);
+	#else
+		system(("xdg-open steam://friends/message/" + (wxString() << getClientCID()->ConvertToUint64())).c_str());
+	#endif
+}
+
+
+
+
+// Contact Target
+void CallDialog::OnContactTarget(wxCommandEvent& WXUNUSED(event))
+{
+	// Log Action
+	LogAction("Contacted Client " + (wxString)getTargetCID()->Render());
+
+	// Open Chat
+	#if defined(__WXMSW__)
+		ShellExecute(NULL, L"open", s2ws("steam://friends/message/" + (wxString() << getTargetCID()->ConvertToUint64())).c_str(), NULL, NULL, SW_SHOWNORMAL);
+	#else
+		system(("xdg-open steam://friends/message/" + (wxString() << getTargetCID()->ConvertToUint64())).c_str());
+	#endif
+}
+
+
+
+
+// Contact Trackers
+void CallDialog::OnContactTrackers(wxCommandEvent& WXUNUSED(event))
+{
+	// Log Action
+	LogAction("Contacting current Trackers");
+
+
+
+	// Are we steam connected?
+	if (steamFriends != NULL && steamConnected)
 	{
-		// Configurate Curl
-		curl_easy_setopt(curl, CURLOPT_URL, pager.c_str());
-		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, ebuf);
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
-		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &stream);
+		// page
+		std::string pager = (std::string)(page + "/trackers.php?from=25&from_type=interval&key=" + key);
 
-		// Perform Curl
-		res = curl_easy_perform(curl);
+		getPage(onGetTrackers, pager, ID);
 
-		// Get Result
-		result = stream.str();
+		return;
+	}
 
+
+	if (m_taskBarIcon != NULL)
+	{
+		m_taskBarIcon->ShowMessage("Coulnd't contact trackers!", "You're not connected with STEAM!", this);
+	}
+}
+
+
+
+
+// Contact Client
+void onGetTrackers(char* errors, wxString result, int x)
+{
+	// Log Action
+	LogAction("Got Trackers");
+
+	wxString error = "";
+
+
+	// found someone?
+	bool found = false;
+
+
+	if (result != "")
+	{
 		// Everything good :)
-		if (res == CURLE_OK)
+		if ((wxString)errors == "")
+		{
+			// Proceed XML result!
+			tinyxml2::XMLDocument doc;
+			tinyxml2::XMLNode *node;
+			tinyxml2::XMLError parseError;
+
+			// Parse the xml data
+			parseError = doc.Parse(result);
+
+			// Parsing good :)?
+			if (parseError == tinyxml2::XML_SUCCESS)
+			{
+				// Goto xml child
+				node = doc.FirstChild();
+
+				// Goto CallAdmin_Trackers
+				if (node != NULL)
+				{
+					node = node->NextSibling();
+				}
+
+				// Found Trackers?
+				if (node != NULL)
+				{
+					// Tracker Loop
+					for (tinyxml2::XMLNode *node2 = node->FirstChild(); node2; node2 = node2->NextSibling())
+					{
+						// API Error?
+						if ((wxString)node2->Value() == "error")
+						{
+							error = (wxString)node2->FirstChild()->Value();
+
+							break;
+						}
+
+						std::string tt = node2->Value();
+
+						// Search admin steamids
+						for (tinyxml2::XMLNode *node3 = node2->FirstChild(); node3; node3 = node3->NextSibling())
+						{
+							// Found steamid
+							if ((wxString)node3->Value() == "trackerID")
+							{
+								std::string steamidString = node3->FirstChild()->Value();
+
+								// Build csteamid
+								CSteamID steamidTracker = call_dialogs[x]->steamIDtoCSteamID((char*) steamidString.c_str());
+
+								// Are we friends and is tracker online? :))
+								if (steamidTracker.IsValid() && steamFriends->GetFriendRelationship(steamidTracker) == k_EFriendRelationshipFriend && steamFriends->GetFriendPersonaState(steamidTracker) != k_EPersonaStateOffline)
+								{
+									// Now we write a message
+									steamFriends->ReplyToFriendMessage(steamidTracker, "Hey, i contact you because of the call from " + call_dialogs[x]->getClient() + " about " + call_dialogs[x]->getTarget());
+
+									// And we found someone :)
+									if (!found)
+									{
+										found = true;
+
+										// So no contacting possible anymore
+										call_dialogs[x]->contactTrackers->Enable(false);
+									}
+								}
+							}
+						}
+					}
+
+					// Have we found something?
+					if (found)
+					{
+						// We are finished :)
+						return;
+					}
+
+				}
+			}
+			else
+			{
+				// XML ERROR
+				error = "XML ERROR: Couldn't parse the trackers API!";
+
+				// Log Action
+				LogAction("XML Error in trackers API");
+			}
+		}
+		else
+		{
+			// Curl error
+			error = errors;
+
+			// Log Action
+			LogAction("CURL Error " + error);
+		}
+	}
+	else
+	{
+		// Curl error
+		error = "Couldn't init. CURL connection";
+	}
+
+
+	// Seems we found no one
+	if (error == "")
+	{
+		error = "Found no available tracker on your friendlist!";
+	}
+
+	if (m_taskBarIcon != NULL)
+	{
+		m_taskBarIcon->ShowMessage("Coulnd't contact trackers!", error, call_dialogs[x]);
+	}
+}
+
+
+
+
+
+// Mark checked
+void onChecked(char* errors, wxString result, int x)
+{
+	// Log Action
+	LogAction("Marked call " + call_dialogs[x]->getID() + " as finished");
+
+	wxString error = "";
+
+	if (result != "")
+	{
+		// Everything good :)
+		if ((wxString)errors == "")
 		{
 			// Proceed XML result!
 			tinyxml2::XMLDocument doc;
@@ -495,7 +691,7 @@ void CallDialog::OnCheck(wxCommandEvent& WXUNUSED(event))
 					// Success?
 					if ((wxString)node->Value() == "success")
 					{
-						takeover->Enable(false);
+						call_dialogs[x]->takeover->Enable(false);
 
 						return;
 					}
@@ -510,7 +706,7 @@ void CallDialog::OnCheck(wxCommandEvent& WXUNUSED(event))
 		else
 		{
 			// Curl error
-			error = ebuf;
+			error = errors;
 		}
 	}
 	else
@@ -527,208 +723,11 @@ void CallDialog::OnCheck(wxCommandEvent& WXUNUSED(event))
 
 	if (m_taskBarIcon != NULL)
 	{
-		m_taskBarIcon->ShowMessage("Coulnd't take over call!", error, this);
+		m_taskBarIcon->ShowMessage("Coulnd't take over call!", error, call_dialogs[x]);
 	}
 }
 
 
-// Contact Client
-void CallDialog::OnContactClient(wxCommandEvent& WXUNUSED(event))
-{
-	// Log Action
-	LogAction("Contacted Client " + (wxString)getClientCID()->Render());
-
-	// Open Chat
-	#if defined(__WXMSW__)
-		ShellExecute(NULL, L"open", s2ws("steam://friends/message/" + (wxString() << getClientCID()->ConvertToUint64())).c_str(), NULL, NULL, SW_SHOWNORMAL);
-	#else
-		system(("xdg-open steam://friends/message/" + (wxString() << getClientCID()->ConvertToUint64())).c_str());
-	#endif
-}
-
-
-// Contact Target
-void CallDialog::OnContactTarget(wxCommandEvent& WXUNUSED(event))
-{
-	// Log Action
-	LogAction("Contacted Client " + (wxString)getTargetCID()->Render());
-
-	// Open Chat
-	#if defined(__WXMSW__)
-		ShellExecute(NULL, L"open", s2ws("steam://friends/message/" + (wxString() << getTargetCID()->ConvertToUint64())).c_str(), NULL, NULL, SW_SHOWNORMAL);
-	#else
-		system(("xdg-open steam://friends/message/" + (wxString() << getTargetCID()->ConvertToUint64())).c_str());
-	#endif
-}
-
-
-// Contact Trackers
-void CallDialog::OnContactTrackers(wxCommandEvent& WXUNUSED(event))
-{
-	// Log Action
-	LogAction("Contacting current Trackers");
-
-	wxString error = "";
-
-	// Are we steam connected?
-	if (steamFriends != NULL && steamConnected)
-	{
-		// found someone?
-		bool found = false;
-
-		CURL *curl;
-		CURLcode res;
-
-		// curl error
-		char ebuf[CURL_ERROR_SIZE];
-
-		// Response
-		std::ostringstream stream;
-		wxString result;
-
-		// page
-		std::string pager = (std::string)(page + "/trackers.php?from=25&from_type=interval&key=" + key);
-
-		// Init Curl
-		curl = curl_easy_init();
-
-		if (curl)
-		{
-			// Configurate Curl
-			curl_easy_setopt(curl, CURLOPT_URL, pager.c_str());
-			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-			curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, ebuf);
-			curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
-			curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
-			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &stream);
-
-			// Perform Curl
-			res = curl_easy_perform(curl);
-
-			// Get Result
-			result = stream.str();
-
-			// Everything good :)
-			if (res == CURLE_OK)
-			{
-				// Proceed XML result!
-				tinyxml2::XMLDocument doc;
-				tinyxml2::XMLNode *node;
-				tinyxml2::XMLError parseError;
-
-				// Parse the xml data
-				parseError = doc.Parse(result);
-
-				// Parsing good :)?
-				if (parseError == tinyxml2::XML_SUCCESS)
-				{
-					// Goto xml child
-					node = doc.FirstChild();
-
-					// Goto CallAdmin_Trackers
-					if (node != NULL)
-					{
-						node = node->NextSibling();
-					}
-
-					// Found Trackers?
-					if (node != NULL)
-					{
-						// Tracker Loop
-						for (tinyxml2::XMLNode *node2 = node->FirstChild(); node2; node2 = node2->NextSibling())
-						{
-							// API Error?
-							if ((wxString)node2->Value() == "error")
-							{
-								error = (wxString)node2->FirstChild()->Value();
-
-								break;
-							}
-
-							std::string tt = node2->Value();
-
-							// Search admin steamids
-							for (tinyxml2::XMLNode *node3 = node2->FirstChild(); node3; node3 = node3->NextSibling())
-							{
-								// Found steamid
-								if ((wxString)node3->Value() == "trackerID")
-								{
-									std::string steamidString = node3->FirstChild()->Value();
-
-									// Build csteamid
-									CSteamID steamidTracker = steamIDtoCSteamID((char*) steamidString.c_str());
-
-									// Are we friends and is tracker online? :))
-									if (steamidTracker.IsValid() && steamFriends->GetFriendRelationship(steamidTracker) == k_EFriendRelationshipFriend && steamFriends->GetFriendPersonaState(steamidTracker) != k_EPersonaStateOffline)
-									{
-										// Now we write a message
-										steamFriends->ReplyToFriendMessage(steamidTracker, "Hey, i contact you because of the call from " + getClient() + " about " + getTarget());
-
-										// And we found someone :)
-										if (!found)
-										{
-											found = true;
-
-											// So no contacting possible anymore
-											contactTrackers->Enable(false);
-										}
-									}
-								}
-							}
-						}
-
-						// Have we found something?
-						if (found)
-						{
-							// We are finished :)
-							return;
-						}
-
-					}
-				}
-				else
-				{
-					// XML ERROR
-					error = "XML ERROR: Couldn't parse the trackers API!";
-
-					// Log Action
-					LogAction("XML Error in trackers API");
-				}
-			}
-			else
-			{
-				// Curl error
-				error = ebuf;
-
-				// Log Action
-				LogAction("CURL Error " + error);
-			}
-		}
-		else
-		{
-			// Curl error
-			error = "Couldn't init. CURL connection";
-		}
-	}
-	else
-	{
-		// No steam connection
-		error = "You're not connected with STEAM!";
-	}
-
-
-	// Seems we found no one
-	if (error == "")
-	{
-		error = "Found no available tracker on your friendlist!";
-	}
-
-	if (m_taskBarIcon != NULL)
-	{
-		m_taskBarIcon->ShowMessage("Coulnd't contact trackers!", error, this);
-	}
-}
 
 
 // Window Event -> disable Window

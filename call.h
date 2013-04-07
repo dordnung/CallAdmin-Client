@@ -71,10 +71,6 @@ private:
 	wxStaticBitmap* targetAvatar;
 
 
-	// take Over Button
-	wxButton* takeover;
-	wxButton* contactTrackers;
-
 	// And for the Steam API
 	CSteamID clientCID;
 	CSteamID targetCID;
@@ -84,6 +80,12 @@ private:
 
 public:
 	CallDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX) {};
+
+	// Tracker button
+	wxButton* contactTrackers;
+
+	// take Over Button
+	wxButton* takeover;
 
 	// Privat -> set Methods
 	void setCallID(const char* ID) {callID = ID;}
@@ -98,8 +100,12 @@ public:
 	void setTime(const char* time) {reportedAt = time;}
 	void setBoxText(wxString text) {boxText = text;}
 
+
+
 	// Convert to community ID
 	CSteamID steamIDtoCSteamID(char* steamid);
+
+
 
 	// Return time as a int
 	inline int getTime() const 
@@ -112,8 +118,11 @@ public:
 		return timestamp;
 	}
 
+
+
 	// Timers
 	SecondTimer *avatarTimer;
+
 
 	// Methods for Details
 	wxString getTarget() const {return target;}
@@ -125,6 +134,7 @@ public:
 
 	CSteamID* getClientCID() {return &clientCID;}
 	CSteamID* getTargetCID() {return &targetCID;}
+
 
 
 	// Start the call
@@ -147,6 +157,13 @@ protected:
 
 	DECLARE_EVENT_TABLE()
 };
+
+
+
+// CURL Callbacks
+void onGetTrackers(char* errors, wxString result, int x);
+void onChecked(char* error, wxString result, int x);
+
 
 
 // Call Dialogs

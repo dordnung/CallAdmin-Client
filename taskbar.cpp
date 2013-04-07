@@ -46,7 +46,7 @@ TaskBarIcon *m_taskBarIcon = NULL;
 // Taskbar ID's
 enum
 {
-	PU_RESTORE = 10001,
+	PU_RESTORE = wxID_HIGHEST+600,
 	PU_UPDATE,
 
 	#if defined(__WXMSW__)
@@ -70,6 +70,20 @@ BEGIN_EVENT_TABLE(TaskBarIcon, wxTaskBarIcon)
 	EVT_MENU(PU_EXIT, TaskBarIcon::OnMenuExit)
 	EVT_TASKBAR_LEFT_DCLICK (TaskBarIcon::OnLeftButtonDClick)
 END_EVENT_TABLE()
+
+
+
+// Set Icon of Taskbar
+TaskBarIcon::TaskBarIcon()
+{
+	#if defined(__WXMSW__)
+		SetIcon(wxIcon("calladmin_icon", wxBITMAP_TYPE_ICO_RESOURCE), "Call Admin Client");
+	#else
+		wxLogNull nolog;
+
+		SetIcon(wxIcon(getAppPath("resources/calladmin_icon.ico"), wxBITMAP_TYPE_ICON), "Call Admin Client");
+	#endif
+}
 
 
 // Restore main dialog

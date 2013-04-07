@@ -51,6 +51,12 @@ extern int lastCalls;
 extern wxString page;
 extern wxString key;
 
+extern bool steamEnabled;
+
+
+// Config
+extern wxConfig *g_config;
+
 
 // Config Dialog Class
 class ConfigPanel: public wxPanel
@@ -62,6 +68,7 @@ private:
 	wxSpinCtrl* callsSlider;
 	wxTextCtrl* pageText;
 	wxTextCtrl* keyText;
+	wxCheckBox* steamEnable;
 
 public:
 	ConfigPanel(wxNotebook* note);
@@ -70,6 +77,8 @@ protected:
 	void OnSet(wxCommandEvent& event);
 	void OnExit(wxCommandEvent& event);
 	void OnHide(wxCommandEvent& event);
+
+	void OnCheckBox(wxCommandEvent& event);
 
 	void parseConfig();
 

@@ -32,6 +32,7 @@
 #include "call.h"
 #include "log.h"
 #include "main.h"
+#include "opensteam.h"
 #include "taskbar.h"
 #include "calladmin-client.h"
 
@@ -51,6 +52,10 @@ wxString page = "";
 wxString key = "";
 
 
+// Steam Enabled?
+bool steamEnabled = true;
+
+
 // The config
 wxConfig *g_config = NULL;
 
@@ -58,9 +63,10 @@ wxConfig *g_config = NULL;
 // Button ID's for Config Panel
 enum
 {
-	wxID_SetConfig = 5011,
+	wxID_SetConfig = wxID_HIGHEST+400,
 	wxID_ExitConfig,
 	wxID_HideConfig,
+	wxID_SteamUpdate,
 };
 
 
@@ -69,20 +75,24 @@ BEGIN_EVENT_TABLE(ConfigPanel, wxPanel)
 	EVT_BUTTON(wxID_ExitConfig, ConfigPanel::OnExit)
 	EVT_BUTTON(wxID_SetConfig, ConfigPanel::OnSet)
 	EVT_BUTTON(wxID_HideConfig, ConfigPanel::OnHide)
+
+	EVT_CHECKBOX(wxID_SteamUpdate, ConfigPanel::OnCheckBox)
 END_EVENT_TABLE()
 
 
 // Create Config Panel
 ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 {
-	// Create Config
-	g_config = new wxConfig("Call Admin");
+	// Current Position
+	int currentPos = 1;
+
 
 	// Create Box
 	wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
 
+
 	// Grid
-	wxGridBagSizer *gridSizer = new wxGridBagSizer(8, 8);
+	wxGridBagSizer *gridSizer = new wxGridBagSizer(10, 2);
 	gridSizer->AddGrowableCol(0);
 
 
@@ -95,23 +105,8 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 	flags.Centre();
 
 
-	// Config
-	text = new wxStaticText(this, wxID_ANY, "Set up your config");
-
-	text->SetFont(wxFont(20, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-
-	// Add it
-	sizerTop->Add(text, flags);
-
-
-
 	// Add Grid
 	sizerTop->Add(gridSizer, 1, wxALL | wxEXPAND, 10);
-
-
-
-	// Static line
-	gridSizer->Add(new wxStaticLine(this, wxID_ANY), wxGBPosition(0, 0), wxGBSpan(1, 2), wxEXPAND | (wxALL &~ wxLEFT &~ wxRIGHT), 10);
 
 
 
@@ -124,8 +119,8 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 	pageText->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add to grid
-	gridSizer->Add(text, wxGBPosition(1, 0), wxDefaultSpan, 0, 10);
-    gridSizer->Add(pageText, wxGBPosition(1, 1), wxDefaultSpan, wxEXPAND);
+	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
+    gridSizer->Add(pageText, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
 
 
 
@@ -139,9 +134,10 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 	keyText->SetMaxLength(64);
 	keyText->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
+
 	// Add to Grid
-	gridSizer->Add(text, wxGBPosition(2, 0), wxDefaultSpan, 0, 10);
-    gridSizer->Add(keyText, wxGBPosition(2, 1), wxDefaultSpan, wxEXPAND);
+	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
+    gridSizer->Add(keyText, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
 
 
 
@@ -149,7 +145,7 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 
 	// Static line
-	gridSizer->Add(new wxStaticLine(this, wxID_ANY), wxGBPosition(3, 0), wxGBSpan(1, 2), wxEXPAND | (wxALL &~ wxLEFT &~ wxRIGHT), 10);
+	gridSizer->Add(new wxStaticLine(this, wxID_ANY), wxGBPosition(currentPos++, 0), wxGBSpan(1, 2), wxEXPAND | (wxALL &~ wxLEFT &~ wxRIGHT), 10);
 
 
 
@@ -159,12 +155,12 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 	text = new wxStaticText(this, wxID_ANY, "Time intervall to search for calls (in seconds): ");
 	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-	stepSlider = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 5, 20, 5, "Time Inverall");
+	stepSlider = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 5, 20, 10, "Time Inverall");
 	stepSlider->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add to Grid
-	gridSizer->Add(text, wxGBPosition(4, 0), wxDefaultSpan, 0, 10);
-    gridSizer->Add(stepSlider, wxGBPosition(4, 1), wxDefaultSpan, wxEXPAND);
+	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
+    gridSizer->Add(stepSlider, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
 
 
 
@@ -174,12 +170,12 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 	text = new wxStaticText(this, wxID_ANY, "Timeout for connection (in seconds): ");
 	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-	timeoutSlider = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 1, 10, 3, "Timeout");
+	timeoutSlider = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 3, 10, 5, "Timeout");
 	timeoutSlider->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add to Grid
-	gridSizer->Add(text, wxGBPosition(5, 0), wxDefaultSpan, 0, 10);
-    gridSizer->Add(timeoutSlider, wxGBPosition(5, 1), wxDefaultSpan, wxEXPAND);
+	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
+    gridSizer->Add(timeoutSlider, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
 
 
 
@@ -193,8 +189,8 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 	attemptsSlider->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add to Grid
-	gridSizer->Add(text, wxGBPosition(6, 0), wxDefaultSpan, 0, 10);
-    gridSizer->Add(attemptsSlider, wxGBPosition(6, 1), wxDefaultSpan, wxEXPAND);
+	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
+    gridSizer->Add(attemptsSlider, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
 
 
 
@@ -207,15 +203,30 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 	callsSlider->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add to Grid
-	gridSizer->Add(text, wxGBPosition(7, 0), wxDefaultSpan, 0, 10);
-    gridSizer->Add(callsSlider, wxGBPosition(7, 1), wxDefaultSpan, wxEXPAND);
+	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
+    gridSizer->Add(callsSlider, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
 
 
 
 
 	// Static line
-	gridSizer->Add(new wxStaticLine(this, wxID_ANY), wxGBPosition(8, 0), wxGBSpan(1, 2), wxEXPAND | (wxALL &~ wxLEFT &~ wxRIGHT), 10);
+	gridSizer->Add(new wxStaticLine(this, wxID_ANY), wxGBPosition(currentPos++, 0), wxGBSpan(1, 2), wxEXPAND | (wxALL &~ wxLEFT &~ wxRIGHT), 10);
 
+
+
+	// Ask for Steam
+	text = new wxStaticText(this, wxID_ANY, "Steam support to write messages and load Avatars: ");
+	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+
+
+	// Steam support
+	steamEnable = new wxCheckBox(this, wxID_SteamUpdate, "Enable Steam Support (Alpha)");
+	steamEnable->SetValue(false);
+
+
+	// Add Steam
+	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
+	gridSizer->Add(steamEnable, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxRIGHT);
 
 
 
@@ -240,6 +251,22 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 	// Parse Config
 	parseConfig();
 }
+
+
+
+// Steam Updated -> Set Config
+void ConfigPanel::OnCheckBox(wxCommandEvent& WXUNUSED(event))
+{
+	// Read config value
+	steamEnabled = steamEnable->GetValue();
+
+	// Write to config file
+	g_config->Write("steam", steamEnabled);
+
+	// Log Action
+	LogAction("Changed Steam Status");
+}
+
 
 
 
@@ -323,7 +350,7 @@ void ConfigPanel::parseConfig()
 
 
 	// Was parsing good?
-	if (!g_config->Exists("step") || !g_config->Exists("timeout") || !g_config->Exists("attempts") || !g_config->Exists("lastcalls") || !g_config->Exists("page") || !g_config->Exists("key"))
+	if (!g_config->Exists("page") || !g_config->Exists("key"))
 	{
 		foundConfigError = true;
 	}
@@ -337,6 +364,7 @@ void ConfigPanel::parseConfig()
 			maxAttempts = g_config->ReadLong("attempts", 5l);
 			lastCalls = g_config->ReadLong("lastcalls", 25l);
 
+			steamEnabled = g_config->ReadBool("steam", true);
 
 			g_config->Read("page", &page, "");
 
@@ -370,9 +398,9 @@ void ConfigPanel::parseConfig()
 			step = 20;
 		}
 
-		if (timeout < 1)
+		if (timeout < 3)
 		{
-			timeout = 1;
+			timeout = 3;
 		}
 
 		if (timeout > 10)
@@ -415,6 +443,7 @@ void ConfigPanel::parseConfig()
 		pageText->SetValue(page);
 		keyText->SetValue(key);
 
+		steamEnable->SetValue(steamEnabled);
 
 
 		// Calls are unimportant
@@ -456,7 +485,11 @@ void ConfigPanel::parseConfig()
 		timer->run(step*1000);
 
 		// Reset Attempts
-		timer->setAttempts(0);
+		attempts = 0;
+
+
+		// Start Steam Thread
+		steamThreader = new steamThread();
 	}
 	else
 	{

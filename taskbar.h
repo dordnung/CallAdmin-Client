@@ -44,7 +44,7 @@
 class TaskBarIcon : public wxTaskBarIcon
 {
 public:
-	TaskBarIcon() {}
+	TaskBarIcon();
 
 	// Taskbar Events
 	void OnLeftButtonDClick(wxTaskBarIconEvent&);
