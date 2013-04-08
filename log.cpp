@@ -150,7 +150,7 @@ void LogAction(wxString action)
 	struct tm* now = localtime(&t);
 
 	// But first we need a Time
-	strftime(buffer, sizeof(buffer), "%H:%M:%S", now);
+	strftime(buffer, sizeof(buffer), "%c", now);
 
 	// Add the log
 	if (logPanel != NULL)

@@ -297,7 +297,7 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 	{
 		pager = pager + "&store=1&steamid=" + steamid;
 	}
-
+	
 	// Get the Page
 	getPage(onNotice, pager);
 }

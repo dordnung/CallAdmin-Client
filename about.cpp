@@ -163,7 +163,7 @@ AboutPanel::AboutPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 	// Hide and Exit Button
 	sizerBtns->Add(new wxButton(this, wxID_HideAbout, "Hide"), flags.Border(wxALL &~ wxRIGHT, 5));
-	sizerBtns->Add(new wxButton(this, wxID_UpdateAbout, "Check Update"), flags.Border(wxALL &~ wxRIGHT &~ wxLEFT, 5));
+	sizerBtns->Add(new wxButton(this, wxID_UpdateAbout, "Check For Update"), flags.Border(wxALL &~ wxRIGHT &~ wxLEFT, 5));
 	sizerBtns->Add(new wxButton(this, wxID_ExitAbout, "Exit"), flags.Border(wxALL &~ wxLEFT, 5));
 
 
