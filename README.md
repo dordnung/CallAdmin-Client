@@ -31,7 +31,7 @@ You can download the full package [here](http://vs.gugyclan.eu:8000/job/CallAdmi
 
 
 ## Installation #Client
-1. Download the client including all files into some folder  
+1. [Download the client](http://popoklopsi.de/calladmin/calladmin-client.zip) including all files into some folder  
 2. Setup the client in the settings tab  
 3. Wait for new reports  
 
