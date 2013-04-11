@@ -222,5 +222,6 @@ void TaskBarIcon::OnLeftButtonDClick(wxTaskBarIconEvent&)
 	if (main_dialog != NULL)
 	{
 		main_dialog->Show(true);
+		main_dialog->Restore();
 	}
 }

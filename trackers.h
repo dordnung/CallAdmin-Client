@@ -1,9 +1,9 @@
-#ifndef LOG_H
-#define LOG_H
+#ifndef TRACKERS_H
+#define TRACKERS_H
 
 /**
  * -----------------------------------------------------
- * File        log.h
+ * File        trackers.h
  * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
@@ -43,27 +43,30 @@
 
 
 
-// Log Panel Class
-class LogPanel: public wxPanel
+// Tracker Panel Class
+class TrackerPanel: public wxPanel
 {
 private:
-	wxListBox* logBox;
+	wxListBox* trackerBox;
 
 public:
-	LogPanel(wxNotebook* note);
+	TrackerPanel(wxNotebook* note);
 
-	void addLog(wxString log);
+	void newTracker(wxString text) {trackerBox->Append(wxString::FromUTF8(text));}
+	void delTrackers() {trackerBox->Clear();}
 
 protected:
 	void OnExit(wxCommandEvent& event);
+	void OnUpdate(wxCommandEvent& event);
 	void OnHide(wxCommandEvent& event);
 
 	DECLARE_EVENT_TABLE()
 };
 
 
-// Log a Action
-void LogAction(wxString action);
+// Refresh the tracker list
+void refreshTrackers(char* error, wxString result, int x);
+void addTracker(wxString text);
 
 
 #endif

@@ -56,7 +56,7 @@ END_EVENT_TABLE()
 
 
 
-// Create Config Panel
+// Create Log Panel
 LogPanel::LogPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 {
 	// Set Log Panel
@@ -108,7 +108,6 @@ LogPanel::LogPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 void LogPanel::addLog(wxString log)
 {
 	logBox->SetSelection(logBox->Append(wxString::FromUTF8(log)));
-	logBox->Thaw();
 }
 
 

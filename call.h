@@ -103,7 +103,7 @@ public:
 
 
 	// Convert to community ID
-	CSteamID steamIDtoCSteamID(char* steamid);
+	static CSteamID steamIDtoCSteamID(char* steamid);
 
 
 
@@ -121,7 +121,7 @@ public:
 
 
 	// Timers
-	SecondTimer *avatarTimer;
+	AvatarTimer *avatarTimer;
 
 
 	// Methods for Details

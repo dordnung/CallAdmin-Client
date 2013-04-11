@@ -83,6 +83,8 @@
     <ClCompile Include="..\opensteam.cpp" />
     <ClCompile Include="..\taskbar.cpp" />
     <ClCompile Include="..\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="..\trackers.cpp" />
+    <ClCompile Include="..\update.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../calladmin-client.h" />
@@ -94,6 +96,8 @@
     <ClInclude Include="..\opensteam.h" />
     <ClInclude Include="..\taskbar.h" />
     <ClInclude Include="..\tinyxml2\tinyxml2.h" />
+    <ClInclude Include="..\trackers.h" />
+    <ClInclude Include="..\update.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\resources\calladmin-client.rc" />

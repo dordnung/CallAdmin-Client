@@ -49,9 +49,6 @@
 #include <wx/stdpaths.h>
 
 
-
-
-
 // Font
 #if defined(__WXMSW__)
 	#define FONT_FAMILY wxFONTFAMILY_SCRIPT
@@ -141,8 +138,8 @@ public:
 };
 
 
-// Client Data for Thread
 
+// Client Data for Thread
 class ThreadData: public wxClientData
 {
 private:
@@ -169,6 +166,8 @@ public:
 
 
 
+
+
 // Main methods
 void checkUpdate();
 void createReconnect(wxString error);
@@ -181,6 +180,7 @@ wxString getAppPath(wxString file);
 #if defined(__WXMSW__)
 	std::wstring s2ws(wxString s);
 #endif
+
 
 
 

@@ -1,9 +1,9 @@
-#ifndef LOG_H
-#define LOG_H
+#ifndef UPDATE_H
+#define UPDATE_H
 
 /**
  * -----------------------------------------------------
- * File        log.h
+ * File        update.h
  * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
@@ -29,8 +29,14 @@
 #pragma once
 
 
+
+// c++
+#include <stdio.h>
+
+
 // Precomp Header
 #include <wx/wxprec.h>
+
 
 
 // We need WX
@@ -38,32 +44,85 @@
 	#include <wx/wx.h>
 #endif
 
-#include <wx/listctrl.h>
-#include <wx/notebook.h>
+
+// Curl
+#include <curl/curl.h>
+
+// Project
+#include "calladmin-client.h"
 
 
 
-// Log Panel Class
-class LogPanel: public wxPanel
+
+// Struct for progress
+struct dlProgress 
+{
+	CURL *curl;
+};
+
+
+
+
+// Update Dialog Class
+class UpdateDialog: public wxDialog
 {
 private:
-	wxListBox* logBox;
+
+	// We need information about the update ;)
+	wxStaticText* dlinfo;
+
+	// Layout
+	wxSizer* sizerTop;
+
+	// Panel
+	wxPanel* panel;
+
+	// Progress Bar
+	wxGauge* progressBar;
 
 public:
-	LogPanel(wxNotebook* note);
-
-	void addLog(wxString log);
+	UpdateDialog();
 
 protected:
-	void OnExit(wxCommandEvent& event);
+	// Button Events
 	void OnHide(wxCommandEvent& event);
+	void OnUpdate(wxCommandEvent& event);
+	void OnFinish(wxCommandEvent& event);
+	void OnCancel(wxCommandEvent& event);
+
+	void OnCloseWindow(wxCloseEvent& event);
 
 	DECLARE_EVENT_TABLE()
 };
 
 
-// Log a Action
-void LogAction(wxString action);
 
+
+
+// Thread for Curl Performances
+class updateThread: public wxThread
+{
+public:
+
+	// Create and Start
+	updateThread() : wxThread() {this->Create(); this->Run();}
+
+	virtual ExitCode Entry();
+};
+
+
+
+
+// CURL Callbacks
+size_t write_data_file(void *ptr, size_t size, size_t nmemb, FILE *stream);
+int progress_updated(void *p, double dltotal, double dlnow, double ultotal, double ulnow);
+
+
+
+// Update Dialogs
+extern UpdateDialog *update_dialog;
+
+// thread
+extern updateThread *update_thread;
 
 #endif

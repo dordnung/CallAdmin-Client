@@ -28,6 +28,7 @@
 // Include Project
 #include "about.h"
 #include "main.h"
+#include "update.h"
 #include "taskbar.h"
 #include "log.h"
 #include "calladmin-client.h"
@@ -179,11 +180,14 @@ AboutPanel::AboutPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 
 
+
 // Button Event -> Exit programm
 void AboutPanel::OnExit(wxCommandEvent& WXUNUSED(event))
 {
 	exitProgramm();
 }
+
+
 
 
 // Button Event -> Check for Update
@@ -196,18 +200,28 @@ void AboutPanel::OnUpdate(wxCommandEvent& WXUNUSED(event))
 }
 
 
+
+
 // Button Event -> Download Update
 void AboutPanel::OnDownload(wxCommandEvent& WXUNUSED(event))
 {
 	// Log Action
 	LogAction("Download new Update");
 
-	#if defined(__WXMSW__)
-		ShellExecute(NULL, L"open", s2ws("http://popoklopsi.de/calladmin/calladmin-client.zip").c_str(), NULL, NULL, SW_SHOWNORMAL);
-	#else
-		system(("xdg-open http://popoklopsi.de/calladmin/calladmin-client.zip").c_str());
-	#endif
+
+	// Open Update Dialog
+	if (update_dialog == NULL && update_thread == NULL)
+	{
+		new UpdateDialog();
+	}
+	else
+	{
+		// Update already running
+		m_taskBarIcon->ShowMessage("Update running", "Update is already running", this);
+	}
 }
+
+
 
 
 

@@ -28,6 +28,12 @@
     <ClCompile Include="..\about.cpp">
       <Filter>Panel</Filter>
     </ClCompile>
+    <ClCompile Include="..\trackers.cpp">
+      <Filter>Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\update.cpp">
+      <Filter>Dialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\tinyxml2\tinyxml2.h">
@@ -56,6 +62,12 @@
     </ClInclude>
     <ClInclude Include="..\about.h">
       <Filter>Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\trackers.h">
+      <Filter>Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\update.h">
+      <Filter>Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -102,8 +102,10 @@ public:
 
 
 
-// Second Timer Class
-class SecondTimer : public wxTimer
+
+
+// Avatar Timer Class
+class AvatarTimer : public wxTimer
 {
 private:
 	int attempts;
@@ -121,10 +123,29 @@ private:
 
 public:
 	// Init Timer
-	SecondTimer(CSteamID *cid, CSteamID *tid, wxStaticBitmap* cAvatar, wxStaticBitmap* tAvatar);
+	AvatarTimer(CSteamID *cid, CSteamID *tid, wxStaticBitmap* cAvatar, wxStaticBitmap* tAvatar);
 
 	void startTimer() {Start(100);}
 	bool setAvatar(CSteamID *id, wxStaticBitmap* map);
+
+	void Notify();
+};
+
+
+
+
+// Name Timer Class
+class NameTimer : public wxTimer
+{
+private:
+	int attempts;
+
+	// The ID
+	CSteamID client;
+
+public:
+	// Init Timer
+	NameTimer(CSteamID clients) : wxTimer(this, -1) {client = clients; Start(100);}
 
 	void Notify();
 };

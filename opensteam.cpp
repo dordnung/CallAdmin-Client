@@ -26,6 +26,7 @@
 #include "opensteam.h"
 #include "main.h"
 #include "log.h"
+#include "trackers.h"
 #include "config.h"
 #include "calladmin-client.h"
 
@@ -230,7 +231,10 @@ void steamThread::checkSteam()
 				// Notice Main the changes
 				event.SetInt(2);
 
-				main_dialog->GetEventHandler()->AddPendingEvent(event);
+				if (main_dialog != NULL)
+				{
+					main_dialog->GetEventHandler()->AddPendingEvent(event);
+				}
 
 				LogAction("Connected to Steam");
 
@@ -341,8 +345,11 @@ wxThread::ExitCode steamThread::Entry()
 
 
 
+
+
+
 // Init. Timer
-SecondTimer::SecondTimer(CSteamID *cid, CSteamID *tid, wxStaticBitmap* cAvatar, wxStaticBitmap* tAvatar) : wxTimer(this, -1) 
+AvatarTimer::AvatarTimer(CSteamID *cid, CSteamID *tid, wxStaticBitmap* cAvatar, wxStaticBitmap* tAvatar) : wxTimer(this, -1) 
 {
 	clientsID = cid; 
 	targetsID = tid; 
@@ -367,7 +374,7 @@ SecondTimer::SecondTimer(CSteamID *cid, CSteamID *tid, wxStaticBitmap* cAvatar, 
 
 
 // Timer to update avatars
-void SecondTimer::Notify()
+void AvatarTimer::Notify()
 {
 	// Steam available?
 	if (steamConnected && steamFriends != NULL && steamUtils != NULL)
@@ -403,7 +410,7 @@ void SecondTimer::Notify()
 
 
 // Set new Avatar
-bool SecondTimer::setAvatar(CSteamID *id, wxStaticBitmap* map)
+bool AvatarTimer::setAvatar(CSteamID *id, wxStaticBitmap* map)
 {
 	// Load avatar
 	int avatar = steamFriends->GetLargeFriendAvatar(*id);
@@ -458,4 +465,67 @@ bool SecondTimer::setAvatar(CSteamID *id, wxStaticBitmap* map)
 	}
 
 	return false;
+}
+
+
+
+
+// Timer to update trackers
+void NameTimer::Notify()
+{
+	// Steam available?
+	if (steamConnected && steamFriends != NULL)
+	{
+		if (client.IsValid())
+		{
+			if (!steamFriends->RequestUserInformation(client, true))
+			{
+				wxString isFriend = "No Friends";
+				wxString isOnline = "Offline";
+
+				// Is Friend?
+				if (steamFriends->GetFriendRelationship(client) == k_EFriendRelationshipFriend)
+				{
+					isFriend = "Friends";
+				}
+
+				// Is Online?
+				if (steamFriends->GetFriendPersonaState(client) != k_EPersonaStateOffline)
+				{
+					// Online
+					if (isFriend == "Friends")
+					{
+						isOnline = "Online";
+					}
+					else
+					{
+						// We can't know
+						isOnline = "Unknown Status";
+					}
+				}
+
+
+				// Add Tracker
+				if (client.Render() != steamid)
+				{
+					addTracker("" + (wxString)steamFriends->GetFriendPersonaName(client) + " - " + (wxString)client.Render() + " - " + isFriend + " - " + isOnline);
+				}
+				else
+				{
+					addTracker("" + (wxString)steamFriends->GetFriendPersonaName(client) + " - " + (wxString)client.Render());
+				}
+
+				//Stop
+				Stop();
+			}
+		}
+	}
+
+
+	// All loaded or 5 seconds gone?
+	if (++attempts == 50)
+	{
+		// Enough, stop timer
+		Stop();
+	}
 }

@@ -69,6 +69,8 @@
 #include "config.h"
 #include "main.h"
 #include "log.h"
+#include "update.h"
+#include "trackers.h"
 #include "about.h"
 #include "call.h"
 #include "taskbar.h"
@@ -88,7 +90,7 @@ int avatarSize = 184;
 
 
 // Version
-wxString version = "0.3B";
+wxString version = "0.4B";
 std::string updateURL = "http://popoklopsi.de/calladmin/version.txt";
 
 
@@ -207,6 +209,11 @@ bool CallAdmin::OnInit()
 		call_dialogs[i] = NULL;
 	}
 
+
+	// Delete .old file
+	remove(wxStandardPaths::Get().GetExecutablePath() + ".old");
+	remove(wxStandardPaths::Get().GetExecutablePath() + ".new");
+
 	// Create main Dialog
 	main_dialog = new MainDialog("Call Admin Client");
 	
@@ -275,9 +282,6 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 	}
 
 
-	// Check Steam
-	//checkSteam();
-
 	std::string pager;
 
 
@@ -293,7 +297,7 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 
 
 	// Store Player
-	if (main_dialog->wantStore())
+	if (main_dialog != NULL && main_dialog->wantStore())
 	{
 		pager = pager + "&store=1&steamid=" + steamid;
 	}
@@ -568,7 +572,7 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 
 							struct tm* dt = localtime(&tt);
 
-							strftime(buffer, sizeof(buffer), "%H:%M:%S", dt);
+							strftime(buffer, sizeof(buffer), "%H:%M", dt);
 
 
 							newDialog->SetTitle("Call At " + (wxString)buffer);
@@ -714,7 +718,10 @@ wxThread::ExitCode curlThread::Entry()
 			curl_easy_cleanup(curl);
 
 			// Add Event Handler
-			main_dialog->GetEventHandler()->AddPendingEvent(event);
+			if (main_dialog != NULL)
+			{
+				main_dialog->GetEventHandler()->AddPendingEvent(event);
+			}
 
 			return (wxThread::ExitCode)0;
 		}
@@ -722,7 +729,10 @@ wxThread::ExitCode curlThread::Entry()
 		event.SetClientObject(new ThreadData(function, "", "", x));
 
 		// Add Event Handler
-		main_dialog->GetEventHandler()->AddPendingEvent(event);
+		if (main_dialog != NULL)
+		{
+			main_dialog->GetEventHandler()->AddPendingEvent(event);
+		}
 	}
 
 	return (wxThread::ExitCode)0;
@@ -802,12 +812,18 @@ void showError(wxString error, wxString type)
 // Close Taskbar Icon and destroy all dialogs
 void exitProgramm()
 {
-	// We don't need Steam support
-	if (steamThreader != NULL)
+	// First disappear Windows
+	if (main_dialog != NULL)
 	{
-		steamThreader->Delete();
-		timer = NULL;
+		main_dialog->Show(false);
 	}
+
+	// No more Update dialog needed
+	if (update_dialog != NULL)
+	{
+		update_dialog->Show(false);
+	}
+
 
 	// Timer... STOP!
 	if (timer != NULL)
@@ -832,6 +848,13 @@ void exitProgramm()
 		main_dialog = NULL;
 	}
 
+	// No more Update dialog needed
+	if (update_dialog != NULL)
+	{
+		update_dialog->Destroy();
+		update_dialog = NULL;
+	}
+
 	// Calls are unimportant
 	for (int i=0; i < MAXCALLS; i++)
 	{
@@ -846,6 +869,20 @@ void exitProgramm()
 			call_dialogs[i]->Destroy();
 			call_dialogs[i] = NULL;
 		}
+	}
+
+	// We don't need Steam support
+	if (steamThreader != NULL)
+	{
+		steamThreader->Delete();
+		steamThreader = NULL;
+	}
+
+	// Delete Update
+	if (update_thread != NULL)
+	{
+		update_thread->Delete();
+		update_thread = NULL;
 	}
 }
 
@@ -923,7 +960,7 @@ void checkUpdate()
 void onUpdate(char* error, wxString result, int WXUNUSED(x))
 {
 	// Log Action
-	LogAction("Retriev information about new version");
+	LogAction("Retrieve information about new version");
 
 	wxString newVersion;
 
@@ -968,8 +1005,16 @@ void onUpdate(char* error, wxString result, int WXUNUSED(x))
 			about->enableDownload(true);
 			about->updateVersion(newVersion, wxColor("red"));
 
+			// Show Main
+			if (main_dialog != NULL)
+			{
+				main_dialog->Show(true);
+				main_dialog->Restore();
+			}
+
 			// Goto About
-			notebook->SetSelection(3);
+			notebook->SetSelection(4);
+
 
 			m_taskBarIcon->ShowMessage("New Version", "New version " + newVersion + " is now available!", main_dialog);
 		}

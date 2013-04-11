@@ -33,6 +33,7 @@
 #include "call.h"
 #include "log.h"
 #include "about.h"
+#include "trackers.h"
 #include "taskbar.h"
 #include "config.h"
 #include "calladmin-client.h"
@@ -287,6 +288,9 @@ void MainDialog::createWindow(bool taskbar)
 	notebook->AddPage(new ConfigPanel(notebook), ("Settings"));
 
 
+	// Add trackers Page
+	notebook->AddPage(new TrackerPanel(notebook), ("Trackers"));
+
 	// Add Log Page
 	notebook->AddPage(new LogPanel(notebook), ("Logging"));
 
@@ -452,6 +456,7 @@ void MainDialog::OnBoxClick(wxCommandEvent& WXUNUSED(event))
 	if (call_dialogs[selection] != NULL)
 	{
 		call_dialogs[selection]->Show(true);
+		call_dialogs[selection]->Restore();
 	}
 }
 
@@ -467,7 +472,7 @@ void MainDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
 	}
 	else
 	{
-		Iconize(true);
+		Iconize();
 	}
 }
 

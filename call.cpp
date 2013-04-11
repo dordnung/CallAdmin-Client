@@ -269,7 +269,7 @@ void CallDialog::startCall(bool show)
 
 
 	// Start the Timers
-	avatarTimer = new SecondTimer(getClientCID(), getTargetCID(), clientAvatar, targetAvatar);
+	avatarTimer = new AvatarTimer(getClientCID(), getTargetCID(), clientAvatar, targetAvatar);
 
 	avatarTimer->startTimer();
 
@@ -352,7 +352,7 @@ void CallDialog::startCall(bool show)
 
 
 // We need the 64bit int id
-CSteamID CallDialog::steamIDtoCSteamID(char* steamid)
+CSteamID CallDialog::steamIDtoCSteamID (char* steamid)
 {
 	CSteamID csteam;
 
@@ -561,7 +561,7 @@ void onGetTrackers(char* errors, wxString result, int x)
 							break;
 						}
 
-						std::string tt = node2->Value();
+
 
 						// Search admin steamids
 						for (tinyxml2::XMLNode *node3 = node2->FirstChild(); node3; node3 = node3->NextSibling())
