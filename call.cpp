@@ -55,8 +55,7 @@ CallDialog *call_dialogs[MAXCALLS];
 // Button ID's for Call Dialog
 enum
 {
-	wxID_CloseCall = wxID_HIGHEST+200,
-	wxID_ConnectCall,
+	wxID_ConnectCall = wxID_HIGHEST+200,
 	wxID_CheckDone,
 	wxID_ContactClient,
 	wxID_ContactTarget,
@@ -68,7 +67,6 @@ enum
 // Button Events for Call Dialog
 BEGIN_EVENT_TABLE(CallDialog, wxDialog)
 	EVT_BUTTON(wxID_ConnectCall, CallDialog::OnConnect)
-	EVT_BUTTON(wxID_CloseCall, CallDialog::OnClose)
 	EVT_BUTTON(wxID_CheckDone, CallDialog::OnCheck)
 	EVT_BUTTON(wxID_ContactClient, CallDialog::OnContactClient)
 	EVT_BUTTON(wxID_ContactTarget, CallDialog::OnContactTarget)
@@ -313,7 +311,6 @@ void CallDialog::startCall(bool show)
 
 	// Hide and Exit Button
 	sizerBtns->Add(new wxButton(panel, wxID_ConnectCall, "Connect"), 0, wxALL &~ wxRIGHT, 5);
-	sizerBtns->Add(new wxButton(panel, wxID_CloseCall, "Close"), 0, wxALL &~ wxRIGHT &~ wxLEFT, 5);
 	sizerBtns->Add(takeover, 0, wxALL &~ wxRIGHT &~ wxLEFT, 5);
 	sizerBtns->Add(contactTrackers, 0, wxALL &~ wxLEFT, 5);
 
@@ -397,15 +394,6 @@ CSteamID CallDialog::steamIDtoCSteamID (char* steamid)
 
 	// Return it
 	return csteam;
-}
-
-
-
-
-// Button Event -> disable window
-void CallDialog::OnClose(wxCommandEvent& WXUNUSED(event))
-{
-	Show(false);
 }
 
 

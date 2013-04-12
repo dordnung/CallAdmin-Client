@@ -70,6 +70,7 @@ private:
 
 	// We need information about the update ;)
 	wxStaticText* dlinfo;
+	wxStaticText* dlstatus;
 
 	// Layout
 	wxSizer* sizerTop;

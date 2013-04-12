@@ -48,19 +48,15 @@ AboutPanel* about = NULL;
 // Button ID's for about Panel
 enum
 {
-	wxID_ExitAbout = wxID_HIGHEST+300,
-	wxID_UpdateAbout,
+	wxID_UpdateAbout = wxID_HIGHEST+300,
 	wxID_DownloadAbout,
-	wxID_HideAbout,
 };
 
 
 // Button Events for about Panel
 BEGIN_EVENT_TABLE(AboutPanel, wxPanel)
-	EVT_BUTTON(wxID_ExitAbout, AboutPanel::OnExit)
 	EVT_BUTTON(wxID_UpdateAbout, AboutPanel::OnUpdate)
 	EVT_BUTTON(wxID_DownloadAbout, AboutPanel::OnDownload)
-	EVT_BUTTON(wxID_HideAbout, AboutPanel::OnHide)
 END_EVENT_TABLE()
 
 
@@ -118,12 +114,12 @@ AboutPanel::AboutPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 
 	// Your Version
-	text = new wxStaticText(this, wxID_ANY, "       Your version: " + version);
+	text = new wxStaticText(this, wxID_ANY, "Your version: " + version);
 
 	text->SetFont(wxFont(15, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
-	sizerVersion->Add(text, 0, wxRIGHT | wxLEFT | wxALIGN_CENTRE_HORIZONTAL, 50);
+	sizerVersion->Add(text, 0, wxRIGHT | wxLEFT | wxALIGN_CENTRE_HORIZONTAL, 20);
 
 
 
@@ -133,16 +129,8 @@ AboutPanel::AboutPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 	currentText->SetForegroundColour(wxColour(34, 139, 34));
 
 	// Add it
-	sizerVersion->Add(currentText, 0, wxLEFT | wxALIGN_CENTRE_HORIZONTAL, 50);
+	sizerVersion->Add(currentText, 0, wxLEFT | wxALIGN_CENTRE_HORIZONTAL, 20);
 
-
-
-	// Update Button
-	downloadButton = new wxButton(this, wxID_DownloadAbout, "Download Update");
-	downloadButton->Enable(false);
-
-	// Add it
-	sizerVersion->Add(downloadButton, 0, wxLEFT | wxRIGHT | wxALIGN_CENTRE_HORIZONTAL, 5);
 
 
 	// Add box
@@ -150,23 +138,53 @@ AboutPanel::AboutPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 
 
-	// Credits, static direction oO, but it works :)
-	text = new wxStaticText(this, wxID_ANY, (wxString)wxVERSION_STRING + "               CURL " + LIBCURL_VERSION + "               OSW 07.03.2013");
 
+
+
+
+	// Box for Credits
+	wxSizer* const sizerCredits = new wxBoxSizer(wxHORIZONTAL);
+
+
+	// WX
+	text = new wxStaticText(this, wxID_ANY, (wxString)wxVERSION_STRING);
 	text->SetFont(wxFont(12, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
-	sizerTop->Add(text, 0, wxALL | wxALIGN_CENTRE_HORIZONTAL, 5);
+	sizerCredits->Add(text, 0, wxALL | wxALIGN_CENTRE_HORIZONTAL, 10);
+
+
+	// Curl
+	text = new wxStaticText(this, wxID_ANY, "CURL " + (wxString)LIBCURL_VERSION);
+	text->SetFont(wxFont(12, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+
+	// Add it
+	sizerCredits->Add(text, 0, wxALL | wxALIGN_CENTRE_HORIZONTAL, 10);
+
+
+	// OSW
+	text = new wxStaticText(this, wxID_ANY, "OpenSteamWorks 7/3/13");
+	text->SetFont(wxFont(12, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+
+	// Add it
+	sizerCredits->Add(text, 0, wxALL | wxALIGN_CENTRE_HORIZONTAL, 10);
+
+
+	// Add box
+	sizerTop->Add(sizerCredits, 0, wxALL | wxALIGN_CENTRE_HORIZONTAL, 5);
+
 
 
 	
 	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
 
-	// Hide and Exit Button
-	sizerBtns->Add(new wxButton(this, wxID_HideAbout, "Hide"), flags.Border(wxALL &~ wxRIGHT, 5));
-	sizerBtns->Add(new wxButton(this, wxID_UpdateAbout, "Check For Update"), flags.Border(wxALL &~ wxRIGHT &~ wxLEFT, 5));
-	sizerBtns->Add(new wxButton(this, wxID_ExitAbout, "Exit"), flags.Border(wxALL &~ wxLEFT, 5));
+	// Buttons
+	sizerBtns->Add(new wxButton(this, wxID_UpdateAbout, "Check For Update"), flags.Border(wxALL &~ wxRIGHT, 5));
 
+	downloadButton = new wxButton(this, wxID_DownloadAbout, "Download Update");
+	downloadButton->Enable(false);
+
+	sizerBtns->Add(downloadButton, flags.Border(wxALL &~ wxLEFT, 5));
 
 
 	// Add Buttons to Box
@@ -178,14 +196,6 @@ AboutPanel::AboutPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 	SetSizerAndFit(sizerTop, true);
 }
 
-
-
-
-// Button Event -> Exit programm
-void AboutPanel::OnExit(wxCommandEvent& WXUNUSED(event))
-{
-	exitProgramm();
-}
 
 
 
@@ -218,27 +228,5 @@ void AboutPanel::OnDownload(wxCommandEvent& WXUNUSED(event))
 	{
 		// Update already running
 		m_taskBarIcon->ShowMessage("Update running", "Update is already running", this);
-	}
-}
-
-
-
-
-
-// Button Event -> Hide to Taskbar
-void AboutPanel::OnHide(wxCommandEvent& WXUNUSED(event))
-{
-	// Log Action
-	LogAction("Hide to taskbar");
-
-	if (m_taskBarIcon != NULL)
-	{
-		m_taskBarIcon->ShowMessage("Call Admin", "Call Admin is now in the taskbar!", this);
-
-		main_dialog->Show(false);
-	}
-	else
-	{
-		main_dialog->Iconize(true);
 	}
 }

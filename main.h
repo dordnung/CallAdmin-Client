@@ -49,8 +49,7 @@ extern wxNotebook* notebook;
 // Event ID's for Main Dialog
 enum
 {
-	wxID_Exit = wxID_HIGHEST+100,
-	wxID_Hide,
+	wxID_Hide = wxID_HIGHEST+100,
 	wxID_Reconnect,
 	wxID_BoxClick,
 	wxID_CheckBox,
@@ -102,7 +101,6 @@ public:
 
 protected:
 	// Button Events
-	void OnExit(wxCommandEvent& event);
 	void OnHide(wxCommandEvent& event);
 	void OnReconnect(wxCommandEvent& event);
 

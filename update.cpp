@@ -98,14 +98,26 @@ UpdateDialog::UpdateDialog() : wxDialog(NULL, wxID_ANY, "Update CallAdmin", wxDe
 
 
 	// Download Info
-	dlinfo = new wxStaticText(panel, wxID_ANY, "Downloaded 0 of 0 Bytes. Total Time: 0:00");
+	dlinfo = new wxStaticText(panel, wxID_ANY, "0000kB of 0000KB (0000 kB/s). Time: 0,00 Seconds");
 
 	dlinfo->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
 
 
 	// Add it
 	sizerTop->Add(dlinfo, flags.Border(wxALL, 10));
-	
+
+
+
+
+	// Download Status
+	dlstatus = new wxStaticText(panel, wxID_ANY, "Status: Downloading...");
+
+	dlstatus->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
+
+	// Add it
+	sizerTop->Add(dlstatus, flags.Border(wxALL, 10));
+
+
 
 	
 	// Auto Size
@@ -185,12 +197,27 @@ void UpdateDialog::OnFinish(wxCommandEvent& event)
 		rename(path, path + ".old");
 		rename(path + ".new", path); 
 
+		// Refresh Status
+		dlstatus->SetLabelText("Status: Finished!");
+		dlstatus->SetForegroundColour(wxColour(34, 139, 34));
+
+
 		m_taskBarIcon->ShowMessage("Update Finished", "Downloading update is finished\nPlease restart your Call Admin Client", this);
 	}
 	else
 	{
-		m_taskBarIcon->ShowMessage("Update Error", "Couldn't download update\n" + event.GetString(), this);
+		// Refresh Status
+		dlstatus->SetLabelText("Status: Error!");
+		dlstatus->SetForegroundColour(wxColour("red"));
+
+
+		m_taskBarIcon->ShowMessage("Error on Update", "Couldn't download update\n" + event.GetString(), this);
 	}
+
+	// Fit Window
+	panel->SetSizerAndFit(sizerTop, false);
+
+	Fit();
 }
 
 
@@ -328,7 +355,7 @@ int progress_updated(void *p, double dltotal, double dlnow, double WXUNUSED(ulto
 		wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_UpdateUpdated);
 
 		// Set Event Data
-		event.SetString(wxString::Format("%.0f", (dlnow/1000)) + "kB of " +  wxString::Format("%.0f", (dltotal/1000)) + "kB. Duration: " + wxString::Format("%.2f", curtime) + " Seconds");
+		event.SetString(wxString::Format("%.0f", (dlnow / 1024)) + "kB of " +  wxString::Format("%.0f", (dltotal / 1024)) + "kB (" + wxString::Format("%.0f", ((dlnow / 1024)/curtime)) + "kB/s). Time: " + wxString::Format("%.2f", curtime) + " Seconds");
 		event.SetInt((dlnow/dltotal) * 100);
 		
 		

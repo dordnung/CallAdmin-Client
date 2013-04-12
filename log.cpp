@@ -40,22 +40,6 @@ LogPanel* logPanel = NULL;
 
 
 
-// Button ID's for Log Panel
-enum
-{
-	wxID_ExitLog = wxID_HIGHEST+500,
-	wxID_HideLog,
-};
-
-
-// Button Events for Log Panel
-BEGIN_EVENT_TABLE(LogPanel, wxPanel)
-	EVT_BUTTON(wxID_ExitLog, LogPanel::OnExit)
-	EVT_BUTTON(wxID_HideLog, LogPanel::OnHide)
-END_EVENT_TABLE()
-
-
-
 // Create Log Panel
 LogPanel::LogPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 {
@@ -83,18 +67,6 @@ LogPanel::LogPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 	// Add Log Box
 	sizerTop->Add(logBox, 1, wxEXPAND);
 
-	
-	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
-
-	// Hide and Exit Button
-	sizerBtns->Add(new wxButton(this, wxID_HideLog, "Hide"), flags.Border(wxALL &~ wxRIGHT, 5));
-	sizerBtns->Add(new wxButton(this, wxID_ExitLog, "Exit"), flags.Border(wxALL &~ wxLEFT, 5));
-
-
-
-	// Add Buttons to Box
-	sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL));
-
 
 
 	// Auto Size
@@ -111,32 +83,6 @@ void LogPanel::addLog(wxString log)
 }
 
 
-
-
-// Button Event -> Exit programm
-void LogPanel::OnExit(wxCommandEvent& WXUNUSED(event))
-{
-	exitProgramm();
-}
-
-
-// Button Event -> Hide to Taskbar
-void LogPanel::OnHide(wxCommandEvent& WXUNUSED(event))
-{
-	// Log Action
-	LogAction("Hide to taskbar");
-
-	if (m_taskBarIcon != NULL)
-	{
-		m_taskBarIcon->ShowMessage("Call Admin", "Call Admin is now in the taskbar!", this);
-
-		main_dialog->Show(false);
-	}
-	else
-	{
-		main_dialog->Iconize(true);
-	}
-}
 
 
 void LogAction(wxString action)

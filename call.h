@@ -147,7 +147,6 @@ public:
 protected:
 	// Button Events
 	void OnConnect(wxCommandEvent& event);
-	void OnClose(wxCommandEvent& event);
 	void OnCheck(wxCommandEvent& event);
 	void OnContactClient(wxCommandEvent& event);
 	void OnContactTarget(wxCommandEvent& event);

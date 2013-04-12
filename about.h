@@ -57,10 +57,8 @@ public:
 	void updateVersion(wxString cversion, wxColor color) {currentText->SetLabelText("Current version: " + cversion); currentText->SetForegroundColour(color);}
 
 protected:
-	void OnExit(wxCommandEvent& event);
 	void OnUpdate(wxCommandEvent& event);
 	void OnDownload(wxCommandEvent& event);
-	void OnHide(wxCommandEvent& event);
 
 	DECLARE_EVENT_TABLE()
 };

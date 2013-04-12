@@ -90,7 +90,7 @@ int avatarSize = 184;
 
 
 // Version
-wxString version = "0.45B";
+wxString version = "0.46B";
 std::string updateURL = "http://popoklopsi.de/calladmin/version.txt";
 
 

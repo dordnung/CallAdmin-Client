@@ -56,7 +56,6 @@ wxNotebook* notebook = NULL;
 
 // Button Events for Main Dialog
 BEGIN_EVENT_TABLE(MainDialog, wxDialog)
-	EVT_BUTTON(wxID_Exit, MainDialog::OnExit)
 	EVT_BUTTON(wxID_Hide, MainDialog::OnHide)
 	EVT_BUTTON(wxID_Reconnect, MainDialog::OnReconnect)
 
@@ -240,12 +239,9 @@ void MainDialog::createWindow(bool taskbar)
 
 
 
-	// Hide, Check and Exit Button
+	// Hide, Check
 	sizerBtns->Add(new wxButton(panel, wxID_Hide, "Hide"), flags.Border(wxALL &~ wxBOTTOM &~ wxRIGHT, 5));
 
-
-	// Exit
-	sizerBtns->Add(new wxButton(panel, wxID_Exit, "Exit"), flags.Border(wxTOP, 5));
 
 
 	// If max attempts reached, add a reconnect button
@@ -343,6 +339,8 @@ void MainDialog::createWindow(bool taskbar)
 
 
 
+
+
 // Button Event -> Hide to Taskbar
 void MainDialog::OnHide(wxCommandEvent& WXUNUSED(event))
 {
@@ -361,13 +359,6 @@ void MainDialog::OnHide(wxCommandEvent& WXUNUSED(event))
 	}
 }
 
-
-
-// Button Event -> Exit hole programm
-void MainDialog::OnExit(wxCommandEvent& WXUNUSED(event))
-{
-	exitProgramm();
-}
 
 
 
@@ -464,16 +455,7 @@ void MainDialog::OnBoxClick(wxCommandEvent& WXUNUSED(event))
 // Window Event -> Hide Window
 void MainDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
 {
-	if (m_taskBarIcon != NULL)
-	{
-		Show(false);
-
-		m_taskBarIcon->ShowMessage("Call Admin", "Call Admin is now in the taskbar!", this);
-	}
-	else
-	{
-		Iconize();
-	}
+	exitProgramm();
 }
 
 

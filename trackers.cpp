@@ -45,17 +45,13 @@ TrackerPanel* trackerPanel = NULL;
 // Button ID's for Tracker Panel
 enum
 {
-	wxID_ExitTrackers = wxID_HIGHEST+700,
-	wxID_UpdateTrackers,
-	wxID_HideTrackers,
+	wxID_UpdateTrackers = wxID_HIGHEST+700,
 };
 
 
 // Button Events for Log Panel
 BEGIN_EVENT_TABLE(TrackerPanel, wxPanel)
-	EVT_BUTTON(wxID_ExitTrackers, TrackerPanel::OnExit)
 	EVT_BUTTON(wxID_UpdateTrackers, TrackerPanel::OnUpdate)
-	EVT_BUTTON(wxID_HideTrackers, TrackerPanel::OnHide)
 END_EVENT_TABLE()
 
 
@@ -91,9 +87,7 @@ TrackerPanel::TrackerPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
 
 	// Hide and Exit Button
-	sizerBtns->Add(new wxButton(this, wxID_HideTrackers, "Hide"), flags.Border(wxALL &~ wxRIGHT, 5));
-	sizerBtns->Add(new wxButton(this, wxID_UpdateTrackers, "Update Trackers"), flags.Border(wxALL &~ wxRIGHT &~ wxLEFT, 5));
-	sizerBtns->Add(new wxButton(this, wxID_ExitTrackers, "Exit"), flags.Border(wxALL &~ wxLEFT, 5));
+	sizerBtns->Add(new wxButton(this, wxID_UpdateTrackers, "Update Trackers"), flags.Border(wxALL, 5));
 
 
 
@@ -108,18 +102,6 @@ TrackerPanel::TrackerPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 
 
-
-
-
-// Button Event -> Exit programm
-void TrackerPanel::OnExit(wxCommandEvent& WXUNUSED(event))
-{
-	exitProgramm();
-}
-
-
-
-
 // Button Event -> Update List
 void TrackerPanel::OnUpdate(wxCommandEvent& WXUNUSED(event))
 {
@@ -127,25 +109,6 @@ void TrackerPanel::OnUpdate(wxCommandEvent& WXUNUSED(event))
 	getPage(refreshTrackers, page + "/trackers.php?from=20&from_type=interval&key=" + key);
 }
 
-
-
-// Button Event -> Hide to Taskbar
-void TrackerPanel::OnHide(wxCommandEvent& WXUNUSED(event))
-{
-	// Log Action
-	LogAction("Hide to taskbar");
-
-	if (m_taskBarIcon != NULL)
-	{
-		m_taskBarIcon->ShowMessage("Call Admin", "Call Admin is now in the taskbar!", this);
-
-		main_dialog->Show(false);
-	}
-	else
-	{
-		main_dialog->Iconize(true);
-	}
-}
 
 
 

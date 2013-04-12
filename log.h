@@ -53,12 +53,6 @@ public:
 	LogPanel(wxNotebook* note);
 
 	void addLog(wxString log);
-
-protected:
-	void OnExit(wxCommandEvent& event);
-	void OnHide(wxCommandEvent& event);
-
-	DECLARE_EVENT_TABLE()
 };
 
 

@@ -64,17 +64,13 @@ wxConfig *g_config = NULL;
 enum
 {
 	wxID_SetConfig = wxID_HIGHEST+400,
-	wxID_ExitConfig,
-	wxID_HideConfig,
 	wxID_SteamUpdate,
 };
 
 
 // Button Events for Config Panel
 BEGIN_EVENT_TABLE(ConfigPanel, wxPanel)
-	EVT_BUTTON(wxID_ExitConfig, ConfigPanel::OnExit)
 	EVT_BUTTON(wxID_SetConfig, ConfigPanel::OnSet)
-	EVT_BUTTON(wxID_HideConfig, ConfigPanel::OnHide)
 
 	EVT_CHECKBOX(wxID_SteamUpdate, ConfigPanel::OnCheckBox)
 END_EVENT_TABLE()
@@ -233,9 +229,7 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
 
 	// Hide and Exit Button
-	sizerBtns->Add(new wxButton(this, wxID_HideConfig, "Hide"), flags.Border(wxALL &~ wxRIGHT, 5));
-	sizerBtns->Add(new wxButton(this, wxID_SetConfig, "Update Settings"), flags.Border(wxALL &~ wxLEFT &~ wxRIGHT, 5));
-	sizerBtns->Add(new wxButton(this, wxID_ExitConfig, "Exit"), flags.Border(wxALL &~ wxLEFT, 5));
+	sizerBtns->Add(new wxButton(this, wxID_SetConfig, "Update Settings"), flags.Border(wxALL, 5));
 
 
 
@@ -310,34 +304,6 @@ void ConfigPanel::OnSet(wxCommandEvent& WXUNUSED(event))
 
 
 
-
-// Button Event -> Exit programm
-void ConfigPanel::OnExit(wxCommandEvent& WXUNUSED(event))
-{
-	// Log Action
-	LogAction("Exit Call Admin");
-
-	exitProgramm();
-}
-
-
-// Button Event -> Hide to Taskbar
-void ConfigPanel::OnHide(wxCommandEvent& WXUNUSED(event))
-{
-	// Log Action
-	LogAction("Hide to taskbar");
-
-	if (m_taskBarIcon != NULL)
-	{
-		m_taskBarIcon->ShowMessage("Call Admin", "Call Admin is now in the taskbar!", this);
-
-		main_dialog->Show(false);
-	}
-	else
-	{
-		main_dialog->Iconize(true);
-	}
-}
 
 
 // parse Config
