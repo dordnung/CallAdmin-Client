@@ -90,7 +90,7 @@ int avatarSize = 184;
 
 
 // Version
-wxString version = "0.4B";
+wxString version = "0.45B";
 std::string updateURL = "http://popoklopsi.de/calladmin/version.txt";
 
 
@@ -597,7 +597,7 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 							{
 								// Log Action
 								LogAction("We have a new Call");
-								newDialog->startCall(main_dialog->isAvailable());
+								newDialog->startCall(main_dialog->isAvailable() && !isOtherInFullscreen());
 							}
 
 							call_dialogs[dialog] = newDialog;
@@ -1006,7 +1006,7 @@ void onUpdate(char* error, wxString result, int WXUNUSED(x))
 			about->updateVersion(newVersion, wxColor("red"));
 
 			// Show Main
-			if (main_dialog != NULL)
+			if (main_dialog != NULL && !isOtherInFullscreen())
 			{
 				main_dialog->Show(true);
 				main_dialog->Restore();

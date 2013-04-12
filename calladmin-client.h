@@ -167,6 +167,71 @@ public:
 
 
 
+// For Windows: Check if other app is in fullscreen mode
+#if defined(__WXMSW__)
+	inline bool IsTopMost(HWND hwnd)
+	{
+		WINDOWINFO info;
+
+		GetWindowInfo(hwnd, &info);
+
+		return (info.dwExStyle & WS_EX_TOPMOST) ? true : false;
+	}
+
+	inline bool IsFullScreenSize(HWND hwnd, const int cx, const int cy)
+	{
+		RECT r;
+		::GetWindowRect(hwnd, &r);
+
+		return r.right - r.left == cx && r.bottom - r.top == cy;
+
+	}
+
+	inline bool IsFullscreenAndMaximized(HWND hwnd)
+	{
+		if (IsTopMost(hwnd))
+		{
+			const int cx = GetSystemMetrics(SM_CXSCREEN);
+			const int cy = GetSystemMetrics(SM_CYSCREEN);
+
+			if (IsFullScreenSize(hwnd, cx, cy))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	inline BOOL CALLBACK CheckMaximized(HWND hwnd, LPARAM lParam)
+	{
+		if(IsFullscreenAndMaximized(hwnd))
+		{
+			*(bool*) lParam = true;
+
+			return FALSE;
+		}
+
+		return TRUE;
+	}
+#endif
+
+
+inline bool isOtherInFullscreen()
+{
+	#if defined(__WXMSW__)
+		bool otherAppInFullscreen = false;
+
+		EnumWindows((WNDENUMPROC) CheckMaximized, (LPARAM) &otherAppInFullscreen);
+
+		// Return result
+		return otherAppInFullscreen;
+	#else
+		// Not for Linux
+		return false;
+	#endif
+}
+
 
 // Main methods
 void checkUpdate();
