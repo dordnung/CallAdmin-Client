@@ -327,7 +327,7 @@ size_t write_data_file(void *ptr, size_t size, size_t nmemb, FILE *stream)
 	// Write
 	size_t written = fwrite(ptr, size, nmemb, stream);
 
-    return written;
+	return written;
 }
 
 

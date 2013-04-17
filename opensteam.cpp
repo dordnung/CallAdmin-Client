@@ -75,8 +75,8 @@ steamThread::steamThread() : wxThread(wxTHREAD_DETACHED), loader(CSteamAPILoader
 	// No Last Error
 	lastError = STEAM_NO_ERROR;
 
-    this->Create();
-    this->Run();
+	this->Create();
+	this->Run();
 }
 
 
@@ -122,8 +122,8 @@ STEAM_ERROR_TYP steamThread::loadSteam()
 
 
 		// Workaround for deadlock
-        steamClient->BReleaseSteamPipe(pipeSteam);
-        wxMilliSleep(5000);
+		steamClient->BReleaseSteamPipe(pipeSteam);
+		wxMilliSleep(5000);
 
 
 		// Create Pipe again
@@ -133,9 +133,9 @@ STEAM_ERROR_TYP steamThread::loadSteam()
 		{
 			return STEAM_ERROR;
 		}
-	
 
-	
+
+
 		// Connect User
 		clientUser = steamClient->ConnectToGlobalUser(pipeSteam);
 		
@@ -249,7 +249,7 @@ void steamThread::checkSteam()
 
 		if (++i % 50 == 0)
 		{
-            // Check if logged in
+			// Check if logged in
 			if (steamUser)
 			{
 				if (!steamUser->BLoggedOn())
@@ -280,9 +280,9 @@ void steamThread::checkSteam()
 		CallbackMsg_t callbackMsg;
 
 		while (Steam_BGetCallback(pipeSteam, &callbackMsg))
-        {
+		{
 			if (callbackMsg.m_iCallback == IPCFailure_t::k_iCallback)
-            {
+			{
 				// Only if connected before
 				if (main_dialog != NULL && steamConnected)
 				{
@@ -300,11 +300,11 @@ void steamThread::checkSteam()
 				// Clean Steam
 				cleanSteam();
 
-                break;
+				break;
 			}
 
-            Steam_FreeLastCallback(pipeSteam);
-        }
+			Steam_FreeLastCallback(pipeSteam);
+		}
 	}
 }
 

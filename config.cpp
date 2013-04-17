@@ -116,7 +116,7 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 	// Add to grid
 	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
-    gridSizer->Add(pageText, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
+	gridSizer->Add(pageText, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
 
 
 
@@ -156,7 +156,7 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 	// Add to Grid
 	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
-    gridSizer->Add(stepSlider, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
+	gridSizer->Add(stepSlider, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
 
 
 
@@ -171,7 +171,7 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 	// Add to Grid
 	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
-    gridSizer->Add(timeoutSlider, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
+	gridSizer->Add(timeoutSlider, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
 
 
 
@@ -186,7 +186,7 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 	// Add to Grid
 	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
-    gridSizer->Add(attemptsSlider, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
+	gridSizer->Add(attemptsSlider, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
 
 
 
@@ -200,7 +200,7 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 	// Add to Grid
 	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
-    gridSizer->Add(callsSlider, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
+	gridSizer->Add(callsSlider, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
 
 
 
