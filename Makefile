@@ -38,7 +38,7 @@ LINK = -L$(WX)/lib/gcc_lib -L$(CURL) $(OPENSTEAMWORKS)/libs/steamclient.a -lcurl
 
 CFLAGS += -O3 -D__WXGTK__ -D_FILE_OFFSET_BITS=64 -DCURL_STATICLIB -DWX_PRECOMP -DSTEAMWORKS_CLIENT_INTERFACES -D_LINUX -DSI_CONVERT_ICU -DNDEBUG -D_UNICODE -DUNICODE \
 				-Wall -Wno-unused-parameter -Wno-unused-result -Wno-unknown-pragmas -Woverloaded-virtual -Wnonnull -pthread -Os -fpermissive -fno-strict-aliasing -m32
-				
+
 OBJ_BIN := $(OBJECTS:%.cpp=%.o)
 
 %.o: %.cpp

@@ -697,6 +697,7 @@ wxThread::ExitCode curlThread::Entry()
 			curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, ebuf);
 			curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout*2);
 			curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
+			curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &stream);
 
