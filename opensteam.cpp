@@ -106,7 +106,7 @@ STEAM_ERROR_TYP steamThread::loadSteam()
 
 		// Load Steam Client
 		steamClient = (ISteamClient012*)factory(STEAMCLIENT_INTERFACE_VERSION_012, NULL);
-		
+
 		if (!steamClient)
 		{
 			return STEAM_ERROR;
@@ -114,7 +114,7 @@ STEAM_ERROR_TYP steamThread::loadSteam()
 		
 		// Create Pipe
 		pipeSteam = steamClient->CreateSteamPipe();
-		
+
 		if (!pipeSteam || pipeSteam == -1)
 		{
 			return STEAM_ERROR;
@@ -138,7 +138,7 @@ STEAM_ERROR_TYP steamThread::loadSteam()
 
 		// Connect User
 		clientUser = steamClient->ConnectToGlobalUser(pipeSteam);
-		
+
 		if (!clientUser)
 		{
 			return STEAM_ERROR;
@@ -146,7 +146,7 @@ STEAM_ERROR_TYP steamThread::loadSteam()
 
 		// Load SteamFriends
 		steamFriends = (ISteamFriends013*)steamClient->GetISteamFriends(clientUser, pipeSteam, STEAMFRIENDS_INTERFACE_VERSION_013);
-
+		
 		if (!steamFriends)
 		{
 			return STEAM_ERROR;

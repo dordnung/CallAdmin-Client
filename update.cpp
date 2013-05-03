@@ -264,6 +264,7 @@ wxThread::ExitCode updateThread::Entry()
 			curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, ebuf);
 			curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
 			curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+			curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data_file);
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
 			curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_updated);
