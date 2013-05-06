@@ -153,6 +153,7 @@ protected:
 	void OnContactTrackers(wxCommandEvent& event);
 
 	void OnCloseWindow(wxCloseEvent& event);
+	void OnMinimizeWindow(wxIconizeEvent& event);
 
 	DECLARE_EVENT_TABLE()
 };

@@ -117,7 +117,10 @@ void TrackerPanel::OnUpdate(wxCommandEvent& WXUNUSED(event))
 void addTracker(wxString text)
 {
 	// Add the new tracker to the  box
-	trackerPanel->newTracker(text);
+	if (trackerPanel != NULL)
+	{
+		trackerPanel->newTracker(text);
+	}
 }
 
 
@@ -127,6 +130,13 @@ void addTracker(wxString text)
 // Refresh Trackers
 void refreshTrackers(char* errors, wxString result, int WXUNUSED(x))
 {
+	// Valid?
+	if (trackerPanel == NULL)
+	{
+		return;
+	}
+
+
 	// Log Action
 	LogAction("Got Trackers");
 

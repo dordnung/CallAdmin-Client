@@ -89,8 +89,12 @@ int attempts = 0;
 int avatarSize = 184;
 
 
+// program ended already?
+bool end = false;
+
+
 // Version
-wxString version = "0.46B";
+wxString version = "0.47B";
 std::string updateURL = "http://popoklopsi.de/calladmin/version.txt";
 
 
@@ -173,6 +177,12 @@ bool CallAdmin::OnInit()
 	// Create Config
 	g_config = new wxConfig("Call Admin");
 
+	// Valid?
+	if (g_config == NULL)
+	{
+		return false;
+	}
+
 
 	int y = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
 
@@ -216,6 +226,13 @@ bool CallAdmin::OnInit()
 
 	// Create main Dialog
 	main_dialog = new MainDialog("Call Admin Client");
+
+
+	// Valid?
+	if (main_dialog == NULL)
+	{
+		return false;
+	}
 	
 	main_dialog->createWindow(start_taskbar);
 
@@ -429,7 +446,7 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 						int dialog = -1;
 
 						// Normal Stepp
-						if (!firstRun)
+						if (!firstRun && call_dialogs != NULL)
 						{
 							// Look for a free place
 							for (int i=0; i < MAXCALLS; i++)
@@ -469,6 +486,13 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 
 						// Create the new CallDialog
 						CallDialog *newDialog = new CallDialog("New Incoming Call");
+
+
+						// Valid?
+						if (newDialog == NULL)
+						{
+							return;
+						}
 
 
 						// Put in ALL needed DATA
@@ -535,7 +559,7 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 						// Check duplicate Entries
 						for (int i=0; i < MAXCALLS; i++)
 						{
-							if (i != dialog)
+							if (i != dialog && call_dialogs != NULL)
 							{
 								if (call_dialogs[i] != NULL)
 								{
@@ -607,7 +631,7 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 			}
 
 			// Everything is good, set attempts to zero
-			if (!foundError)
+			if (!foundError && main_dialog != NULL)
 			{
 				// Reset attempts
 				attempts = 0;
@@ -746,11 +770,17 @@ wxThread::ExitCode curlThread::Entry()
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
 	std::ostringstream *data = (std::ostringstream*)userp;
-	size_t count = size * nmemb;
 
-	data->write((char*)buffer, count);
+	if (data != NULL)
+	{
+		size_t count = size * nmemb;
 
-	return count;
+		data->write((char*)buffer, count);
+
+		return count;
+	}
+
+	return (size_t) -1;
 }
 
 
@@ -774,6 +804,12 @@ void getPage(callback function, wxString page, int x)
 // Create the Window as a reconnecter
 void createReconnect(wxString error)
 {
+	// Valid?
+	if (main_dialog == NULL || notebook == NULL)
+	{
+		return;
+	}
+
 	// Log Action
 	LogAction("Create a reconnect window");
 
@@ -803,7 +839,10 @@ void showError(wxString error, wxString type)
 	// Log Action
 	LogAction(type + " Error: " + error);
 
-	m_taskBarIcon->ShowMessage("An error occured", type + " Error : " + error + "\nTry again... " + (wxString() << attempts) + "/" + (wxString() << maxAttempts), main_dialog);
+	if (m_taskBarIcon != NULL)
+	{
+		m_taskBarIcon->ShowMessage("An error occured", type + " Error : " + error + "\nTry again... " + (wxString() << attempts) + "/" + (wxString() << maxAttempts), main_dialog);
+	}
 }
 
 
@@ -813,77 +852,84 @@ void showError(wxString error, wxString type)
 // Close Taskbar Icon and destroy all dialogs
 void exitProgramm()
 {
-	// First disappear Windows
-	if (main_dialog != NULL)
+	if (!end)
 	{
-		main_dialog->Show(false);
-	}
+		// Mark as ended
+		end = true;
 
-	// No more Update dialog needed
-	if (update_dialog != NULL)
-	{
-		update_dialog->Show(false);
-	}
-
-
-	// Timer... STOP!
-	if (timer != NULL)
-	{
-		timer->Stop();
-		timer = NULL;
-	}
-
-	// Taskbar goodbye :)
-	if (m_taskBarIcon != NULL)
-	{
-		m_taskBarIcon->RemoveIcon();
-		m_taskBarIcon->Destroy();
-
-		m_taskBarIcon = NULL;
-	}
-
-	// No more Main dialog needed
-	if (main_dialog != NULL)
-	{
-		main_dialog->Destroy();
-		main_dialog = NULL;
-	}
-
-	// No more Update dialog needed
-	if (update_dialog != NULL)
-	{
-		update_dialog->Destroy();
-		update_dialog = NULL;
-	}
-
-	// Calls are unimportant
-	for (int i=0; i < MAXCALLS; i++)
-	{
-		if (call_dialogs[i] != NULL)
+		// First disappear Windows
+		if (main_dialog != NULL)
 		{
-			// Stop Avatar Timer
-			if (call_dialogs[i]->avatarTimer != NULL && call_dialogs[i]->avatarTimer->IsRunning())
-			{
-				call_dialogs[i]->avatarTimer->Stop();
-			}
-
-			call_dialogs[i]->Destroy();
-			call_dialogs[i] = NULL;
+			main_dialog->Show(false);
 		}
-	}
 
-	// We don't need Steam support
-	if (steamThreader != NULL)
-	{
-		steamThreader->Delete();
-		steamThreader = NULL;
-	}
+		// No more Update dialog needed
+		if (update_dialog != NULL)
+		{
+			update_dialog->Show(false);
+		}
 
-	// Delete Update
-	if (update_thread != NULL)
-	{
-		update_thread->Delete();
-		update_thread = NULL;
+
+		// Timer... STOP!
+		if (timer != NULL)
+		{
+			timer->Stop();
+			timer = NULL;
+		}
+
+		// Taskbar goodbye :)
+		if (m_taskBarIcon != NULL)
+		{
+			m_taskBarIcon->RemoveIcon();
+			m_taskBarIcon->Destroy();
+
+			m_taskBarIcon = NULL;
+		}
+
+		// No more Main dialog needed
+		if (main_dialog != NULL)
+		{
+			main_dialog->Destroy();
+			main_dialog = NULL;
+		}
+
+		// No more Update dialog needed
+		if (update_dialog != NULL)
+		{
+			update_dialog->Destroy();
+			update_dialog = NULL;
+		}
+
+		// Calls are unimportant
+		for (int i=0; i < MAXCALLS; i++)
+		{
+			if (call_dialogs[i] != NULL)
+			{
+				// Stop Avatar Timer
+				if (call_dialogs[i]->avatarTimer != NULL && call_dialogs[i]->avatarTimer->IsRunning())
+				{
+					call_dialogs[i]->avatarTimer->Stop();
+				}
+
+				call_dialogs[i]->Destroy();
+				call_dialogs[i] = NULL;
+			}
+		}
+
+
+		// We don't need Steam support
+		if (steamThreader != NULL)
+		{
+			steamThreader->Delete();
+			steamThreader = NULL;
+		}
+
+		// Delete Update
+		if (update_thread != NULL)
+		{
+			update_thread->Delete();
+			update_thread = NULL;
+		}
 	}
 }
 
@@ -973,7 +1019,10 @@ void onUpdate(char* error, wxString result, int WXUNUSED(x))
 			if (result.length() > 30)
 			{
 				// Maybe an Error Page?
-				m_taskBarIcon->ShowMessage("Update Check Failed", "Error: PAGE_TOO_LONG", main_dialog);
+				if (m_taskBarIcon != NULL)
+				{
+					m_taskBarIcon->ShowMessage("Update Check Failed", "Error: PAGE_TOO_LONG", main_dialog);
+				}
 			}
 			else
 			{
@@ -989,7 +1038,10 @@ void onUpdate(char* error, wxString result, int WXUNUSED(x))
 			// Log Action
 			LogAction("Update check failed: " + (wxString)error);
 
-			m_taskBarIcon->ShowMessage("Update Check Failed", "Error: " + (wxString)error, main_dialog);
+			if (m_taskBarIcon != NULL)
+			{
+				m_taskBarIcon->ShowMessage("Update Check Failed", "Error: " + (wxString)error, main_dialog);
+			}
 		}
 	}
 
@@ -997,7 +1049,7 @@ void onUpdate(char* error, wxString result, int WXUNUSED(x))
 	if (newVersion != "")
 	{
 		// Check Version
-		if (newVersion != version)
+		if (newVersion != version && about != NULL && notebook != NULL)
 		{
 			// Log Action
 			LogAction("Found a new Version: " + newVersion);
@@ -1016,15 +1068,20 @@ void onUpdate(char* error, wxString result, int WXUNUSED(x))
 			// Goto About
 			notebook->SetSelection(4);
 
-
-			m_taskBarIcon->ShowMessage("New Version", "New version " + newVersion + " is now available!", main_dialog);
+			if (m_taskBarIcon != NULL)
+			{
+				m_taskBarIcon->ShowMessage("New Version", "New version " + newVersion + " is now available!", main_dialog);
+			}
 		}
 		else
 		{
 			// Log Action
 			LogAction("Version is up to date");
 
-			m_taskBarIcon->ShowMessage("Up to Date", "Your Call Admin Client is up to date", main_dialog);
+			if (m_taskBarIcon != NULL)
+			{
+				m_taskBarIcon->ShowMessage("Up to Date", "Your Call Admin Client is up to date", main_dialog);
+			}
 		}
 	}
 }

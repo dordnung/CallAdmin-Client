@@ -52,6 +52,7 @@ extern wxString page;
 extern wxString key;
 
 extern bool steamEnabled;
+extern bool hideOnMinimize;
 
 
 // Config
@@ -69,6 +70,7 @@ private:
 	wxTextCtrl* pageText;
 	wxTextCtrl* keyText;
 	wxCheckBox* steamEnable;
+	wxCheckBox* hideMini;
 
 public:
 	ConfigPanel(wxNotebook* note);
@@ -79,6 +81,7 @@ protected:
 	void OnHide(wxCommandEvent& event);
 
 	void OnCheckBox(wxCommandEvent& event);
+	void OnCheckBox2(wxCommandEvent& event);
 
 	void parseConfig();
 

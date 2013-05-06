@@ -105,7 +105,7 @@ protected:
 	void OnReconnect(wxCommandEvent& event);
 
 	void OnCloseWindow(wxCloseEvent& event);
-
+	void OnMinimizeWindow(wxIconizeEvent& event);
 	void OnBoxClick(wxCommandEvent& event);
 
 	void OnCheckBox(wxCommandEvent& event);

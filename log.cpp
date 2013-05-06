@@ -79,7 +79,10 @@ LogPanel::LogPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 // Add Action to the logBox
 void LogPanel::addLog(wxString log)
 {
-	logBox->SetSelection(logBox->Append(wxString::FromUTF8(log)));
+	if (logBox != NULL)
+	{
+		logBox->SetSelection(logBox->Append(wxString::FromUTF8(log)));
+	}
 }
 
 

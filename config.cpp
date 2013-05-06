@@ -54,6 +54,7 @@ wxString key = "";
 
 // Steam Enabled?
 bool steamEnabled = true;
+bool hideOnMinimize = false;
 
 
 // The config
@@ -65,6 +66,7 @@ enum
 {
 	wxID_SetConfig = wxID_HIGHEST+400,
 	wxID_SteamUpdate,
+	wxID_HideUpdate,
 };
 
 
@@ -73,6 +75,7 @@ BEGIN_EVENT_TABLE(ConfigPanel, wxPanel)
 	EVT_BUTTON(wxID_SetConfig, ConfigPanel::OnSet)
 
 	EVT_CHECKBOX(wxID_SteamUpdate, ConfigPanel::OnCheckBox)
+	EVT_CHECKBOX(wxID_HideUpdate, ConfigPanel::OnCheckBox2)
 END_EVENT_TABLE()
 
 
@@ -133,7 +136,7 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 	// Add to Grid
 	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
-    gridSizer->Add(keyText, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
+	gridSizer->Add(keyText, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxEXPAND);
 
 
 
@@ -216,13 +219,31 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 
 	// Steam support
-	steamEnable = new wxCheckBox(this, wxID_SteamUpdate, "Enable Steam Support (Alpha)");
-	steamEnable->SetValue(false);
+	steamEnable = new wxCheckBox(this, wxID_SteamUpdate, "Enable Steam Support");
+	steamEnable->SetValue(true);
 
-
+	
 	// Add Steam
 	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
 	gridSizer->Add(steamEnable, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxRIGHT);
+
+
+
+
+	// Ask for hide on mini
+	text = new wxStaticText(this, wxID_ANY, "Hide windows on minimize: ");
+	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+
+	
+	// Add
+	hideMini = new wxCheckBox(this, wxID_HideUpdate, "Hide on Minimize");
+	hideMini->SetValue(false);
+
+
+	// Add Hide on minimize
+	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
+	gridSizer->Add(hideMini, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxRIGHT);
+
 
 
 
@@ -252,13 +273,36 @@ ConfigPanel::ConfigPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 void ConfigPanel::OnCheckBox(wxCommandEvent& WXUNUSED(event))
 {
 	// Read config value
-	steamEnabled = steamEnable->GetValue();
+	if (steamEnable != NULL && g_config != NULL)
+	{
+		steamEnabled = steamEnable->GetValue();
 
-	// Write to config file
-	g_config->Write("steam", steamEnabled);
+		// Write to config file
+		g_config->Write("steam", steamEnabled);
 
-	// Log Action
-	LogAction("Changed Steam Status");
+		// Log Action
+		LogAction("Changed Steam Status");
+	}
+}
+
+
+
+
+
+// Hide On Minimize Updated -> Set Config
+void ConfigPanel::OnCheckBox2(wxCommandEvent& WXUNUSED(event))
+{
+	// Read config value
+	if (hideMini != NULL && g_config != NULL)
+	{
+		hideOnMinimize = hideMini->GetValue();
+
+		// Write to config file
+		g_config->Write("hideonminimize", hideOnMinimize);
+
+		// Log Action
+		LogAction("Changed Hide on Minimize Status");
+	}
 }
 
 
@@ -267,6 +311,12 @@ void ConfigPanel::OnCheckBox(wxCommandEvent& WXUNUSED(event))
 // Button Event -> Try to set new config
 void ConfigPanel::OnSet(wxCommandEvent& WXUNUSED(event))
 {
+	// Valid?
+	if (hideMini == NULL || timeoutSlider == NULL || stepSlider == NULL || attemptsSlider == NULL || lastCalls == NULL || pageText == NULL || keyText == NULL || g_config == NULL || main_dialog == NULL || notebook == NULL)
+	{
+		return;
+	}
+
 	// Read config values
 	timeout = timeoutSlider->GetValue();
 	step = stepSlider->GetValue();
@@ -309,6 +359,12 @@ void ConfigPanel::OnSet(wxCommandEvent& WXUNUSED(event))
 // parse Config
 void ConfigPanel::parseConfig()
 {
+	// Valid?
+	if (hideMini == NULL || timeoutSlider == NULL || stepSlider == NULL || attemptsSlider == NULL || lastCalls == NULL || pageText == NULL || keyText == NULL || g_config == NULL || main_dialog == NULL)
+	{
+		return;
+	}
+
 	bool foundConfigError = false;
 
 	// Log Action
@@ -331,6 +387,7 @@ void ConfigPanel::parseConfig()
 			lastCalls = g_config->ReadLong("lastcalls", 25l);
 
 			steamEnabled = g_config->ReadBool("steam", true);
+			hideOnMinimize = g_config->ReadBool("hideonminimize", false);
 
 			g_config->Read("page", &page, "");
 
@@ -410,7 +467,7 @@ void ConfigPanel::parseConfig()
 		keyText->SetValue(key);
 
 		steamEnable->SetValue(steamEnabled);
-
+		hideMini->SetValue(hideOnMinimize);
 
 		// Calls are unimportant
 		for (int i=0; i < MAXCALLS; i++)

@@ -56,6 +56,7 @@ enum
 BEGIN_EVENT_TABLE(UpdateDialog, wxDialog)
 	EVT_COMMAND(wxID_UpdateUpdated, wxEVT_COMMAND_MENU_SELECTED, UpdateDialog::OnUpdate)
 	EVT_COMMAND(wxID_UpdateFinish, wxEVT_COMMAND_MENU_SELECTED, UpdateDialog::OnFinish)
+
 	EVT_CLOSE(UpdateDialog::OnCloseWindow)
 END_EVENT_TABLE()
 
@@ -158,6 +159,12 @@ UpdateDialog::UpdateDialog() : wxDialog(NULL, wxID_ANY, "Update CallAdmin", wxDe
 // Progress Update
 void UpdateDialog::OnUpdate(wxCommandEvent& event)
 {
+	// valid?
+	if (dlinfo == NULL || progressBar == NULL || panel == NULL)
+	{
+		return;
+	}
+
 	// Set new Text
 	dlinfo->SetLabelText(event.GetString());
 
@@ -178,6 +185,12 @@ void UpdateDialog::OnUpdate(wxCommandEvent& event)
 // Update Finished
 void UpdateDialog::OnFinish(wxCommandEvent& event)
 {
+	// valid?
+	if (dlstatus == NULL || progressBar == NULL || m_taskBarIcon == NULL || panel == NULL)
+	{
+		return;
+	}
+
 	// Update Progress Bar
 	progressBar->SetValue(100);
 
@@ -255,6 +268,13 @@ wxThread::ExitCode updateThread::Entry()
 			// Open File
 			fp = fopen(path + ".new", "wb");
 
+
+			if (fp == NULL)
+			{
+				return (wxThread::ExitCode)1;
+			}
+
+
 			// Reset Prog time
 			prog.curl = curl;
 
@@ -326,9 +346,14 @@ wxThread::ExitCode updateThread::Entry()
 size_t write_data_file(void *ptr, size_t size, size_t nmemb, FILE *stream) 
 {
 	// Write
-	size_t written = fwrite(ptr, size, nmemb, stream);
+	if (ptr != NULL)
+	{
+		size_t written = fwrite(ptr, size, nmemb, stream);
 
-	return written;
+		return written;
+	}
+
+	return (size_t) -1;
 }
 
 
@@ -340,6 +365,13 @@ int progress_updated(void *p, double dltotal, double dlnow, double WXUNUSED(ulto
 {
 	// Get progress strucht
 	struct dlProgress *myp = (struct dlProgress *)p;
+
+	// valid?
+	if (myp == NULL)
+	{
+		return -1;
+	}
+
 
 	// Get Curl
 	CURL *curl = myp->curl;
@@ -377,7 +409,7 @@ int progress_updated(void *p, double dltotal, double dlnow, double WXUNUSED(ulto
 void UpdateDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
 {
 	// Update running?
-	if (update_thread != NULL)
+	if (update_thread != NULL && m_taskBarIcon != NULL)
 	{
 		// Update is running
 		m_taskBarIcon->ShowMessage("Please Wait", "Please wait until download is finished", this);

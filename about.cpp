@@ -163,7 +163,7 @@ AboutPanel::AboutPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 
 	// OSW
-	text = new wxStaticText(this, wxID_ANY, "OpenSteamWorks 7/3/13");
+	text = new wxStaticText(this, wxID_ANY, "OpenSteamWorks 18/4/13");
 	text->SetFont(wxFont(12, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
@@ -227,6 +227,9 @@ void AboutPanel::OnDownload(wxCommandEvent& WXUNUSED(event))
 	else
 	{
 		// Update already running
-		m_taskBarIcon->ShowMessage("Update running", "Update is already running", this);
+		if (m_taskBarIcon != NULL)
+		{
+			m_taskBarIcon->ShowMessage("Update running", "Update is already running", this);
+		}
 	}
 }

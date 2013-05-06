@@ -65,6 +65,7 @@ BEGIN_EVENT_TABLE(MainDialog, wxDialog)
 	EVT_COMMAND(wxID_SteamChanged, wxEVT_COMMAND_MENU_SELECTED, MainDialog::OnSteamChange)
 
 	EVT_CLOSE(MainDialog::OnCloseWindow)
+	EVT_ICONIZE(MainDialog::OnMinimizeWindow)
 
 	EVT_LISTBOX_DCLICK(wxID_BoxClick, MainDialog::OnBoxClick)
 END_EVENT_TABLE()
@@ -77,7 +78,23 @@ void MainDialog::createWindow(bool taskbar)
 	// Create Notebook and panel
 	notebook = new wxNotebook(this, wxID_ANY);
 
+
+	// Valid?
+	if (notebook == NULL)
+	{
+		return;
+	}
+
+
 	panel = new wxPanel(notebook, wxID_ANY);
+
+
+	// Valid?
+	if (panel == NULL)
+	{
+		return;
+	}
+
 
 	// Add Main Page
 	notebook->AddPage(panel, ("Main"));
@@ -164,7 +181,7 @@ void MainDialog::createWindow(bool taskbar)
 
 
 
-	eventText = new wxStaticText(panel, wxID_ANY,  "Waiting for a new event...");
+	eventText = new wxStaticText(panel, wxID_ANY,  "Waiting for a new report...");
 
 	eventText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 	eventText->SetForegroundColour(wxColor("blue"));
@@ -444,7 +461,7 @@ void MainDialog::OnBoxClick(wxCommandEvent& WXUNUSED(event))
 {
 	int selection = callBox->GetSelection();
 
-	if (call_dialogs[selection] != NULL)
+	if (call_dialogs != NULL && call_dialogs[selection] != NULL)
 	{
 		call_dialogs[selection]->Show(true);
 		call_dialogs[selection]->Restore();
@@ -452,11 +469,35 @@ void MainDialog::OnBoxClick(wxCommandEvent& WXUNUSED(event))
 }
 
 
-// Window Event -> Hide Window
+// Window Event -> exit programm
 void MainDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
 {
 	exitProgramm();
 }
+
+
+
+// Window Event -> Hide Window
+void MainDialog::OnMinimizeWindow(wxIconizeEvent& WXUNUSED(event))
+{
+	if (hideOnMinimize)
+	{
+		// Log Action
+		LogAction("Hided Window");
+
+		if (m_taskBarIcon != NULL)
+		{
+			m_taskBarIcon->ShowMessage("Call Admin", "Call Admin is now in the taskbar!", this);
+
+			Show(false);
+		}
+		else
+		{
+			Iconize(true);
+		}
+	}
+}
+
 
 
 // Update Call List
@@ -466,7 +507,7 @@ void MainDialog::updateCall()
 
 	for (int i=0; i < MAXCALLS; i++)
 	{
-		if (call_dialogs[i] != NULL)
+		if (call_dialogs != NULL && call_dialogs[i] != NULL)
 		{
 			callBox->SetSelection(callBox->Append(wxString::FromUTF8(call_dialogs[i]->getBoxText())));
 		}

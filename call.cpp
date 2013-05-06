@@ -71,7 +71,9 @@ BEGIN_EVENT_TABLE(CallDialog, wxDialog)
 	EVT_BUTTON(wxID_ContactClient, CallDialog::OnContactClient)
 	EVT_BUTTON(wxID_ContactTarget, CallDialog::OnContactTarget)
 	EVT_BUTTON(wxID_ContactTrackers, CallDialog::OnContactTrackers)
+
 	EVT_CLOSE(CallDialog::OnCloseWindow)
+	EVT_ICONIZE(CallDialog::OnMinimizeWindow)
 END_EVENT_TABLE()
 
 
@@ -85,7 +87,15 @@ void CallDialog::startCall(bool show)
 
 	// Panel
 	wxPanel* panel = new wxPanel(this, wxID_ANY);
-	
+
+
+	// Valid?
+	if (sizerTop == NULL || panel == NULL)
+	{
+		return;
+	}
+
+
 	// Border and Center
 	wxSizerFlags flags;
 	wxStaticText* text;
@@ -98,6 +108,14 @@ void CallDialog::startCall(bool show)
 
 	// ToolTip for Contact friend 
 	wxToolTip* contactTooltip = new wxToolTip("This will open a Steam chat with this client.");
+
+
+	// Valid?
+	if (contactTooltip == NULL)
+	{
+		return;
+	}
+
 
 	contactTooltip->SetDelay(500);
 	contactTooltip->Enable(true);
@@ -510,6 +528,8 @@ void onGetTrackers(char* errors, wxString result, int x)
 	bool found = false;
 
 
+
+
 	if (result != "")
 	{
 		// Everything good :)
@@ -555,7 +575,7 @@ void onGetTrackers(char* errors, wxString result, int x)
 						for (tinyxml2::XMLNode *node3 = node2->FirstChild(); node3; node3 = node3->NextSibling())
 						{
 							// Found steamid
-							if ((wxString)node3->Value() == "trackerID")
+							if ((wxString)node3->Value() == "trackerID" && steamFriends != NULL && call_dialogs != NULL && call_dialogs[x] != NULL)
 							{
 								std::string steamidString = node3->FirstChild()->Value();
 
@@ -677,7 +697,7 @@ void onChecked(char* errors, wxString result, int x)
 					}
 
 					// Success?
-					if ((wxString)node->Value() == "success")
+					if ((wxString)node->Value() == "success" && call_dialogs != NULL && call_dialogs[x] != NULL)
 					{
 						call_dialogs[x]->takeover->Enable(false);
 
@@ -722,4 +742,16 @@ void onChecked(char* errors, wxString result, int x)
 void CallDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
 {
 	Show(false);
+}
+
+
+
+
+// Window Event -> Hide Window
+void CallDialog::OnMinimizeWindow(wxIconizeEvent& WXUNUSED(event))
+{
+	if (hideOnMinimize)
+	{
+		Show(false);
+	}
 }
