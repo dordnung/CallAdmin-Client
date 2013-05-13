@@ -77,7 +77,7 @@ AboutPanel::AboutPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 
 	// Create Box
-	wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
+	sizerTop = new wxBoxSizer(wxVERTICAL);
 
 
 	// Call Admin

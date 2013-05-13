@@ -94,7 +94,7 @@ bool end = false;
 
 
 // Version
-wxString version = "0.47B";
+wxString version = "0.48B";
 std::string updateURL = "http://popoklopsi.de/calladmin/version.txt";
 
 
@@ -142,6 +142,10 @@ static const wxCmdLineEntryDesc g_cmdLineDesc [] =
 
 // Timer already run?
 bool timerStarted = false;
+
+
+// First fetch time
+time_t firstFetch;
 
 
 // Implement the APP
@@ -309,7 +313,7 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 	}
 	else
 	{
-		pager = (page + "/notice.php?from=" + (wxString() << (step * 2)) + "&from_type=interval&key=" + key + "&sort=asc");
+		pager = (page + "/notice.php?from=" + (wxString() << (step * 2)) + "&from_type=interval&key=" + key + "&sort=asc&handled=" + (wxString() << (time(0) - firstFetch)));
 	}
 
 
@@ -333,6 +337,8 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 	// First Run?
 	if (!timerStarted)
 	{
+		firstFetch = time(0);
+
 		timerStarted = true;
 		firstRun = true;
 	}
@@ -440,13 +446,15 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 						// Row Count
 						if ((wxString)node2->Value() == "foundRows")
 						{
-								continue;
+							continue;
 						}
+
 
 						int dialog = -1;
 
+
 						// Normal Stepp
-						if (!firstRun && call_dialogs != NULL)
+						if (!firstRun)
 						{
 							// Look for a free place
 							for (int i=0; i < MAXCALLS; i++)
@@ -479,6 +487,7 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 							// First run, update call list
 							dialog = foundRows - 1;
 						}
+
 
 						// Api is fine :)
 						int found = 0;
@@ -551,6 +560,12 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 								found++;
 								newDialog->setTime(node3->FirstChild()->Value());
 							}
+
+							if ((wxString)node3->Value() == "callHandled")
+							{
+								found++;
+								newDialog->setHandled(strcmp(node3->FirstChild()->Value(), "1") == 0);
+							}
 						}
 
 						bool findDuplicate = false;
@@ -568,6 +583,12 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 									{
 										findDuplicate = true;
 
+										// Call is now handled
+										if (newDialog->getHandled() && !call_dialogs[i]->getHandled())
+										{
+											main_dialog->setHandled(i);
+										}
+
 										// That's enough
 										break;
 									}
@@ -576,7 +597,7 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 						}
 
 						// Found all necessary items?
-						if (found != 9 || findDuplicate)
+						if (found != 10 || findDuplicate)
 						{
 							// Something went wrong or duplicate
 							newDialog->Destroy();
@@ -624,6 +645,8 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 								newDialog->startCall(main_dialog->isAvailable() && !isOtherInFullscreen());
 							}
 
+							newDialog->takeover->Enable(!newDialog->getHandled());
+
 							call_dialogs[dialog] = newDialog;
 						}
 					}
@@ -638,7 +661,7 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 
 				// Updated Main Interface
 				main_dialog->SetTitle("Call Admin Client");
-				main_dialog->setEventText("Waiting for a new event...");
+				main_dialog->setEventText("Waiting for a new report...");
 
 				// Update Call List
 				if (foundNew)

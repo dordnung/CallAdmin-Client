@@ -49,12 +49,13 @@ class AboutPanel: public wxPanel
 private:
 	wxButton* downloadButton;
 	wxStaticText* currentText;
+	wxSizer* sizerTop;
 
 public:
 	AboutPanel(wxNotebook* note);
 
 	void enableDownload(bool enable) {downloadButton->Enable(enable);}
-	void updateVersion(wxString cversion, wxColor color) {currentText->SetLabelText("Current version: " + cversion); currentText->SetForegroundColour(color);}
+	void updateVersion(wxString cversion, wxColor color) {currentText->SetLabelText("Current version: " + cversion); currentText->SetForegroundColour(color); sizerTop->Layout();}
 
 protected:
 	void OnUpdate(wxCommandEvent& event);

@@ -30,7 +30,6 @@
 
 // Include Project
 #include "main.h"
-#include "call.h"
 #include "log.h"
 #include "about.h"
 #include "trackers.h"
@@ -509,7 +508,20 @@ void MainDialog::updateCall()
 	{
 		if (call_dialogs != NULL && call_dialogs[i] != NULL)
 		{
-			callBox->SetSelection(callBox->Append(wxString::FromUTF8(call_dialogs[i]->getBoxText())));
+			int item;
+
+			
+			if (call_dialogs[i]->getHandled())
+			{
+				item = callBox->Append("F - " + wxString::FromUTF8(call_dialogs[i]->getBoxText()));
+			}
+			else
+			{
+				item = callBox->Append("U - " + wxString::FromUTF8(call_dialogs[i]->getBoxText()));
+			}
+			
+
+			callBox->SetSelection(item);
 		}
 	}
 }

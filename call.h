@@ -69,7 +69,7 @@ private:
 	// Avatars
 	wxStaticBitmap* clientAvatar;
 	wxStaticBitmap* targetAvatar;
-
+	wxStaticText* doneText;
 
 	// And for the Steam API
 	CSteamID clientCID;
@@ -77,6 +77,7 @@ private:
 
 	// Item List
 	int ID;
+	bool isHandled;
 
 public:
 	CallDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxMINIMIZE_BOX) {};
@@ -99,7 +100,9 @@ public:
 	void setID(int num) {ID = num;}
 	void setTime(const char* time) {reportedAt = time;}
 	void setBoxText(wxString text) {boxText = text;}
+	void setHandled(bool handled) {isHandled = handled;}
 
+	void setFinish() {doneText->SetLabelText("Finished"); doneText->SetForegroundColour(wxColour(34, 139, 34)); sizerTop->Layout();}
 
 
 	// Convert to community ID
@@ -135,6 +138,7 @@ public:
 	CSteamID* getClientCID() {return &clientCID;}
 	CSteamID* getTargetCID() {return &targetCID;}
 
+	bool getHandled() {return isHandled;}
 
 
 	// Start the call

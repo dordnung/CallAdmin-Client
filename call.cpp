@@ -30,6 +30,7 @@
 #include <stdlib.h>
 
 // Includes Project
+#include "main.h"
 #include "call.h"
 #include "opensteam.h"
 #include "config.h"
@@ -150,7 +151,32 @@ void CallDialog::startCall(bool show)
 
 
 	// Add it
-	sizerTop->Add(text, flags.Border(wxALL &~ wxTOP, 20));
+	sizerTop->Add(text, flags.Border(wxALL &~ wxTOP &~ wxBOTTOM, 20));
+
+
+
+	// New Call At
+	if (!isHandled)
+	{
+		doneText = new wxStaticText(panel, wxID_ANY, "Unfinished");
+
+		doneText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
+		doneText->SetForegroundColour(wxColor("red"));
+	}
+	else
+	{
+		doneText = new wxStaticText(panel, wxID_ANY, "Finished");
+
+		doneText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
+		doneText->SetForegroundColour(wxColour(34, 139, 34));
+	}
+
+
+	// Add it
+	sizerTop->Add(doneText, flags.Border(wxALL &~ wxTOP, 20));
+
+
+
 	
 
 
@@ -311,6 +337,7 @@ void CallDialog::startCall(bool show)
 	// Takeover button
 	takeover = new wxButton(panel, wxID_CheckDone, "Take Over");
 	takeover->SetToolTip(takeOverTooltip);
+
 
 
 	// ToolTip for Contact Trackers button
@@ -699,7 +726,7 @@ void onChecked(char* errors, wxString result, int x)
 					// Success?
 					if ((wxString)node->Value() == "success" && call_dialogs != NULL && call_dialogs[x] != NULL)
 					{
-						call_dialogs[x]->takeover->Enable(false);
+						main_dialog->setHandled(x);
 
 						return;
 					}

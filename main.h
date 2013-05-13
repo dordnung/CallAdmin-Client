@@ -39,6 +39,7 @@
 
 #include <wx/listbox.h>
 #include <wx/notebook.h>
+#include "call.h"
 
 // Main Notebook
 extern wxNotebook* notebook;
@@ -90,14 +91,21 @@ public:
 	bool wantSound() {return (sound != NULL && sound->IsChecked());}
 
 	// Update Window
-	void setEventText(wxString text) {eventText->SetLabelText(text); eventText->Refresh(); panel->SetSizerAndFit(sizerBody, false); notebook->Fit(); Fit();}
+	void setEventText(wxString text) {eventText->SetLabelText(text); sizerBody->Layout(); eventText->Refresh(); panel->SetSizerAndFit(sizerBody, false); notebook->Fit(); Fit();}
 	void setReconnectButton(bool enable=false) {reconnectButton->Enable(enable);}
 
-	void setSteamStatus(wxString text, wxColor color) {steamText->SetLabelText(text); steamText->SetForegroundColour(color); panel->SetSizerAndFit(sizerBody, false); notebook->Fit(); Fit();}
+	void setSteamStatus(wxString text, wxColor color) {steamText->SetLabelText(text); steamText->SetForegroundColour(color); sizerBody->Layout(); panel->SetSizerAndFit(sizerBody, false); notebook->Fit(); Fit();}
 
 	// Update Call list
 	void updateCall();
 	void resetCalls() {callBox->Clear();}
+	void setHandled(int item)
+	{
+		callBox->SetString(item, "F - " + wxString::FromUTF8(call_dialogs[item]->getBoxText()));
+		call_dialogs[item]->setFinish();
+		call_dialogs[item]->takeover->Enable(false);
+	}
+
 
 protected:
 	// Button Events

@@ -167,7 +167,7 @@ void UpdateDialog::OnUpdate(wxCommandEvent& event)
 
 	// Set new Text
 	dlinfo->SetLabelText(event.GetString());
-
+	sizerTop->Layout();
 
 	// Update Progress Bar
 	progressBar->SetValue(event.GetInt());
@@ -213,7 +213,7 @@ void UpdateDialog::OnFinish(wxCommandEvent& event)
 		// Refresh Status
 		dlstatus->SetLabelText("Status: Finished!");
 		dlstatus->SetForegroundColour(wxColour(34, 139, 34));
-
+		sizerTop->Layout(); 
 
 		m_taskBarIcon->ShowMessage("Update Finished", "Downloading update is finished\nPlease restart your Call Admin Client", this);
 	}
@@ -222,7 +222,7 @@ void UpdateDialog::OnFinish(wxCommandEvent& event)
 		// Refresh Status
 		dlstatus->SetLabelText("Status: Error!");
 		dlstatus->SetForegroundColour(wxColour("red"));
-
+		sizerTop->Layout();
 
 		m_taskBarIcon->ShowMessage("Error on Update", "Couldn't download update\n" + event.GetString(), this);
 	}
