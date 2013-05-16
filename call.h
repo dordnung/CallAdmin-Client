@@ -80,7 +80,19 @@ private:
 	bool isHandled;
 
 public:
-	CallDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxMINIMIZE_BOX) {};
+	CallDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxMINIMIZE_BOX)
+	{
+		// Initialize vars
+		sizerTop = NULL;
+		clientAvatar = NULL;
+		targetAvatar = NULL;
+		doneText = NULL;
+		ID = 0;
+		isHandled = false;
+		takeover = NULL;
+		contactTrackers = NULL;
+		avatarTimer = NULL;
+	}
 
 	// Tracker button
 	wxButton* contactTrackers;

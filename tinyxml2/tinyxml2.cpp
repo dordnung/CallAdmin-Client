@@ -583,6 +583,7 @@ XMLNode::XMLNode( XMLDocument* doc ) :
 	_firstChild( 0 ), _lastChild( 0 ),
 	_prev( 0 ), _next( 0 )
 {
+	_memPool= NULL;
 }
 
 
@@ -1835,8 +1836,8 @@ void XMLPrinter::PrintString( const char* p, bool restricted )
 
 void XMLPrinter::PushHeader( bool writeBOM, bool writeDec )
 {
-	static const unsigned char bom[] = { TIXML_UTF_LEAD_0, TIXML_UTF_LEAD_1, TIXML_UTF_LEAD_2, 0 };
 	if ( writeBOM ) {
+		static const unsigned char bom[] = { TIXML_UTF_LEAD_0, TIXML_UTF_LEAD_1, TIXML_UTF_LEAD_2, 0 };
 		Print( "%s", bom );
 	}
 	if ( writeDec ) {

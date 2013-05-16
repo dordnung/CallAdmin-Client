@@ -417,7 +417,7 @@ void MainDialog::OnReconnect(wxCommandEvent& WXUNUSED(event))
 void MainDialog::OnThread(wxCommandEvent& event)
 {
 	// Get Content
-	ThreadData* data = (ThreadData*)event.GetClientObject();
+	ThreadData* data = static_cast<ThreadData *>(event.GetClientObject());
 
 	// Get Function
 	callback function = data->getCallback();

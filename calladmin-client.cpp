@@ -347,7 +347,7 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 	if (result != "")
 	{
 		// Everything good :)
-		if ((wxString)error == "")
+		if (strcmp(error, "") == 0)
 		{
 			bool foundError = false;
 			bool foundNew = false;
@@ -724,9 +724,6 @@ wxThread::ExitCode curlThread::Entry()
 {
 	if (!TestDestroy())
 	{
-		// Error
-		char ebuf[CURL_ERROR_SIZE];
-
 		// Event
 		wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_ThreadHandled);
 
@@ -738,6 +735,10 @@ wxThread::ExitCode curlThread::Entry()
 		
 		if (curl != NULL)
 		{
+			// Error
+			char ebuf[CURL_ERROR_SIZE];
+			
+			
 			// Configurate Curl
 			curl_easy_setopt(curl, CURLOPT_URL, ((std::string)page).c_str());
 			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
@@ -994,7 +995,7 @@ wxString getAppPath(wxString file)
 	size_t start = path.find_last_of("\\");
 
 
-	if (start < 0 || start == wxString::npos)
+	if (start == 0 || start == wxString::npos)
 	{
 		// No... Linux Format ;)
 		start = path.find_last_of("/");
@@ -1037,7 +1038,7 @@ void onUpdate(char* error, wxString result, int WXUNUSED(x))
 	if (result != "")
 	{
 		// Everything good :)
-		if ((wxString)error == "")
+		if (strcmp(error, "") == 0)
 		{
 			if (result.length() > 30)
 			{

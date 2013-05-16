@@ -1555,7 +1555,7 @@ public:
 		Delete a node associated with this document.
 		It will be unlinked from the DOM.
 	*/
-	void DeleteNode( XMLNode* node )	{
+	static void DeleteNode( XMLNode* node )	{
 		node->_parent->DeleteChild( node );
 	}
 
@@ -1810,6 +1810,7 @@ public:
 	const XMLDeclaration* ToDeclaration() const	{
 		return ( ( _node && _node->ToDeclaration() ) ? _node->ToDeclaration() : 0 );
 	}
+
 
 private:
 	const XMLNode* _node;

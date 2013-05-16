@@ -145,7 +145,7 @@ private:
 
 public:
 	// Init Timer
-	NameTimer(CSteamID clients) : wxTimer(this, -1) {client = clients; Start(100);}
+	NameTimer(CSteamID clients) : wxTimer(this, -1) {attempts = 0; client = clients; Start(100);}
 
 	void Notify();
 };

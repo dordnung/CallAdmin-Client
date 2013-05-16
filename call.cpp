@@ -551,16 +551,11 @@ void onGetTrackers(char* errors, wxString result, int x)
 	wxString error = "";
 
 
-	// found someone?
-	bool found = false;
-
-
-
 
 	if (result != "")
 	{
 		// Everything good :)
-		if ((wxString)errors == "")
+		if (strcmp(errors, "") == 0)
 		{
 			// Proceed XML result!
 			tinyxml2::XMLDocument doc;
@@ -585,6 +580,10 @@ void onGetTrackers(char* errors, wxString result, int x)
 				// Found Trackers?
 				if (node != NULL)
 				{
+					// found someone?
+					bool found = false;
+					
+					
 					// Tracker Loop
 					for (tinyxml2::XMLNode *node2 = node->FirstChild(); node2; node2 = node2->NextSibling())
 					{
@@ -689,7 +688,7 @@ void onChecked(char* errors, wxString result, int x)
 	if (result != "")
 	{
 		// Everything good :)
-		if ((wxString)errors == "")
+		if (strcmp(errors, "") == 0)
 		{
 			// Proceed XML result!
 			tinyxml2::XMLDocument doc;

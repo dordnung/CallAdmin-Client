@@ -250,18 +250,18 @@ wxThread::ExitCode updateThread::Entry()
 		// dl Progress
 		struct dlProgress prog;
 
-		// Error
-		char ebuf[CURL_ERROR_SIZE];
-
 		// Init Curl
 		CURL *curl = curl_easy_init();
-
-		// File Pointer
-		FILE *fp;
 
 
 		if (curl != NULL)
 		{
+			// File Pointer
+			FILE *fp;
+			
+			// Error
+			char ebuf[CURL_ERROR_SIZE];
+			
 			// Path
 			wxString path = wxStandardPaths::Get().GetExecutablePath();
 

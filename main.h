@@ -80,7 +80,19 @@ private:
 	wxStaticText* steamText;
 
 public:
-	MainDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX) {}
+	MainDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX) 
+	{
+		// Initialize vars
+		store = NULL;
+		available = NULL;
+		sound = NULL;
+		reconnectButton = NULL;
+		panel = NULL;
+		callBox = NULL;
+		sizerBody = NULL;
+		eventText = NULL;
+		steamText = NULL;
+	}
 
 	// Create the window
 	void createWindow(bool taskbar = false);
