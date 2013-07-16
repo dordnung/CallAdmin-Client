@@ -163,7 +163,7 @@ AboutPanel::AboutPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 
 	// OSW
-	text = new wxStaticText(this, wxID_ANY, "OpenSteamWorks 18/4/13");
+	text = new wxStaticText(this, wxID_ANY, "OpenSteamWorks 2013/27/5");
 	text->SetFont(wxFont(12, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it

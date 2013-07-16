@@ -54,7 +54,7 @@ HSteamUser clientUser = 0;
 ISteamFriends013* steamFriends = NULL;
 ISteamClient012* steamClient = NULL;
 ISteamUser016* steamUser = NULL;
-ISteamUtils005* steamUtils = NULL;
+ISteamUtils006* steamUtils = NULL;
 
 
 // Steam Thread
@@ -161,7 +161,7 @@ STEAM_ERROR_TYP steamThread::loadSteam()
 		}
 
 		// Load Steam Utils
-		steamUtils = (ISteamUtils005*)steamClient->GetISteamUtils(pipeSteam, STEAMUTILS_INTERFACE_VERSION_005);
+		steamUtils = (ISteamUtils006*)steamClient->GetISteamUtils(pipeSteam, STEAMUTILS_INTERFACE_VERSION_006);
 
 		if (!steamUtils)
 		{

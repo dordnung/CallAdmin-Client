@@ -66,7 +66,7 @@ extern HSteamUser clientUser;
 extern ISteamFriends013* steamFriends;
 extern ISteamClient012* steamClient;
 extern ISteamUser016* steamUser;
-extern ISteamUtils005* steamUtils;
+extern ISteamUtils006* steamUtils;
 
 
 enum STEAM_ERROR_TYP
