@@ -67,7 +67,7 @@
 // Project
 #include "calladmin-client.h"
 #include "config.h"
-#include "main.h"
+#include "mainframe.h"
 #include "log.h"
 #include "update.h"
 #include "trackers.h"

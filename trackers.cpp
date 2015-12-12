@@ -28,7 +28,7 @@
 
 // Include Project
 #include "log.h"
-#include "main.h"
+#include "mainframe.h"
 #include "call.h"
 #include "config.h"
 #include "tinyxml2/tinyxml2.h"

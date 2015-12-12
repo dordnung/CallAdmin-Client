@@ -31,7 +31,7 @@
 #include "config.h"
 #include "call.h"
 #include "log.h"
-#include "main.h"
+#include "mainframe.h"
 #include "opensteam.h"
 #include "taskbar.h"
 #include "calladmin-client.h"

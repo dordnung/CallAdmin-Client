@@ -80,7 +80,7 @@
     <ClCompile Include="..\call.cpp" />
     <ClCompile Include="..\config.cpp" />
     <ClCompile Include="..\log.cpp" />
-    <ClCompile Include="..\main.cpp" />
+    <ClCompile Include="..\mainframe.cpp" />
     <ClCompile Include="..\opensteam.cpp" />
     <ClCompile Include="..\taskbar.cpp" />
     <ClCompile Include="..\tinyxml2\tinyxml2.cpp" />
@@ -93,7 +93,7 @@
     <ClInclude Include="..\call.h" />
     <ClInclude Include="..\config.h" />
     <ClInclude Include="..\log.h" />
-    <ClInclude Include="..\main.h" />
+    <ClInclude Include="..\mainframe.h" />
     <ClInclude Include="..\opensteam.h" />
     <ClInclude Include="..\taskbar.h" />
     <ClInclude Include="..\tinyxml2\tinyxml2.h" />

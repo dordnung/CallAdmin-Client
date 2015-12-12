@@ -26,7 +26,7 @@
 
 // Includes Project
 #include "taskbar.h"
-#include "main.h"
+#include "mainframe.h"
 #include "log.h"
 #include "config.h"
 #include "calladmin-client.h"

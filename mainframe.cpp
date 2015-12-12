@@ -29,7 +29,7 @@
 
 
 // Include Project
-#include "main.h"
+#include "mainframe.h"
 #include "log.h"
 #include "about.h"
 #include "trackers.h"

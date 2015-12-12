@@ -27,7 +27,7 @@
 
 // Include Project
 #include "about.h"
-#include "main.h"
+#include "mainframe.h"
 #include "update.h"
 #include "taskbar.h"
 #include "log.h"

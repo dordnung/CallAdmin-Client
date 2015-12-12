@@ -24,7 +24,7 @@
  */
 
 #include "opensteam.h"
-#include "main.h"
+#include "mainframe.h"
 #include "log.h"
 #include "trackers.h"
 #include "config.h"
