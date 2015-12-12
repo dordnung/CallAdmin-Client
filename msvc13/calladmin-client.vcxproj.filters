@@ -5,16 +5,13 @@
       <Filter>TinyXML2</Filter>
     </ClCompile>
     <ClCompile Include="..\call.cpp">
-      <Filter>Dialogs</Filter>
+      <Filter>Dialog</Filter>
     </ClCompile>
     <ClCompile Include="..\opensteam.cpp">
       <Filter>Steam</Filter>
     </ClCompile>
     <ClCompile Include="..\taskbar.cpp">
       <Filter>Taskbar</Filter>
-    </ClCompile>
-    <ClCompile Include="..\main.cpp">
-      <Filter>Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="../calladmin-client.cpp">
       <Filter>Main</Filter>
@@ -32,7 +29,10 @@
       <Filter>Panel</Filter>
     </ClCompile>
     <ClCompile Include="..\update.cpp">
-      <Filter>Dialogs</Filter>
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\main.cpp">
+      <Filter>Frame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -40,16 +40,13 @@
       <Filter>TinyXML2</Filter>
     </ClInclude>
     <ClInclude Include="..\call.h">
-      <Filter>Dialogs</Filter>
+      <Filter>Dialog</Filter>
     </ClInclude>
     <ClInclude Include="..\opensteam.h">
       <Filter>Steam</Filter>
     </ClInclude>
     <ClInclude Include="..\taskbar.h">
       <Filter>Taskbar</Filter>
-    </ClInclude>
-    <ClInclude Include="..\main.h">
-      <Filter>Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="../calladmin-client.h">
       <Filter>Main</Filter>
@@ -67,15 +64,15 @@
       <Filter>Panel</Filter>
     </ClInclude>
     <ClInclude Include="..\update.h">
-      <Filter>Dialogs</Filter>
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\main.h">
+      <Filter>Frame</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TinyXML2">
       <UniqueIdentifier>{b833f0af-e32e-4318-a27a-53fde17dcc98}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Dialogs">
-      <UniqueIdentifier>{2149f6a4-1176-488e-a8d4-fef78fc4cb4c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Steam">
       <UniqueIdentifier>{d7fa3297-b19f-4680-9320-97d98a545907}</UniqueIdentifier>
@@ -91,6 +88,12 @@
     </Filter>
     <Filter Include="Panel">
       <UniqueIdentifier>{79060fd2-57f7-43e2-972e-105413197e02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frame">
+      <UniqueIdentifier>{44d00b88-49e4-4049-9647-f95a898d783f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dialog">
+      <UniqueIdentifier>{2149f6a4-1176-488e-a8d4-fef78fc4cb4c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
