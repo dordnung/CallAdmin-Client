@@ -725,7 +725,7 @@ void onChecked(char* errors, wxString result, int x)
 					// Success?
 					if ((wxString)node->Value() == "success" && call_dialogs != NULL && call_dialogs[x] != NULL)
 					{
-						main_dialog->setHandled(x);
+						mainFrame->setHandled(x);
 
 						return;
 					}

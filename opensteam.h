@@ -63,10 +63,10 @@ extern bool steamConnected;
 // Var to send messages
 extern HSteamPipe pipeSteam;
 extern HSteamUser clientUser;
-extern ISteamFriends013* steamFriends;
-extern ISteamClient012* steamClient;
-extern ISteamUser016* steamUser;
-extern ISteamUtils006* steamUtils;
+extern ISteamFriends015* steamFriends;
+extern ISteamClient017* steamClient;
+extern ISteamUser017* steamUser;
+extern ISteamUtils007* steamUtils;
 
 
 enum STEAM_ERROR_TYP

@@ -51,10 +51,10 @@ bool steamConnected = false;
 // Var to send messages
 HSteamPipe pipeSteam = 0;
 HSteamUser clientUser = 0;
-ISteamFriends013* steamFriends = NULL;
-ISteamClient012* steamClient = NULL;
-ISteamUser016* steamUser = NULL;
-ISteamUtils006* steamUtils = NULL;
+ISteamFriends015* steamFriends = NULL;
+ISteamClient017* steamClient = NULL;
+ISteamUser017* steamUser = NULL;
+ISteamUtils007* steamUtils = NULL;
 
 
 // Steam Thread
@@ -105,7 +105,7 @@ STEAM_ERROR_TYP steamThread::loadSteam()
 		}
 
 		// Load Steam Client
-		steamClient = (ISteamClient012*)factory(STEAMCLIENT_INTERFACE_VERSION_012, NULL);
+		steamClient = (ISteamClient017*)factory(STEAMCLIENT_INTERFACE_VERSION_012, NULL);
 
 		if (!steamClient)
 		{
@@ -145,7 +145,7 @@ STEAM_ERROR_TYP steamThread::loadSteam()
 		}
 
 		// Load SteamFriends
-		steamFriends = (ISteamFriends013*)steamClient->GetISteamFriends(clientUser, pipeSteam, STEAMFRIENDS_INTERFACE_VERSION_013);
+		steamFriends = (ISteamFriends015*)steamClient->GetISteamFriends(clientUser, pipeSteam, STEAMFRIENDS_INTERFACE_VERSION_013);
 		
 		if (!steamFriends)
 		{
@@ -153,7 +153,7 @@ STEAM_ERROR_TYP steamThread::loadSteam()
 		}
 
 		// Load Steam User
-		steamUser = (ISteamUser016*)steamClient->GetISteamUser(clientUser, pipeSteam, STEAMUSER_INTERFACE_VERSION_016);
+		steamUser = (ISteamUser017*)steamClient->GetISteamUser(clientUser, pipeSteam, STEAMUSER_INTERFACE_VERSION_016);
 		
 		if (!steamUser)
 		{
@@ -161,7 +161,7 @@ STEAM_ERROR_TYP steamThread::loadSteam()
 		}
 
 		// Load Steam Utils
-		steamUtils = (ISteamUtils006*)steamClient->GetISteamUtils(pipeSteam, STEAMUTILS_INTERFACE_VERSION_006);
+		steamUtils = (ISteamUtils007*)steamClient->GetISteamUtils(pipeSteam, STEAMUTILS_INTERFACE_VERSION_006);
 
 		if (!steamUtils)
 		{
@@ -193,12 +193,12 @@ void steamThread::checkSteam()
 				if (steamError == STEAM_ERROR)
 				{
 					// Only if connected before
-					if (main_dialog != NULL && steamConnected)
+					if (mainFrame != NULL && steamConnected)
 					{
 						// Notice Main the changes
 						event.SetInt(1);
 
-						main_dialog->GetEventHandler()->AddPendingEvent(event);
+						mainFrame->GetEventHandler()->AddPendingEvent(event);
 
 						LogAction("Disonnected from Steam");
 					}
@@ -206,12 +206,12 @@ void steamThread::checkSteam()
 				else
 				{
 					// Disabled
-					if (main_dialog != NULL && lastError != STEAM_DISABLED)
+					if (mainFrame != NULL && lastError != STEAM_DISABLED)
 					{
 						// Notice Main the changes
 						event.SetInt(0);
 
-						main_dialog->GetEventHandler()->AddPendingEvent(event);
+						mainFrame->GetEventHandler()->AddPendingEvent(event);
 
 						// clean
 						cleanSteam();
@@ -231,9 +231,9 @@ void steamThread::checkSteam()
 				// Notice Main the changes
 				event.SetInt(2);
 
-				if (main_dialog != NULL)
+				if (mainFrame != NULL)
 				{
-					main_dialog->GetEventHandler()->AddPendingEvent(event);
+					mainFrame->GetEventHandler()->AddPendingEvent(event);
 				}
 
 				LogAction("Connected to Steam");
@@ -255,12 +255,12 @@ void steamThread::checkSteam()
 				if (!steamUser->BLoggedOn())
 				{
 					// Only if connected before
-					if (main_dialog != NULL && steamConnected)
+					if (mainFrame != NULL && steamConnected)
 					{
 						// Notice Main the changes
 						event.SetInt(1);
 
-						main_dialog->GetEventHandler()->AddPendingEvent(event);
+						mainFrame->GetEventHandler()->AddPendingEvent(event);
 
 						LogAction("Disonnected from Steam");
 					}
@@ -284,12 +284,12 @@ void steamThread::checkSteam()
 			if (callbackMsg.m_iCallback == IPCFailure_t::k_iCallback)
 			{
 				// Only if connected before
-				if (main_dialog != NULL && steamConnected)
+				if (mainFrame != NULL && steamConnected)
 				{
 					// Notice Main the changes
 					event.SetInt(1);
 
-					main_dialog->GetEventHandler()->AddPendingEvent(event);
+					mainFrame->GetEventHandler()->AddPendingEvent(event);
 
 					LogAction("Disonnected from Steam");
 				}

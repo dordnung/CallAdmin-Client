@@ -44,7 +44,7 @@
 #include <wx/tooltip.h>
 
 // Main Dialog
-MainDialog *main_dialog = NULL;
+MainFrame *mainFrame = NULL;
 
 
 // Notebook
@@ -54,25 +54,25 @@ wxNotebook* notebook = NULL;
 
 
 // Button Events for Main Dialog
-BEGIN_EVENT_TABLE(MainDialog, wxDialog)
-	EVT_BUTTON(wxID_Hide, MainDialog::OnHide)
-	EVT_BUTTON(wxID_Reconnect, MainDialog::OnReconnect)
+BEGIN_EVENT_TABLE(MainFrame, wxFrame)
+	EVT_BUTTON(wxID_Hide, MainFrame::OnHide)
+	EVT_BUTTON(wxID_Reconnect, MainFrame::OnReconnect)
 
-	EVT_CHECKBOX(wxID_CheckBox, MainDialog::OnCheckBox)
+	EVT_CHECKBOX(wxID_CheckBox, MainFrame::OnCheckBox)
 
-	EVT_COMMAND(wxID_ThreadHandled, wxEVT_COMMAND_MENU_SELECTED, MainDialog::OnThread)
-	EVT_COMMAND(wxID_SteamChanged, wxEVT_COMMAND_MENU_SELECTED, MainDialog::OnSteamChange)
+	EVT_COMMAND(wxID_ThreadHandled, wxEVT_COMMAND_MENU_SELECTED, MainFrame::OnThread)
+	EVT_COMMAND(wxID_SteamChanged, wxEVT_COMMAND_MENU_SELECTED, MainFrame::OnSteamChange)
 
-	EVT_CLOSE(MainDialog::OnCloseWindow)
-	EVT_ICONIZE(MainDialog::OnMinimizeWindow)
+	EVT_CLOSE(MainFrame::OnCloseWindow)
+	EVT_ICONIZE(MainFrame::OnMinimizeWindow)
 
-	EVT_LISTBOX_DCLICK(wxID_BoxClick, MainDialog::OnBoxClick)
+	EVT_LISTBOX_DCLICK(wxID_BoxClick, MainFrame::OnBoxClick)
 END_EVENT_TABLE()
 
 
 
 // Create Main Window
-void MainDialog::createWindow(bool taskbar)
+void MainFrame::createWindow(bool taskbar)
 {
 	// Create Notebook and panel
 	notebook = new wxNotebook(this, wxID_ANY);
@@ -99,7 +99,6 @@ void MainDialog::createWindow(bool taskbar)
 	notebook->AddPage(panel, ("Main"));
 
 	// Border and Center
-	wxSizerFlags flags;
 	wxStaticText* text;
 
 	// Hole Body
@@ -117,19 +116,9 @@ void MainDialog::createWindow(bool taskbar)
 	// Add to Body
 	sizerBox->Add(callBox, 0, wxEXPAND | wxALL, 5);
 	sizerBody->Add(sizerBox, 0, wxEXPAND | wxALL, 5);
-	
-
 
 	// Create Box
 	wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
-
-
-
-	// Border and Centre
-	flags.Border(wxALL, 10);
-	flags.Centre();
-
-
 
 	// Space
 	sizerTop->Add(0, 0, 0, wxBOTTOM, 15);
@@ -142,18 +131,11 @@ void MainDialog::createWindow(bool taskbar)
 	text->SetFont(wxFont(30, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
-	sizerTop->Add(text, flags.Border(wxALL &~ wxTOP, 40));
-
-
-	// Restore Border
-	flags.Border(wxALL, 10);
-
+	sizerTop->Add(text, 0, wxBOTTOM | wxLEFT | wxRIGHT | wxALIGN_CENTER, 40);
 
 
 	// Space
 	sizerTop->Add(0, 0, 0, wxTOP, 20);
-
-	
 
 	// Static line
 	sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 5);
@@ -166,7 +148,7 @@ void MainDialog::createWindow(bool taskbar)
 	steamText->SetForegroundColour(wxColor("red"));
 
 	// Add it
-	sizerTop->Add(steamText, flags);
+	sizerTop->Add(steamText, 0, wxALL | wxALIGN_CENTER, 10);
 
 
 
@@ -185,7 +167,7 @@ void MainDialog::createWindow(bool taskbar)
 	eventText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 	eventText->SetForegroundColour(wxColor("blue"));
 
-	sizerTop->Add(eventText, flags);
+	sizerTop->Add(eventText, 0, wxALL | wxALIGN_CENTER, 10);
 
 
 
@@ -218,7 +200,7 @@ void MainDialog::createWindow(bool taskbar)
 	available->SetValue(g_config->ReadBool("available", true));
 	available->SetToolTip(tipAvailable);
 
-	sizerChecks->Add(available , flags.Border(wxALL, 5));
+	sizerChecks->Add(available, 0, wxALL | wxALIGN_CENTER, 5);
 
 	// ToolTip for second Checkbox
 	wxToolTip* tipSound = new wxToolTip("You will hear a notification sound on an incoming call.");
@@ -234,7 +216,7 @@ void MainDialog::createWindow(bool taskbar)
 	sound->SetValue(g_config->ReadBool("sound", true));
 	sound->SetToolTip(tipSound);
 
-	sizerChecks->Add(sound, flags.Border(wxALL, 5));
+	sizerChecks->Add(sound, 0, wxALL | wxALIGN_CENTER, 5);
 
 	// ToolTip for third Checkbox
 	wxToolTip* specAvailable = new wxToolTip("You will only receive calls but you will not be stored in the trackers database");
@@ -251,12 +233,12 @@ void MainDialog::createWindow(bool taskbar)
 	store->SetValue(g_config->ReadBool("spectate", false));
 	store->SetToolTip(specAvailable);
 
-	sizerChecks->Add(store, flags.Border(wxALL, 5));
+	sizerChecks->Add(store, 0, wxALL | wxALIGN_CENTER, 5);
 
 
 
 	// Hide, Check
-	sizerBtns->Add(new wxButton(panel, wxID_Hide, "Hide"), flags.Border(wxALL &~ wxBOTTOM &~ wxRIGHT, 5));
+	sizerBtns->Add(new wxButton(panel, wxID_Hide, "Hide"), 0, wxTOP | wxLEFT | wxALIGN_CENTER, 5);
 
 
 
@@ -264,15 +246,14 @@ void MainDialog::createWindow(bool taskbar)
 	reconnectButton = new wxButton(panel, wxID_Reconnect, "Reconnect");
 	reconnectButton->Enable(false);
 
-	sizerBtns->Add(reconnectButton, flags.Border(wxALL &~ wxBOTTOM &~ wxLEFT, 5));
-
+	sizerBtns->Add(reconnectButton, 0, wxTOP | wxRIGHT | wxALIGN_CENTER, 5);
 
 
 	// Add Checks to Box
-	sizerTop->Add(sizerChecks, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	sizerTop->Add(sizerChecks, 0, wxTOP | wxRIGHT | wxALIGN_CENTER_HORIZONTAL, 5);
 
 	// Add Buttons to Box
-	sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL &~ wxBOTTOM, 5));
+	sizerTop->Add(sizerBtns, 0, wxTOP | wxRIGHT | wxLEFT | wxALIGN_CENTER_HORIZONTAL, 5);
 
 
 
@@ -282,12 +263,12 @@ void MainDialog::createWindow(bool taskbar)
 	text->SetFont(wxFont(8, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
-	sizerTop->Add(text, flags.Align(wxALIGN_RIGHT).Border(wxALL &~ wxBOTTOM, 10));
+	sizerTop->Add(text, 0, wxTOP | wxRIGHT | wxLEFT | wxALIGN_RIGHT, 10);
 
 
 
 	// Add to Body
-	sizerBody->Add(sizerTop, flags.Right());
+	sizerBody->Add(sizerTop, 0, wxTOP | wxRIGHT | wxLEFT | wxALIGN_RIGHT, 10);
 
 
 	// Auto Size
@@ -318,7 +299,7 @@ void MainDialog::createWindow(bool taskbar)
 	// Start in taskbar
 	if (taskbar && m_taskBarIcon != NULL)
 	{
-		main_dialog->Show(false);
+		mainFrame->Show(false);
 				
 		m_taskBarIcon->ShowMessage("Call Admin Started", "Call Admin started in taskbar", panel);
 	}
@@ -358,7 +339,7 @@ void MainDialog::createWindow(bool taskbar)
 
 
 // Button Event -> Hide to Taskbar
-void MainDialog::OnHide(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnHide(wxCommandEvent& WXUNUSED(event))
 {
 	// Log Action
 	LogAction("Hided Window");
@@ -379,7 +360,7 @@ void MainDialog::OnHide(wxCommandEvent& WXUNUSED(event))
 
 
 // Check Box Event -> Write To Config
-void MainDialog::OnCheckBox(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnCheckBox(wxCommandEvent& WXUNUSED(event))
 {
 	g_config->Write("available", available->IsChecked());
 	g_config->Write("sound", sound->IsChecked());
@@ -389,7 +370,7 @@ void MainDialog::OnCheckBox(wxCommandEvent& WXUNUSED(event))
 
 
 // Button Event -> Reconnect
-void MainDialog::OnReconnect(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnReconnect(wxCommandEvent& WXUNUSED(event))
 {
 	// Log Action
 	LogAction("Reconnecting...");
@@ -397,14 +378,14 @@ void MainDialog::OnReconnect(wxCommandEvent& WXUNUSED(event))
 	// Reset attempts
 	attempts = 0;
 
-	if (main_dialog != NULL)
+	if (mainFrame != NULL)
 	{
-		main_dialog->SetTitle("Call Admin Client");
-		main_dialog->setEventText("Trying to reconnect...");
-		main_dialog->setReconnectButton(false);
+		mainFrame->SetTitle("Call Admin Client");
+		mainFrame->setEventText("Trying to reconnect...");
+		mainFrame->setReconnectButton(false);
 
-		main_dialog->Show(true);
-		main_dialog->Restore();
+		mainFrame->Show(true);
+		mainFrame->Restore();
 	}
 
 	// Start the Timer again
@@ -414,7 +395,7 @@ void MainDialog::OnReconnect(wxCommandEvent& WXUNUSED(event))
 
 
 // Thread Handled -> Call Function
-void MainDialog::OnThread(wxCommandEvent& event)
+void MainFrame::OnThread(wxCommandEvent& event)
 {
 	// Get Content
 	ThreadData* data = static_cast<ThreadData *>(event.GetClientObject());
@@ -432,31 +413,31 @@ void MainDialog::OnThread(wxCommandEvent& event)
 
 
 // Steam Changed -> Set Text
-void MainDialog::OnSteamChange(wxCommandEvent& event)
+void MainFrame::OnSteamChange(wxCommandEvent& event)
 {
 	// Get Status
 	int id = event.GetInt();
 
 	if (id == 0)
 	{
-		main_dialog->setSteamStatus("Steam support is disabled", wxColour("red"));
+		mainFrame->setSteamStatus("Steam support is disabled", wxColour("red"));
 	}
 
 	else if (id == 1)
 	{
-		main_dialog->setSteamStatus("Steam is currently not running", wxColour("red"));
+		mainFrame->setSteamStatus("Steam is currently not running", wxColour("red"));
 	}
 
 	else
 	{
-		main_dialog->setSteamStatus("Steam is currently running", wxColour(34, 139, 34));
+		mainFrame->setSteamStatus("Steam is currently running", wxColour(34, 139, 34));
 	}
 }
 
 
 
 // Window Event -> Open Call
-void MainDialog::OnBoxClick(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnBoxClick(wxCommandEvent& WXUNUSED(event))
 {
 	int selection = callBox->GetSelection();
 
@@ -469,7 +450,7 @@ void MainDialog::OnBoxClick(wxCommandEvent& WXUNUSED(event))
 
 
 // Window Event -> exit programm
-void MainDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
+void MainFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
 {
 	exitProgramm();
 }
@@ -477,7 +458,7 @@ void MainDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
 
 
 // Window Event -> Hide Window
-void MainDialog::OnMinimizeWindow(wxIconizeEvent& WXUNUSED(event))
+void MainFrame::OnMinimizeWindow(wxIconizeEvent& WXUNUSED(event))
 {
 	if (hideOnMinimize)
 	{
@@ -500,7 +481,7 @@ void MainDialog::OnMinimizeWindow(wxIconizeEvent& WXUNUSED(event))
 
 
 // Update Call List
-void MainDialog::updateCall()
+void MainFrame::updateCall()
 {
 	callBox->Clear();
 

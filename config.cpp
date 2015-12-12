@@ -312,7 +312,7 @@ void ConfigPanel::OnCheckBox2(wxCommandEvent& WXUNUSED(event))
 void ConfigPanel::OnSet(wxCommandEvent& WXUNUSED(event))
 {
 	// Valid?
-	if (hideMini == NULL || timeoutSlider == NULL || stepSlider == NULL || attemptsSlider == NULL || lastCalls == NULL || pageText == NULL || keyText == NULL || g_config == NULL || main_dialog == NULL || notebook == NULL)
+	if (hideMini == NULL || timeoutSlider == NULL || stepSlider == NULL || attemptsSlider == NULL || lastCalls == NULL || pageText == NULL || keyText == NULL || g_config == NULL || mainFrame == NULL || notebook == NULL)
 	{
 		return;
 	}
@@ -338,8 +338,8 @@ void ConfigPanel::OnSet(wxCommandEvent& WXUNUSED(event))
 
 
 	// Refresh main dialog
-	main_dialog->SetTitle("Call Admin Client");
-	main_dialog->setEventText("Enable new Settings...");
+	mainFrame->SetTitle("Call Admin Client");
+	mainFrame->setEventText("Enable new Settings...");
 
 	// Log Action
 	LogAction("Saved the config");
@@ -360,7 +360,7 @@ void ConfigPanel::OnSet(wxCommandEvent& WXUNUSED(event))
 void ConfigPanel::parseConfig()
 {
 	// Valid?
-	if (hideMini == NULL || timeoutSlider == NULL || stepSlider == NULL || attemptsSlider == NULL || lastCalls == NULL || pageText == NULL || keyText == NULL || g_config == NULL || main_dialog == NULL)
+	if (hideMini == NULL || timeoutSlider == NULL || stepSlider == NULL || attemptsSlider == NULL || lastCalls == NULL || pageText == NULL || keyText == NULL || g_config == NULL || mainFrame == NULL)
 	{
 		return;
 	}
@@ -498,7 +498,7 @@ void ConfigPanel::parseConfig()
 
 
 		// Updated Main Interface
-		main_dialog->resetCalls();
+		mainFrame->resetCalls();
 
 		// First Start again ;D
 		timerStarted = false;
@@ -517,8 +517,8 @@ void ConfigPanel::parseConfig()
 	else
 	{
 		// Refresh main dialog
-		main_dialog->SetTitle("Call Admin Client");
-		main_dialog->setEventText("Please configurate your settings...");
+		mainFrame->SetTitle("Call Admin Client");
+		mainFrame->setEventText("Please configurate your settings...");
 
 		// Log Action
 		LogAction("Couldn't load/find the config");

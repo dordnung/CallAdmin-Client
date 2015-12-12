@@ -62,7 +62,7 @@ enum
 
 
 // Main Dialog Class
-class MainDialog: public wxDialog
+class MainFrame: public wxFrame
 {
 private:
 	wxCheckBox* store;
@@ -80,7 +80,7 @@ private:
 	wxStaticText* steamText;
 
 public:
-	MainDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX) 
+	MainFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxMINIMIZE_BOX)
 	{
 		// Initialize vars
 		store = NULL;
@@ -139,6 +139,6 @@ protected:
 
 
 // Main Dialog
-extern MainDialog *main_dialog;
+extern MainFrame *mainFrame;
 
 #endif

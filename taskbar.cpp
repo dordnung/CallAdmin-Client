@@ -89,9 +89,9 @@ TaskBarIcon::TaskBarIcon()
 // Restore main dialog
 void TaskBarIcon::OnMenuRestore(wxCommandEvent&)
 {
-	if (main_dialog != NULL)
+	if (mainFrame != NULL)
 	{
-		main_dialog->Show(true);
+		mainFrame->Show(true);
 	}
 }
 
@@ -219,9 +219,9 @@ wxMenu *TaskBarIcon::CreatePopupMenu()
 // On doppel left click -> open Menu
 void TaskBarIcon::OnLeftButtonDClick(wxTaskBarIconEvent&)
 {
-	if (main_dialog != NULL)
+	if (mainFrame != NULL)
 	{
-		main_dialog->Show(true);
-		main_dialog->Restore();
+		mainFrame->Show(true);
+		mainFrame->Restore();
 	}
 }

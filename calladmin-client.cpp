@@ -229,16 +229,16 @@ bool CallAdmin::OnInit()
 	remove(wxStandardPaths::Get().GetExecutablePath() + ".new");
 
 	// Create main Dialog
-	main_dialog = new MainDialog("Call Admin Client");
+	mainFrame = new MainFrame("Call Admin Client");
 
 
 	// Valid?
-	if (main_dialog == NULL)
+	if (mainFrame == NULL)
 	{
 		return false;
 	}
 	
-	main_dialog->createWindow(start_taskbar);
+	mainFrame->createWindow(start_taskbar);
 
 
 	return true;
@@ -318,7 +318,7 @@ void Timer::update(wxTimerEvent& WXUNUSED(event))
 
 
 	// Store Player
-	if (main_dialog != NULL && main_dialog->wantStore())
+	if (mainFrame != NULL && mainFrame->wantStore())
 	{
 		pager = pager + "&store=1&steamid=" + steamid;
 	}
@@ -586,7 +586,7 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 										// Call is now handled
 										if (newDialog->getHandled() && !call_dialogs[i]->getHandled())
 										{
-											main_dialog->setHandled(i);
+											mainFrame->setHandled(i);
 										}
 
 										// That's enough
@@ -642,7 +642,7 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 							{
 								// Log Action
 								LogAction("We have a new Call");
-								newDialog->startCall(main_dialog->isAvailable() && !isOtherInFullscreen());
+								newDialog->startCall(mainFrame->isAvailable() && !isOtherInFullscreen());
 							}
 
 							newDialog->takeover->Enable(!newDialog->getHandled());
@@ -654,23 +654,23 @@ void onNotice(char* error, wxString result, int WXUNUSED(x))
 			}
 
 			// Everything is good, set attempts to zero
-			if (!foundError && main_dialog != NULL)
+			if (!foundError && mainFrame != NULL)
 			{
 				// Reset attempts
 				attempts = 0;
 
 				// Updated Main Interface
-				main_dialog->SetTitle("Call Admin Client");
-				main_dialog->setEventText("Waiting for a new report...");
+				mainFrame->SetTitle("Call Admin Client");
+				mainFrame->setEventText("Waiting for a new report...");
 
 				// Update Call List
 				if (foundNew)
 				{
 					// Update call list
-					main_dialog->updateCall();
+					mainFrame->updateCall();
 
 					// Play Sound
-					if (main_dialog->wantSound() && !firstRun && main_dialog->isAvailable())
+					if (mainFrame->wantSound() && !firstRun && mainFrame->isAvailable())
 					{
 						wxSound* soundfile;
 
@@ -767,9 +767,9 @@ wxThread::ExitCode curlThread::Entry()
 			curl_easy_cleanup(curl);
 
 			// Add Event Handler
-			if (main_dialog != NULL)
+			if (mainFrame != NULL)
 			{
-				main_dialog->GetEventHandler()->AddPendingEvent(event);
+				mainFrame->GetEventHandler()->AddPendingEvent(event);
 			}
 
 			return (wxThread::ExitCode)0;
@@ -778,9 +778,9 @@ wxThread::ExitCode curlThread::Entry()
 		event.SetClientObject(new ThreadData(function, "", "", x));
 
 		// Add Event Handler
-		if (main_dialog != NULL)
+		if (mainFrame != NULL)
 		{
-			main_dialog->GetEventHandler()->AddPendingEvent(event);
+			mainFrame->GetEventHandler()->AddPendingEvent(event);
 		}
 	}
 
@@ -829,7 +829,7 @@ void getPage(callback function, wxString page, int x)
 void createReconnect(wxString error)
 {
 	// Valid?
-	if (main_dialog == NULL || notebook == NULL)
+	if (mainFrame == NULL || notebook == NULL)
 	{
 		return;
 	}
@@ -837,13 +837,13 @@ void createReconnect(wxString error)
 	// Log Action
 	LogAction("Create a reconnect window");
 
-	main_dialog->SetTitle("Couldn't Connect");
-	main_dialog->setEventText(error);
-	main_dialog->setReconnectButton(true);
+	mainFrame->SetTitle("Couldn't Connect");
+	mainFrame->setEventText(error);
+	mainFrame->setReconnectButton(true);
 
 	// Show it
-	main_dialog->Show(true);
-	main_dialog->Restore();
+	mainFrame->Show(true);
+	mainFrame->Restore();
 
 	// Go to first page
 	notebook->SetSelection(0);
@@ -865,7 +865,7 @@ void showError(wxString error, wxString type)
 
 	if (m_taskBarIcon != NULL)
 	{
-		m_taskBarIcon->ShowMessage("An error occured", type + " Error : " + error + "\nTry again... " + (wxString() << attempts) + "/" + (wxString() << maxAttempts), main_dialog);
+		m_taskBarIcon->ShowMessage("An error occured", type + " Error : " + error + "\nTry again... " + (wxString() << attempts) + "/" + (wxString() << maxAttempts), mainFrame);
 	}
 }
 
@@ -882,9 +882,9 @@ void exitProgramm()
 		end = true;
 
 		// First disappear Windows
-		if (main_dialog != NULL)
+		if (mainFrame != NULL)
 		{
-			main_dialog->Show(false);
+			mainFrame->Show(false);
 		}
 
 		// No more Update dialog needed
@@ -911,10 +911,10 @@ void exitProgramm()
 		}
 
 		// No more Main dialog needed
-		if (main_dialog != NULL)
+		if (mainFrame != NULL)
 		{
-			main_dialog->Destroy();
-			main_dialog = NULL;
+			mainFrame->Destroy();
+			mainFrame = NULL;
 		}
 
 		// No more Update dialog needed
@@ -1045,7 +1045,7 @@ void onUpdate(char* error, wxString result, int WXUNUSED(x))
 				// Maybe an Error Page?
 				if (m_taskBarIcon != NULL)
 				{
-					m_taskBarIcon->ShowMessage("Update Check Failed", "Error: PAGE_TOO_LONG", main_dialog);
+					m_taskBarIcon->ShowMessage("Update Check Failed", "Error: PAGE_TOO_LONG", mainFrame);
 				}
 			}
 			else
@@ -1064,7 +1064,7 @@ void onUpdate(char* error, wxString result, int WXUNUSED(x))
 
 			if (m_taskBarIcon != NULL)
 			{
-				m_taskBarIcon->ShowMessage("Update Check Failed", "Error: " + (wxString)error, main_dialog);
+				m_taskBarIcon->ShowMessage("Update Check Failed", "Error: " + (wxString)error, mainFrame);
 			}
 		}
 	}
@@ -1083,10 +1083,10 @@ void onUpdate(char* error, wxString result, int WXUNUSED(x))
 			about->updateVersion(newVersion, wxColor("red"));
 
 			// Show Main
-			if (main_dialog != NULL && !isOtherInFullscreen())
+			if (mainFrame != NULL && !isOtherInFullscreen())
 			{
-				main_dialog->Show(true);
-				main_dialog->Restore();
+				mainFrame->Show(true);
+				mainFrame->Restore();
 			}
 
 			// Goto About
@@ -1094,7 +1094,7 @@ void onUpdate(char* error, wxString result, int WXUNUSED(x))
 
 			if (m_taskBarIcon != NULL)
 			{
-				m_taskBarIcon->ShowMessage("New Version", "New version " + newVersion + " is now available!", main_dialog);
+				m_taskBarIcon->ShowMessage("New Version", "New version " + newVersion + " is now available!", mainFrame);
 			}
 		}
 		else
@@ -1104,7 +1104,7 @@ void onUpdate(char* error, wxString result, int WXUNUSED(x))
 
 			if (m_taskBarIcon != NULL)
 			{
-				m_taskBarIcon->ShowMessage("Up to Date", "Your Call Admin Client is up to date", main_dialog);
+				m_taskBarIcon->ShowMessage("Up to Date", "Your Call Admin Client is up to date", mainFrame);
 			}
 		}
 	}

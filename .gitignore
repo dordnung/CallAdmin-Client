@@ -29,8 +29,7 @@
 
 
 # Builds
-Release*/
-Debug*/
+bin*/
 
 # Databases
 *.db
