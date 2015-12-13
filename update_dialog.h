@@ -1,9 +1,9 @@
-#ifndef ABOUT_H
-#define ABOUT_H
+#ifndef UPDATE_H
+#define UPDATE_H
 
 /**
  * -----------------------------------------------------
- * File        about.h
+ * File        update_dialog.h
  * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
@@ -29,8 +29,14 @@
 #pragma once
 
 
+
+// c++
+#include <stdio.h>
+
+
 // Precomp Header
 #include <wx/wxprec.h>
+
 
 
 // We need WX
@@ -38,34 +44,86 @@
 	#include <wx/wx.h>
 #endif
 
-#include <wx/statline.h>
-#include <wx/notebook.h>
+
+// Curl
+#include <curl/curl.h>
+
+// Project
+#include "calladmin-client.h"
 
 
 
-// About Panel Class
-class AboutPanel: public wxPanel
+
+// Struct for progress
+struct dlProgress 
+{
+	CURL *curl;
+};
+
+
+
+
+// Update Dialog Class
+class UpdateDialog: public wxDialog
 {
 private:
-	wxButton* downloadButton;
-	wxStaticText* currentText;
+
+	// We need information about the update ;)
+	wxStaticText* dlinfo;
+	wxStaticText* dlstatus;
+
+	// Layout
 	wxSizer* sizerTop;
 
-public:
-	AboutPanel(wxNotebook* note);
+	// Panel
+	wxPanel* panel;
 
-	void enableDownload(bool enable) {downloadButton->Enable(enable);}
-	void updateVersion(wxString cversion, wxColor color) {currentText->SetLabelText("Current version: " + cversion); currentText->SetForegroundColour(color); sizerTop->Layout();}
+	// Progress Bar
+	wxGauge* progressBar;
+
+public:
+	UpdateDialog();
 
 protected:
+	// Button Events
+	void OnHide(wxCommandEvent& event);
 	void OnUpdate(wxCommandEvent& event);
-	void OnDownload(wxCommandEvent& event);
+	void OnFinish(wxCommandEvent& event);
+	void OnCancel(wxCommandEvent& event);
+
+	void OnCloseWindow(wxCloseEvent& event);
 
 	DECLARE_EVENT_TABLE()
 };
 
 
-// Extern Accessor
-extern AboutPanel* about;
+
+
+
+// Thread for Curl Performances
+class updateThread: public wxThread
+{
+public:
+
+	// Create and Start
+	updateThread() : wxThread() {this->Create(); this->Run();}
+
+	virtual ExitCode Entry();
+};
+
+
+
+
+// CURL Callbacks
+size_t write_data_file(void *ptr, size_t size, size_t nmemb, FILE *stream);
+int progress_updated(void *p, double dltotal, double dlnow, double ultotal, double ulnow);
+
+
+
+// Update Dialogs
+extern UpdateDialog *update_dialog;
+
+// thread
+extern updateThread *update_thread;
 
 #endif

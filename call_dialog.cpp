@@ -30,11 +30,11 @@
 #include <stdlib.h>
 
 // Includes Project
-#include "mainframe.h"
-#include "call.h"
+#include "main_frame.h"
+#include "call_dialog.h"
 #include "opensteam.h"
-#include "config.h"
-#include "log.h"
+#include "config_panel.h"
+#include "log_panel.h"
 #include "taskbar.h"
 #include "calladmin-client.h"
 

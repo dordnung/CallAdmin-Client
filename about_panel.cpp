@@ -26,11 +26,11 @@
 
 
 // Include Project
-#include "about.h"
-#include "mainframe.h"
-#include "update.h"
+#include "about_panel.h"
+#include "main_frame.h"
+#include "update_dialog.h"
 #include "taskbar.h"
-#include "log.h"
+#include "log_panel.h"
 #include "calladmin-client.h"
 
 

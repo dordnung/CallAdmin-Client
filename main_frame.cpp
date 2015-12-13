@@ -29,12 +29,12 @@
 
 
 // Include Project
-#include "mainframe.h"
-#include "log.h"
-#include "about.h"
-#include "trackers.h"
+#include "main_frame.h"
+#include "log_panel.h"
+#include "about_panel.h"
+#include "trackers_panel.h"
 #include "taskbar.h"
-#include "config.h"
+#include "config_panel.h"
 #include "calladmin-client.h"
 
 

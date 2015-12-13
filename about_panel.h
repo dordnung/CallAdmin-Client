@@ -1,9 +1,9 @@
-#ifndef UPDATE_H
-#define UPDATE_H
+#ifndef ABOUT_H
+#define ABOUT_H
 
 /**
  * -----------------------------------------------------
- * File        update.h
+ * File        about_panel.h
  * Authors     David <popoklopsi> Ordnung, Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
@@ -29,14 +29,8 @@
 #pragma once
 
 
-
-// c++
-#include <stdio.h>
-
-
 // Precomp Header
 #include <wx/wxprec.h>
-
 
 
 // We need WX
@@ -44,86 +38,34 @@
 	#include <wx/wx.h>
 #endif
 
-
-// Curl
-#include <curl/curl.h>
-
-// Project
-#include "calladmin-client.h"
+#include <wx/statline.h>
+#include <wx/notebook.h>
 
 
 
-
-// Struct for progress
-struct dlProgress 
-{
-	CURL *curl;
-};
-
-
-
-
-// Update Dialog Class
-class UpdateDialog: public wxDialog
+// About Panel Class
+class AboutPanel: public wxPanel
 {
 private:
-
-	// We need information about the update ;)
-	wxStaticText* dlinfo;
-	wxStaticText* dlstatus;
-
-	// Layout
+	wxButton* downloadButton;
+	wxStaticText* currentText;
 	wxSizer* sizerTop;
 
-	// Panel
-	wxPanel* panel;
-
-	// Progress Bar
-	wxGauge* progressBar;
-
 public:
-	UpdateDialog();
+	AboutPanel(wxNotebook* note);
+
+	void enableDownload(bool enable) {downloadButton->Enable(enable);}
+	void updateVersion(wxString cversion, wxColor color) {currentText->SetLabelText("Current version: " + cversion); currentText->SetForegroundColour(color); sizerTop->Layout();}
 
 protected:
-	// Button Events
-	void OnHide(wxCommandEvent& event);
 	void OnUpdate(wxCommandEvent& event);
-	void OnFinish(wxCommandEvent& event);
-	void OnCancel(wxCommandEvent& event);
-
-	void OnCloseWindow(wxCloseEvent& event);
+	void OnDownload(wxCommandEvent& event);
 
 	DECLARE_EVENT_TABLE()
 };
 
 
-
-
-
-// Thread for Curl Performances
-class updateThread: public wxThread
-{
-public:
-
-	// Create and Start
-	updateThread() : wxThread() {this->Create(); this->Run();}
-
-	virtual ExitCode Entry();
-};
-
-
-
-
-// CURL Callbacks
-size_t write_data_file(void *ptr, size_t size, size_t nmemb, FILE *stream);
-int progress_updated(void *p, double dltotal, double dlnow, double ultotal, double ulnow);
-
-
-
-// Update Dialogs
-extern UpdateDialog *update_dialog;
-
-// thread
-extern updateThread *update_thread;
+// Extern Accessor
+extern AboutPanel* about;
 
 #endif

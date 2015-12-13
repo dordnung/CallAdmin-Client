@@ -39,7 +39,7 @@
 
 #include <wx/listbox.h>
 #include <wx/notebook.h>
-#include "call.h"
+#include "call_dialog.h"
 
 // Main Notebook
 extern wxNotebook* notebook;

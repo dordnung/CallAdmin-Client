@@ -26,9 +26,9 @@
 
 
 // Includes Project
-#include "update.h"
-#include "log.h"
-#include "config.h"
+#include "update_dialog.h"
+#include "log_panel.h"
+#include "config_panel.h"
 #include "taskbar.h"
 #include "calladmin-client.h"
 

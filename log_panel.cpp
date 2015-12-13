@@ -29,8 +29,8 @@
 #include <ctime>
 
 // Include Project
-#include "log.h"
-#include "mainframe.h"
+#include "log_panel.h"
+#include "main_frame.h"
 #include "taskbar.h"
 #include "calladmin-client.h"
 

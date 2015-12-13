@@ -76,29 +76,29 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="../calladmin-client.cpp" />
-    <ClCompile Include="..\about.cpp" />
-    <ClCompile Include="..\call.cpp" />
-    <ClCompile Include="..\config.cpp" />
-    <ClCompile Include="..\log.cpp" />
-    <ClCompile Include="..\mainframe.cpp" />
+    <ClCompile Include="..\about_panel.cpp" />
+    <ClCompile Include="..\call_dialog.cpp" />
+    <ClCompile Include="..\config_panel.cpp" />
+    <ClCompile Include="..\log_panel.cpp" />
+    <ClCompile Include="..\main_frame.cpp" />
     <ClCompile Include="..\opensteam.cpp" />
     <ClCompile Include="..\taskbar.cpp" />
     <ClCompile Include="..\tinyxml2\tinyxml2.cpp" />
-    <ClCompile Include="..\trackers.cpp" />
-    <ClCompile Include="..\update.cpp" />
+    <ClCompile Include="..\trackers_panel.cpp" />
+    <ClCompile Include="..\update_dialog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../calladmin-client.h" />
-    <ClInclude Include="..\about.h" />
-    <ClInclude Include="..\call.h" />
-    <ClInclude Include="..\config.h" />
-    <ClInclude Include="..\log.h" />
-    <ClInclude Include="..\mainframe.h" />
+    <ClInclude Include="..\about_panel.h" />
+    <ClInclude Include="..\call_dialog.h" />
+    <ClInclude Include="..\config_panel.h" />
+    <ClInclude Include="..\log_panel.h" />
+    <ClInclude Include="..\main_frame.h" />
     <ClInclude Include="..\opensteam.h" />
     <ClInclude Include="..\taskbar.h" />
     <ClInclude Include="..\tinyxml2\tinyxml2.h" />
-    <ClInclude Include="..\trackers.h" />
-    <ClInclude Include="..\update.h" />
+    <ClInclude Include="..\trackers_panel.h" />
+    <ClInclude Include="..\update_dialog.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\resources\calladmin-client.rc" />

@@ -28,10 +28,10 @@
 #include <sstream>
 
 // Include Project
-#include "config.h"
-#include "call.h"
-#include "log.h"
-#include "mainframe.h"
+#include "config_panel.h"
+#include "call_dialog.h"
+#include "log_panel.h"
+#include "main_frame.h"
 #include "opensteam.h"
 #include "taskbar.h"
 #include "calladmin-client.h"

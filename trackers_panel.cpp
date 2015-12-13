@@ -27,13 +27,13 @@
 
 
 // Include Project
-#include "log.h"
-#include "mainframe.h"
-#include "call.h"
-#include "config.h"
+#include "log_panel.h"
+#include "main_frame.h"
+#include "call_dialog.h"
+#include "config_panel.h"
 #include "tinyxml2/tinyxml2.h"
 #include "taskbar.h"
-#include "trackers.h"
+#include "trackers_panel.h"
 #include "calladmin-client.h"
 
 

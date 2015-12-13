@@ -24,10 +24,10 @@
  */
 
 #include "opensteam.h"
-#include "mainframe.h"
-#include "log.h"
-#include "trackers.h"
-#include "config.h"
+#include "main_frame.h"
+#include "log_panel.h"
+#include "trackers_panel.h"
+#include "config_panel.h"
 #include "calladmin-client.h"
 
 

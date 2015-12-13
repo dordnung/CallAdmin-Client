@@ -66,13 +66,13 @@
 
 // Project
 #include "calladmin-client.h"
-#include "config.h"
-#include "mainframe.h"
-#include "log.h"
-#include "update.h"
-#include "trackers.h"
-#include "about.h"
-#include "call.h"
+#include "config_panel.h"
+#include "main_frame.h"
+#include "log_panel.h"
+#include "update_dialog.h"
+#include "trackers_panel.h"
+#include "about_panel.h"
+#include "call_dialog.h"
 #include "taskbar.h"
 
 

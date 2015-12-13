@@ -3,7 +3,7 @@
 
 /**
 * -----------------------------------------------------
-* File        trackers.h
+* File        trackers_panel.h
 * Authors     David <popoklopsi> Ordnung, Impact
 * License     GPLv3
 * Web         http://popoklopsi.de, http://gugyclan.eu

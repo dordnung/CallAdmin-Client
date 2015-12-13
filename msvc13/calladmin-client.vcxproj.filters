@@ -4,9 +4,6 @@
     <ClCompile Include="..\tinyxml2\tinyxml2.cpp">
       <Filter>TinyXML2</Filter>
     </ClCompile>
-    <ClCompile Include="..\call.cpp">
-      <Filter>Dialog</Filter>
-    </ClCompile>
     <ClCompile Include="..\opensteam.cpp">
       <Filter>Steam</Filter>
     </ClCompile>
@@ -16,31 +13,31 @@
     <ClCompile Include="../calladmin-client.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="..\config.cpp">
-      <Filter>Panel</Filter>
+    <ClCompile Include="..\main_frame.cpp">
+      <Filter>Frame</Filter>
     </ClCompile>
-    <ClCompile Include="..\log.cpp">
-      <Filter>Panel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\about.cpp">
-      <Filter>Panel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trackers.cpp">
-      <Filter>Panel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\update.cpp">
+    <ClCompile Include="..\call_dialog.cpp">
       <Filter>Dialog</Filter>
     </ClCompile>
-    <ClCompile Include="..\mainframe.cpp">
-      <Filter>Frame</Filter>
+    <ClCompile Include="..\update_dialog.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\about_panel.cpp">
+      <Filter>Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\config_panel.cpp">
+      <Filter>Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\log_panel.cpp">
+      <Filter>Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\trackers_panel.cpp">
+      <Filter>Panel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\tinyxml2\tinyxml2.h">
       <Filter>TinyXML2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\call.h">
-      <Filter>Dialog</Filter>
     </ClInclude>
     <ClInclude Include="..\opensteam.h">
       <Filter>Steam</Filter>
@@ -51,23 +48,26 @@
     <ClInclude Include="../calladmin-client.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="..\config.h">
-      <Filter>Panel</Filter>
+    <ClInclude Include="..\main_frame.h">
+      <Filter>Frame</Filter>
     </ClInclude>
-    <ClInclude Include="..\log.h">
-      <Filter>Panel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\about.h">
-      <Filter>Panel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\trackers.h">
-      <Filter>Panel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\update.h">
+    <ClInclude Include="..\call_dialog.h">
       <Filter>Dialog</Filter>
     </ClInclude>
-    <ClInclude Include="..\mainframe.h">
-      <Filter>Frame</Filter>
+    <ClInclude Include="..\update_dialog.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\about_panel.h">
+      <Filter>Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\config_panel.h">
+      <Filter>Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\log_panel.h">
+      <Filter>Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\trackers_panel.h">
+      <Filter>Panel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
