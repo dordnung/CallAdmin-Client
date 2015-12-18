@@ -1,9 +1,9 @@
-#ifndef LOG_PANEL_H
-#define LOG_PANEL_H
+#ifndef CURL_UTIL_H
+#define CURL_UTIL_H
 
 /**
  * -----------------------------------------------------
- * File        log_panel.h
+ * File        curl_util.h
  * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
@@ -36,15 +36,53 @@
 #endif
 
 
-// Log Panel Class
-class LogPanel : public wxPanel {
+// Thread for Curl Performances
+// TODO Char* mit wxString ersetzen
+typedef void(*CurlCallback)(char*, wxString, int);
+
+class CurlThread : public wxThread {
 private:
-	wxListBox *logBox;
+	// Callback function
+	CurlCallback callbackFunction;
+
+	// Page
+	wxString page;
+
+	// Optional Parameter
+	int extra;
 
 public:
-	LogPanel();
+	static void GetPage(CurlCallback callbackFunction, wxString page, int extra = 0);
 
-	void AddLog(wxString log);
+	CurlThread(CurlCallback callbackFunction, wxString page, int extra);
+	virtual ExitCode Entry();
+};
+
+size_t CurlWriteData(void *buffer, size_t size, size_t nmemb, void *userp);
+
+
+// Client Data for CurlThread
+class CurlThreadData : public wxClientData {
+private:
+	// Callback function
+	CurlCallback callbackFunction;
+
+	// Callback function
+	wxString content;
+
+	// Error
+	char *error;
+
+	// Optional Parameter
+	int extra;
+
+public:
+	CurlThreadData(CurlCallback callbackFunction, wxString content, char *error, int extra);
+
+	CurlCallback GetCallbackFunction();
+	wxString GetContent();
+	char* GetError();
+	int GetExtra();
 };
 
 #endif

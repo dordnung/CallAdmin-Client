@@ -4,50 +4,49 @@
 /**
  * -----------------------------------------------------
  * File        calladmin-client.h
- * Authors     David <popoklopsi> Ordnung, Impact
+ * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
- * 
- * 
- * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
- * 
+ *
+ * Copyright (C) 2013-2016 David O., Impact
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
 #pragma once
 
-
-#define MAXCALLS 200
-
-
-
 // Precomp Header
 #include <wx/wxprec.h>
-
-// c++ libs
-#include <string>
 
 // We need WX
 #ifndef WX_PRECOMP
 	#include <wx/wx.h>
 #endif
 
-#include <wx/cmdline.h>
-#include <wx/timer.h>
-#include <wx/stdpaths.h>
+#include "config.h"
+#include "main_frame.h"
+#include "taskbar.h"
+#include "timer.h"
+#include "opensteam.h"
+#include "update_dialog.h"
+#include "call_dialog.h"
 
+// Version, update URL and update exe
+#define CALLADMIN_CLIENT_VERSION "0.47B"
+#define CALLADMIN_UPDATE_URL "http://popoklopsi.de/calladmin/version.txt"
+#define CALLADMIN_UPDATE_EXE "http://popoklopsi.de/calladmin/calladmin-client.exe"
 
 // Font
 #if defined(__WXMSW__)
@@ -58,215 +57,143 @@
 	#define FONT_WEIGHT_BOLD wxFONTWEIGHT_NORMAL
 #endif
 
+// Helpers
+#define caGetApp wxGetApp
+
+#define caGetConfig caGetApp().GetConfig
+#define caGetTimer caGetApp().GetTimer
+#define caGetSteamThread caGetApp().GetSteamThread
+#define caGetTaskBarIcon caGetApp().GetTaskBarIcon
+#define caGetCallDialogs caGetApp().GetCallDialogs
+#define caGetUpdateDialog caGetApp().GetUpdateDialog
+#define caLogAction caGetApp().LogAction
+
+#define caGetMainFrame caGetApp().GetMainFrame
+#define caGetNotebook caGetMainFrame()->GetNotebook
+#define caGetMainPanel caGetNotebook()->GetMainPanel
+#define caGetConfigPanel caGetNotebook()->GetConfigPanel
+#define caGetTrackersPanel caGetNotebook()->GetTrackersPanel
+#define caGetLogPanel caGetNotebook()->GetLogPanel
+#define caGetAboutPanel caGetNotebook()->GetAboutPanel
 
 
-
-extern int avatarSize;
-
-// Version
-extern wxString version;
-
-// Timer already run?
-extern bool timerStarted;
-
-// Attempts
-extern int attempts;
-
-
-
+// Custom events for Call Dialog closed or update dialog closed
+wxDECLARE_EVENT(wxEVT_UPDATE_DIALOG_CLOSED, wxCommandEvent);
+wxDECLARE_EVENT(wxEVT_CALL_DIALOG_CLOSED, wxCommandEvent);
 
 
 // App Class
-class CallAdmin : public wxApp
-{
+class CallAdmin : public wxApp {
+private:
+	Timer *timer;
+	Config *config;
+	MainFrame *mainFrame;
+	TaskBarIcon *taskBarIcon;
+	SteamThread *steamThread;
+	UpdateDialog *updateDialog;
+
+	wxVector<CallDialog *> callDialogs;
+
+	int avatarSize;
+	int attempts;
+
+	bool end;
+
+	// Start in Taskbar?
+	bool startInTaskbar;
+
 public:
+	CallAdmin();
+
+	void StartTimer();
+	void StartSteamThread();
+	void StartUpdate();
+
+	UpdateDialog* GetUpdateDialog();
+	SteamThread* GetSteamThread();
+	Config* GetConfig();
+	MainFrame* GetMainFrame();
+	TaskBarIcon* GetTaskBarIcon();
+
+	wxVector<CallDialog *>* GetCallDialogs();
+
+	int GetAvatarSize();
+	wxString GetAppPath(wxString file);
+
+	int GetAttempts();
+	void SetAttempts(int attempts);
+
+	void CheckUpdate();
+	void CreateReconnect(wxString error);
+	void ShowError(wxString error, wxString type);
+	void ExitProgramm();
+	void LogAction(wxString action);
+
+	static void OnNotice(char* error, wxString result, int firstRun);
+	static void OnUpdate(char* error, wxString result, int extra);
+
+protected:
 	// Where all began :)
 	virtual bool OnInit();
 
 	// Where all end ;)
-	virtual ~CallAdmin();
+	virtual int OnExit();
 
 	// Command line arguments
-	virtual void OnInitCmdLine(wxCmdLineParser& parser);
-	virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
+	virtual void OnInitCmdLine(wxCmdLineParser &parser);
+	virtual bool OnCmdLineParsed(wxCmdLineParser &parser);
 
-	// Start in Taskbar?
-	static bool start_taskbar;
-};
-
-
-
-
-
-// Timer Class
-class Timer : public wxTimer
-{
-public:
-	Timer() : wxTimer(this, 1) {}
-
-	void run(int milliSecs);
-	void update(wxTimerEvent&);
+	void OnCallDialogClosed(wxCommandEvent &event);
+	void OnUpdateDialogClosed(wxCommandEvent &event);
 
 	DECLARE_EVENT_TABLE()
 };
 
 
-
-
-
-// Thread for Curl Performances
-typedef void (*callback)(char*, wxString, int);
-
-class curlThread: public wxThread
-{
-private:
-	// Callback function
-	callback function;
-
-	// Page
-	wxString page;
-
-	// Optional Parameter
-	int x;
-
-public:
-
-	// Create and Start
-	curlThread(callback f, wxString p, int extra) : wxThread() {function = f; page = p; x = extra; this->Create(); this->Run();}
-
-	virtual ExitCode Entry();
-};
-
-
-
-// Client Data for Thread
-class ThreadData: public wxClientData
-{
-private:
-	// Callback function
-	callback function;
-
-	// Callback function
-	wxString content;
-
-	// Error
-	char* error;
-
-	// Optional Parameter
-	int x;
-
-public:
-	ThreadData(callback func, wxString cont, char* err, int extra) {function = func; content = cont, error = err, x = extra;}
-
-	callback getCallback() {return function;}
-	wxString getContent() {return content;}
-	char* getError() {return error;}
-	int getExtra() {return x;}
-};
-
-
-
-
 // For Windows: Check if other app is in fullscreen mode
 #if defined(__WXMSW__)
-	inline bool IsTopMost(HWND hwnd)
-	{
-		WINDOWINFO info;
+inline BOOL CALLBACK CheckMaximized(HWND hwnd, LPARAM lParam) {
+	WINDOWINFO info;
+	GetWindowInfo(hwnd, &info);
 
-		GetWindowInfo(hwnd, &info);
+	// Only if top most
+	if (info.dwExStyle & WS_EX_TOPMOST) {
+		RECT rect;
+		GetWindowRect(hwnd, &rect);
 
-		return (info.dwExStyle & WS_EX_TOPMOST) ? true : false;
-	}
+		int cx = GetSystemMetrics(SM_CXSCREEN);
+		int cy = GetSystemMetrics(SM_CYSCREEN);
 
-	inline bool IsFullScreenSize(HWND hwnd, const int cx, const int cy)
-	{
-		RECT r;
-		::GetWindowRect(hwnd, &r);
-
-		return r.right - r.left == cx && r.bottom - r.top == cy;
-
-	}
-
-	inline bool IsFullscreenAndMaximized(HWND hwnd)
-	{
-		if (IsTopMost(hwnd))
-		{
-			const int cx = GetSystemMetrics(SM_CXSCREEN);
-			const int cy = GetSystemMetrics(SM_CYSCREEN);
-
-			if (IsFullScreenSize(hwnd, cx, cy))
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	inline BOOL CALLBACK CheckMaximized(HWND hwnd, LPARAM lParam)
-	{
-		if(IsFullscreenAndMaximized(hwnd))
-		{
-			*(bool*) lParam = true;
+		// Only if in fullscreen
+		if (rect.right - rect.left == cx && rect.bottom - rect.top == cy) {
+			*(bool *)lParam = true;
 
 			return FALSE;
 		}
-
-		return TRUE;
 	}
-#endif
 
-
-inline bool isOtherInFullscreen()
-{
-	#if defined(__WXMSW__)
-		bool otherAppInFullscreen = false;
-
-		EnumWindows((WNDENUMPROC) CheckMaximized, (LPARAM) &otherAppInFullscreen);
-
-		// Return result
-		return otherAppInFullscreen;
-	#else
-		// Not for Linux
-		return false;
-	#endif
+	return TRUE;
 }
-
-
-// Main methods
-void checkUpdate();
-void createReconnect(wxString error);
-void showError(wxString error, wxString type);
-void exitProgramm();
-
-wxString getAppPath(wxString file);
-
-
-#if defined(__WXMSW__)
-	std::wstring s2ws(wxString s);
 #endif
 
 
+inline bool isOtherInFullscreen() {
+#if defined(__WXMSW__)
+	bool otherAppInFullscreen = false;
 
+	EnumWindows((WNDENUMPROC)CheckMaximized, (LPARAM)&otherAppInFullscreen);
 
-// Curl Stuff
-void getPage(callback function, wxString page, int x=0);
-void onNotice(char* error, wxString result, int x);
-void onUpdate(char* error, wxString result, int x);
-
-size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
-
-
+	// Return result
+	return otherAppInFullscreen;
+#else
+	// Not for Linux
+	return false;
+#endif
+}
 
 
 // Declare the app
 DECLARE_APP(CallAdmin)
-
-
-
-// Timer
-extern Timer *timer;
-
 
 
 #endif

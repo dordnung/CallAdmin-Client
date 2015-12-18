@@ -1,10 +1,10 @@
-#ifndef TASKBAR_H
-#define TASKBAR_H
+#ifndef MAIN_PANEL_H
+#define MAIN_PANEL_H
 
 /**
  * -----------------------------------------------------
- * File        taskbar.h
- * Authors     David David O., Impact
+ * File        main_panel.h
+ * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
@@ -35,30 +35,59 @@
 #include <wx/wx.h>
 #endif
 
-#include <wx/taskbar.h>
+#include <wx/listbox.h>
+#include <wx/statline.h>
 
 
-// Taskbar Class
-class TaskBarIcon : public wxTaskBarIcon {
+// Event ID's
+enum {
+	wxID_Hide = wxID_HIGHEST + 20,
+	wxID_Reconnect,
+	wxID_BoxClick,
+	wxID_CheckBox,
+	wxID_SteamChanged
+};
+
+
+// Main Panel Class
+class MainPanel : public wxPanel {
+private:
+	wxCheckBox *store;
+	wxCheckBox *available;
+	wxCheckBox *sound;
+
+	wxButton *reconnectButton;
+
+	wxListBox *callBox;
+	wxSizer *sizerBody;
+
+	wxStaticText *eventText;
+	wxStaticText *steamText;
+
+	void SetSteamStatus(wxString text, wxColor color);
+
 public:
-	TaskBarIcon();
+	MainPanel();
 
-	// Taskbar Events
-	void OnLeftButtonDClick(wxTaskBarIconEvent &event);
-	void OnMenuRestore(wxCommandEvent &event);
-	void OnMenuExit(wxCommandEvent &event);
-	void OnMenuUpdate(wxCommandEvent &event);
+	// Update Window
+	void SetEventText(wxString text);
+	void SetReconnectButton(bool enable = false);
 
-#if defined(__WXMSW__)
-	// Autostart only for Windows
-	void OnMenuAutoStart(wxCommandEvent &event);
-#endif
+	// Update Call list
+	void UpdateCalls();
+	void ResetCalls();
 
-	// Show a information
-	void ShowMessage(wxString title, wxString message, wxWindow *parent);
+	void SetHandled(int item);
 
-	// Override CreatePopupMenu
-	virtual wxMenu *CreatePopupMenu();
+protected:
+	// Events
+	void OnHide(wxCommandEvent &event);
+	void OnReconnect(wxCommandEvent &event);
+
+	void OnBoxClick(wxCommandEvent &event);
+
+	void OnCheckBox(wxCommandEvent &event);
+	void OnSteamChange(wxCommandEvent &event);
 
 	DECLARE_EVENT_TABLE()
 };

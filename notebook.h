@@ -1,10 +1,10 @@
-#ifndef TASKBAR_H
-#define TASKBAR_H
+#ifndef NOTEBOOK_H
+#define NOTEBOOK_H
 
 /**
  * -----------------------------------------------------
- * File        taskbar.h
- * Authors     David David O., Impact
+ * File        notebook.h
+ * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
@@ -35,32 +35,38 @@
 #include <wx/wx.h>
 #endif
 
-#include <wx/taskbar.h>
+#include <wx/notebook.h>
+
+// Project
+#include "main_panel.h"
+#include "config_panel.h"
+#include "trackers_panel.h"
+#include "log_panel.h"
+#include "about_panel.h"
 
 
-// Taskbar Class
-class TaskBarIcon : public wxTaskBarIcon {
+/**
+ * Notebook with its panels
+ */
+class Notebook : public wxNotebook {
+private:
+	MainPanel *mainPanel;
+	ConfigPanel *configPanel;
+	TrackerPanel *trackersPanel;
+	LogPanel *logPanel;
+	AboutPanel *aboutPanel;
+
 public:
-	TaskBarIcon();
+	Notebook();
 
-	// Taskbar Events
-	void OnLeftButtonDClick(wxTaskBarIconEvent &event);
-	void OnMenuRestore(wxCommandEvent &event);
-	void OnMenuExit(wxCommandEvent &event);
-	void OnMenuUpdate(wxCommandEvent &event);
+	void CreateAndAddPages();
 
-#if defined(__WXMSW__)
-	// Autostart only for Windows
-	void OnMenuAutoStart(wxCommandEvent &event);
-#endif
-
-	// Show a information
-	void ShowMessage(wxString title, wxString message, wxWindow *parent);
-
-	// Override CreatePopupMenu
-	virtual wxMenu *CreatePopupMenu();
-
-	DECLARE_EVENT_TABLE()
+	/** Panel accessors */
+	MainPanel *GetMainPanel();
+	ConfigPanel *GetConfigPanel();
+	TrackerPanel *GetTrackersPanel();
+	LogPanel *GetLogPanel();
+	AboutPanel *GetAboutPanel();
 };
 
 #endif

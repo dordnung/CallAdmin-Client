@@ -10,7 +10,16 @@
     <ClCompile Include="..\taskbar.cpp">
       <Filter>Taskbar</Filter>
     </ClCompile>
-    <ClCompile Include="../calladmin-client.cpp">
+    <ClCompile Include="..\calladmin-client.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\timer.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\curl_util.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\config.cpp">
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="..\main_frame.cpp">
@@ -34,6 +43,12 @@
     <ClCompile Include="..\trackers_panel.cpp">
       <Filter>Panel</Filter>
     </ClCompile>
+    <ClCompile Include="..\main_panel.cpp">
+      <Filter>Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\notebook.cpp">
+      <Filter>Notebook</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\tinyxml2\tinyxml2.h">
@@ -45,7 +60,16 @@
     <ClInclude Include="..\taskbar.h">
       <Filter>Taskbar</Filter>
     </ClInclude>
-    <ClInclude Include="../calladmin-client.h">
+    <ClInclude Include="..\calladmin-client.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\timer.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\curl_util.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\config.h">
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="..\main_frame.h">
@@ -68,6 +92,12 @@
     </ClInclude>
     <ClInclude Include="..\trackers_panel.h">
       <Filter>Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\main_panel.h">
+      <Filter>Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notebook.h">
+      <Filter>Notebook</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +124,9 @@
     </Filter>
     <Filter Include="Dialog">
       <UniqueIdentifier>{2149f6a4-1176-488e-a8d4-fef78fc4cb4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Notebook">
+      <UniqueIdentifier>{884369d9-d192-4aad-8d15-14cf58196c89}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

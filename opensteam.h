@@ -4,139 +4,121 @@
 /**
  * -----------------------------------------------------
  * File        opensteam.h
- * Authors     David <popoklopsi> Ordnung, Impact
+ * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
- * 
- * 
- * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
- * 
+ *
+ * Copyright (C) 2013-2016 David O., Impact
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
 #pragma once
 
-
 // Precomp Header
 #include <wx/wxprec.h>
 
-// c++ libs
-#include <string>
-
-
 // We need WX
 #ifndef WX_PRECOMP
-	#include <wx/wx.h>
+#include <wx/wx.h>
 #endif
-
 
 // Steamworks warning -> disable
 #pragma warning(disable: 4245)
 
-// Steam Workds for Client tools
+// Steam Works for Client tools
 #include "Steamworks.h"
 
 // Steamworks warning -> enable
 #pragma warning(default: 4245)
 
 
-
-// Steamid
-extern std::string steamid;
-
-// Is Connected?
-extern bool steamConnected;
-
-
-// Var to send messages
-extern HSteamPipe pipeSteam;
-extern HSteamUser clientUser;
-extern ISteamFriends015* steamFriends;
-extern ISteamClient017* steamClient;
-extern ISteamUser017* steamUser;
-extern ISteamUtils007* steamUtils;
-
-
-enum STEAM_ERROR_TYP
-{
+enum STEAM_ERROR_TYP {
 	STEAM_NO_ERROR = 0,
 	STEAM_DISABLED,
 	STEAM_ERROR,
 };
 
 
-
-class steamThread : public wxThread
-{
+class SteamThread : public wxThread {
 private:
+	wxString steamid;
+	bool isConnected;
+
 	CSteamAPILoader loader;
 	wxMutex steamLock;
 
 	// Last Steam Error
 	STEAM_ERROR_TYP lastError;
 
+	HSteamPipe pipeSteam;
+	HSteamUser clientUser;
+	ISteamFriends015 *steamFriends;
+	ISteamClient017 *steamClient;
+	ISteamUser017 *steamUser;
+	ISteamUtils007 *steamUtils;
+
 public:
-	steamThread();
-	~steamThread();
+	SteamThread();
+	~SteamThread();
 
 	virtual ExitCode Entry();
 
-	STEAM_ERROR_TYP loadSteam();
-	void checkSteam();
+	wxString GetUserSteamId();
+	bool IsConnected();
+
+	ISteamFriends015* GetSteamFriends();
+	ISteamUtils007* GetSteamUtils();
+
+	STEAM_ERROR_TYP Load();
+	void Check();
 
 	// Cleanup Steam
-	void cleanSteam();
+	void Clean();
 };
 
 
-
-
-
 // Avatar Timer Class
-class AvatarTimer : public wxTimer
-{
+class AvatarTimer : public wxTimer {
 private:
 	int attempts;
 
 	// The ID's
-	CSteamID *clientsID;
-	CSteamID *targetsID;
+	CSteamID *clientId;
+	CSteamID *targetId;
 
 	// The avatars
-	wxStaticBitmap *clientsAvatar;
-	wxStaticBitmap *targetsAvatar;
+	wxStaticBitmap *clientAvatar;
+	wxStaticBitmap *targetAvatar;
 
 	bool clientLoaded;
 	bool targetLoaded;
 
 public:
 	// Init Timer
-	AvatarTimer(CSteamID *cid, CSteamID *tid, wxStaticBitmap* cAvatar, wxStaticBitmap* tAvatar);
+	AvatarTimer(CSteamID *clientId, CSteamID *targetId, wxStaticBitmap *clientAvatar, wxStaticBitmap *targetAvatar);
 
-	void startTimer() {Start(100);}
-	bool setAvatar(CSteamID *id, wxStaticBitmap* map);
+	void StartTimer();
+	bool SetAvatar(CSteamID *id, wxStaticBitmap *map);
 
 	void Notify();
 };
 
 
-
-
 // Name Timer Class
-class NameTimer : public wxTimer
-{
+class NameTimer : public wxTimer {
 private:
 	int attempts;
 
@@ -145,14 +127,9 @@ private:
 
 public:
 	// Init Timer
-	NameTimer(CSteamID clients) : wxTimer(this, -1) {attempts = 0; client = clients; Start(100);}
+	NameTimer(CSteamID client);
 
 	void Notify();
 };
-
-
-
-// Gobal Thread 
-extern steamThread* steamThreader;
 
 #endif

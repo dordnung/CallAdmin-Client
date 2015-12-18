@@ -1,344 +1,289 @@
 /**
  * -----------------------------------------------------
  * File        opensteam.cpp
- * Authors     David <popoklopsi> Ordnung, Impact
+ * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
- * 
- * 
- * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
- * 
+ *
+ * Copyright (C) 2013-2016 David O., Impact
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
 #include "opensteam.h"
-#include "main_frame.h"
-#include "log_panel.h"
-#include "trackers_panel.h"
-#include "config_panel.h"
 #include "calladmin-client.h"
-
 
 // Alloca
 #if defined(__WXMSW__)
-	#define ALLOCA _alloca
+#define ALLOCA _alloca
 #else
-	#define ALLOCA alloca
+#define ALLOCA alloca
 #endif
 
 
-
-// Steamid
-std::string steamid = "";
-
-
-// Is Connected?
-bool steamConnected = false;
-
-
-// Var to send messages
-HSteamPipe pipeSteam = 0;
-HSteamUser clientUser = 0;
-ISteamFriends015* steamFriends = NULL;
-ISteamClient017* steamClient = NULL;
-ISteamUser017* steamUser = NULL;
-ISteamUtils007* steamUtils = NULL;
-
-
-// Steam Thread
-steamThread *steamThreader = NULL;
-
-
 // The Thread Class
-steamThread::steamThread() : wxThread(wxTHREAD_DETACHED), loader(CSteamAPILoader::k_ESearchOrderSteamInstallFirst)
-{
+SteamThread::SteamThread() {
+	this->loader = CSteamAPILoader(CSteamAPILoader::k_ESearchOrderSteamInstallFirst);
+
 	// Reset
-	pipeSteam = 0;
-	clientUser = 0;
-	steamClient = NULL;
-	steamFriends = NULL;
-	steamUser = NULL;
-	steamUtils = NULL;
+	this->pipeSteam = 0;
+	this->clientUser = 0;
+	this->steamClient = NULL;
+	this->steamFriends = NULL;
+	this->steamUser = NULL;
+	this->steamUtils = NULL;
 
 	// No Last Error
-	lastError = STEAM_NO_ERROR;
+	this->lastError = STEAM_NO_ERROR;
 
-	this->Create();
-	this->Run();
+	Create();
+	Run();
 }
 
 
 // Destroy
-steamThread::~steamThread()
-{
-	cleanSteam();
+SteamThread::~SteamThread() {
+	Clean();
 }
 
 
-STEAM_ERROR_TYP steamThread::loadSteam()
-{
-	if (!steamEnabled)
-	{
+wxString SteamThread::GetUserSteamId() {
+	return this->steamid;
+}
+
+
+bool SteamThread::IsConnected() {
+	return isConnected;
+}
+
+
+ISteamFriends015* SteamThread::GetSteamFriends() {
+	return this->steamFriends;
+}
+
+
+ISteamUtils007* SteamThread::GetSteamUtils() {
+	return this->steamUtils;
+}
+
+
+STEAM_ERROR_TYP SteamThread::Load() {
+	if (!caGetConfig()->GetSteamEnabled()) {
 		// Don't want Steam
 		return STEAM_DISABLED;
 	}
-	else
-	{
-		// Load Factore
-		CreateInterfaceFn factory = loader.GetSteam3Factory();
-		
-		if (!factory)
-		{
-			return STEAM_ERROR;
-		}
 
-		// Load Steam Client
-		steamClient = (ISteamClient017*)factory(STEAMCLIENT_INTERFACE_VERSION_012, NULL);
+	// Load Factore
+	CreateInterfaceFn factory = this->loader.GetSteam3Factory();
 
-		if (!steamClient)
-		{
-			return STEAM_ERROR;
-		}
-		
-		// Create Pipe
-		pipeSteam = steamClient->CreateSteamPipe();
-
-		if (!pipeSteam || pipeSteam == -1)
-		{
-			return STEAM_ERROR;
-		}
-
-
-		// Workaround for deadlock
-		steamClient->BReleaseSteamPipe(pipeSteam);
-		wxMilliSleep(5000);
-
-
-		// Create Pipe again
-		pipeSteam = steamClient->CreateSteamPipe();
-		
-		if (!pipeSteam || pipeSteam == -1)
-		{
-			return STEAM_ERROR;
-		}
-
-
-
-		// Connect User
-		clientUser = steamClient->ConnectToGlobalUser(pipeSteam);
-
-		if (!clientUser)
-		{
-			return STEAM_ERROR;
-		}
-
-		// Load SteamFriends
-		steamFriends = (ISteamFriends015*)steamClient->GetISteamFriends(clientUser, pipeSteam, STEAMFRIENDS_INTERFACE_VERSION_013);
-		
-		if (!steamFriends)
-		{
-			return STEAM_ERROR;
-		}
-
-		// Load Steam User
-		steamUser = (ISteamUser017*)steamClient->GetISteamUser(clientUser, pipeSteam, STEAMUSER_INTERFACE_VERSION_016);
-		
-		if (!steamUser)
-		{
-			return STEAM_ERROR;
-		}
-
-		// Load Steam Utils
-		steamUtils = (ISteamUtils007*)steamClient->GetISteamUtils(pipeSteam, STEAMUTILS_INTERFACE_VERSION_006);
-
-		if (!steamUtils)
-		{
-			return STEAM_ERROR;
-		}
-
-		// Everything is good :)
-		return STEAM_NO_ERROR;
+	if (!factory) {
+		return STEAM_ERROR;
 	}
+
+	// Load Steam Client
+	this->steamClient = (ISteamClient017*)factory(STEAMCLIENT_INTERFACE_VERSION_017, NULL);
+
+	if (!this->steamClient) {
+		return STEAM_ERROR;
+	}
+
+	// Create Pipe
+	this->pipeSteam = this->steamClient->CreateSteamPipe();
+
+	if (!this->pipeSteam || this->pipeSteam == -1) {
+		return STEAM_ERROR;
+	}
+
+	// Workaround for deadlock
+	this->steamClient->BReleaseSteamPipe(this->pipeSteam);
+	wxMilliSleep(5000);
+
+	// Create Pipe again
+	this->pipeSteam = this->steamClient->CreateSteamPipe();
+
+	if (!this->pipeSteam || this->pipeSteam == -1) {
+		return STEAM_ERROR;
+	}
+
+	// Connect User
+	this->clientUser = this->steamClient->ConnectToGlobalUser(this->pipeSteam);
+
+	if (!this->clientUser) {
+		return STEAM_ERROR;
+	}
+
+	// Load SteamFriends
+	this->steamFriends = (ISteamFriends015*)this->steamClient->GetISteamFriends(this->clientUser, this->pipeSteam, STEAMFRIENDS_INTERFACE_VERSION_015);
+
+	if (!this->steamFriends) {
+		return STEAM_ERROR;
+	}
+
+	// Load Steam User
+	this->steamUser = (ISteamUser017*)this->steamClient->GetISteamUser(this->clientUser, this->pipeSteam, STEAMUSER_INTERFACE_VERSION_017);
+
+	if (!this->steamUser) {
+		return STEAM_ERROR;
+	}
+
+	// Load Steam Utils
+	this->steamUtils = (ISteamUtils007*)this->steamClient->GetISteamUtils(this->pipeSteam, STEAMUTILS_INTERFACE_VERSION_007);
+
+	if (!this->steamUtils) {
+		return STEAM_ERROR;
+	}
+
+	// Everything is good :)
+	return STEAM_NO_ERROR;
 }
 
 
 // Thread started
-void steamThread::checkSteam()
-{
-	for(; !TestDestroy(); Sleep(100))
-	{
+void SteamThread::Check() {
+	for (; !TestDestroy(); Sleep(100)) {
 		wxMutexLocker steamLocker(steamLock);
 		wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_SteamChanged);
 
-		if (!pipeSteam || pipeSteam == -1 || !steamEnabled)
-		{
+		if (!this->pipeSteam || this->pipeSteam == -1 || !caGetConfig()->GetSteamEnabled()) {
 			// Load Steam
-			STEAM_ERROR_TYP steamError = loadSteam();
+			STEAM_ERROR_TYP steamError = Load();
 
 			// Handling
-			if (steamError != STEAM_NO_ERROR)
-			{
-				if (steamError == STEAM_ERROR)
-				{
+			if (steamError != STEAM_NO_ERROR) {
+				if (steamError == STEAM_ERROR) {
 					// Only if connected before
-					if (mainFrame != NULL && steamConnected)
-					{
+					if (this->isConnected) {
 						// Notice Main the changes
 						event.SetInt(1);
 
-						mainFrame->GetEventHandler()->AddPendingEvent(event);
-
-						LogAction("Disonnected from Steam");
+						caGetMainFrame()->GetEventHandler()->AddPendingEvent(event);
+						caLogAction("Disonnected from Steam");
 					}
-				}
-				else
-				{
+				} else {
 					// Disabled
-					if (mainFrame != NULL && lastError != STEAM_DISABLED)
-					{
+					if (this->lastError != STEAM_DISABLED) {
 						// Notice Main the changes
 						event.SetInt(0);
 
-						mainFrame->GetEventHandler()->AddPendingEvent(event);
+						caGetMainFrame()->GetEventHandler()->AddPendingEvent(event);
 
 						// clean
-						cleanSteam();
+						Clean();
 					}
 				}
 
-				steamConnected = false;
-				steamid = "";
+				this->isConnected = false;
+				this->steamid = "";
 
 				continue;
-			}
-			else
-			{
+			} else {
 				// Connected :)
-				steamid = steamUser->GetSteamID().Render(); 
+				this->steamid = this->steamUser->GetSteamID().Render();
 
 				// Notice Main the changes
 				event.SetInt(2);
 
-				if (mainFrame != NULL)
-				{
-					mainFrame->GetEventHandler()->AddPendingEvent(event);
-				}
+				caGetMainFrame()->GetEventHandler()->AddPendingEvent(event);
+				caLogAction("Connected to Steam");
 
-				LogAction("Connected to Steam");
-
-				steamConnected = true;
+				this->isConnected = true;
 			}
 
 
-			lastError = steamError;
+			this->lastError = steamError;
 		}
 
 		static unsigned int i = 0;
 
-		if (++i % 50 == 0)
-		{
+		if (++i % 50 == 0) {
 			// Check if logged in
-			if (steamUser)
-			{
-				if (!steamUser->BLoggedOn())
-				{
+			if (this->steamUser) {
+				if (!this->steamUser->BLoggedOn()) {
 					// Only if connected before
-					if (mainFrame != NULL && steamConnected)
-					{
+					if (this->isConnected) {
 						// Notice Main the changes
 						event.SetInt(1);
 
-						mainFrame->GetEventHandler()->AddPendingEvent(event);
-
-						LogAction("Disonnected from Steam");
+						caGetMainFrame()->GetEventHandler()->AddPendingEvent(event);
+						caLogAction("Disonnected from Steam");
 					}
 
-					steamConnected = false;
+					this->isConnected = false;
 
 					// Clean Steam
-					cleanSteam();
-					steamid = "";
+					Clean();
+					this->steamid = "";
 
 					continue;
 				}
 			}
 		}
 
-
 		CallbackMsg_t callbackMsg;
 
-		while (Steam_BGetCallback(pipeSteam, &callbackMsg))
-		{
-			if (callbackMsg.m_iCallback == IPCFailure_t::k_iCallback)
-			{
+		while (Steam_BGetCallback(this->pipeSteam, &callbackMsg)) {
+			if (callbackMsg.m_iCallback == IPCFailure_t::k_iCallback) {
 				// Only if connected before
-				if (mainFrame != NULL && steamConnected)
-				{
+				if (this->isConnected) {
 					// Notice Main the changes
 					event.SetInt(1);
 
-					mainFrame->GetEventHandler()->AddPendingEvent(event);
-
-					LogAction("Disonnected from Steam");
+					caGetMainFrame()->GetEventHandler()->AddPendingEvent(event);
+					caLogAction("Disonnected from Steam");
 				}
 
-				steamConnected = false;
-				steamid = "";
+				this->isConnected = false;
+				this->steamid = "";
 
 				// Clean Steam
-				cleanSteam();
+				Clean();
 
 				break;
 			}
 
-			Steam_FreeLastCallback(pipeSteam);
+			Steam_FreeLastCallback(this->pipeSteam);
 		}
 	}
 }
-
 
 
 // Clean Up Steam Stuff
-void steamThread::cleanSteam()
-{
+void SteamThread::Clean() {
 	// Close Steam Stuff
-	if (pipeSteam && pipeSteam != -1 && steamClient)
-	{
-		if (clientUser)
-		{
-			steamClient->ReleaseUser(pipeSteam, clientUser);
+	if (this->pipeSteam && this->pipeSteam != -1 && this->steamClient) {
+		if (this->clientUser) {
+			this->steamClient->ReleaseUser(this->pipeSteam, this->clientUser);
 		}
 
-		steamClient->BReleaseSteamPipe(pipeSteam);
+		this->steamClient->BReleaseSteamPipe(this->pipeSteam);
 	}
 
 	// Reset
-	pipeSteam = 0;
-	clientUser = 0;
-	steamClient = NULL;
-	steamFriends = NULL;
-	steamUser = NULL;
-	steamUtils = NULL;
+	this->pipeSteam = 0;
+	this->clientUser = 0;
+	this->steamClient = NULL;
+	this->steamFriends = NULL;
+	this->steamUser = NULL;
+	this->steamUtils = NULL;
 }
 
 
 
-wxThread::ExitCode steamThread::Entry()
-{
+wxThread::ExitCode SteamThread::Entry() {
 	// Check Steam
-	checkSteam();
+	Check();
 
 	return (wxThread::ExitCode)0;
 }
@@ -346,117 +291,99 @@ wxThread::ExitCode steamThread::Entry()
 
 
 
-
-
 // Init. Timer
-AvatarTimer::AvatarTimer(CSteamID *cid, CSteamID *tid, wxStaticBitmap* cAvatar, wxStaticBitmap* tAvatar) : wxTimer(this, -1) 
-{
-	clientsID = cid; 
-	targetsID = tid; 
-	attempts = 0; 
-	clientsAvatar = cAvatar; 
-	targetsAvatar = tAvatar; 
+AvatarTimer::AvatarTimer(CSteamID *clientId, CSteamID *targetId, wxStaticBitmap* clientAvatar, wxStaticBitmap* targetAvatar) : wxTimer(this, -1) {
+	this->clientId = clientId;
+	this->targetId = targetId;
+	this->clientAvatar = clientAvatar;
+	this->targetAvatar = targetAvatar;
+	this->attempts = 0;
 
-	clientLoaded = targetLoaded = false;
+	this->clientLoaded = this->targetLoaded = false;
 
-	// Invalid Steamid?
-	if (clientsID == NULL || !clientsID->IsValid())
-	{
-		clientLoaded = true;
+	// Invalid Steamids -> Loaded
+	if (this->clientId == NULL || !this->clientId->IsValid()) {
+		this->clientLoaded = true;
 	}
 
-	if (targetsID == NULL || !targetsID->IsValid())
-	{
-		targetLoaded = true;
+	if (this->targetId == NULL || !this->targetId->IsValid()) {
+		this->targetLoaded = true;
 	}
 }
 
 
-
 // Timer to update avatars
-void AvatarTimer::Notify()
-{
+void AvatarTimer::Notify() {
 	// Steam available?
-	if (steamConnected && steamFriends != NULL && steamUtils != NULL)
-	{
+	if (caGetSteamThread()->IsConnected()) {
 		// Do we have information about the users?
 		// Load the images
-		if (!clientLoaded)
-		{
-			if (!steamFriends->RequestUserInformation(*clientsID, false))
-			{
+		if (!this->clientLoaded) {
+			if (!caGetSteamThread()->GetSteamFriends()->RequestUserInformation(*this->clientId, false)) {
 				// Try to laod caller avatar
-				clientLoaded = setAvatar(clientsID, clientsAvatar);
+				this->clientLoaded = SetAvatar(this->clientId, this->clientAvatar);
 			}
 		}
 
-		if (!targetLoaded)
-		{
-			if (!steamFriends->RequestUserInformation(*targetsID, false))
-			{
+		if (!this->targetLoaded) {
+			if (!caGetSteamThread()->GetSteamFriends()->RequestUserInformation(*this->targetId, false)) {
 				// Try to laod target avatar
-				targetLoaded = setAvatar(targetsID, targetsAvatar);
+				this->targetLoaded = SetAvatar(this->targetId, this->targetAvatar);
 			}
 		}
 	}
 
 	// All loaded or 10 seconds gone?
-	if (++attempts == 100 || (clientLoaded && targetLoaded))
-	{
+	if (++this->attempts == 100 || (this->clientLoaded && this->targetLoaded)) {
 		// Enough, stop timer
 		Stop();
 	}
 }
 
 
+void AvatarTimer::StartTimer() {
+	Start(100);
+}
+
+
 // Set new Avatar
-bool AvatarTimer::setAvatar(CSteamID *id, wxStaticBitmap* map)
-{
+bool AvatarTimer::SetAvatar(CSteamID *id, wxStaticBitmap* map) {
 	// Load avatar
-	int avatar = steamFriends->GetLargeFriendAvatar(*id);
+	int avatar = caGetSteamThread()->GetSteamFriends()->GetLargeFriendAvatar(*id);
 
 	// Could it load?
-	if (avatar > 0)
-	{
+	if (avatar > 0) {
 		// Buffer to store picture
 		uint8* rgbaBuffer = (uint8*)ALLOCA(4 * 184 * 184);
-
 		uint32* size = new uint32(184);
 
 		// Is Size valid?
-		if (steamUtils->GetImageSize(avatar, size, size))
-		{
+		if (caGetSteamThread()->GetSteamUtils()->GetImageSize(avatar, size, size)) {
 			// Load Image
-			if (steamUtils->GetImageRGBA(avatar, rgbaBuffer, (4 * 184 * 184)))
-			{
+			if (caGetSteamThread()->GetSteamUtils()->GetImageRGBA(avatar, rgbaBuffer, (4 * 184 * 184))) {
 				// Image
 				wxImage image(184, 184);
 
 				// RGBA to Image
-				for (int y=0; y < 184; y++)
-				{
+				for (int y = 0; y < 184; y++) {
 					int start = 184 * y * 4;
 
-					for (int x=0; x < 184; x++)
-					{
+					for (int x = 0; x < 184; x++) {
 						// Set Colour
-						image.SetRGB(x, y, rgbaBuffer[start], rgbaBuffer[start+1], rgbaBuffer[start+2]);
+						image.SetRGB(x, y, rgbaBuffer[start], rgbaBuffer[start + 1], rgbaBuffer[start + 2]);
 
 						start += 4;
 					}
 				}
-				
-				if (avatarSize != 184)
-				{
-					image.Rescale(avatarSize, avatarSize);
+
+				if (caGetApp().GetAvatarSize() != 184) {
+					image.Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize());
 				}
 
 				// Set new Avatar
 				map->SetBitmap(wxBitmap(image));
 
-
-				LogAction("Loaded Avatar of " + (wxString)id->Render());
-
+				caLogAction("Loaded Avatar of " + (wxString)id->Render());
 
 				// It's loaded
 				return true;
@@ -470,35 +397,34 @@ bool AvatarTimer::setAvatar(CSteamID *id, wxStaticBitmap* map)
 
 
 
+NameTimer::NameTimer(CSteamID client) : wxTimer(this, -1) {
+	this->attempts = 0;
+	this->client = client;
+
+	Start(100);
+}
+
+
 // Timer to update trackers
-void NameTimer::Notify()
-{
+void NameTimer::Notify() {
 	// Steam available?
-	if (steamConnected && steamFriends != NULL)
-	{
-		if (client.IsValid())
-		{
-			if (!steamFriends->RequestUserInformation(client, true))
-			{
+	if (caGetSteamThread()->IsConnected()) {
+		if (this->client.IsValid()) {
+			if (!caGetSteamThread()->GetSteamFriends()->RequestUserInformation(this->client, true)) {
 				wxString isFriend = "No Friends";
 				wxString isOnline = "Offline";
 
 				// Is Friend?
-				if (steamFriends->GetFriendRelationship(client) == k_EFriendRelationshipFriend)
-				{
+				if (caGetSteamThread()->GetSteamFriends()->GetFriendRelationship(client) == k_EFriendRelationshipFriend) {
 					isFriend = "Friends";
 				}
 
 				// Is Online?
-				if (steamFriends->GetFriendPersonaState(client) != k_EPersonaStateOffline)
-				{
+				if (caGetSteamThread()->GetSteamFriends()->GetFriendPersonaState(client) != k_EPersonaStateOffline) {
 					// Online
-					if (isFriend == "Friends")
-					{
+					if (isFriend == "Friends") {
 						isOnline = "Online";
-					}
-					else
-					{
+					} else {
 						// We can't know
 						isOnline = "Unknown Status";
 					}
@@ -506,13 +432,10 @@ void NameTimer::Notify()
 
 
 				// Add Tracker
-				if (client.Render() != steamid)
-				{
-					addTracker("" + (wxString)steamFriends->GetFriendPersonaName(client) + " - " + (wxString)client.Render() + " - " + isFriend + " - " + isOnline);
-				}
-				else
-				{
-					addTracker("" + (wxString)steamFriends->GetFriendPersonaName(client) + " - " + (wxString)client.Render());
+				if (this->client.Render() != wxGetApp().GetSteamThread()->GetUserSteamId()) {
+					caGetTrackersPanel()->AddTracker("" + (wxString)caGetSteamThread()->GetSteamFriends()->GetFriendPersonaName(this->client) + " - " + (wxString)this->client.Render() + " - " + isFriend + " - " + isOnline);
+				} else {
+					caGetTrackersPanel()->AddTracker("" + (wxString)caGetSteamThread()->GetSteamFriends()->GetFriendPersonaName(this->client) + " - " + (wxString)this->client.Render());
 				}
 
 				//Stop
@@ -523,8 +446,7 @@ void NameTimer::Notify()
 
 
 	// All loaded or 5 seconds gone?
-	if (++attempts == 50)
-	{
+	if (++this->attempts == 50) {
 		// Enough, stop timer
 		Stop();
 	}

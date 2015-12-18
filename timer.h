@@ -1,10 +1,10 @@
-#ifndef TASKBAR_H
-#define TASKBAR_H
+#ifndef TIMER_H
+#define TIMER_H
 
 /**
  * -----------------------------------------------------
- * File        taskbar.h
- * Authors     David David O., Impact
+ * File        timer.h
+ * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
@@ -35,32 +35,26 @@
 #include <wx/wx.h>
 #endif
 
-#include <wx/taskbar.h>
+#include <wx/timer.h>
+
+// The timer ID
+#define TIMER_ID 1
 
 
-// Taskbar Class
-class TaskBarIcon : public wxTaskBarIcon {
+// Timer Class
+class Timer : public wxTimer {
+private:
+	bool isFirstShoot;
+	long firstFetch;
+
 public:
-	TaskBarIcon();
+	Timer();
 
-	// Taskbar Events
-	void OnLeftButtonDClick(wxTaskBarIconEvent &event);
-	void OnMenuRestore(wxCommandEvent &event);
-	void OnMenuExit(wxCommandEvent &event);
-	void OnMenuUpdate(wxCommandEvent &event);
-
-#if defined(__WXMSW__)
-	// Autostart only for Windows
-	void OnMenuAutoStart(wxCommandEvent &event);
-#endif
-
-	// Show a information
-	void ShowMessage(wxString title, wxString message, wxWindow *parent);
-
-	// Override CreatePopupMenu
-	virtual wxMenu *CreatePopupMenu();
+	void Run(int repeatInterval);
+	void OnExecute(wxTimerEvent &event);
 
 	DECLARE_EVENT_TABLE()
 };
+
 
 #endif
