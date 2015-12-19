@@ -27,36 +27,72 @@
 
 #pragma once
 
-// Precomp Header
 #include <wx/wxprec.h>
 
-// We need WX
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
 
+#include "opensteam.h"
 
-// Tracker Panel Class
+
+// Name Timer Class
+class NameTimer : public wxTimer {
+private:
+	int id;
+	int attempts;
+
+	// The ID
+	CSteamID client;
+
+public:
+	// Init Timer
+	NameTimer(CSteamID client, int id);
+	~NameTimer();
+
+	int GetId() {
+		return this->id;
+	}
+
+protected:
+	virtual void Notify();
+};
+
+
 class TrackerPanel : public wxPanel {
 private:
+	int currentNameTimerId;
+	wxVector<NameTimer *> nameTimers;
+
 	wxListBox *trackerBox;
 
 public:
 	TrackerPanel();
 
-	void AddTracker(wxString text);
-	void DeleteTrackers();
+	void AddTracker(wxString text) {
+		this->trackerBox->Append(wxString::FromUTF8(text));
+	}
+
+	void DeleteTrackers() {
+		this->trackerBox->Clear();
+	}
+
+	wxVector<NameTimer *>* GetNameTimers() {
+		return &nameTimers;
+	}
+
+	int GetAndIncraseCurrentNameTimerId() {
+		return currentNameTimerId++;
+	}
 
 	// Refresh the tracker list
 	static void RefreshTrackers(char *error, wxString result, int extra);
 
 protected:
-	void OnExit(wxCommandEvent &event);
 	void OnUpdate(wxCommandEvent &event);
-	void OnHide(wxCommandEvent &event);
+	void OnCloseWindow(wxCloseEvent &event);
 
 	DECLARE_EVENT_TABLE()
 };
-
 
 #endif

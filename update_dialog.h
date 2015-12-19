@@ -27,18 +27,12 @@
 
 #pragma once
 
-// c++
-#include <stdio.h>
-
-// Precomp Header
 #include <wx/wxprec.h>
 
-// We need WX
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
 
-// Curl
 #include <curl/curl.h>
 
 
@@ -89,7 +83,7 @@ protected:
 
 
 // CURL Callbacks
-size_t WriteDataToFile(void *filePointer, size_t size, size_t nmemb, FILE *stream);
+size_t WriteDataToFile(void *data, size_t size, size_t nmemb, FILE *file);
 int ProgressUpdated(void *progressPointer, double dltotal, double dlnow, double ultotal, double ulnow);
 
 #endif

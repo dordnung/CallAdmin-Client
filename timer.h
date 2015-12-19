@@ -27,10 +27,8 @@
 
 #pragma once
 
-// Precomp Header
 #include <wx/wxprec.h>
 
-// We need WX
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
@@ -48,10 +46,12 @@ private:
 	long firstFetch;
 
 public:
-	Timer();
+	Timer() : wxTimer(this, TIMER_ID), isFirstShoot(true), firstFetch(0) {};
 
 	void Run(int repeatInterval);
 	void OnExecute(wxTimerEvent &event);
+
+	static void OnNotice(char* error, wxString result, int firstRun);
 
 	DECLARE_EVENT_TABLE()
 };

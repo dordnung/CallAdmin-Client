@@ -22,21 +22,23 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-// Include Project
 #include "main_panel.h"
 #include "calladmin-client.h"
 
+
+wxDEFINE_EVENT(wxEVT_STEAM_STATUS_CHANGED, wxCommandEvent);
 
 // Button Events for about Panel
 BEGIN_EVENT_TABLE(MainPanel, wxPanel)
 EVT_BUTTON(wxID_Hide, MainPanel::OnHide)
 EVT_BUTTON(wxID_Reconnect, MainPanel::OnReconnect)
-
 EVT_CHECKBOX(wxID_CheckBox, MainPanel::OnCheckBox)
 
-EVT_COMMAND(wxID_SteamChanged, wxEVT_COMMAND_MENU_SELECTED, MainPanel::OnSteamChange)
+EVT_COMMAND(wxID_ANY, wxEVT_STEAM_STATUS_CHANGED, MainPanel::OnSteamChange)
 
 EVT_LISTBOX_DCLICK(wxID_BoxClick, MainPanel::OnBoxClick)
+
+EVT_CLOSE(MainPanel::OnCloseWindow)
 END_EVENT_TABLE()
 
 
@@ -51,7 +53,6 @@ MainPanel::MainPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	// Box Body
 	wxStaticBoxSizer* sizerBox = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("Latest Calls")), wxHORIZONTAL);
-
 
 	// Box for all Calls
 	this->callBox = new wxListBox(this, wxID_BoxClick, wxDefaultPosition, wxSize(280, -1), 0, NULL, wxLB_HSCROLL | wxLB_SINGLE);
@@ -82,31 +83,29 @@ MainPanel::MainPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
 
 	// Steam Text
-	steamText = new wxStaticText(this, wxID_ANY, "Steam is currently not running");
-	steamText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-	steamText->SetForegroundColour(wxColor("red"));
+	this->steamText = new wxStaticText(this, wxID_ANY, "Steam is currently not running");
+	this->steamText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	this->steamText->SetForegroundColour(wxColor("red"));
 
 	// Add it
-	sizerTop->Add(steamText, 0, wxALL | wxALIGN_CENTER, 10);
+	sizerTop->Add(this->steamText, 0, wxALL | wxALIGN_CENTER, 10);
 
 	// Static line
 	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
 	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
 
-	eventText = new wxStaticText(this, wxID_ANY, "Waiting for a new report...");
+	this->eventText = new wxStaticText(this, wxID_ANY, "Starting CallAdmin Client...");
 
-	eventText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-	eventText->SetForegroundColour(wxColor("blue"));
+	this->eventText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	this->eventText->SetForegroundColour(wxColor("blue"));
 
-	sizerTop->Add(eventText, 0, wxALL | wxALIGN_CENTER, 10);
+	sizerTop->Add(this->eventText, 0, wxALL | wxALIGN_CENTER, 10);
 
 	// Static line
 	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
-
 
 	// Space
 	sizerTop->Add(0, 0, 0, wxBOTTOM, 40);
-
 
 	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer* const sizerChecks = new wxBoxSizer(wxHORIZONTAL);
@@ -119,11 +118,11 @@ MainPanel::MainPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	tipAvailable->Enable(true);
 
 	// The available Checkbox
-	available = new wxCheckBox(this, wxID_CheckBox, "I'm available");
-	available->SetValue(caGetConfig()->GetIsAvailable());
-	available->SetToolTip(tipAvailable);
+	this->available = new wxCheckBox(this, wxID_CheckBox, "I'm available");
+	this->available->SetValue(caGetConfig()->GetIsAvailable());
+	this->available->SetToolTip(tipAvailable);
 
-	sizerChecks->Add(available, 0, wxALL | wxALIGN_CENTER, 5);
+	sizerChecks->Add(this->available, 0, wxALL | wxALIGN_CENTER, 5);
 
 	// ToolTip for second Checkbox
 	wxToolTip* tipSound = new wxToolTip("You will hear a notification sound on an incoming call.");
@@ -131,13 +130,12 @@ MainPanel::MainPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	tipSound->SetDelay(500);
 	tipSound->Enable(true);
 
-
 	// The sound Checkbox
-	sound = new wxCheckBox(this, wxID_CheckBox, "Sound on call");
-	sound->SetValue(caGetConfig()->GetWantSound());
-	sound->SetToolTip(tipSound);
+	this->sound = new wxCheckBox(this, wxID_CheckBox, "Sound on call");
+	this->sound->SetValue(caGetConfig()->GetWantSound());
+	this->sound->SetToolTip(tipSound);
 
-	sizerChecks->Add(sound, 0, wxALL | wxALIGN_CENTER, 5);
+	sizerChecks->Add(this->sound, 0, wxALL | wxALIGN_CENTER, 5);
 
 	// ToolTip for third Checkbox
 	wxToolTip* specAvailable = new wxToolTip("You will only receive calls but you will not be stored in the trackers database");
@@ -146,28 +144,26 @@ MainPanel::MainPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	specAvailable->Enable(true);
 
 	// The store Checkbox
-	store = new wxCheckBox(this, wxID_CheckBox, "Spectate only");
-	store->SetValue(caGetConfig()->GetIsSpectator());
-	store->SetToolTip(specAvailable);
+	this->store = new wxCheckBox(this, wxID_CheckBox, "Spectate only");
+	this->store->SetValue(caGetConfig()->GetIsSpectator());
+	this->store->SetToolTip(specAvailable);
 
-	sizerChecks->Add(store, 0, wxALL | wxALIGN_CENTER, 5);
+	sizerChecks->Add(this->store, 0, wxALL | wxALIGN_CENTER, 5);
 
 	// Hide, Check
 	sizerBtns->Add(new wxButton(this, wxID_Hide, "Hide"), 0, wxTOP | wxLEFT | wxALIGN_CENTER, 5);
 
 	// If max attempts reached, add a reconnect button
-	reconnectButton = new wxButton(this, wxID_Reconnect, "Reconnect");
-	reconnectButton->Enable(false);
+	this->reconnectButton = new wxButton(this, wxID_Reconnect, "Reconnect");
+	this->reconnectButton->Enable(false);
 
-	sizerBtns->Add(reconnectButton, 0, wxTOP | wxRIGHT | wxALIGN_CENTER, 5);
-
+	sizerBtns->Add(this->reconnectButton, 0, wxTOP | wxRIGHT | wxALIGN_CENTER, 5);
 
 	// Add Checks to Box
 	sizerTop->Add(sizerChecks, 0, wxTOP | wxRIGHT | wxALIGN_CENTER_HORIZONTAL, 5);
 
 	// Add Buttons to Box
 	sizerTop->Add(sizerBtns, 0, wxTOP | wxRIGHT | wxLEFT | wxALIGN_CENTER_HORIZONTAL, 5);
-
 
 	// Author + Version Text
 	text = new wxStaticText(this, wxID_ANY, "v" + (wxString)CALLADMIN_CLIENT_VERSION + "  (c) Popoklopsi and Impact");
@@ -177,10 +173,8 @@ MainPanel::MainPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	// Add it
 	sizerTop->Add(text, 0, wxTOP | wxRIGHT | wxLEFT | wxALIGN_RIGHT, 10);
 
-
 	// Add to Body
 	sizerBody->Add(sizerTop, 0, wxTOP | wxRIGHT | wxLEFT | wxALIGN_RIGHT, 10);
-
 
 	// Auto Size
 	SetSizerAndFit(sizerBody, true);
@@ -197,11 +191,6 @@ void MainPanel::SetEventText(wxString text) {
 
 	caGetNotebook()->Fit();
 	caGetMainFrame()->Fit();
-}
-
-
-void MainPanel::SetReconnectButton(bool enable) {
-	this->reconnectButton->Enable(enable);
 }
 
 
@@ -225,19 +214,14 @@ void MainPanel::UpdateCalls() {
 		CallDialog *currentDialog = *callDialog;
 		int item;
 
-		if (currentDialog->GetHandled()) {
-			item = callBox->Append("F - " + wxString::FromUTF8(currentDialog->GetBoxText()));
+		if (currentDialog->IsHandled()) {
+			item = this->callBox->Append("F - " + wxString::FromUTF8(currentDialog->GetBoxText()));
 		} else {
-			item = callBox->Append("U - " + wxString::FromUTF8(currentDialog->GetBoxText()));
+			item = this->callBox->Append("U - " + wxString::FromUTF8(currentDialog->GetBoxText()));
 		}
 
 		this->callBox->SetSelection(item);
 	}
-}
-
-
-void MainPanel::ResetCalls() {
-	this->callBox->Clear();
 }
 
 
@@ -253,7 +237,6 @@ void MainPanel::SetHandled(int item) {
 void MainPanel::OnHide(wxCommandEvent& WXUNUSED(event)) {
 	// Log Action
 	caLogAction("Hided Window");
-	caGetTaskBarIcon()->ShowMessage("Call Admin", "Call Admin is now in the taskbar!", this);
 
 	if (caGetTaskBarIcon()->IsAvailable()) {
 		caGetMainFrame()->Show(false);
@@ -309,4 +292,9 @@ void MainPanel::OnBoxClick(wxCommandEvent& WXUNUSED(event)) {
 
 	caGetCallDialogs()->at(selection)->Show(true);
 	caGetCallDialogs()->at(selection)->Restore();
+}
+
+
+void MainPanel::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {
+	Destroy();
 }

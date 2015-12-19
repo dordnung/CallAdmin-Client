@@ -24,15 +24,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
+// TODO: LOGGING
 #pragma once
 
-// Precomp Header
 #include <wx/wxprec.h>
 
-// We need WX
 #ifndef WX_PRECOMP
-	#include <wx/wx.h>
+#include <wx/wx.h>
 #endif
 
 #include "config.h"
@@ -42,6 +40,7 @@
 #include "opensteam.h"
 #include "update_dialog.h"
 #include "call_dialog.h"
+#include "curl_util.h"
 
 // Version, update URL and update exe
 #define CALLADMIN_CLIENT_VERSION "0.47B"
@@ -50,11 +49,11 @@
 
 // Font
 #if defined(__WXMSW__)
-	#define FONT_FAMILY wxFONTFAMILY_SCRIPT
-	#define FONT_WEIGHT_BOLD wxFONTWEIGHT_BOLD
+#define FONT_FAMILY wxFONTFAMILY_SCRIPT
+#define FONT_WEIGHT_BOLD wxFONTWEIGHT_BOLD
 #else
-	#define FONT_FAMILY wxFONTFAMILY_DEFAULT
-	#define FONT_WEIGHT_BOLD wxFONTWEIGHT_NORMAL
+#define FONT_FAMILY wxFONTFAMILY_DEFAULT
+#define FONT_WEIGHT_BOLD wxFONTWEIGHT_NORMAL
 #endif
 
 // Helpers
@@ -77,9 +76,9 @@
 #define caGetAboutPanel caGetNotebook()->GetAboutPanel
 
 
-// Custom events for Call Dialog closed or update dialog closed
+// Custom events
 wxDECLARE_EVENT(wxEVT_UPDATE_DIALOG_CLOSED, wxCommandEvent);
-wxDECLARE_EVENT(wxEVT_CALL_DIALOG_CLOSED, wxCommandEvent);
+wxDECLARE_EVENT(wxEVT_CURL_THREAD_FINISHED, wxCommandEvent);
 
 
 // App Class
@@ -90,14 +89,13 @@ private:
 	MainFrame *mainFrame;
 	TaskBarIcon *taskBarIcon;
 	SteamThread *steamThread;
+	CurlThread *curlThread;
 	UpdateDialog *updateDialog;
 
 	wxVector<CallDialog *> callDialogs;
 
 	int avatarSize;
 	int attempts;
-
-	bool end;
 
 	// Start in Taskbar?
 	bool startInTaskbar;
@@ -109,27 +107,56 @@ public:
 	void StartSteamThread();
 	void StartUpdate();
 
-	UpdateDialog* GetUpdateDialog();
-	SteamThread* GetSteamThread();
-	Config* GetConfig();
-	MainFrame* GetMainFrame();
-	TaskBarIcon* GetTaskBarIcon();
+	void GetPage(CurlCallback callbackFunction, wxString page, int extra = 0);
 
-	wxVector<CallDialog *>* GetCallDialogs();
+	UpdateDialog* GetUpdateDialog() {
+		return this->updateDialog;
+	}
 
-	int GetAvatarSize();
+	SteamThread* GetSteamThread() {
+		return this->steamThread;
+	}
+
+	Config* GetConfig() {
+		return this->config;
+	}
+
+	MainFrame* GetMainFrame() {
+		return this->mainFrame;
+	}
+
+	TaskBarIcon* GetTaskBarIcon() {
+		return this->taskBarIcon;
+	}
+
+	wxVector<CallDialog *>* GetCallDialogs() {
+		return &this->callDialogs;
+	}
+
+	int GetAvatarSize() {
+		return this->avatarSize;
+	}
+
+	int GetAttempts() {
+		return this->attempts;
+	}
+
+	void SetAttempts(int attempts) {
+		this->attempts = attempts;
+	}
+
 	wxString GetAppPath(wxString file);
-
-	int GetAttempts();
-	void SetAttempts(int attempts);
 
 	void CheckUpdate();
 	void CreateReconnect(wxString error);
 	void ShowError(wxString error, wxString type);
-	void ExitProgramm();
-	void LogAction(wxString action);
 
-	static void OnNotice(char* error, wxString result, int firstRun);
+	void ExitProgramm();
+
+	void LogAction(wxString action) {
+		this->mainFrame->GetNotebook()->GetLogPanel()->AddLog(action);
+	}
+
 	static void OnUpdate(char* error, wxString result, int extra);
 
 protected:
@@ -143,8 +170,8 @@ protected:
 	virtual void OnInitCmdLine(wxCmdLineParser &parser);
 	virtual bool OnCmdLineParsed(wxCmdLineParser &parser);
 
-	void OnCallDialogClosed(wxCommandEvent &event);
 	void OnUpdateDialogClosed(wxCommandEvent &event);
+	void OnCurlThread(wxCommandEvent &event);
 
 	DECLARE_EVENT_TABLE()
 };

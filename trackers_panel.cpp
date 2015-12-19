@@ -22,26 +22,31 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-// Include Project
+#include "trackers_panel.h"
 #include "calladmin-client.h"
+
 #include "tinyxml2/tinyxml2.h"
 #include "curl_util.h"
 
 
-// Update Button Id
+// Event Id
 enum {
 	wxID_UpdateTrackers = wxID_HIGHEST + 10,
 };
 
 
-// Button Events for Log Panel
+// Events for Trackers Panel
 BEGIN_EVENT_TABLE(TrackerPanel, wxPanel)
 EVT_BUTTON(wxID_UpdateTrackers, TrackerPanel::OnUpdate)
+
+EVT_CLOSE(TrackerPanel::OnCloseWindow)
 END_EVENT_TABLE()
 
 
 // Create Tracker Panel
 TrackerPanel::TrackerPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
+	this->currentNameTimerId = 0;
+
 	// Border and Center
 	wxSizerFlags flags;
 
@@ -71,20 +76,10 @@ TrackerPanel::TrackerPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 }
 
 
-void TrackerPanel::AddTracker(wxString text) {
-	this->trackerBox->Append(wxString::FromUTF8(text));
-}
-
-
-void TrackerPanel::DeleteTrackers() {
-	this->trackerBox->Clear();
-}
-
-
 // Button Event -> Update List
 void TrackerPanel::OnUpdate(wxCommandEvent& WXUNUSED(event)) {
 	// Get the Trackers Page
-	CurlThread::GetPage(TrackerPanel::RefreshTrackers, caGetConfig()->GetPage() + "/trackers.php?from=20&from_type=interval&key=" + caGetConfig()->GetKey());
+	caGetApp().GetPage(TrackerPanel::RefreshTrackers, caGetConfig()->GetPage() + "/trackers.php?from=20&from_type=interval&key=" + caGetConfig()->GetKey());
 }
 
 
@@ -142,13 +137,12 @@ void TrackerPanel::RefreshTrackers(char* errors, wxString result, int WXUNUSED(e
 								wxString steamidString = node3->FirstChild()->Value();
 
 								// Build csteamid
-								CSteamID steamidTracker = CallDialog::SteamIDtoCSteamID((char*)steamidString.mb_str().data());
+								CSteamID steamidTracker = CallDialog::SteamIdtoCSteamId((char*)steamidString.mb_str().data());
 
 								// Valid Tracker ID?
 								if (steamidTracker.IsValid()) {
 									// Create Name Timer
-									// TODO Kills itself?
-									new NameTimer(steamidTracker);
+									caGetTrackersPanel()->GetNameTimers()->push_back(new NameTimer(steamidTracker, caGetTrackersPanel()->GetAndIncraseCurrentNameTimerId()));
 
 									found = true;
 								}
@@ -188,4 +182,99 @@ void TrackerPanel::RefreshTrackers(char* errors, wxString result, int WXUNUSED(e
 	}
 
 	caGetTaskBarIcon()->ShowMessage("Coulnd't retrieve trackers!", error, NULL);
+}
+
+
+void TrackerPanel::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {
+	for (wxVector<NameTimer *>::iterator nameTimer = nameTimers.begin(); nameTimer != nameTimers.end(); ++nameTimer) {
+		(*nameTimer)->Stop();
+		delete (*nameTimer);
+	}
+
+	nameTimers.clear();
+
+	Destroy();
+}
+
+
+
+
+NameTimer::NameTimer(CSteamID client, int id) : wxTimer(this, -1) {
+	this->client = client;
+	this->id = id;
+	this->attempts = 0;
+
+	Start(100, wxTIMER_CONTINUOUS);
+}
+
+
+NameTimer::~NameTimer() {
+	bool found = false;
+
+	// Remove name timer
+	wxVector<NameTimer *>* nameTimers = caGetTrackersPanel()->GetNameTimers();
+	wxVector<NameTimer *>::iterator nameTimerIterator;
+
+	for (nameTimerIterator = nameTimers->begin(); nameTimerIterator != nameTimers->end(); ++nameTimerIterator) {
+		NameTimer *nameTimer = *nameTimerIterator;
+
+		if (nameTimer->GetId() == this->id) {
+			found = true;
+			break;
+		}
+	}
+
+	if (found) {
+		nameTimers->erase(nameTimerIterator);
+	}
+}
+
+
+// Timer to update trackers
+void NameTimer::Notify() {
+	// Steam available?
+	if (caGetSteamThread()->IsConnected()) {
+		if (this->client.IsValid()) {
+			if (!caGetSteamThread()->GetSteamFriends()->RequestUserInformation(this->client, true)) {
+				wxString isFriend = "No Friends";
+				wxString isOnline = "Offline";
+
+				// Is Friend?
+				if (caGetSteamThread()->GetSteamFriends()->GetFriendRelationship(this->client) == k_EFriendRelationshipFriend) {
+					isFriend = "Friends";
+				}
+
+				// Is Online?
+				if (caGetSteamThread()->GetSteamFriends()->GetFriendPersonaState(this->client) != k_EPersonaStateOffline) {
+					// Online
+					if (isFriend == "Friends") {
+						isOnline = "Online";
+					} else {
+						// We can't know
+						isOnline = "Unknown Status";
+					}
+				}
+
+
+				// Add Tracker
+				if (this->client.Render() != caGetSteamThread()->GetUserSteamId()) {
+					caGetTrackersPanel()->AddTracker("" + (wxString)caGetSteamThread()->GetSteamFriends()->GetFriendPersonaName(this->client) + " - " + (wxString)this->client.Render() + " - " + isFriend + " - " + isOnline);
+				} else {
+					caGetTrackersPanel()->AddTracker("" + (wxString)caGetSteamThread()->GetSteamFriends()->GetFriendPersonaName(this->client) + " - " + (wxString)this->client.Render());
+				}
+
+				//Stop
+				Stop();
+				delete this;
+			}
+		}
+	}
+
+
+	// All loaded or 5 seconds gone?
+	if (++this->attempts == 50) {
+		// Enough, stop timer
+		Stop();
+		delete this;
+	}
 }

@@ -22,7 +22,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-// Include Project
 #include "config.h"
 #include "calladmin-client.h"
 
@@ -119,111 +118,4 @@ bool Config::ParseConfig() {
 	}
 
 	return isConfigSet;
-}
-
-
-// Config accessors
-int Config::GetStep() {
-	return this->step;
-}
-
-int Config::GetTimeout() {
-	return this->timeout;
-}
-
-int Config::GetMaxAttempts() {
-	return this->maxAttempts;
-}
-
-int Config::GetNumLastCalls() {
-	return this->numLastCalls;
-}
-
-
-wxString Config::GetPage() {
-	return this->page;
-}
-
-wxString Config::GetKey() {
-	return this->key;
-}
-
-
-bool Config::GetSteamEnabled() {
-	return this->steamEnabled;
-}
-
-bool Config::GetHideOnMinimize() {
-	return this->hideOnMinimize;
-}
-
-bool Config::GetIsAvailable() {
-	return this->isAvailable;
-}
-
-bool Config::GetWantSound() {
-	return this->wantSound;
-}
-
-bool Config::GetIsSpectator() {
-	return this->isSpectator;
-}
-
-
-// Config setters
-void Config::SetStep(int step) {
-	this->step = step;
-	Write("step", step);
-}
-
-void Config::SetTimeout(int timeout) {
-	this->timeout = timeout;
-	Write("timeout", timeout);
-}
-
-void Config::SetMaxAttempts(int maxAttempts) {
-	this->maxAttempts = maxAttempts;
-	Write("attempts", maxAttempts);
-}
-
-void Config::SetNumLastCalls(int numLastCalls) {
-	this->numLastCalls = numLastCalls;
-	Write("lastcalls", numLastCalls);
-}
-
-
-void Config::SetPage(wxString page) {
-	this->page = page;
-	Write("page", page);
-}
-
-void Config::SetKey(wxString key) {
-	this->key = key;
-	Write("key", key);
-}
-
-
-void Config::SetSteamEnabled(bool steamEnabled) {
-	this->steamEnabled = steamEnabled;
-	Write("steam", steamEnabled);
-}
-
-void Config::SetHideOnMinimize(bool hideOnMinimize) {
-	this->hideOnMinimize = hideOnMinimize;
-	Write("hideonminimize", hideOnMinimize);
-}
-
-void Config::SetIsAvailable(bool isAvailable) {
-	this->isAvailable = isAvailable;
-	Write("available", isAvailable);
-}
-
-void Config::SetWantSound(bool wantSound) {
-	this->wantSound = wantSound;
-	Write("sound", wantSound);
-}
-
-void Config::SetIsSpectator(bool isSpectator) {
-	this->isSpectator = isSpectator;
-	Write("spectate", isSpectator);
 }

@@ -27,10 +27,8 @@
 
 #pragma once
 
-// Precomp Header
 #include <wx/wxprec.h>
 
-// We need WX
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
@@ -38,30 +36,23 @@
 #include "notebook.h"
 
 
-// Event ID's for main frame
-enum {
-	wxID_ThreadHandled = wxID_HIGHEST + 50,
-};
-
-
-/**
- * Main Frame
- */
 class MainFrame : public wxFrame {
 private:
 	Notebook *notebook;
 
 public:
-	MainFrame(const wxString &title);
+	MainFrame(const wxString &title)
+		: wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxMINIMIZE_BOX), notebook(NULL) {}
 
 	// Create the window
 	void CreateWindow(bool createInTaskbar = false);
 
 	// Notebook accessor
-	Notebook* GetNotebook();
+	Notebook* GetNotebook() {
+		return this->notebook;
+	}
 
 protected:
-	void OnThread(wxCommandEvent &event);
 	void OnCloseWindow(wxCloseEvent &event);
 	void OnMinimizeWindow(wxIconizeEvent &event);
 

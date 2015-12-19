@@ -27,10 +27,8 @@
 
 #pragma once
 
-// Precomp Header
 #include <wx/wxprec.h>
 
-// We need WX
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
@@ -38,7 +36,6 @@
 // Steamworks warning -> disable
 #pragma warning(disable: 4245)
 
-// Steam Works for Client tools
 #include "Steamworks.h"
 
 // Steamworks warning -> enable
@@ -52,17 +49,8 @@ enum STEAM_ERROR_TYP {
 };
 
 
-class SteamThread : public wxThread {
+class SteamThread : public wxThreadHelper {
 private:
-	wxString steamid;
-	bool isConnected;
-
-	CSteamAPILoader loader;
-	wxMutex steamLock;
-
-	// Last Steam Error
-	STEAM_ERROR_TYP lastError;
-
 	HSteamPipe pipeSteam;
 	HSteamUser clientUser;
 	ISteamFriends015 *steamFriends;
@@ -70,66 +58,41 @@ private:
 	ISteamUser017 *steamUser;
 	ISteamUtils007 *steamUtils;
 
+	wxString steamid;
+	bool isConnected;
+
+	wxMutex steamLock;
+
+	// Last Steam Error
+	STEAM_ERROR_TYP lastError;
+
 public:
 	SteamThread();
 	~SteamThread();
 
-	virtual ExitCode Entry();
+	virtual wxThread::ExitCode Entry();
 
-	wxString GetUserSteamId();
-	bool IsConnected();
+	wxString GetUserSteamId() {
+		return this->steamid;
+	}
 
-	ISteamFriends015* GetSteamFriends();
-	ISteamUtils007* GetSteamUtils();
+	bool IsConnected() {
+		return this->isConnected;
+	}
+
+	ISteamFriends015* GetSteamFriends() {
+		return this->steamFriends;
+	}
+
+	ISteamUtils007* GetSteamUtils() {
+		return this->steamUtils;
+	}
 
 	STEAM_ERROR_TYP Load();
 	void Check();
 
 	// Cleanup Steam
 	void Clean();
-};
-
-
-// Avatar Timer Class
-class AvatarTimer : public wxTimer {
-private:
-	int attempts;
-
-	// The ID's
-	CSteamID *clientId;
-	CSteamID *targetId;
-
-	// The avatars
-	wxStaticBitmap *clientAvatar;
-	wxStaticBitmap *targetAvatar;
-
-	bool clientLoaded;
-	bool targetLoaded;
-
-public:
-	// Init Timer
-	AvatarTimer(CSteamID *clientId, CSteamID *targetId, wxStaticBitmap *clientAvatar, wxStaticBitmap *targetAvatar);
-
-	void StartTimer();
-	bool SetAvatar(CSteamID *id, wxStaticBitmap *map);
-
-	void Notify();
-};
-
-
-// Name Timer Class
-class NameTimer : public wxTimer {
-private:
-	int attempts;
-
-	// The ID
-	CSteamID client;
-
-public:
-	// Init Timer
-	NameTimer(CSteamID client);
-
-	void Notify();
 };
 
 #endif

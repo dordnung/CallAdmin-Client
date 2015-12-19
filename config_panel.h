@@ -27,10 +27,8 @@
 
 #pragma once
 
-// Precomp Header
 #include <wx/wxprec.h>
 
-// We need WX
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
@@ -38,7 +36,6 @@
 #include <wx/spinctrl.h>
 
 
-// Config Dialog Class
 class ConfigPanel : public wxPanel {
 private:
 	wxSpinCtrl *stepSlider;
@@ -49,6 +46,7 @@ private:
 	wxTextCtrl *keyText;
 	wxCheckBox *steamEnable;
 	wxCheckBox *hideMini;
+
 public:
 	ConfigPanel();
 
@@ -56,11 +54,10 @@ public:
 
 protected:
 	void OnSet(wxCommandEvent &event);
-	void OnExit(wxCommandEvent &event);
-	void OnHide(wxCommandEvent &event);
+	void OnSteamUpdate(wxCommandEvent &event);
+	void OnHideUpdate(wxCommandEvent &event);
 
-	void OnCheckBox(wxCommandEvent &event);
-	void OnCheckBox2(wxCommandEvent &event);
+	void OnCloseWindow(wxCloseEvent &event);
 
 	DECLARE_EVENT_TABLE()
 };

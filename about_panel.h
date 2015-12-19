@@ -27,16 +27,13 @@
 
 #pragma once
 
-// Precomp Header
 #include <wx/wxprec.h>
 
-// We need WX
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
 
 
-// About Panel Class
 class AboutPanel : public wxPanel {
 private:
 	wxButton *downloadButton;
@@ -46,12 +43,17 @@ private:
 public:
 	AboutPanel();
 
-	void EnableDownload(bool enable);
-	void UpdateVersion(wxString currentBersion, wxColor color);
+	void EnableDownload(bool enable) {
+		this->downloadButton->Enable(enable);
+	}
+
+	void UpdateVersionText(wxString currentVersion, wxColor color);
 
 protected:
 	void OnUpdate(wxCommandEvent &event);
 	void OnDownload(wxCommandEvent &event);
+
+	void OnCloseWindow(wxCloseEvent &event);
 
 	DECLARE_EVENT_TABLE()
 };

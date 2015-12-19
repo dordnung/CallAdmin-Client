@@ -22,20 +22,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-// Include Project
 #include "notebook.h"
 #include "calladmin-client.h"
 
+// Events
+BEGIN_EVENT_TABLE(Notebook, wxNotebook)
+EVT_CLOSE(Notebook::OnCloseWindow)
+END_EVENT_TABLE()
 
-// Create Notebook
-Notebook::Notebook() : wxNotebook(wxGetApp().GetMainFrame(), wxID_ANY) {
+Notebook::Notebook() : wxNotebook(caGetMainFrame(), wxID_ANY) {
 	this->mainPanel = NULL;
 	this->configPanel = NULL;
 	this->trackersPanel = NULL;
 	this->logPanel = NULL;
 	this->aboutPanel = NULL;
 }
-
 
 // Create Notebook pages
 void Notebook::CreateAndAddPages() {
@@ -62,23 +63,12 @@ void Notebook::CreateAndAddPages() {
 }
 
 
-/** Panel accessors */
-MainPanel* Notebook::GetMainPanel() {
-	return this->mainPanel;
-}
+void Notebook::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {
+	this->mainPanel->Close();
+	this->configPanel->Close();
+	this->trackersPanel->Close();
+	this->logPanel->Close();
+	this->aboutPanel->Close();
 
-ConfigPanel* Notebook::GetConfigPanel() {
-	return this->configPanel;
-}
-
-TrackerPanel* Notebook::GetTrackersPanel() {
-	return this->trackersPanel;
-}
-
-LogPanel* Notebook::GetLogPanel() {
-	return this->logPanel;
-}
-
-AboutPanel* Notebook::GetAboutPanel() {
-	return this->aboutPanel;
+	Destroy();
 }

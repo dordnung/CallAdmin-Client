@@ -22,16 +22,10 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 
-// Includes Project
 #include "calladmin-client.h"
+
+#include <wx/ffile.h>
 #include <wx/stdpaths.h>
-
-
-// Button ID's for Update Dialog
-enum {
-	wxID_UpdateUpdated = wxID_HIGHEST + 60,
-	wxID_UpdateFinish
-};
 
 
 wxDEFINE_EVENT(wxEVT_THREAD_UPDATE, wxCommandEvent);
@@ -52,47 +46,42 @@ UpdateDialog::UpdateDialog() : wxDialog(NULL, wxID_ANY, "Update CallAdmin", wxDe
 	caLogAction("Start downloading Update");
 
 	// Create Box
-	sizerTop = new wxBoxSizer(wxVERTICAL);
+	this->sizerTop = new wxBoxSizer(wxVERTICAL);
 
 	// Panel
-	panel = new wxPanel(this, wxID_ANY);
+	this->panel = new wxPanel(this, wxID_ANY);
 
 	// Border and Center
 	wxSizerFlags flags;
-
 
 	// Border and Centre
 	flags.Border(wxALL, 10);
 	flags.Centre();
 
-
 	// Create Progress Bar
-	progressBar = new wxGauge(panel, wxID_ANY, 100);
+	this->progressBar = new wxGauge(this->panel, wxID_ANY, 100);
 
 	// Add it
-	sizerTop->Add(progressBar, 0, wxALL | wxEXPAND, 10);
+	this->sizerTop->Add(this->progressBar, 0, wxALL | wxEXPAND, 10);
 
 	// Download Info
-	dlinfo = new wxStaticText(panel, wxID_ANY, "0000kB of 0000KB (0000 kB/s). Time: 0,00 Seconds");
+	this->dlinfo = new wxStaticText(this->panel, wxID_ANY, "0000kB of 0000KB (0000 kB/s). Time: 0,00 Seconds");
 
-	dlinfo->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
-
+	this->dlinfo->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
 
 	// Add it
-	sizerTop->Add(dlinfo, flags.Border(wxALL, 10));
-
+	this->sizerTop->Add(this->dlinfo, flags.Border(wxALL, 10));
 
 	// Download Status
-	dlstatus = new wxStaticText(panel, wxID_ANY, "Status: Downloading...");
+	this->dlstatus = new wxStaticText(this->panel, wxID_ANY, "Status: Downloading...");
 
-	dlstatus->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
+	this->dlstatus->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
 
 	// Add it
-	sizerTop->Add(dlstatus, flags.Border(wxALL, 10));
-
+	this->sizerTop->Add(this->dlstatus, flags.Border(wxALL, 10));
 
 	// Auto Size
-	panel->SetSizerAndFit(sizerTop, true);
+	this->panel->SetSizerAndFit(sizerTop, true);
 
 	// Fit
 	Fit();
@@ -152,8 +141,8 @@ void UpdateDialog::OnFinish(wxCommandEvent &event) {
 	if (event.GetString() == "") {
 		// Renaming Files
 		// TODO: Activate again
-		//rename(path, path + ".old");
-		//rename(path + ".new", path);
+		//wxRenameFile(path, path + ".old");
+		//wxRenameFile(path + ".new", path);
 
 		// Refresh Status
 		this->dlstatus->SetLabelText("Status: Finished!");
@@ -194,7 +183,7 @@ void UpdateDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event)) {
 
 	// Wait until thread is finished
 	while (1) {
-		if (!this->GetThread()) {
+		if (!GetThread()) {
 			break;
 		}
 
@@ -218,7 +207,7 @@ wxThread::ExitCode UpdateDialog::Entry() {
 		CURL *curl = curl_easy_init();
 
 		if (curl != NULL) {
-			FILE *filePointer;
+			wxFFile *newFile;
 
 			// Error
 			char errorBuffer[CURL_ERROR_SIZE + 1];
@@ -227,9 +216,9 @@ wxThread::ExitCode UpdateDialog::Entry() {
 			wxString path = wxStandardPaths::Get().GetExecutablePath();
 
 			// Open File
-			filePointer = fopen(path + ".new", "wb");
+			newFile = new wxFFile(path + ".new", "wb");
 
-			if (filePointer == NULL) {
+			if (newFile == NULL || !newFile->IsOpened()) {
 				event.SetString("Couldn't create file " + path + ".new");
 			} else {
 				// Reset Prog time
@@ -243,7 +232,7 @@ wxThread::ExitCode UpdateDialog::Entry() {
 				curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
 				curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
 				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteDataToFile);
-				curl_easy_setopt(curl, CURLOPT_WRITEDATA, filePointer);
+				curl_easy_setopt(curl, CURLOPT_WRITEDATA, newFile->fp());
 				curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, ProgressUpdated);
 				curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &progress);
 
@@ -262,7 +251,7 @@ wxThread::ExitCode UpdateDialog::Entry() {
 				curl_easy_cleanup(curl);
 
 				// Close File
-				fclose(filePointer);
+				newFile->Close();
 			}
 
 			// Add Event Handler
@@ -282,10 +271,10 @@ wxThread::ExitCode UpdateDialog::Entry() {
 
 
 // Write Data to file
-size_t WriteDataToFile(void *filePointer, size_t size, size_t nmemb, FILE *stream) {
+size_t WriteDataToFile(void *data, size_t size, size_t nmemb, FILE *file) {
 	// Write
-	if (filePointer != NULL) {
-		return fwrite(filePointer, size, nmemb, stream);
+	if (data != NULL) {
+		return fwrite(data, size, nmemb, file);
 	}
 
 	return (size_t)-1;

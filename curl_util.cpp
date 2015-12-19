@@ -6,7 +6,7 @@
  * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
  *
- * Copyright (C) 2013 David O., Impact
+ * Copyright (C) 2013-2016 David O., Impact
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,30 +22,34 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-// Include Project
 #include "curl_util.h"
 #include "calladmin-client.h"
 
-// c++ libs
+#include <curl/curl.h>
 #include <sstream>
 
-// Curl
-#include <curl/curl.h>
 
+CurlThread::~CurlThread() {
+	if (GetThread()) {
+		GetThread()->Delete();
+	}
 
-// Create and Start
-CurlThread::CurlThread(CurlCallback callbackFunction, wxString page, int extra) {
-	this->callbackFunction = callbackFunction;
-	this->page = page;
-	this->extra = extra;
+	// Wait until thread is finished
+	while (1) {
+		if (!GetThread()) {
+			break;
+		}
+
+		wxThread::This()->Sleep(1);
+	}
 }
 
 
 // Curl Thread started
 wxThread::ExitCode CurlThread::Entry() {
-	if (!TestDestroy()) {
+	if (!GetThread()->TestDestroy()) {
 		// Event
-		wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_ThreadHandled);
+		wxCommandEvent event(wxEVT_CURL_THREAD_FINISHED);
 
 		// Response
 		std::ostringstream stream;
@@ -97,20 +101,11 @@ wxThread::ExitCode CurlThread::Entry() {
 }
 
 
-// Get Page
-void CurlThread::GetPage(CurlCallback callbackFunction, wxString page, int extra) {
-	CurlThread *curlThread = new CurlThread(callbackFunction, page, extra);
-
-	curlThread->Create();
-	curlThread->Run();
-}
-
-
 // Curl receive data -> write to buffer
 size_t CurlWriteData(void *buffer, size_t size, size_t nmemb, void *userp) {
 	std::ostringstream *data = (std::ostringstream*) userp;
 
-	if (data != NULL) {
+	if (buffer != NULL) {
 		size_t count = size * nmemb;
 
 		data->write((char*)buffer, count);
@@ -119,32 +114,4 @@ size_t CurlWriteData(void *buffer, size_t size, size_t nmemb, void *userp) {
 	}
 
 	return (size_t)-1;
-}
-
-
-CurlThreadData::CurlThreadData(CurlCallback callbackFunction, wxString content, char *error, int extra) {
-	this->callbackFunction = callbackFunction;
-	this->content = content;
-	this->error = error;
-	this->extra = extra;
-}
-
-
-CurlCallback CurlThreadData::GetCallbackFunction() {
-	return this->callbackFunction;
-}
-
-
-wxString CurlThreadData::GetContent() {
-	return this->content;
-}
-
-
-char* CurlThreadData::GetError() {
-	return this->error;
-}
-
-
-int CurlThreadData::GetExtra() {
-	return this->extra;
 }

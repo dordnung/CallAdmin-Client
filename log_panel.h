@@ -27,16 +27,13 @@
 
 #pragma once
 
-// Precomp Header
 #include <wx/wxprec.h>
 
-// We need WX
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
 
 
-// Log Panel Class
 class LogPanel : public wxPanel {
 private:
 	wxListBox *logBox;
@@ -44,7 +41,15 @@ private:
 public:
 	LogPanel();
 
-	void AddLog(wxString log);
+	// Add Action to the logBox
+	void AddLog(wxString log) {
+		this->logBox->SetSelection(this->logBox->Append(wxString::FromUTF8(wxNow() + " - " + log)));
+	}
+
+protected:
+	void OnCloseWindow(wxCloseEvent &event);
+
+	DECLARE_EVENT_TABLE()
 };
 
 #endif

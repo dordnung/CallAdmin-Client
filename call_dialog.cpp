@@ -22,19 +22,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-// Includes Project
 #include "curl_util.h"
 #include "calladmin-client.h"
 
-// wx
+#include <wx/tokenzr.h>
 #include <wx/statline.h>
 #include <wx/tooltip.h>
 
-// xml parser
 #include "tinyxml2/tinyxml2.h"
 
 
-// Button ID's for Call Dialog
+// Event ID's for Call Dialog
 enum {
 	wxID_ConnectCall = wxID_HIGHEST + 200,
 	wxID_CheckDone,
@@ -71,20 +69,22 @@ CallDialog::CallDialog(const wxString &title) : wxDialog(NULL, wxID_ANY, title, 
 }
 
 
-// start the Call
+CallDialog::~CallDialog() {
+	if (this->avatarTimer != NULL) {
+		this->avatarTimer->Stop();
+		delete this->avatarTimer;
+	}
+}
+
+
+// Start the Call
 void CallDialog::StartCall(bool show) {
 
 	// Create Box
-	sizerTop = new wxBoxSizer(wxVERTICAL);
+	this->sizerTop = new wxBoxSizer(wxVERTICAL);
 
 	// Panel
 	wxPanel* panel = new wxPanel(this, wxID_ANY);
-
-
-	// Valid?
-	if (sizerTop == NULL || panel == NULL) {
-		return;
-	}
 
 	// Border and Center
 	wxSizerFlags flags;
@@ -95,20 +95,11 @@ void CallDialog::StartCall(bool show) {
 	flags.Border(wxALL, 10);
 	flags.Centre();
 
-
 	// ToolTip for Contact friend 
 	wxToolTip* contactTooltip = new wxToolTip("This will open a Steam chat with this client.");
 
-
-	// Valid?
-	if (contactTooltip == NULL) {
-		return;
-	}
-
-
 	contactTooltip->SetDelay(500);
 	contactTooltip->Enable(true);
-
 
 	// Time
 	char buffer[80];
@@ -120,15 +111,14 @@ void CallDialog::StartCall(bool show) {
 
 	strftime(buffer, sizeof(buffer), "%c", dt);
 
-
 	// New Call
-	text = new wxStaticText(panel, wxID_ANY, wxString::FromUTF8(serverName));
+	text = new wxStaticText(panel, wxID_ANY, wxString::FromUTF8(this->serverName));
 
 	text->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
 
 
 	// Add it
-	sizerTop->Add(text, flags.Border(wxALL &~wxBOTTOM, 20));
+	this->sizerTop->Add(text, flags.Border(wxALL &~wxBOTTOM, 20));
 
 
 	// New Call At
@@ -136,59 +126,51 @@ void CallDialog::StartCall(bool show) {
 
 	text->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
 
-
 	// Add it
-	sizerTop->Add(text, flags.Border(wxALL &~wxTOP &~wxBOTTOM, 20));
-
+	this->sizerTop->Add(text, flags.Border(wxALL &~wxTOP &~wxBOTTOM, 20));
 
 	// New Call At
-	if (!isHandled) {
-		doneText = new wxStaticText(panel, wxID_ANY, "Unfinished");
+	if (!this->isHandled) {
+		this->doneText = new wxStaticText(panel, wxID_ANY, "Unfinished");
 
-		doneText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
-		doneText->SetForegroundColour(wxColor("red"));
+		this->doneText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
+		this->doneText->SetForegroundColour(wxColor("red"));
 	} else {
-		doneText = new wxStaticText(panel, wxID_ANY, "Finished");
+		this->doneText = new wxStaticText(panel, wxID_ANY, "Finished");
 
-		doneText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
-		doneText->SetForegroundColour(wxColour(34, 139, 34));
+		this->doneText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
+		this->doneText->SetForegroundColour(wxColour(34, 139, 34));
 	}
 
-
 	// Add it
-	sizerTop->Add(doneText, flags.Border(wxALL &~wxTOP, 20));
-
+	this->sizerTop->Add(this->doneText, flags.Border(wxALL &~wxTOP, 20));
 
 	// Restore Border
 	flags.Border(wxALL, 10);
 
-
 	// Static line 
-	sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 5);
-
+	this->sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 5);
 
 	wxSizer* const clientLayout = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer* const clientDetails = new wxBoxSizer(wxVERTICAL);
 
-
 	// Avatar
 #if defined(__WXMSW__)
-	clientAvatar = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(wxImage("calladmin_avatar", wxBITMAP_TYPE_RESOURCE).Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize())));
+	this->clientAvatar = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(wxImage("calladmin_avatar", wxBITMAP_TYPE_RESOURCE).Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize())));
 #else
-	clientAvatar = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(wxImage(aGetApp().GetAppPath("resources/calladmin_avatar.bmp")).Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize())));
+	this->clientAvatar = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(wxImage(aGetApp().GetAppPath("resources/calladmin_avatar.bmp")).Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize())));
 #endif
 
-	clientLayout->Add(clientAvatar, flags);
-
+	clientLayout->Add(this->clientAvatar, flags);
 
 	// Caller Name
-	text = new wxStaticText(panel, wxID_ANY, wxString::FromUTF8(client));
+	text = new wxStaticText(panel, wxID_ANY, wxString::FromUTF8(this->client));
 	text->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
 
 	clientDetails->Add(text, flags);
 
-	if (caGetSteamThread()->IsConnected() && GetClientCID()->IsValid()) {
-		if (caGetSteamThread()->GetSteamFriends()->GetFriendRelationship(*GetClientCID()) == k_EFriendRelationshipFriend) {
+	if (caGetSteamThread()->IsConnected() && this->clientCId.IsValid()) {
+		if (caGetSteamThread()->GetSteamFriends()->GetFriendRelationship(this->clientCId) == k_EFriendRelationshipFriend) {
 			// Add Contact Friend button
 			wxButton *contactClient = new wxButton(panel, wxID_ContactClient, "Contact Friend");
 
@@ -198,56 +180,49 @@ void CallDialog::StartCall(bool show) {
 		}
 	}
 
-
 	// Steamid
-	text2 = new wxTextCtrl(panel, wxID_ANY, clientID, wxDefaultPosition, wxSize(220, -1), wxTE_CENTRE | wxTE_READONLY);
+	text2 = new wxTextCtrl(panel, wxID_ANY, clientId, wxDefaultPosition, wxSize(220, -1), wxTE_CENTRE | wxTE_READONLY);
 
 	text2->SetFont(wxFont(14, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	clientDetails->Add(text2, 0, wxEXPAND | wxALL | wxHORIZONTAL, 10);
 
-
 	clientLayout->Add(clientDetails, flags);
-	sizerTop->Add(clientLayout, flags);
+	this->sizerTop->Add(clientLayout, flags);
 
 
 	// Static line
-	sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 10);
+	this->sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 10);
 
 	// Reason
 	text = new wxStaticText(panel, wxID_ANY, wxString::FromUTF8("\xe2\x96\xbc") + " reported because of reason: \"" + wxString::FromUTF8(reason) + "\" " + wxString::FromUTF8("\xe2\x96\xbc"));
 	text->SetFont(wxFont(14, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-	sizerTop->Add(text, flags);
-
+	this->sizerTop->Add(text, flags);
 
 	// Static line
-	sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 10);
-
+	this->sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 10);
 
 	wxSizer* const targetLayout = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer* const targetDetails = new wxBoxSizer(wxVERTICAL);
 
 	// Avatar
 #if defined(__WXMSW__)
-	targetAvatar = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(wxImage("calladmin_avatar", wxBITMAP_TYPE_RESOURCE).Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize())));
+	this->targetAvatar = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(wxImage("calladmin_avatar", wxBITMAP_TYPE_RESOURCE).Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize())));
 #else
-	targetAvatar = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(wxImage(caGetApp().GetAppPath("resources/calladmin_avatar.bmp")).Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize())));
+	this->targetAvatar = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(wxImage(caGetApp().GetAppPath("resources/calladmin_avatar.bmp")).Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize())));
 #endif
 
-	targetLayout->Add(targetAvatar, flags);
-
-
+	targetLayout->Add(this->targetAvatar, flags);
 
 	// Target Name
-	text = new wxStaticText(panel, wxID_ANY, wxString::FromUTF8(target));
+	text = new wxStaticText(panel, wxID_ANY, wxString::FromUTF8(this->target));
 	text->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
 
 	targetDetails->Add(text, flags);
 
-
-	if (caGetSteamThread()->IsConnected() && GetTargetCID()->IsValid()) {
-		if (caGetSteamThread()->GetSteamFriends()->GetFriendRelationship(*GetTargetCID()) == k_EFriendRelationshipFriend) {
+	if (caGetSteamThread()->IsConnected() && this->targetCId.IsValid()) {
+		if (caGetSteamThread()->GetSteamFriends()->GetFriendRelationship(this->targetCId) == k_EFriendRelationshipFriend) {
 			// Add Contact Friend button
 			wxButton *contactTarget = new wxButton(panel, wxID_ContactTarget, "Contact Friend");
 
@@ -258,9 +233,8 @@ void CallDialog::StartCall(bool show) {
 	}
 
 
-
 	// Steamid
-	text2 = new wxTextCtrl(panel, wxID_ANY, targetID, wxDefaultPosition, wxSize(220, -1), wxTE_CENTRE | wxTE_READONLY);
+	text2 = new wxTextCtrl(panel, wxID_ANY, targetId, wxDefaultPosition, wxSize(220, -1), wxTE_CENTRE | wxTE_READONLY);
 
 	text2->SetFont(wxFont(14, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
@@ -268,20 +242,16 @@ void CallDialog::StartCall(bool show) {
 
 
 	targetLayout->Add(targetDetails, flags);
-	sizerTop->Add(targetLayout, flags);
-
+	this->sizerTop->Add(targetLayout, flags);
 
 	// Start the Timers
-	avatarTimer = new AvatarTimer(GetClientCID(), GetTargetCID(), clientAvatar, targetAvatar);
-	avatarTimer->StartTimer();
-
+	this->avatarTimer = new AvatarTimer(&this->clientCId, &this->targetCId, this->clientAvatar, this->targetAvatar);
+	this->avatarTimer->Start(100);
 
 	// Static line
 	sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 5);
 
-
 	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
-
 
 	// ToolTip for Take over button
 	wxToolTip* takeOverTooltip = new wxToolTip("This will mark the call as finished and will ignore it next time.");
@@ -290,8 +260,8 @@ void CallDialog::StartCall(bool show) {
 	takeOverTooltip->Enable(true);
 
 	// Takeover button
-	takeover = new wxButton(panel, wxID_CheckDone, "Take Over");
-	takeover->SetToolTip(takeOverTooltip);
+	this->takeover = new wxButton(panel, wxID_CheckDone, "Take Over");
+	this->takeover->SetToolTip(takeOverTooltip);
 
 	// ToolTip for Contact Trackers button
 	wxToolTip* contactTrackersTooltip = new wxToolTip("This will send all available trackers on your friendlist a message.");
@@ -299,23 +269,21 @@ void CallDialog::StartCall(bool show) {
 	contactTrackersTooltip->SetDelay(500);
 	contactTrackersTooltip->Enable(true);
 
-
 	// Contect trackers button
-	contactTrackers = new wxButton(panel, wxID_ContactTrackers, "Contact Trackers");
-	contactTrackers->Enable(true);
-	contactTrackers->SetToolTip(contactTrackersTooltip);
-
+	this->contactTrackers = new wxButton(panel, wxID_ContactTrackers, "Contact Trackers");
+	this->contactTrackers->Enable(true);
+	this->contactTrackers->SetToolTip(contactTrackersTooltip);
 
 	// Hide and Exit Button
 	sizerBtns->Add(new wxButton(panel, wxID_ConnectCall, "Connect"), 0, wxALL &~wxRIGHT, 5);
-	sizerBtns->Add(takeover, 0, wxALL &~wxRIGHT &~wxLEFT, 5);
-	sizerBtns->Add(contactTrackers, 0, wxALL &~wxLEFT, 5);
+	sizerBtns->Add(this->takeover, 0, wxALL &~wxRIGHT &~wxLEFT, 5);
+	sizerBtns->Add(this->contactTrackers, 0, wxALL &~wxLEFT, 5);
 
 	// Add Buttons to Box
-	sizerTop->Add(sizerBtns, flags);
+	this->sizerTop->Add(sizerBtns, flags);
 
 	// Auto Size
-	panel->SetSizerAndFit(sizerTop, true);
+	panel->SetSizerAndFit(this->sizerTop, true);
 
 	// Fit
 	Fit();
@@ -332,134 +300,8 @@ void CallDialog::StartCall(bool show) {
 	SetIcon(wxIcon(caGetApp().GetAppPath("resources/calladmin_icon.ico"), wxBITMAP_TYPE_ICON));
 #endif
 
-
 	// Show the Window
 	Show(show);
-}
-
-
-// Return time as a int
-long CallDialog::GetTime() const {
-	return this->reportedAt;
-}
-
-
-// Methods for Details
-wxString CallDialog::GetTarget() const {
-	return this->target;
-}
-
-
-wxString CallDialog::GetClient() const {
-	return this->client;
-}
-
-
-wxString CallDialog::GetID() const {
-	return this->callID;
-}
-
-
-wxString CallDialog::GetServer() {
-	return this->serverName;
-}
-
-
-wxString CallDialog::GetBoxText() {
-	return this->boxText;
-}
-
-
-AvatarTimer* CallDialog::GetAvatarTimer() {
-	return this->avatarTimer;
-}
-
-
-wxButton* CallDialog::GetContactTrackersButton() {
-	return this->contactTrackers;
-}
-
-
-wxButton* CallDialog::GetTakeoverButton() {
-	return this->takeover;
-}
-
-
-CSteamID* CallDialog::GetClientCID() {
-	return &this->clientCID;
-}
-
-
-CSteamID* CallDialog::GetTargetCID() {
-	return &this->targetCID;
-}
-
-
-bool CallDialog::GetHandled() {
-	return this->isHandled;
-}
-
-
-// Privat -> set Methods
-void CallDialog::SetCallID(const char* id) {
-	this->callID = id;
-}
-
-
-void CallDialog::SetIP(const char* ip) {
-	this->fullIP = ip;
-}
-
-
-void CallDialog::SetName(wxString name) {
-	this->serverName = name;
-}
-
-
-void CallDialog::SetTarget(const char* name) {
-	this->target = name;
-}
-
-
-void CallDialog::SetTargetID(const char* steamidID) {
-	this->targetID = steamidID;
-	this->targetCID = SteamIDtoCSteamID((char*)(steamidID));
-}
-
-
-void CallDialog::SetClient(const char* name) {
-	this->client = name;
-}
-
-
-void CallDialog::SetClientID(const char* steamidID) {
-	this->clientID = steamidID;
-	this->clientCID = SteamIDtoCSteamID((char*)(steamidID));
-}
-
-
-void CallDialog::SetReason(const char* name) {
-	this->reason = name;
-}
-
-
-void CallDialog::SetID(int num) {
-	this->id = num;
-}
-
-
-void CallDialog::SetTime(long time) {
-	this->reportedAt = time;
-}
-
-
-void CallDialog::SetBoxText(wxString text) {
-	this->boxText = text;
-}
-
-
-void CallDialog::SetHandled(bool handled) {
-	this->isHandled = handled;
 }
 
 
@@ -472,58 +314,52 @@ void CallDialog::SetFinish() {
 
 
 // We need the 64bit int id
-CSteamID CallDialog::SteamIDtoCSteamID(char* steamid) {
-	CSteamID csteam;
+CSteamID CallDialog::SteamIdtoCSteamId(wxString steamId) {
+	CSteamID cSteamId;
 
 	// To small
-	if (strlen(steamid) < 11) {
-		return csteam;
+	if (wxStrlen(steamId) < 11) {
+		return cSteamId;
 	}
-
-	int server = 0;
-	int authID = 0;
 
 	// Strip the steamid
-	char *strip = strtok(steamid, ":");
+	wxStringTokenizer tokenizer(steamId, ":");
 
-	while (strip) {
-		strip = strtok(NULL, ":");
-
-		char *strip2 = strtok(NULL, ":");
-
-		// Read server and authID
-		if (strip2) {
-			server = atoi(strip);
-			authID = atoi(strip2);
-		}
+	// There should be three tokens
+	if (tokenizer.CountTokens() < 3) {
+		return cSteamId;
 	}
+
+	tokenizer.GetNextToken();
+	int server = wxAtoi(tokenizer.GetNextToken());
+	int authId = wxAtoi(tokenizer.GetNextToken());
 
 	// Wrong Format
-	if (authID == 0) {
-		return csteam;
+	if (authId == 0) {
+		return cSteamId;
 	}
 
-	uint64 uintID = (uint64)authID * 2;
+	uint64 uintId = (uint64)authId * 2;
 
 	// Convert to a uint64
-	uintID += 76561197960265728 + server;
+	uintId += 76561197960265728 + server;
 
-	csteam.SetFromUint64(uintID);
+	cSteamId.SetFromUint64(uintId);
 
 	// Return it
-	return csteam;
+	return cSteamId;
 }
 
 
 // Button Event -> Connect to Server
 void CallDialog::OnConnect(wxCommandEvent& WXUNUSED(event)) {
 	// Log Action
-	caLogAction("Connected to the Server " + fullIP);
+	caLogAction("Connected to the Server " + this->fullIP);
 
 #if defined(__WXMSW__)
-	ShellExecute(NULL, L"open", ("steam://connect/" + fullIP).wc_str(), NULL, NULL, SW_SHOWNORMAL);
+	ShellExecute(NULL, L"open", ("steam://connect/" + this->fullIP).wc_str(), NULL, NULL, SW_SHOWNORMAL);
 #else
-	system(("xdg-open steam://connect/" + fullIP).mb_str().data());
+	system(("xdg-open steam://connect/" + this->fullIP).mb_str().data());
 #endif
 
 	Show(false);
@@ -533,26 +369,26 @@ void CallDialog::OnConnect(wxCommandEvent& WXUNUSED(event)) {
 // Mark it checked
 void CallDialog::OnCheck(wxCommandEvent& WXUNUSED(event)) {
 	// Log Action
-	caLogAction("Marke call " + callID + " as finished");
+	caLogAction("Marke call " + this->callId + " as finished");
 
 	// page
-	wxString pager = (caGetConfig()->GetPage() + "/takeover.php?callid=" + callID + "&key=" + caGetConfig()->GetKey());
+	wxString page = (caGetConfig()->GetPage() + "/takeover.php?callid=" + this->callId + "&key=" + caGetConfig()->GetKey());
 
 	// Get Page
-	CurlThread::GetPage(OnChecked, pager, id);
+	caGetApp().GetPage(CallDialog::OnChecked, page, this->id);
 }
 
 
 // Contact Client
 void CallDialog::OnContactClient(wxCommandEvent& WXUNUSED(event)) {
 	// Log Action
-	caLogAction("Contacted Client " + (wxString)GetClientCID()->Render());
+	caLogAction("Contacted Client " + (wxString)this->clientCId.Render());
 
 	// Open Chat
 #if defined(__WXMSW__)
-	ShellExecute(NULL, L"open", ("steam://friends/message/" + (wxString() << GetClientCID()->ConvertToUint64())).wc_str(), NULL, NULL, SW_SHOWNORMAL);
+	ShellExecute(NULL, L"open", ("steam://friends/message/" + (wxString() << this->clientCId.ConvertToUint64())).wc_str(), NULL, NULL, SW_SHOWNORMAL);
 #else
-	system(("xdg-open steam://friends/message/" + (wxString() << getClientCID()->ConvertToUint64())).mb_str().data());
+	system(("xdg-open steam://friends/message/" + (wxString() << this->clientCId.ConvertToUint64())).mb_str().data());
 #endif
 }
 
@@ -560,13 +396,13 @@ void CallDialog::OnContactClient(wxCommandEvent& WXUNUSED(event)) {
 // Contact Target
 void CallDialog::OnContactTarget(wxCommandEvent& WXUNUSED(event)) {
 	// Log Action
-	caLogAction("Contacted Client " + (wxString)GetTargetCID()->Render());
+	caLogAction("Contacted Client " + (wxString)this->targetCId.Render());
 
 	// Open Chat
 #if defined(__WXMSW__)
-	ShellExecute(NULL, L"open", ("steam://friends/message/" + (wxString() << GetTargetCID()->ConvertToUint64())).wc_str(), NULL, NULL, SW_SHOWNORMAL);
+	ShellExecute(NULL, L"open", ("steam://friends/message/" + (wxString() << this->targetCId.ConvertToUint64())).wc_str(), NULL, NULL, SW_SHOWNORMAL);
 #else
-	system(("xdg-open steam://friends/message/" + (wxString() << getTargetCID()->ConvertToUint64())).mb_str().data());
+	system(("xdg-open steam://friends/message/" + (wxString() << this->targetCId.ConvertToUint64())).mb_str().data());
 #endif
 }
 
@@ -579,9 +415,9 @@ void CallDialog::OnContactTrackers(wxCommandEvent& WXUNUSED(event)) {
 	// Are we steam connected?
 	if (caGetSteamThread()->IsConnected()) {
 		// page
-		wxString pager = caGetConfig()->GetPage() + "/trackers.php?from=25&from_type=interval&key=" + caGetConfig()->GetKey();
+		wxString page = caGetConfig()->GetPage() + "/trackers.php?from=25&from_type=interval&key=" + caGetConfig()->GetKey();
 
-		CurlThread::GetPage(OnGetTrackers, pager, id);
+		caGetApp().GetPage(CallDialog::OnGetTrackers, page, this->id);
 
 		return;
 	}
@@ -591,7 +427,7 @@ void CallDialog::OnContactTrackers(wxCommandEvent& WXUNUSED(event)) {
 
 
 // Contact Client
-void OnGetTrackers(char* errors, wxString result, int x) {
+void CallDialog::OnGetTrackers(char* errors, wxString result, int x) {
 	// Log Action
 	caLogAction("Got Trackers");
 
@@ -639,7 +475,7 @@ void OnGetTrackers(char* errors, wxString result, int x) {
 								wxString steamidString = node3->FirstChild()->Value();
 
 								// Build csteamid
-								CSteamID steamidTracker = caGetCallDialogs()->at(x)->SteamIDtoCSteamID((char*)steamidString.mb_str().data());
+								CSteamID steamidTracker = caGetCallDialogs()->at(x)->SteamIdtoCSteamId(steamidString);
 
 								// Are we friends and is tracker online? :))
 								if (steamidTracker.IsValid() && caGetSteamThread()->GetSteamFriends()->GetFriendRelationship(steamidTracker) == k_EFriendRelationshipFriend && caGetSteamThread()->GetSteamFriends()->GetFriendPersonaState(steamidTracker) != k_EPersonaStateOffline) {
@@ -695,9 +531,9 @@ void OnGetTrackers(char* errors, wxString result, int x) {
 
 
 // Mark checked
-void OnChecked(char* errors, wxString result, int x) {
+void CallDialog::OnChecked(char* errors, wxString result, int x) {
 	// Log Action
-	caLogAction("Marked call " + caGetCallDialogs()->at(x)->GetID() + " as finished");
+	caLogAction("Marked call " + caGetCallDialogs()->at(x)->GetId() + " as finished");
 
 	wxString error = "";
 
@@ -771,4 +607,115 @@ void CallDialog::OnMinimizeWindow(wxIconizeEvent& WXUNUSED(event)) {
 	if (caGetConfig()->GetHideOnMinimize()) {
 		Show(false);
 	}
+}
+
+
+
+
+// Init. Timer
+AvatarTimer::AvatarTimer(CSteamID *clientId, CSteamID *targetId, wxStaticBitmap* clientAvatar, wxStaticBitmap* targetAvatar) : wxTimer(this, -1) {
+	this->clientId = clientId;
+	this->targetId = targetId;
+	this->clientAvatar = clientAvatar;
+	this->targetAvatar = targetAvatar;
+	this->attempts = 0;
+
+	this->clientLoaded = false;
+	this->targetLoaded = false;
+
+	// Invalid Steamids -> Loaded
+	if (this->clientId == NULL || !this->clientId->IsValid()) {
+		this->clientLoaded = true;
+	}
+
+	if (this->targetId == NULL || !this->targetId->IsValid()) {
+		this->targetLoaded = true;
+	}
+}
+
+
+// Timer to update avatars
+void AvatarTimer::Notify() {
+	// Steam available?
+	if (caGetSteamThread()->IsConnected()) {
+		// Do we have information about the users?
+		// Load the images
+		if (!this->clientLoaded) {
+			if (!caGetSteamThread()->GetSteamFriends()->RequestUserInformation(*this->clientId, false)) {
+				// Try to laod caller avatar
+				this->clientLoaded = SetAvatar(this->clientId, this->clientAvatar);
+			}
+		}
+
+		if (!this->targetLoaded) {
+			if (!caGetSteamThread()->GetSteamFriends()->RequestUserInformation(*this->targetId, false)) {
+				// Try to laod target avatar
+				this->targetLoaded = SetAvatar(this->targetId, this->targetAvatar);
+			}
+		}
+	}
+
+	// All loaded or 10 seconds gone?
+	if (++this->attempts == 100 || (this->clientLoaded && this->targetLoaded)) {
+		// Enough, stop timer
+		Stop();
+	}
+}
+
+
+// Set new Avatar
+bool AvatarTimer::SetAvatar(CSteamID *id, wxStaticBitmap* map) {
+	// Load avatar
+	int avatar = caGetSteamThread()->GetSteamFriends()->GetLargeFriendAvatar(*id);
+
+	// Could it load?
+	if (avatar > 0) {
+		// Buffer to store picture
+		//uint8* rgbaBuffer = (uint8 *)ALLOCA(4 * 184 * 184);
+		uint8 *rgbaBuffer = new uint8[4 * 184 * 184];
+		uint32 *size = new uint32(184);
+
+		// Is Size valid?
+		if (caGetSteamThread()->GetSteamUtils()->GetImageSize(avatar, size, size)) {
+			// Load Image
+			if (caGetSteamThread()->GetSteamUtils()->GetImageRGBA(avatar, rgbaBuffer, (4 * 184 * 184))) {
+				// Image
+				wxImage image(184, 184);
+
+				// RGBA to Image
+				for (int y = 0; y < 184; y++) {
+					int start = 184 * y * 4;
+
+					for (int x = 0; x < 184; x++) {
+						// Set Colour
+						image.SetRGB(x, y, rgbaBuffer[start], rgbaBuffer[start + 1], rgbaBuffer[start + 2]);
+
+						start += 4;
+					}
+				}
+
+				if (caGetApp().GetAvatarSize() != 184) {
+					image.Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize());
+				}
+
+				// Set new Avatar
+				map->SetBitmap(wxBitmap(image));
+
+				caLogAction("Loaded Avatar of " + (wxString)id->Render());
+
+				// Clean
+				delete size;
+				delete rgbaBuffer;
+
+				// It's loaded
+				return true;
+			}
+		}
+
+		// Clean
+		delete size;
+		delete rgbaBuffer;
+	}
+
+	return false;
 }

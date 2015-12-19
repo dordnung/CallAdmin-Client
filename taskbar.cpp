@@ -22,18 +22,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-// unused warning -> disable
-#pragma warning(disable: 4100)
-
-// Includes Project
 #include "taskbar.h"
 #include "calladmin-client.h"
 
-// wx
 #include <wx/stdpaths.h>
 
 
-// Taskbar ID's
+// Taskbar event ID's
 enum {
 	PU_RESTORE = wxID_HIGHEST + 1,
 	PU_UPDATE,
@@ -76,18 +71,19 @@ void TaskBarIcon::OnMenuRestore(wxCommandEvent& WXUNUSED(event)) {
 
 // On exit -> Exit whole programm
 void TaskBarIcon::OnMenuExit(wxCommandEvent& WXUNUSED(event)) {
+	caLogAction("Closed via taskbar");
 	caGetApp().ExitProgramm();
 }
 
-// TODO: Wxstring regkey benutzen
+
 #if defined(__WXMSW__)
 // Append/Remove to Autostart
 void TaskBarIcon::OnMenuAutoStart(wxCommandEvent &event) {
 	// Registry Key
-	HKEY hkRegistry;
+	wxRegKey regKey(wxRegKey::HKCU, "Software\\Microsoft\\Windows\\CurrentVersion\\Run\\");
 
-	// Open Key
-	if (RegOpenKeyExA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run\\", 0, KEY_WRITE, &hkRegistry) == ERROR_SUCCESS) {
+	// Check key exists
+	if (regKey.Exists()) {
 		// He checked it
 		if (event.IsChecked()) {
 			// Get App Path
@@ -97,18 +93,15 @@ void TaskBarIcon::OnMenuAutoStart(wxCommandEvent &event) {
 			appPath = "\"" + appPath + "\"" + " -taskbar";
 
 			// Write in
-			RegSetValueExW(hkRegistry, L"CallAdmin-Client", 0, REG_SZ, (BYTE*)appPath.wc_str(), (wcslen(appPath.wc_str()) + 1) * sizeof(wchar_t));
+			regKey.SetValue("CallAdmin-Client", appPath);
 
 			caLogAction("Added Call Admin to the auto start list");
 		} else {
 			// Remove it
-			RegDeleteValueA(hkRegistry, "CallAdmin-Client");
+			regKey.DeleteValue("CallAdmin-Client");
 
 			caLogAction("Removed Call Admin from the auto start list");
 		}
-
-		// Close Key
-		RegCloseKey(hkRegistry);
 	}
 }
 #endif
@@ -121,10 +114,13 @@ void TaskBarIcon::OnMenuUpdate(wxCommandEvent& WXUNUSED(event)) {
 
 
 // Shows a Message
-void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow *parent) {
+// TODO check message
+void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow *
 #if defined(__WXMSW__) && wxUSE_TASKBARICON_BALLOONS
+							  WXUNUSED(parent)) {
 	ShowBalloon(title, message, 15000, wxICON_INFORMATION);
 #else
+							  parent) {
 	// Not the taskbar message
 	if (message != "Call Admin is now in the taskbar!") {
 		wxMessageBox(message, title, wxICON_INFORMATION | wxOK, parent);
@@ -136,50 +132,45 @@ void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow *parent
 // On doppel left click -> open Menu
 void TaskBarIcon::OnLeftButtonDClick(wxTaskBarIconEvent& WXUNUSED(event)) {
 	caGetMainFrame()->Show(true);
-	caGetMainFrame()->Restore();
 }
 
 
 // Create the Taskbar Menu
-// TODO Menu deconstructor?
 wxMenu* TaskBarIcon::CreatePopupMenu() {
 	wxMenu *menu = new wxMenu();
-
-#if defined(__WXMSW__)
-	// Check Auto run Key
-	HKEY hkRegistry;
-	bool autoRun = false;
-
-	// Open it
-	if (RegOpenKeyExA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run\\", 0, KEY_QUERY_VALUE, &hkRegistry) == ERROR_SUCCESS) {
-		// Path in the registry
-		wchar_t wszPath[1024];
-		memset(wszPath, 0, sizeof(wszPath));
-
-		DWORD dwType, dwSize = sizeof(wszPath)-1;
-
-		// Look for calladmin
-		if (RegQueryValueExW(hkRegistry, L"CallAdmin-Client", 0, &dwType, (unsigned char *)wszPath, &dwSize) == ERROR_SUCCESS) {
-			// Is Path the same?
-			if (wxString(wszPath).IsSameAs(wxStandardPaths::Get().GetExecutablePath())) {
-				// So it's on
-				autoRun = true;
-			}
-		}
-
-		// Close the Key
-		RegCloseKey(hkRegistry);
-	}
-#endif
 
 	menu->Append(PU_RESTORE, "Restore Windows");
 	menu->AppendSeparator();
 	menu->Append(PU_UPDATE, "Check For Update");
+
 #if defined(__WXMSW__)
-	menu->Append(PU_AUTOSTART, "Start With Windows", wxEmptyString, wxITEM_CHECK)->Check(autoRun);
+	wxMenuItem *autostartItem = menu->Append(PU_AUTOSTART, "Start With Windows", wxEmptyString, wxITEM_CHECK);
+
+	// Do not check the autostart item by default
+	autostartItem->Check(false);
+
+	// Check Auto run Key
+	wxRegKey regKey(wxRegKey::HKCU, "Software\\Microsoft\\Windows\\CurrentVersion\\Run\\");
+
+	// Check if it exists
+	if (regKey.Exists()) {
+		// String to store value in
+		wxString value;
+
+		// Look for CallAdmin-Client
+		if (regKey.QueryValue("CallAdmin-Client", value)) {
+			// Is Path the same?
+			if (value.IsSameAs(wxStandardPaths::Get().GetExecutablePath())) {
+				// So it's on
+				autostartItem->Check(true);
+			}
+		}
+	}
 #endif
+
 	menu->AppendSeparator();
 	menu->Append(PU_EXIT, "Exit");
 
+	// Menu will be automatically deleted by wxTaskBarIconBase
 	return menu;
 }

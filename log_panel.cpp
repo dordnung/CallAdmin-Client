@@ -22,10 +22,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-// Include Project
 #include "log_panel.h"
 #include "calladmin-client.h"
 
+
+// Events for Log Panel
+BEGIN_EVENT_TABLE(LogPanel, wxPanel)
+EVT_CLOSE(LogPanel::OnCloseWindow)
+END_EVENT_TABLE()
 
 // Create Log Panel
 LogPanel::LogPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
@@ -49,9 +53,6 @@ LogPanel::LogPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	SetSizerAndFit(sizerTop, true);
 }
 
-
-// Add Action to the logBox
-void LogPanel::AddLog(wxString log) {
-	// Add the new Log to the Log box
-	this->logBox->SetSelection(this->logBox->Append(wxString::FromUTF8(wxNow() + " - " + log)));
+void LogPanel::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {
+	Destroy();
 }

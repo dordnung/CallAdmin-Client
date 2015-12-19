@@ -27,17 +27,14 @@
 
 #pragma once
 
-// Precomp Header
 #include <wx/wxprec.h>
 
-// We need WX
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
 
 #include <wx/notebook.h>
 
-// Project
 #include "main_panel.h"
 #include "config_panel.h"
 #include "trackers_panel.h"
@@ -61,12 +58,31 @@ public:
 
 	void CreateAndAddPages();
 
-	/** Panel accessors */
-	MainPanel *GetMainPanel();
-	ConfigPanel *GetConfigPanel();
-	TrackerPanel *GetTrackersPanel();
-	LogPanel *GetLogPanel();
-	AboutPanel *GetAboutPanel();
+	// Panel accessors
+	MainPanel* GetMainPanel() {
+		return this->mainPanel;
+	}
+
+	ConfigPanel* GetConfigPanel() {
+		return this->configPanel;
+	}
+
+	TrackerPanel* GetTrackersPanel() {
+		return this->trackersPanel;
+	}
+
+	LogPanel* GetLogPanel() {
+		return this->logPanel;
+	}
+
+	AboutPanel* GetAboutPanel() {
+		return this->aboutPanel;
+	}
+
+protected:
+	void OnCloseWindow(wxCloseEvent &event);
+
+	DECLARE_EVENT_TABLE()
 };
 
 #endif

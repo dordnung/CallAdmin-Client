@@ -27,10 +27,8 @@
 
 #pragma once
 
-// Precomp Header
 #include <wx/wxprec.h>
 
-// We need WX
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
@@ -47,6 +45,9 @@ enum {
 	wxID_CheckBox,
 	wxID_SteamChanged
 };
+
+
+wxDECLARE_EVENT(wxEVT_STEAM_STATUS_CHANGED, wxCommandEvent);
 
 
 // Main Panel Class
@@ -71,11 +72,12 @@ public:
 
 	// Update Window
 	void SetEventText(wxString text);
-	void SetReconnectButton(bool enable = false);
+	void SetReconnectButton(bool enable = false) {
+		this->reconnectButton->Enable(enable);
+	}
 
 	// Update Call list
 	void UpdateCalls();
-	void ResetCalls();
 
 	void SetHandled(int item);
 
@@ -88,6 +90,8 @@ protected:
 
 	void OnCheckBox(wxCommandEvent &event);
 	void OnSteamChange(wxCommandEvent &event);
+
+	void OnCloseWindow(wxCloseEvent &event);
 
 	DECLARE_EVENT_TABLE()
 };

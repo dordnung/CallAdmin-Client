@@ -22,24 +22,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-// Include Project
 #include "main_frame.h"
 #include "calladmin-client.h"
 #include "curl_util.h"
 
 
-// Window events for Main Frame
+// Events for Main Frame
 BEGIN_EVENT_TABLE(MainFrame, wxFrame)
-EVT_COMMAND(wxID_ThreadHandled, wxEVT_COMMAND_MENU_SELECTED, MainFrame::OnThread)
-
 EVT_CLOSE(MainFrame::OnCloseWindow)
 EVT_ICONIZE(MainFrame::OnMinimizeWindow)
 END_EVENT_TABLE()
-
-
-MainFrame::MainFrame(const wxString &title) : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxMINIMIZE_BOX) {
-	this->notebook = NULL;
-}
 
 
 // Create Main Frame (Window)
@@ -48,14 +40,8 @@ void MainFrame::CreateWindow(bool createInTaskbar) {
 	this->notebook = new Notebook();
 	this->notebook->CreateAndAddPages();
 
-	// Start in taskbar
-	if (createInTaskbar && caGetTaskBarIcon()->IsAvailable()) {
-		Show(false);
-		caGetTaskBarIcon()->ShowMessage("Call Admin Started", "Call Admin started in taskbar", this);
-	} else {
-		// Show
-		Show(true);
-	}
+	// Start in taskbar?
+	Show(!createInTaskbar || !caGetTaskBarIcon()->IsAvailable());
 
 	// Set the Icon
 #if defined(__WXMSW__)
@@ -77,30 +63,10 @@ void MainFrame::CreateWindow(bool createInTaskbar) {
 }
 
 
-// Notebook accessor
-Notebook* MainFrame::GetNotebook() {
-	return this->notebook;
-}
-
-
-// Thread Handled -> Call Function
-void MainFrame::OnThread(wxCommandEvent& event) {
-	// Get Content
-	CurlThreadData *data = static_cast<CurlThreadData *>(event.GetClientObject());
-
-	// Get Function
-	CurlCallback function = data->GetCallbackFunction();
-
-	// Call it
-	function(data->GetError(), data->GetContent(), data->GetExtra());
-
-	// Delete data
-	delete data;
-}
-
-
 // Window Event -> exit programm
 void MainFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event)) {
+	caLogAction("Closed main frame");
+
 	caGetApp().ExitProgramm();
 }
 
@@ -109,7 +75,7 @@ void MainFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event)) {
 void MainFrame::OnMinimizeWindow(wxIconizeEvent& WXUNUSED(event)) {
 	if (caGetConfig()->GetHideOnMinimize()) {
 		// Log Action
-		caLogAction("Hided Window");
+		caLogAction("Hided main frame");
 		caGetTaskBarIcon()->ShowMessage("Call Admin", "Call Admin is now in the taskbar!", this);
 
 		if (caGetTaskBarIcon()->IsAvailable()) {

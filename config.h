@@ -27,10 +27,8 @@
 
 #pragma once
 
-// Precomp Header
 #include <wx/wxprec.h>
 
-// We need WX
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
@@ -41,7 +39,7 @@
 // Config Class
 class Config : public wxConfig {
 private:
-	// Settings (Can be public)
+	// Settings
 	int step;
 	int timeout;
 	int maxAttempts;
@@ -63,34 +61,106 @@ public:
 	bool ParseConfig();
 
 	// Config accessors
-	int GetStep();
-	int GetTimeout();
-	int GetMaxAttempts();
-	int GetNumLastCalls();
+	int GetStep() {
+		return this->step;
+	}
 
-	wxString GetPage();
-	wxString GetKey();
+	int GetTimeout() {
+		return this->timeout;
+	}
 
-	bool GetSteamEnabled();
-	bool GetHideOnMinimize();
-	bool GetIsAvailable();
-	bool GetWantSound();
-	bool GetIsSpectator();
+	int GetMaxAttempts() {
+		return this->maxAttempts;
+	}
 
-	// Config Setters
-	void SetStep(int step);
-	void SetTimeout(int timeout);
-	void SetMaxAttempts(int maxAttempts);
-	void SetNumLastCalls(int numLastCalls);
+	int GetNumLastCalls() {
+		return this->numLastCalls;
+	}
 
-	void SetPage(wxString page);
-	void SetKey(wxString key);
+	wxString GetPage() {
+		return this->page;
+	}
 
-	void SetSteamEnabled(bool steamEnabled);
-	void SetHideOnMinimize(bool hideOnMinimize);
-	void SetIsAvailable(bool isAvailable);
-	void SetWantSound(bool wantSound);
-	void SetIsSpectator(bool isSpectator);
+	wxString GetKey() {
+		return this->key;
+	}
+
+	bool GetSteamEnabled() {
+		return this->steamEnabled;
+	}
+
+	bool GetHideOnMinimize() {
+		return this->hideOnMinimize;
+	}
+
+	bool GetIsAvailable() {
+		return this->isAvailable;
+	}
+
+	bool GetWantSound() {
+		return this->wantSound;
+	}
+
+	bool GetIsSpectator() {
+		return this->isSpectator;
+	}
+
+
+	// Config setters
+	void SetStep(int step) {
+		this->step = step;
+		Write("step", step);
+	}
+
+	void SetTimeout(int timeout) {
+		this->timeout = timeout;
+		Write("timeout", timeout);
+	}
+
+	void SetMaxAttempts(int maxAttempts) {
+		this->maxAttempts = maxAttempts;
+		Write("attempts", maxAttempts);
+	}
+
+	void SetNumLastCalls(int numLastCalls) {
+		this->numLastCalls = numLastCalls;
+		Write("lastcalls", numLastCalls);
+	}
+
+	void SetPage(wxString page) {
+		this->page = page;
+		Write("page", page);
+	}
+
+	void SetKey(wxString key) {
+		this->key = key;
+		Write("key", key);
+	}
+
+	void SetSteamEnabled(bool steamEnabled) {
+		this->steamEnabled = steamEnabled;
+		Write("steam", steamEnabled);
+	}
+
+	void SetHideOnMinimize(bool hideOnMinimize) {
+		this->hideOnMinimize = hideOnMinimize;
+		Write("hideonminimize", hideOnMinimize);
+	}
+
+	void SetIsAvailable(bool isAvailable) {
+		this->isAvailable = isAvailable;
+		Write("available", isAvailable);
+	}
+
+	void SetWantSound(bool wantSound) {
+		this->wantSound = wantSound;
+		Write("sound", wantSound);
+	}
+
+	void SetIsSpectator(bool isSpectator) {
+		this->isSpectator = isSpectator;
+		Write("spectate", isSpectator);
+	}
 };
 
 

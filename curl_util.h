@@ -27,10 +27,8 @@
 
 #pragma once
 
-// Precomp Header
 #include <wx/wxprec.h>
 
-// We need WX
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
@@ -40,7 +38,8 @@
 // TODO Char* mit wxString ersetzen
 typedef void(*CurlCallback)(char*, wxString, int);
 
-class CurlThread : public wxThread {
+
+class CurlThread : public wxThreadHelper {
 private:
 	// Callback function
 	CurlCallback callbackFunction;
@@ -52,10 +51,22 @@ private:
 	int extra;
 
 public:
-	static void GetPage(CurlCallback callbackFunction, wxString page, int extra = 0);
+	CurlThread() : callbackFunction(NULL), page(wxString()), extra(0) {}
+	~CurlThread();
 
-	CurlThread(CurlCallback callbackFunction, wxString page, int extra);
-	virtual ExitCode Entry();
+	void SetCallbackFunction(CurlCallback callbackFunction) {
+		this->callbackFunction = callbackFunction;
+	}
+
+	void SetPage(wxString page) {
+		this->page = page;
+	}
+
+	void SetExtra(int extra) {
+		this->extra = extra;
+	}
+
+	virtual wxThread::ExitCode Entry();
 };
 
 size_t CurlWriteData(void *buffer, size_t size, size_t nmemb, void *userp);
@@ -77,12 +88,24 @@ private:
 	int extra;
 
 public:
-	CurlThreadData(CurlCallback callbackFunction, wxString content, char *error, int extra);
+	CurlThreadData(CurlCallback callbackFunction, wxString content, char *error, int extra)
+		: callbackFunction(callbackFunction), content(content), error(error), extra(extra) {}
 
-	CurlCallback GetCallbackFunction();
-	wxString GetContent();
-	char* GetError();
-	int GetExtra();
+	CurlCallback GetCallbackFunction() {
+		return this->callbackFunction;
+	}
+
+	wxString GetContent() {
+		return this->content;
+	}
+
+	char* GetError() {
+		return this->error;
+	}
+
+	int GetExtra() {
+		return this->extra;
+	}
 };
 
 #endif
