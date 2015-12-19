@@ -310,14 +310,14 @@ void ConfigPanel::ParseConfig() {
 		// Updated Main Interface
 		caGetMainPanel()->UpdateCalls();
 
+		// Start Steam Thread again
+		caGetApp().StartSteamThread();
+
 		// Restart the Timer
 		caGetApp().StartTimer();
 
 		// Log Action
 		caLogAction("Loaded the config");
-
-		// Start Steam Thread again
-		caGetApp().StartSteamThread();
 	} else {
 		// Refresh main dialog
 		caGetMainFrame()->SetTitle("Call Admin Client");

@@ -185,7 +185,7 @@ void CallAdmin::StartTimer() {
 	this->attempts = 0;
 
 	this->timer = new Timer();
-	this->timer->Start(this->config->GetStep() * 1000);
+	this->timer->Run(this->config->GetStep() * 1000);
 }
 
 
