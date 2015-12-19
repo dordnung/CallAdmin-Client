@@ -35,6 +35,17 @@
 
 #include <wx/config.h>
 
+enum LogLevel {
+	LEVEL_DEBUG = 0,
+	LEVEL_INFO,
+	LEVEL_WARNING,
+	LEVEL_ERROR,
+	LEVEL_SIZE_OF
+};
+
+static wxString LogLevelNames[] = { "DEBUG", "INFO", "WARNING", "ERROR" };
+// statically check that the size of LogLevel fits the number of log levels
+static_assert(sizeof(LogLevelNames) / sizeof(wxString) == LEVEL_SIZE_OF, "Sizes do not match");
 
 // Config Class
 class Config : public wxConfig {
@@ -48,6 +59,7 @@ private:
 	wxString page;
 	wxString key;
 
+	LogLevel logLevel;
 	bool steamEnabled;
 	bool showInTaskbar;
 	bool hideOnMinimize;
@@ -84,6 +96,10 @@ public:
 
 	wxString GetKey() {
 		return this->key;
+	}
+
+	LogLevel GetLogLevel() {
+		return this->logLevel;
 	}
 
 	bool GetSteamEnabled() {
@@ -140,6 +156,11 @@ public:
 	void SetKey(wxString key) {
 		this->key = key;
 		Write("key", key);
+	}
+
+	void SetLogLevel(LogLevel logLevel) {
+		this->logLevel = logLevel;
+		Write("logLevel", (int)logLevel);
 	}
 
 	void SetSteamEnabled(bool steamEnabled) {

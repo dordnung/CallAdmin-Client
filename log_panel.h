@@ -33,6 +33,7 @@
 #include <wx/wx.h>
 #endif
 
+#include "config.h"
 
 class LogPanel : public wxPanel {
 private:
@@ -42,8 +43,8 @@ public:
 	LogPanel();
 
 	// Add Action to the logBox
-	void AddLog(wxString log) {
-		this->logBox->SetSelection(this->logBox->Append(wxString::FromUTF8(wxNow() + " - " + log)));
+	void AddLog(wxString log, LogLevel logLevel) {
+		this->logBox->SetSelection(this->logBox->Append("[" + LogLevelNames[logLevel] + "] " + wxString::FromUTF8(wxNow() + " - " + log)));
 	}
 
 protected:

@@ -223,8 +223,10 @@ void CallAdmin::CreateReconnect(wxString error) {
 	mainFrame->GetNotebook()->GetMainPanel()->SetReconnectButton(true);
 
 	// Show it
-	mainFrame->Show(true);
-	mainFrame->Restore();
+	if (!isOtherInFullscreen()) {
+		mainFrame->Show(true);
+		mainFrame->Restore();
+	}
 
 	// Go to first page
 	mainFrame->GetNotebook()->SetSelection(0);
@@ -363,7 +365,7 @@ void CallAdmin::OnUpdate(char* error, wxString result, int WXUNUSED(x)) {
 			caGetAboutPanel()->EnableDownload(true);
 			caGetAboutPanel()->UpdateVersionText(newVersion, wxColor("red"));
 
-			// Show Main
+			// Show Main, but only if no other app is in fullscreen
 			if (!isOtherInFullscreen()) {
 				caGetMainFrame()->Show(true);
 				caGetMainFrame()->Restore();

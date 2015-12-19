@@ -153,8 +153,10 @@ public:
 
 	void ExitProgramm();
 
-	void LogAction(wxString action) {
-		this->mainFrame->GetNotebook()->GetLogPanel()->AddLog(action);
+	void LogAction(wxString action, LogLevel logLevel = LEVEL_INFO) {
+		if (logLevel >= this->config->GetLogLevel()) {
+			this->mainFrame->GetNotebook()->GetLogPanel()->AddLog(action, logLevel);
+		}
 	}
 
 	static void OnUpdate(char* error, wxString result, int extra);

@@ -115,16 +115,19 @@ void TaskBarIcon::OnMenuUpdate(wxCommandEvent& WXUNUSED(event)) {
 
 // Shows a Message
 void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow *parent) {
+	// Only if not other app is in fullscreen, otherwise it would be minimized
+	if (!isOtherInFullscreen()) {
 #if defined(__WXMSW__) && defined(wxUSE_TASKBARICON_BALLOONS) && wxUSE_TASKBARICON_BALLOONS
-	if (caGetConfig()->GetShowInTaskbar()) {
-		ShowBalloon(title, message, 15000, wxICON_INFORMATION);
+		if (caGetConfig()->GetShowInTaskbar()) {
+			ShowBalloon(title, message, 15000, wxICON_INFORMATION);
 
-		return;
-	}
+			return;
+		}
 #endif
 
-	// No taskbar message
-	wxMessageBox(message, title, wxICON_INFORMATION | wxOK, parent);
+		// No taskbar message
+		wxMessageBox(message, title, wxICON_INFORMATION | wxOK, parent);
+	}
 }
 
 

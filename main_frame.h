@@ -42,7 +42,7 @@ private:
 
 public:
 	MainFrame(const wxString &title)
-		: wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxMINIMIZE_BOX), notebook(NULL) {}
+		: wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxMINIMIZE_BOX), notebook(NULL) {}
 
 	// Create the window
 	void CreateWindow(bool createInTaskbar = false);

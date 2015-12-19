@@ -37,6 +37,7 @@ Config::Config() : wxConfig("Call Admin") {
 	this->page = "";
 	this->key = "";
 
+	this->logLevel = LEVEL_INFO;
 	this->steamEnabled = true;
 	this->showInTaskbar = false;
 	this->hideOnMinimize = false;
@@ -61,6 +62,7 @@ bool Config::ParseConfig() {
 			this->maxAttempts = ReadLong("attempts", 5l);
 			this->numLastCalls = ReadLong("lastcalls", 25l);
 
+			this->logLevel = (LogLevel)ReadLong("logLevel", LEVEL_INFO);
 			this->steamEnabled = ReadBool("steam", true);
 			this->showInTaskbar = ReadBool("showInTaskbar", false);
 			this->hideOnMinimize = ReadBool("hideonminimize", false);

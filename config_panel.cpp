@@ -31,6 +31,7 @@
 // Event ID's
 enum {
 	wxID_SetConfig = wxID_HIGHEST + 30,
+	wxID_LogLevel,
 	wxID_SteamUpdate,
 	wxID_ShowInTaskbarUpdate,
 	wxID_HideUpdate,
@@ -44,6 +45,7 @@ EVT_BUTTON(wxID_SetConfig, ConfigPanel::OnSet)
 EVT_CHECKBOX(wxID_SteamUpdate, ConfigPanel::OnSteamUpdate)
 EVT_CHECKBOX(wxID_ShowInTaskbarUpdate, ConfigPanel::OnShowInTaskbarUpdate)
 EVT_CHECKBOX(wxID_HideUpdate, ConfigPanel::OnHideUpdate)
+EVT_CHOICE(wxID_LogLevel, ConfigPanel::OnLogLevelUpdate)
 
 EVT_CLOSE(ConfigPanel::OnCloseWindow)
 END_EVENT_TABLE()
@@ -147,6 +149,18 @@ ConfigPanel::ConfigPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	// Static line
 	gridSizer->Add(new wxStaticLine(this, wxID_ANY), wxGBPosition(currentPos++, 0), wxGBSpan(1, 2), wxEXPAND | (wxALL &~wxLEFT &~wxRIGHT), 10);
 
+	// Ask for LogLevel
+	text = new wxStaticText(this, wxID_ANY, "What information should be logged in log panel: ");
+	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+
+	// LogLevel choice
+	this->logLevel = new wxChoice(this, wxID_LogLevel, wxDefaultPosition, wxDefaultSize, (sizeof(LogLevelNames) / sizeof(LogLevelNames[0])), LogLevelNames, 0, wxDefaultValidator, "Log Level");
+	this->logLevel->SetSelection(LEVEL_INFO);
+
+	// Add LogLevel
+	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
+	gridSizer->Add(this->logLevel, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxRIGHT);
+
 	// Ask for Steam
 	text = new wxStaticText(this, wxID_ANY, "Steam support to write messages and load Avatars: ");
 	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
@@ -159,7 +173,7 @@ ConfigPanel::ConfigPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
 	gridSizer->Add(this->steamEnable, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxRIGHT);
 
-	// Ask for SHow in taskbar
+	// Ask for Show in taskbar
 	text = new wxStaticText(this, wxID_ANY, "Show messages in the Taskbar instead in own window: ");
 	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
@@ -196,6 +210,16 @@ ConfigPanel::ConfigPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 }
 
 
+// Log Level Updated -> Set Config
+void ConfigPanel::OnLogLevelUpdate(wxCommandEvent& WXUNUSED(event)) {
+	// Write to config file
+	caGetConfig()->SetLogLevel((LogLevel) this->logLevel->GetSelection());
+
+	// Log Action
+	caLogAction("Changed Log Level");
+}
+
+
 // Steam Updated -> Set Config
 void ConfigPanel::OnSteamUpdate(wxCommandEvent& WXUNUSED(event)) {
 	// Write to config file
@@ -206,7 +230,7 @@ void ConfigPanel::OnSteamUpdate(wxCommandEvent& WXUNUSED(event)) {
 }
 
 
-// Steam Updated -> Set Config
+// Show in Taskbar Updated -> Set Config
 void ConfigPanel::OnShowInTaskbarUpdate(wxCommandEvent& WXUNUSED(event)) {
 	// Write to config file
 	caGetConfig()->SetShowInTaskbar(this->showInTaskbar->GetValue());
@@ -271,7 +295,9 @@ void ConfigPanel::ParseConfig() {
 		this->pageText->SetValue(config->GetPage());
 		this->keyText->SetValue(config->GetKey());
 
+		this->logLevel->SetSelection((int)config->GetLogLevel());
 		this->steamEnable->SetValue(config->GetSteamEnabled());
+		this->showInTaskbar->SetValue(config->GetShowInTaskbar());
 		this->hideMini->SetValue(config->GetHideOnMinimize());
 
 		// Calls are unimportant

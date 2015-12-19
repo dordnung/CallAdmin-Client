@@ -156,7 +156,7 @@ void SteamThread::Check() {
 						// Notice changes to main panel
 						event.SetInt(1);
 
-						caGetMainFrame()->GetEventHandler()->AddPendingEvent(event);
+						caGetMainPanel()->GetEventHandler()->AddPendingEvent(event);
 						caLogAction("Disonnected from Steam");
 
 						// Clean
@@ -168,7 +168,7 @@ void SteamThread::Check() {
 						// Notice changes to main panel
 						event.SetInt(0);
 
-						caGetMainFrame()->GetEventHandler()->AddPendingEvent(event);
+						caGetMainPanel()->GetEventHandler()->AddPendingEvent(event);
 
 						// Clean
 						Clean();
@@ -184,7 +184,7 @@ void SteamThread::Check() {
 				// Notice changes to main panel
 				event.SetInt(2);
 
-				caGetMainFrame()->GetEventHandler()->AddPendingEvent(event);
+				caGetMainPanel()->GetEventHandler()->AddPendingEvent(event);
 				caLogAction("Connected to Steam");
 
 				this->isConnected = true;

@@ -44,6 +44,7 @@ private:
 	wxSpinCtrl *callsSlider;
 	wxTextCtrl *pageText;
 	wxTextCtrl *keyText;
+	wxChoice *logLevel;
 	wxCheckBox *steamEnable;
 	wxCheckBox *showInTaskbar;
 	wxCheckBox *hideMini;
@@ -55,6 +56,7 @@ public:
 
 protected:
 	void OnSet(wxCommandEvent &event);
+	void OnLogLevelUpdate(wxCommandEvent &event);
 	void OnSteamUpdate(wxCommandEvent &event);
 	void OnShowInTaskbarUpdate(wxCommandEvent &event);
 	void OnHideUpdate(wxCommandEvent &event);

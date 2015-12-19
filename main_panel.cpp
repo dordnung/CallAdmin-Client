@@ -279,9 +279,9 @@ void MainPanel::OnSteamChange(wxCommandEvent &event) {
 	if (id == 0) {
 		SetSteamStatus("Steam support is disabled", wxColour("red"));
 	} else if (id == 1) {
-		SetSteamStatus("Steam is currently not running", wxColour("red"));
+		SetSteamStatus("Steam is not running", wxColour("red"));
 	} else {
-		SetSteamStatus("Steam is currently running", wxColour(34, 139, 34));
+		SetSteamStatus("Steam is running", wxColour(34, 139, 34));
 	}
 }
 

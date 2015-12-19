@@ -34,7 +34,7 @@
 
 // Event ID's for Call Dialog
 enum {
-	wxID_ConnectCall = wxID_HIGHEST + 200,
+	wxID_ConnectCall = wxID_HIGHEST + 50,
 	wxID_CheckDone,
 	wxID_ContactClient,
 	wxID_ContactTarget,
