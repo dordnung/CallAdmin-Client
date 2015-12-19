@@ -32,6 +32,7 @@
 enum {
 	wxID_SetConfig = wxID_HIGHEST + 30,
 	wxID_SteamUpdate,
+	wxID_ShowInTaskbarUpdate,
 	wxID_HideUpdate,
 };
 
@@ -41,6 +42,7 @@ BEGIN_EVENT_TABLE(ConfigPanel, wxPanel)
 EVT_BUTTON(wxID_SetConfig, ConfigPanel::OnSet)
 
 EVT_CHECKBOX(wxID_SteamUpdate, ConfigPanel::OnSteamUpdate)
+EVT_CHECKBOX(wxID_ShowInTaskbarUpdate, ConfigPanel::OnShowInTaskbarUpdate)
 EVT_CHECKBOX(wxID_HideUpdate, ConfigPanel::OnHideUpdate)
 
 EVT_CLOSE(ConfigPanel::OnCloseWindow)
@@ -157,6 +159,18 @@ ConfigPanel::ConfigPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
 	gridSizer->Add(this->steamEnable, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxRIGHT);
 
+	// Ask for SHow in taskbar
+	text = new wxStaticText(this, wxID_ANY, "Show messages in the Taskbar instead in own window: ");
+	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+
+	// Show in taskbar
+	this->showInTaskbar = new wxCheckBox(this, wxID_ShowInTaskbarUpdate, "Show messages in Taskbar");
+	this->showInTaskbar->SetValue(false);
+
+	// Add Show in taskbar
+	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
+	gridSizer->Add(this->showInTaskbar, wxGBPosition(currentPos++, 1), wxDefaultSpan, wxRIGHT);
+
 	// Ask for hide on mini
 	text = new wxStaticText(this, wxID_ANY, "Hide windows on minimize: ");
 	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
@@ -189,6 +203,16 @@ void ConfigPanel::OnSteamUpdate(wxCommandEvent& WXUNUSED(event)) {
 
 	// Log Action
 	caLogAction("Changed Steam Status");
+}
+
+
+// Steam Updated -> Set Config
+void ConfigPanel::OnShowInTaskbarUpdate(wxCommandEvent& WXUNUSED(event)) {
+	// Write to config file
+	caGetConfig()->SetShowInTaskbar(this->showInTaskbar->GetValue());
+
+	// Log Action
+	caLogAction("Changed show in taskbar value");
 }
 
 

@@ -422,7 +422,7 @@ void CallDialog::OnContactTrackers(wxCommandEvent& WXUNUSED(event)) {
 		return;
 	}
 
-	caGetTaskBarIcon()->ShowMessage("Coulnd't contact trackers!", "You're not connected with STEAM!", this);
+	caGetTaskBarIcon()->ShowMessage("Couldn't contact trackers!", "You're not connected with STEAM!", this);
 }
 
 
@@ -526,7 +526,7 @@ void CallDialog::OnGetTrackers(char* errors, wxString result, int x) {
 		error = "Found no available tracker on your friendlist!";
 	}
 
-	caGetTaskBarIcon()->ShowMessage("Coulnd't contact trackers!", error, caGetCallDialogs()->at(x));
+	caGetTaskBarIcon()->ShowMessage("Couldn't contact trackers!", error, caGetCallDialogs()->at(x));
 }
 
 
@@ -592,7 +592,7 @@ void CallDialog::OnChecked(char* errors, wxString result, int x) {
 		error = "Invalid XML structure!";
 	}
 
-	caGetTaskBarIcon()->ShowMessage("Coulnd't take over call!", error, caGetCallDialogs()->at(x));
+	caGetTaskBarIcon()->ShowMessage("Couldn't take over call!", error, caGetCallDialogs()->at(x));
 }
 
 

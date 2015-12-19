@@ -114,24 +114,24 @@ void TaskBarIcon::OnMenuUpdate(wxCommandEvent& WXUNUSED(event)) {
 
 
 // Shows a Message
-// TODO check message
-void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow *
-#if defined(__WXMSW__) && wxUSE_TASKBARICON_BALLOONS
-							  WXUNUSED(parent)) {
-	ShowBalloon(title, message, 15000, wxICON_INFORMATION);
-#else
-							  parent) {
-	// Not the taskbar message
-	if (message != "Call Admin is now in the taskbar!") {
-		wxMessageBox(message, title, wxICON_INFORMATION | wxOK, parent);
+void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow *parent) {
+#if defined(__WXMSW__) && defined(wxUSE_TASKBARICON_BALLOONS) && wxUSE_TASKBARICON_BALLOONS
+	if (caGetConfig()->GetShowInTaskbar()) {
+		ShowBalloon(title, message, 15000, wxICON_INFORMATION);
+
+		return;
 	}
 #endif
+
+	// No taskbar message
+	wxMessageBox(message, title, wxICON_INFORMATION | wxOK, parent);
 }
 
 
 // On doppel left click -> open Menu
 void TaskBarIcon::OnLeftButtonDClick(wxTaskBarIconEvent& WXUNUSED(event)) {
 	caGetMainFrame()->Show(true);
+	caGetMainFrame()->Restore();
 }
 
 
@@ -153,14 +153,14 @@ wxMenu* TaskBarIcon::CreatePopupMenu() {
 	wxRegKey regKey(wxRegKey::HKCU, "Software\\Microsoft\\Windows\\CurrentVersion\\Run\\");
 
 	// Check if it exists
-	if (regKey.Exists()) {
+	if (regKey.Exists() && regKey.HasValue("CallAdmin-Client")) {
 		// String to store value in
 		wxString value;
 
 		// Look for CallAdmin-Client
 		if (regKey.QueryValue("CallAdmin-Client", value)) {
 			// Is Path the same?
-			if (value.IsSameAs(wxStandardPaths::Get().GetExecutablePath())) {
+			if (value.Contains(wxStandardPaths::Get().GetExecutablePath())) {
 				// So it's on
 				autostartItem->Check(true);
 			}

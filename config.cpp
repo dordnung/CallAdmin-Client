@@ -38,6 +38,7 @@ Config::Config() : wxConfig("Call Admin") {
 	this->key = "";
 
 	this->steamEnabled = true;
+	this->showInTaskbar = false;
 	this->hideOnMinimize = false;
 	this->isAvailable = true;
 	this->wantSound = true;
@@ -61,6 +62,7 @@ bool Config::ParseConfig() {
 			this->numLastCalls = ReadLong("lastcalls", 25l);
 
 			this->steamEnabled = ReadBool("steam", true);
+			this->showInTaskbar = ReadBool("showInTaskbar", false);
 			this->hideOnMinimize = ReadBool("hideonminimize", false);
 			this->isAvailable = ReadBool("available", true);
 			this->wantSound = ReadBool("sound", true);

@@ -49,6 +49,7 @@ private:
 	wxString key;
 
 	bool steamEnabled;
+	bool showInTaskbar;
 	bool hideOnMinimize;
 	bool isAvailable;
 	bool wantSound;
@@ -87,6 +88,10 @@ public:
 
 	bool GetSteamEnabled() {
 		return this->steamEnabled;
+	}
+
+	bool GetShowInTaskbar() {
+		return this->showInTaskbar;
 	}
 
 	bool GetHideOnMinimize() {
@@ -140,6 +145,11 @@ public:
 	void SetSteamEnabled(bool steamEnabled) {
 		this->steamEnabled = steamEnabled;
 		Write("steam", steamEnabled);
+	}
+
+	void SetShowInTaskbar(bool showInTaskbar) {
+		this->showInTaskbar = showInTaskbar;
+		Write("showInTaskbar", showInTaskbar);
 	}
 
 	void SetHideOnMinimize(bool hideOnMinimize) {

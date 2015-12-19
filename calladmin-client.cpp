@@ -372,7 +372,7 @@ void CallAdmin::OnUpdate(char* error, wxString result, int WXUNUSED(x)) {
 			// Goto About
 			caGetNotebook()->SetSelection(4);
 
-			caGetTaskBarIcon()->ShowMessage("New Version", "New version " + newVersion + " is now available!", caGetMainFrame());
+			caGetTaskBarIcon()->ShowMessage("New Version available", "New version " + newVersion + " is now available!", caGetMainFrame());
 		} else {
 			// Log Action
 			caLogAction("Version is up to date");

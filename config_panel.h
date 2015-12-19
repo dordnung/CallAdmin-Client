@@ -45,6 +45,7 @@ private:
 	wxTextCtrl *pageText;
 	wxTextCtrl *keyText;
 	wxCheckBox *steamEnable;
+	wxCheckBox *showInTaskbar;
 	wxCheckBox *hideMini;
 
 public:
@@ -55,6 +56,7 @@ public:
 protected:
 	void OnSet(wxCommandEvent &event);
 	void OnSteamUpdate(wxCommandEvent &event);
+	void OnShowInTaskbarUpdate(wxCommandEvent &event);
 	void OnHideUpdate(wxCommandEvent &event);
 
 	void OnCloseWindow(wxCloseEvent &event);

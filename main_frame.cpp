@@ -76,7 +76,6 @@ void MainFrame::OnMinimizeWindow(wxIconizeEvent& WXUNUSED(event)) {
 	if (caGetConfig()->GetHideOnMinimize()) {
 		// Log Action
 		caLogAction("Hided main frame");
-		caGetTaskBarIcon()->ShowMessage("Call Admin", "Call Admin is now in the taskbar!", this);
 
 		if (caGetTaskBarIcon()->IsAvailable()) {
 			Show(false);
