@@ -10,6 +10,7 @@ The Updater for the Call Admin Client
   1. `apt-get install build-essential`
   2. `apt-get install libcurl4-openssl-dev`
   3. `apt-get install libwxgtk3.0-dev`
+    - Install wxWidgets with [this guide](https://wiki.wxwidgets.org/Compiling_and_getting_started), if wxWidgets 3.0 is not available on your system
 
 - **Build calladmin-client-updater**
   1. `wget https://github.com/popoklopsi/CallAdmin-Client/archive/master.zip && unzip CallAdmin-Client-master.zip`
