@@ -35,16 +35,6 @@
 #include "update_dialog.h"
 
 
-// Font
-#if defined(__WXMSW__)
-#define FONT_FAMILY wxFONTFAMILY_SCRIPT
-#define FONT_WEIGHT_BOLD wxFONTWEIGHT_BOLD
-#else
-#define FONT_FAMILY wxFONTFAMILY_DEFAULT
-#define FONT_WEIGHT_BOLD wxFONTWEIGHT_NORMAL
-#endif
-
-
 // App Class
 class CallAdminUpdater : public wxApp {
 private:

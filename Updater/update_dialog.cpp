@@ -41,19 +41,12 @@ END_EVENT_TABLE()
 
 
 // Open Update Dialog
-UpdateDialog::UpdateDialog() : wxDialog(NULL, wxID_ANY, "Update CallAdmin", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxMINIMIZE_BOX) {
+UpdateDialog::UpdateDialog() : wxDialog(NULL, wxID_ANY, "Update CallAdmin Client", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxMINIMIZE_BOX) {
 	// Create Box
 	this->sizerTop = new wxBoxSizer(wxVERTICAL);
 
 	// Panel
 	this->panel = new wxPanel(this, wxID_ANY);
-
-	// Border and Center
-	wxSizerFlags flags;
-
-	// Border and Centre
-	flags.Border(wxALL, 10);
-	flags.Centre();
 
 	// Create Progress Bar
 	this->progressBar = new wxGauge(this->panel, wxID_ANY, 100);
@@ -64,18 +57,18 @@ UpdateDialog::UpdateDialog() : wxDialog(NULL, wxID_ANY, "Update CallAdmin", wxDe
 	// Download Info
 	this->dlinfo = new wxStaticText(this->panel, wxID_ANY, "0000kB of 0000KB (0000 kB/s). Time: 0,00 Seconds");
 
-	this->dlinfo->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
+	this->dlinfo->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
-	this->sizerTop->Add(this->dlinfo, flags.Border(wxALL, 10));
+	this->sizerTop->Add(this->dlinfo, 0, wxALL | wxALIGN_CENTRE, 10);
 
 	// Download Status
 	this->dlstatus = new wxStaticText(this->panel, wxID_ANY, "Status: Downloading...");
 
-	this->dlstatus->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, FONT_WEIGHT_BOLD));
+	this->dlstatus->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
-	this->sizerTop->Add(this->dlstatus, flags.Border(wxALL, 10));
+	this->sizerTop->Add(this->dlstatus, 0, wxALL | wxALIGN_CENTRE, 10);
 
 	// Auto Size
 	this->panel->SetSizerAndFit(sizerTop, true);

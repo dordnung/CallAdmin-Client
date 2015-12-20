@@ -22,7 +22,7 @@ The Updater for the Call Admin Client
   - Download prebuild file from `http://www.xxx.com`
   
 - **Build wxwidgets 3.0.2**
-  1. Download wxwidgets 3.0.2 from `http://sourceforge.net/projects/wxwindows/files/3.0.2/wxWidgets-3.0.2.zip/download` and unzip
+  1. Download wxwidgets 3.0.2 from `https://github.com/wxWidgets/wxWidgets/releases/download/v3.0.2/wxWidgets-3.0.2.zip` and unzip
   2. Add MSBuild to the system PATH if not done yet:
     - For example: `C:\Program Files (x86)\MSBuild\12.0\Bin` 
   3. Open command line at `wxWidgets-3.0.2/build/msw/`
