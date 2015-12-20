@@ -22,18 +22,13 @@
 
 CPP = g++
 
-WX = ../wxwidgets
-OPENSSL = ../openssl
-CURL = ../curl
-
 BINARY = calladmin-client-updater
 
 OBJECTS += calladmin-client-updater.cpp update_dialog.cpp
-INCLUDE += -I. -I$(CURL)/include
-LINK = `wx-config --libs` $(CURL)/lib/.libs/libcurl.a $(OPENSSL)/libssl.a $(OPENSSL)/libcrypto.a -lz -m32
+LINK = `wx-config --libs` `curl-config --libs`
 
-CFLAGS += `wx-config --cxxflags` -O3 -DCURL_STATICLIB -DWX_PRECOMP -D_LINUX -DNDEBUG -D_UNICODE \
-				-Wall -Woverloaded-virtual -Os -fpermissive -fno-strict-aliasing -m32
+CFLAGS += `wx-config --cxxflags` `curl-config --cflags` -O3 -DCURL_STATICLIB -DWX_PRECOMP -D_LINUX -DNDEBUG -D_UNICODE \
+				-Wall -Woverloaded-virtual -Os -fpermissive -fno-strict-aliasing
 
 OBJ_BIN := $(OBJECTS:%.cpp=%.o)
 
