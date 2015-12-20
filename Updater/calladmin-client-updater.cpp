@@ -28,6 +28,7 @@
 #include <wx/cmdline.h>
 #include <wx/snglinst.h>
 #include <wx/stdpaths.h>
+#include <wx/xrc/xmlres.h>
 
 #include "calladmin-client-updater.h"
 
@@ -60,6 +61,10 @@ bool CallAdminUpdater::OnInit() {
 
 		return false;
 	}
+
+	// Load update dialog
+	wxXmlResource::Get()->InitAllHandlers();
+	wxXmlResource::Get()->Load(GetPath("rc/calladmin-client-updater.xrc"));
 
 	// No update found? -> Delete App
 	if (!CheckForUpdate()) {

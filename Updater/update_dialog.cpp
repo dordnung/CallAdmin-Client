@@ -26,6 +26,7 @@
 #include "calladmin-client-updater.h"
 
 #include <wx/ffile.h>
+#include <wx/xrc/xmlres.h>
 
 
 wxDEFINE_EVENT(wxEVT_THREAD_UPDATE, wxCommandEvent);
@@ -41,50 +42,38 @@ END_EVENT_TABLE()
 
 
 // Open Update Dialog
-UpdateDialog::UpdateDialog() : wxDialog(NULL, wxID_ANY, "Update CallAdmin Client", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxMINIMIZE_BOX) {
-	// Create Box
-	this->sizerTop = new wxBoxSizer(wxVERTICAL);
+UpdateDialog::UpdateDialog() {
+	this->dlinfo = NULL;
+	this->dlstatus = NULL;
+	this->sizerTop = NULL;
+	this->panel = NULL;
+	this->progressBar = NULL;
+
+	wxXmlResource::Get()->LoadDialog(this, NULL, "updateDialog");
 
 	// Panel
-	this->panel = new wxPanel(this, wxID_ANY);
+	this->panel = XRCCTRL(*this, "updatePanel", wxPanel);
 
-	// Create Progress Bar
-	this->progressBar = new wxGauge(this->panel, wxID_ANY, 100);
+	// sizer
+	this->sizerTop = this->panel->GetSizer();
 
-	// Add it
-	this->sizerTop->Add(this->progressBar, 0, wxALL | wxEXPAND, 10);
+	// sizer
+	this->progressBar = XRCCTRL(*this->panel, "progressBar", wxGauge);
 
 	// Download Info
-	this->dlinfo = new wxStaticText(this->panel, wxID_ANY, "0000kB of 0000KB (0000 kB/s). Time: 0,00 Seconds");
-
-	this->dlinfo->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-
-	// Add it
-	this->sizerTop->Add(this->dlinfo, 0, wxALL | wxALIGN_CENTRE, 10);
+	this->dlinfo = XRCCTRL(*this->panel, "dlinfo", wxStaticText);
 
 	// Download Status
-	this->dlstatus = new wxStaticText(this->panel, wxID_ANY, "Status: Downloading...");
-
-	this->dlstatus->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-
-	// Add it
-	this->sizerTop->Add(this->dlstatus, 0, wxALL | wxALIGN_CENTRE, 10);
-
-	// Auto Size
-	this->panel->SetSizerAndFit(sizerTop, true);
-
-	// Fit
-	Fit();
-
-	// Centre to Screen
-	Centre();
+	this->dlstatus = XRCCTRL(*this->panel, "dlstatus", wxStaticText);
 
 	// Set Icon
 #if defined(__WXMSW__)
 	SetIcon(wxIcon("calladmin_icon", wxBITMAP_TYPE_ICO_RESOURCE));
 #else
-	SetIcon(wxIcon(wxGetApp().GetPath("resources/calladmin_icon.ico"), wxBITMAP_TYPE_ICON));
+	SetIcon(wxIcon(wxGetApp().GetPath("rc/calladmin_icon.ico"), wxBITMAP_TYPE_ICON));
 #endif
+
+	Fit();
 
 	Show(true);
 
@@ -104,13 +93,11 @@ UpdateDialog::~UpdateDialog() {
 void UpdateDialog::OnUpdate(wxCommandEvent &event) {
 	// Set new Text
 	this->dlinfo->SetLabelText(event.GetString());
-	this->sizerTop->Layout();
 
 	// Update Progress Bar
 	this->progressBar->SetValue(event.GetInt());
 
 	this->panel->SetSizerAndFit(this->sizerTop, false);
-
 	Fit();
 }
 
@@ -145,12 +132,10 @@ void UpdateDialog::OnFinish(wxCommandEvent &event) {
 		wxMessageBox("Couldn't download update\n " + event.GetString(), "Error on Update", wxOK | wxCENTRE | wxICON_INFORMATION, this);
 	}
 
-	this->sizerTop->Layout();
-
 	// Fit Window
 	this->panel->SetSizerAndFit(sizerTop, false);
-
 	Fit();
+
 	wxGetApp().ExitProgramm();
 }
 

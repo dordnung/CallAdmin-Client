@@ -56,7 +56,7 @@
       <AdditionalIncludeDirectories>$(WXWIDGETS302)\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>libcurl_a.lib;wxmsw30u_html.lib;wxmsw30u_xrc.lib;wxmsw30u_adv.lib;wxmsw30u_core.lib;wxbase30u_xml.lib;wxbase30u.lib;wxpng.lib;wxjpeg.lib;wxzlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcurl_a.lib;wxmsw30u_html.lib;wxmsw30u_xrc.lib;wxmsw30u_adv.lib;wxmsw30u_core.lib;wxbase30u_xml.lib;wxbase30u.lib;wxexpat.lib;wxpng.lib;wxjpeg.lib;wxzlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\calladmin-client-updater.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(WXWIDGETS302)\lib\vc_lib;$(CURL);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -83,7 +83,7 @@
     <ClInclude Include="..\update_dialog.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\resources\calladmin-client-updater.rc" />
+    <ResourceCompile Include="..\rc\calladmin-client-updater.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

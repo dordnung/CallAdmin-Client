@@ -28,7 +28,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\resources\calladmin-client-updater.rc">
+    <ResourceCompile Include="..\rc\calladmin-client-updater.rc">
       <Filter>Resources</Filter>
     </ResourceCompile>
   </ItemGroup>
