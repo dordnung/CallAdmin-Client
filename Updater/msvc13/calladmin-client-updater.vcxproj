@@ -29,10 +29,8 @@
     <_ProjectFileVersion>11.0.51106.1</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>bin\</OutDir>
-    <IntDir>bin\calladmin-client-updater\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <GenerateManifest>false</GenerateManifest>
+    <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -42,9 +40,7 @@
       <PreprocessorDefinitions>CURL_STATICLIB;WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <ObjectFileName>bin\calladmin-client-updater\</ObjectFileName>
-      <ProgramDataBaseFileName>bin\calladmin-client-updater.pdb</ProgramDataBaseFileName>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -52,38 +48,37 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0407</Culture>
+      <Culture>0x0409</Culture>
       <AdditionalIncludeDirectories>$(WXWIDGETS302)\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>libcurl_a.lib;wxmsw30u_html.lib;wxmsw30u_xrc.lib;wxmsw30u_adv.lib;wxmsw30u_core.lib;wxbase30u_xml.lib;wxbase30u.lib;wxexpat.lib;wxpng.lib;wxjpeg.lib;wxzlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>bin\calladmin-client-updater.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(WXWIDGETS302)\lib\vc_lib;$(CURL);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>bin\calladmin-client-updater.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
     <Bscmake>
-      <OutputFile>bin\calladmin-client-updater.bsc</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\calladmin-client-updater.cpp" />
-    <ClCompile Include="..\update_dialog.cpp" />
+    <ClCompile Include="..\resource.cpp" />
+    <ClCompile Include="..\calladmin_client_updater.cpp" />
+    <ClCompile Include="..\update_frame.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\calladmin-client-updater.h" />
-    <ClInclude Include="..\update_dialog.h" />
+    <ClInclude Include="..\calladmin_client_updater.h" />
+    <ClInclude Include="..\update_frame.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\rc\calladmin-client-updater.rc" />
+    <ResourceCompile Include="..\resources\calladmin_client_updater.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

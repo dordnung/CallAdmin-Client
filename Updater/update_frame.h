@@ -1,9 +1,9 @@
-#ifndef UPDATE_DIALOG_H
-#define UPDATE_DIALOG_H
+#ifndef UPDATE_FRAME_H
+#define UPDATE_FRAME_H
 
 /**
  * -----------------------------------------------------
- * File        update_dialog.h
+ * File        update_frame.h
  * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
@@ -35,27 +35,15 @@
 
 #include <curl/curl.h>
 
-
-// Struct for progress
-struct dlProgress {
-	CURL *curl;
-};
-
-
 wxDECLARE_EVENT(wxEVT_THREAD_UPDATE, wxCommandEvent);
 wxDECLARE_EVENT(wxEVT_THREAD_FINISHED, wxCommandEvent);
 
-
-// Update Dialog Class
-class UpdateDialog : public wxDialog, wxThreadHelper {
-public:
-	UpdateDialog();
-	~UpdateDialog();
-
+// Update Frame Class
+class UpdateFrame : public wxFrame, wxThreadHelper {
 private:
 	// We need information about the update ;)
-	wxStaticText *dlinfo;
-	wxStaticText *dlstatus;
+	wxStaticText *dlInfo;
+	wxStaticText *dlStatus;
 
 	// Layout
 	wxSizer *sizerTop;
@@ -65,6 +53,13 @@ private:
 
 	// Progress Bar
 	wxGauge *progressBar;
+
+public:
+	UpdateFrame()
+		: dlInfo(NULL), dlStatus(NULL), sizerTop(NULL), panel(NULL), progressBar(NULL) {};
+	~UpdateFrame();
+
+	bool ShowFrame();
 
 protected:
 	virtual wxThread::ExitCode Entry();
@@ -81,6 +76,6 @@ protected:
 
 // CURL Callbacks
 size_t WriteDataToFile(void *data, size_t size, size_t nmemb, FILE *file);
-int ProgressUpdated(void *progressPointer, double dltotal, double dlnow, double ultotal, double ulnow);
+int ProgressUpdated(void *curlPointer, double dlTotal, double dlNow, double ulTotal, double ulNow);
 
 #endif

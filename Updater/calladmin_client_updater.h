@@ -3,7 +3,7 @@
 
 /**
  * -----------------------------------------------------
- * File        calladmin-client-updater.h
+ * File        calladmin_client_updater.h
  * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
@@ -32,8 +32,7 @@
 #include <wx/wx.h>
 #endif
 
-#include "update_dialog.h"
-
+#include "update_frame.h"
 
 // App Class
 class CallAdminUpdater : public wxApp {
@@ -44,11 +43,11 @@ private:
 	wxString callAdminUrl;
 	wxString callAdminExecutable;
 
-	UpdateDialog *updateDialog;
+	UpdateFrame *updateFrame;
 
 public:
 	CallAdminUpdater()
-		: appEnded(false), callAdminVersion(wxString()), callAdminUrl(wxString()), callAdminExecutable(wxString()), updateDialog(NULL) {};
+		: appEnded(false), callAdminVersion(wxString()), callAdminUrl(wxString()), callAdminExecutable(wxString()), updateFrame(NULL) {};
 
 	wxString GetCallAdminVersion() {
 		return this->callAdminVersion;
@@ -58,17 +57,17 @@ public:
 		return this->callAdminExecutable;
 	}
 
-	UpdateDialog* GetUpdateDialog() {
-		return this->updateDialog;
+	UpdateFrame* GetUpdateFrame() {
+		return this->updateFrame;
 	}
 
-	wxString GetPath(wxString file);
+	wxString GetRelativePath(wxString relativeFileOrPath);
 
-	wxString GetCallAdminPath() {
+	wxString GetCallAdminExecutablePath() {
 #if defined(__WXMSW__)
-		return GetPath("calladmin-client.exe");
+		return GetRelativePath("calladmin-client.exe");
 #else
-		return GetPath("calladmin-client");
+		return GetRelativePath("calladmin-client");
 #endif
 	}
 
@@ -77,7 +76,7 @@ public:
 
 	void ExitProgramm();
 
-	void OnUpdateDialogClosed();
+	void OnUpdateFrameClosed();
 	bool OnGetVersion(wxString error, wxString result);
 
 protected:
@@ -92,10 +91,13 @@ protected:
 	virtual bool OnCmdLineParsed(wxCmdLineParser &parser);
 };
 
-size_t CurlWriteData(void *buffer, size_t size, size_t nmemb, void *userp);
+size_t CurlWriteData(void *data, size_t size, size_t nmemb, void *stream);
 
 
 // Declare the app
 DECLARE_APP(CallAdminUpdater)
+
+// Defined in resource.cpp
+extern void InitXmlResource();
 
 #endif

@@ -1,13 +1,12 @@
 /**
  * -----------------------------------------------------
- * File        calladmin-client.rc
- * Authors     David <popoklopsi> Ordnung, Impact
+ * File        calladmin_client_updater.rc
+ * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
  * 
- * 
- * Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
+ * Copyright (C) 2013-2016 David O., Impact
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +22,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-// Call Admin Icon
-calladmin_icon ICON "calladmin_icon.ico"
+// Call Admin Client Updater Icon
+calladmin_client_updater_icon ICON "calladmin_client_updater.ico"
 
 #define wxUSE_NO_MANIFEST 0
 #include "wx/msw/wx.rc"
@@ -52,7 +51,7 @@ BEGIN
 			VALUE "FileDescription", "Call Admin Client Updater"
 			VALUE "FileVersion", "0.1"
 			VALUE "InternalName", "Call Admin Client Updater"
-			VALUE "LegalCopyright", "Copyright (c) 2013-2016, David Ordnung, Impact"
+			VALUE "LegalCopyright", "Copyright (c) 2013-2016, David O., Impact"
 			VALUE "OriginalFilename", "calladmin-client-updater.exe"
 			VALUE "ProductName", "Call Admin Client Updater"
 			VALUE "ProductVersion", "0.1"

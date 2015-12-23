@@ -1,6 +1,6 @@
 ﻿/**
 * -----------------------------------------------------
-* File        update_dialog.cpp
+* File        update_frame.cpp
 * Authors     David O., Impact
 * License     GPLv3
 * Web         http://popoklopsi.de, http://gugyclan.eu
@@ -22,77 +22,76 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 
-#include "update_dialog.h"
-#include "calladmin-client-updater.h"
+#include "update_frame.h"
+#include "calladmin_client_updater.h"
 
 #include <wx/ffile.h>
 #include <wx/xrc/xmlres.h>
 
 
+#define FIND_OR_FAIL(var, ptr, str) var = ptr;\
+if (var == NULL) {\
+	wxMessageBox("Error: Couldn't find XRCID " ## str, "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this); \
+	return false; \
+}
+
+
 wxDEFINE_EVENT(wxEVT_THREAD_UPDATE, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_THREAD_FINISHED, wxCommandEvent);
 
-// Events for Update Dialog
-BEGIN_EVENT_TABLE(UpdateDialog, wxDialog)
-EVT_COMMAND(wxID_ANY, wxEVT_THREAD_UPDATE, UpdateDialog::OnUpdate)
-EVT_COMMAND(wxID_ANY, wxEVT_THREAD_FINISHED, UpdateDialog::OnFinish)
+// Events for Update Frame
+BEGIN_EVENT_TABLE(UpdateFrame, wxFrame)
+EVT_COMMAND(wxID_ANY, wxEVT_THREAD_UPDATE, UpdateFrame::OnUpdate)
+EVT_COMMAND(wxID_ANY, wxEVT_THREAD_FINISHED, UpdateFrame::OnFinish)
 
-EVT_CLOSE(UpdateDialog::OnCloseWindow)
+EVT_CLOSE(UpdateFrame::OnCloseWindow)
 END_EVENT_TABLE()
 
 
-// Open Update Dialog
-UpdateDialog::UpdateDialog() {
-	this->dlinfo = NULL;
-	this->dlstatus = NULL;
-	this->sizerTop = NULL;
-	this->panel = NULL;
-	this->progressBar = NULL;
+// Open Update Frame
+bool UpdateFrame::ShowFrame() {
+	if (!wxXmlResource::Get()->LoadFrame(this, NULL, "updateFrame")) {
+		wxMessageBox("Error: Couldn't find XRCID updateFrame", "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this);
 
-	wxXmlResource::Get()->LoadDialog(this, NULL, "updateDialog");
+		return false;
+	}
 
 	// Panel
-	this->panel = XRCCTRL(*this, "updatePanel", wxPanel);
+	FIND_OR_FAIL(this->panel, XRCCTRL(*this, "updatePanel", wxPanel), "updatePanel");
 
 	// sizer
-	this->sizerTop = this->panel->GetSizer();
+	FIND_OR_FAIL(this->sizerTop, this->panel->GetSizer(), "sizer");
 
-	// sizer
-	this->progressBar = XRCCTRL(*this->panel, "progressBar", wxGauge);
+	// Progress bar
+	FIND_OR_FAIL(this->progressBar, XRCCTRL(*this->panel, "progressBar", wxGauge), "progressBar");
 
 	// Download Info
-	this->dlinfo = XRCCTRL(*this->panel, "dlinfo", wxStaticText);
+	FIND_OR_FAIL(this->dlInfo, XRCCTRL(*this->panel, "dlInfo", wxStaticText), "dlInfo");
 
 	// Download Status
-	this->dlstatus = XRCCTRL(*this->panel, "dlstatus", wxStaticText);
-
-	// Set Icon
-#if defined(__WXMSW__)
-	SetIcon(wxIcon("calladmin_icon", wxBITMAP_TYPE_ICO_RESOURCE));
-#else
-	SetIcon(wxIcon(wxGetApp().GetPath("rc/calladmin_icon.ico"), wxBITMAP_TYPE_ICON));
-#endif
+	FIND_OR_FAIL(this->dlStatus, XRCCTRL(*this->panel, "dlStatus", wxStaticText), "dlStatus");
 
 	Fit();
-
 	Show(true);
 
 	// Now start the Update
 	CreateThread(wxTHREAD_DETACHED);
 	GetThread()->Run();
+
+	return true;
 }
 
 
-UpdateDialog::~UpdateDialog() {
+UpdateFrame::~UpdateFrame() {
 	// Notice app that update is finished
-	wxGetApp().OnUpdateDialogClosed();
+	wxGetApp().OnUpdateFrameClosed();
 }
 
 
 // Progress Update
-void UpdateDialog::OnUpdate(wxCommandEvent &event) {
+void UpdateFrame::OnUpdate(wxCommandEvent &event) {
 	// Set new Text
-	this->dlinfo->SetLabelText(event.GetString());
+	this->dlInfo->SetLabelText(event.GetString());
 
 	// Update Progress Bar
 	this->progressBar->SetValue(event.GetInt());
@@ -103,12 +102,12 @@ void UpdateDialog::OnUpdate(wxCommandEvent &event) {
 
 
 // Update Finished
-void UpdateDialog::OnFinish(wxCommandEvent &event) {
+void UpdateFrame::OnFinish(wxCommandEvent &event) {
 	// Update Progress Bar
 	this->progressBar->SetValue(100);
 
 	// Path
-	wxString executablePath = wxGetApp().GetCallAdminPath();
+	wxString executablePath = wxGetApp().GetCallAdminExecutablePath();
 
 	// Notice finish
 	if (event.GetString() == "") {
@@ -122,18 +121,21 @@ void UpdateDialog::OnFinish(wxCommandEvent &event) {
 		}
 
 		// Refresh Status
-		this->dlstatus->SetLabelText("Status: Finished!");
-		this->dlstatus->SetForegroundColour(wxColour(34, 139, 34));
-	} else {
-		// Refresh Status
-		this->dlstatus->SetLabelText("Status: Error!");
-		this->dlstatus->SetForegroundColour(wxColour("red"));
+		this->dlStatus->SetLabelText("Status: Finished");
+		this->dlStatus->SetForegroundColour(wxColour(34, 139, 34));
 
-		wxMessageBox("Couldn't download update\n " + event.GetString(), "Error on Update", wxOK | wxCENTRE | wxICON_INFORMATION, this);
+		wxMessageBox("Update finished successfully", "Update finished", wxOK | wxCENTRE | wxICON_INFORMATION, this);
+	}
+	else {
+		// Refresh Status
+		this->dlStatus->SetLabelText("Status: Error!");
+		this->dlStatus->SetForegroundColour(wxColour("red"));
+
+		wxMessageBox("Couldn't download update\n " + event.GetString(), "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this);
 	}
 
 	// Fit Window
-	this->panel->SetSizerAndFit(sizerTop, false);
+	this->panel->SetSizerAndFit(this->sizerTop, false);
 	Fit();
 
 	wxGetApp().ExitProgramm();
@@ -141,11 +143,12 @@ void UpdateDialog::OnFinish(wxCommandEvent &event) {
 
 
 // Window Event -> Disable Window
-void UpdateDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event)) {
+void UpdateFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event)) {
 	// Thread still there?
 	if (GetThread()) {
 		if (GetThread()->IsRunning()) {
 			wxMessageBox("Please wait until download is finished", "Please Wait", wxOK | wxCENTRE | wxICON_INFORMATION, this);
+
 			return;
 		}
 
@@ -162,8 +165,8 @@ void UpdateDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event)) {
 	}
 
 	// Delete .new file
-	if (wxFileExists(wxGetApp().GetCallAdminPath() + ".new")) {
-		wxRemoveFile(wxGetApp().GetCallAdminPath() + ".new");
+	if (wxFileExists(wxGetApp().GetCallAdminExecutablePath() + ".new")) {
+		wxRemoveFile(wxGetApp().GetCallAdminExecutablePath() + ".new");
 	}
 
 	Destroy();
@@ -171,35 +174,28 @@ void UpdateDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event)) {
 
 
 // Curl Thread started
-wxThread::ExitCode UpdateDialog::Entry() {
+wxThread::ExitCode UpdateFrame::Entry() {
 	if (!GetThread()->TestDestroy()) {
 		// Event
 		wxCommandEvent event(wxEVT_THREAD_FINISHED);
-
-		// dl Progress
-		struct dlProgress progress;
 
 		// Init Curl
 		CURL *curl = curl_easy_init();
 
 		if (curl != NULL) {
-			wxFFile *newFile;
-
 			// Error
 			char errorBuffer[CURL_ERROR_SIZE + 1];
 
 			// Path
-			wxString executablePath = wxGetApp().GetCallAdminPath();
+			wxString executablePath = wxGetApp().GetCallAdminExecutablePath();
 
 			// Open File
-			newFile = new wxFFile(executablePath + ".new", "wb");
+			wxFFile *newFile = new wxFFile(executablePath + ".new", "wb");
 
-			if (newFile == NULL || !newFile->IsOpened()) {
-				event.SetString("Couldn't create file " + executablePath + ".new");
-			} else {
-				// Reset Prog time
-				progress.curl = curl;
-
+			if (!newFile->IsOpened()) {
+				event.SetString("Couldn't create file " + newFile->GetName());
+			}
+			else {
 				// Configurate Curl
 				curl_easy_setopt(curl, CURLOPT_URL, wxGetApp().GetCallAdminExecutable().mb_str().data());
 				curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
@@ -210,7 +206,7 @@ wxThread::ExitCode UpdateDialog::Entry() {
 				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteDataToFile);
 				curl_easy_setopt(curl, CURLOPT_WRITEDATA, newFile->fp());
 				curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, ProgressUpdated);
-				curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &progress);
+				curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, curl);
 
 				// Perform Curl
 				CURLcode res = curl_easy_perform(curl);
@@ -218,28 +214,25 @@ wxThread::ExitCode UpdateDialog::Entry() {
 				// Everything good :)
 				if (res == CURLE_OK) {
 					event.SetString(wxString());
-				} else {
+				}
+				else {
 					// Error ):
 					event.SetString(errorBuffer);
 				}
 
 				// Clean Curl
 				curl_easy_cleanup(curl);
-
-				// Close File
-				newFile->Close();
 			}
 
-			// Add Event Handler
-			wxGetApp().GetUpdateDialog()->GetEventHandler()->AddPendingEvent(event);
-
-			return (wxThread::ExitCode)0;
+			// Close File
+			newFile->Close();
+		}
+		else {
+			event.SetString("Couldn't init. CURL!");
 		}
 
-		event.SetString("Couldn't init. CURL!");
-
 		// Add Event Handler
-		wxGetApp().GetUpdateDialog()->GetEventHandler()->AddPendingEvent(event);
+		wxGetApp().GetUpdateFrame()->GetEventHandler()->AddPendingEvent(event);
 	}
 
 	return (wxThread::ExitCode)0;
@@ -258,33 +251,35 @@ size_t WriteDataToFile(void *data, size_t size, size_t nmemb, FILE *file) {
 
 
 // Progress Updated
-int ProgressUpdated(void *progressPointer, double dltotal, double dlnow, double WXUNUSED(ultotal), double WXUNUSED(ulnow)) {
-	// Get progress struct
-	struct dlProgress *progress = (struct dlProgress *)progressPointer;
+int ProgressUpdated(void *curlPointer, double dlTotal, double dlNow, double WXUNUSED(ulTotal), double WXUNUSED(ulNow)) {
+	static int numUpdates = 0;
 
-	// valid?
-	if (progress == NULL) {
-		return -1;
-	}
+	// Update only every 10 times
+	if (++numUpdates % 10 == 0) {
+		// Get curl
+		CURL *curl = (CURL *)curlPointer;
 
-	// Get Curl
-	CURL *curl = progress->curl;
+		// valid?
+		if (curl == NULL) {
+			return -1;
+		}
 
-	// Get Current time
-	double curtime = 0;
-	curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &curtime);
+		// Get Current time
+		double curtime = 0;
+		curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &curtime);
 
-	// Valid Data?
-	if (dltotal > 0) {
-		// Event
-		wxCommandEvent event(wxEVT_THREAD_UPDATE);
+		// Valid Data?
+		if (dlTotal > 0) {
+			// Event
+			wxCommandEvent event(wxEVT_THREAD_UPDATE);
 
-		// Set Event Data
-		event.SetString(wxString::Format("%.0f", (dlnow / 1024)) + "kB of " + wxString::Format("%.0f", (dltotal / 1024)) + "kB (" + wxString::Format("%.0f", ((dlnow / 1024) / curtime)) + "kB/s). Time: " + wxString::Format("%.2f", curtime) + " Seconds");
-		event.SetInt((dlnow / dltotal) * 100);
+			// Set Event Data
+			event.SetString(wxString::Format("%.0f", (dlNow / 1024)) + "kB of " + wxString::Format("%.0f", (dlTotal / 1024)) + "kB (" + wxString::Format("%.0f", ((dlNow / 1024) / curtime)) + "kB/s). Time: " + wxString::Format("%.2f", curtime) + " Seconds");
+			event.SetInt((dlNow / dlTotal) * 100);
 
-		// Add Event Handler
-		wxGetApp().GetUpdateDialog()->GetEventHandler()->AddPendingEvent(event);
+			// Add Event Handler
+			wxGetApp().GetUpdateFrame()->GetEventHandler()->AddPendingEvent(event);
+		}
 	}
 
 	return 0;

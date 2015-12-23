@@ -24,7 +24,7 @@ CPP = g++
 
 BINARY = calladmin-client-updater
 
-OBJECTS += calladmin-client-updater.cpp update_dialog.cpp
+OBJECTS += calladmin_client_updater.cpp update_frame.cpp resource.cpp
 LINK = `wx-config --libs` `curl-config --libs`
 
 CFLAGS += `wx-config --cxxflags` `curl-config --cflags` -O3 -DCURL_STATICLIB -DWX_PRECOMP -D_LINUX -DNDEBUG -D_UNICODE \

@@ -10,7 +10,7 @@
         <property name="disconnect_python_events">0</property>
         <property name="embedded_files_path">res</property>
         <property name="encoding">UTF-8</property>
-        <property name="event_generation">connect</property>
+        <property name="event_generation">table</property>
         <property name="file"></property>
         <property name="first_id">1000</property>
         <property name="help_provider">none</property>
@@ -26,7 +26,7 @@
         <property name="ui_table">UI</property>
         <property name="use_enum">1</property>
         <property name="use_microsoft_bom">1</property>
-        <object class="Dialog" expanded="1">
+        <object class="Frame" expanded="1">
             <property name="aui_managed">1</property>
             <property name="aui_manager_style">wxAUI_MGR_DEFAULT</property>
             <property name="bg"></property>
@@ -42,16 +42,17 @@
             <property name="id">wxID_ANY</property>
             <property name="maximum_size"></property>
             <property name="minimum_size"></property>
-            <property name="name">updateDialog</property>
+            <property name="name">updateFrame</property>
             <property name="pos"></property>
             <property name="size">-1,-1</property>
-            <property name="style">wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX</property>
+            <property name="style">wxCAPTION|wxCLOSE_BOX|wxMINIMIZE_BOX|wxSYSTEM_MENU</property>
             <property name="subclass"></property>
-            <property name="title">Update CallAdmin Client</property>
+            <property name="title">CallAdmin Client Updater</property>
             <property name="tooltip"></property>
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
-            <property name="window_style"></property>
+            <property name="window_style">wxTAB_TRAVERSAL</property>
+            <property name="xrc_skip_sizer">1</property>
             <event name="OnActivate"></event>
             <event name="OnActivateApp"></event>
             <event name="OnAuiFindManager"></event>
@@ -61,13 +62,12 @@
             <event name="OnAuiPaneRestore"></event>
             <event name="OnAuiRender"></event>
             <event name="OnChar"></event>
-            <event name="OnClose"></event>
+            <event name="OnClose">OnCloseWindow</event>
             <event name="OnEnterWindow"></event>
             <event name="OnEraseBackground"></event>
             <event name="OnHibernate"></event>
             <event name="OnIconize"></event>
             <event name="OnIdle"></event>
-            <event name="OnInitDialog"></event>
             <event name="OnKeyDown"></event>
             <event name="OnKeyUp"></event>
             <event name="OnKillFocus"></event>
@@ -286,7 +286,7 @@
                             <property name="gripper">0</property>
                             <property name="hidden">0</property>
                             <property name="id">wxID_ANY</property>
-                            <property name="label">0000kB of 0000KB (0000 kB/s). Time: 0,00 Seconds</property>
+                            <property name="label">0kB of 0KB (0 kB/s). Time: 0,00 Seconds</property>
                             <property name="max_size"></property>
                             <property name="maximize_button">0</property>
                             <property name="maximum_size"></property>
@@ -294,7 +294,7 @@
                             <property name="minimize_button">0</property>
                             <property name="minimum_size"></property>
                             <property name="moveable">1</property>
-                            <property name="name">dlinfo</property>
+                            <property name="name">dlInfo</property>
                             <property name="pane_border">1</property>
                             <property name="pane_position"></property>
                             <property name="pane_size"></property>
@@ -338,8 +338,8 @@
                         </object>
                     </object>
                     <object class="sizeritem" expanded="1">
-                        <property name="border">10</property>
-                        <property name="flag">wxALIGN_CENTER|wxALL</property>
+                        <property name="border">20</property>
+                        <property name="flag">wxALIGN_BOTTOM|wxALIGN_CENTER|wxALL</property>
                         <property name="proportion">0</property>
                         <object class="wxStaticText" expanded="1">
                             <property name="BottomDockable">1</property>
@@ -369,7 +369,7 @@
                             <property name="gripper">0</property>
                             <property name="hidden">0</property>
                             <property name="id">wxID_ANY</property>
-                            <property name="label">Status: Downloading...</property>
+                            <property name="label">Status: Downloading</property>
                             <property name="max_size"></property>
                             <property name="maximize_button">0</property>
                             <property name="maximum_size"></property>
@@ -377,7 +377,7 @@
                             <property name="minimize_button">0</property>
                             <property name="minimum_size"></property>
                             <property name="moveable">1</property>
-                            <property name="name">dlstatus</property>
+                            <property name="name">dlStatus</property>
                             <property name="pane_border">1</property>
                             <property name="pane_position"></property>
                             <property name="pane_size"></property>

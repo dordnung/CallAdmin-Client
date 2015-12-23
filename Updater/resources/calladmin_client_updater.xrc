@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.5.3.0">
-	<object class="wxDialog" name="updateDialog">
-		<style>wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX</style>
+	<object class="wxFrame" name="updateFrame">
+		<style>wxCAPTION | wxCLOSE_BOX | wxMINIMIZE_BOX | wxSYSTEM_MENU</style>
 		<title>Update CallAdmin Client</title>
 		<centered>1</centered>
+		<icon>calladmin_client_updater.ico</icon>
 		<object class="wxPanel" name="updatePanel">
-			<style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
+			<style>wxNO_BORDER | wxTAB_TRAVERSAL</style>
 			<object class="wxBoxSizer">
 				<orient>wxVERTICAL</orient>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALL|wxEXPAND</flag>
-					<border>10</border>
+					<flag>wxALL | wxEXPAND</flag>
+					<border>5</border>
 					<object class="wxGauge" name="progressBar">
 						<style>wxGA_HORIZONTAL</style>
 						<range>100</range>
@@ -20,31 +21,31 @@
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER|wxALL</flag>
+					<flag>wxALIGN_CENTER | wxALL</flag>
 					<border>10</border>
-					<object class="wxStaticText" name="dlinfo">
+					<object class="wxStaticText" name="dlInfo">
 						<font>
 							<size>16</size>
 							<style>normal</style>
 							<weight>normal</weight>
 							<underlined>0</underlined>
 						</font>
-						<label>0000kB of 0000KB (0000 kB/s). Time: 0,00 Seconds</label>
+						<label>0kB of 0KB (0 kB/s). Time: 0,00 Seconds</label>
 						<wrap>-1</wrap>
 					</object>
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER|wxALL</flag>
-					<border>10</border>
-					<object class="wxStaticText" name="dlstatus">
+					<flag>wxALIGN_CENTER | wxBOTTOM</flag>
+					<border>20</border>
+					<object class="wxStaticText" name="dlStatus">
 						<font>
 							<size>16</size>
 							<style>normal</style>
 							<weight>normal</weight>
 							<underlined>0</underlined>
 						</font>
-						<label>Status: Downloading...</label>
+						<label>Status: Downloading</label>
 						<wrap>-1</wrap>
 					</object>
 				</object>

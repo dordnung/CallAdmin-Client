@@ -1,18 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\calladmin-client-updater.cpp">
+    <ClCompile Include="..\resource.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\update_dialog.cpp">
+    <ClCompile Include="..\update_frame.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\calladmin_client_updater.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\calladmin-client-updater.h">
+    <ClInclude Include="..\update_frame.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\update_dialog.h">
+    <ClInclude Include="..\calladmin_client_updater.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -28,7 +31,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\rc\calladmin-client-updater.rc">
+    <ResourceCompile Include="..\resources\calladmin_client_updater.rc">
       <Filter>Resources</Filter>
     </ResourceCompile>
   </ItemGroup>

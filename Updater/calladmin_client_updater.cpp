@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        calladmin-client-updater.cpp
+ * File        calladmin_client_updater.cpp
  * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
@@ -30,15 +30,14 @@
 #include <wx/stdpaths.h>
 #include <wx/xrc/xmlres.h>
 
-#include "calladmin-client-updater.h"
-
+#include "calladmin_client_updater.h"
 
 // Help for the CMDLine
 static const wxCmdLineEntryDesc cmdLineDesc[] =
 {
-	{ wxCMD_LINE_OPTION, "version", NULL, "Specify current Call Admin Client version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY },
-	{ wxCMD_LINE_OPTION, "url", NULL, "URL with new Call Admin version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY },
-	{ wxCMD_LINE_OPTION, "executable", NULL, "URL to Call Admin Client executable", wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY },
+	{ wxCMD_LINE_OPTION, "version", NULL, "Specify current CallAdmin Client version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY },
+	{ wxCMD_LINE_OPTION, "url", NULL, "URL with new CallAdmin Client version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY },
+	{ wxCMD_LINE_OPTION, "executable", NULL, "URL to CallAdmin Client executable", wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY },
 	{ wxCMD_LINE_NONE }
 };
 
@@ -54,19 +53,30 @@ bool CallAdminUpdater::OnInit() {
 	}
 
 	// Check duplicate
-	static wxSingleInstanceChecker checkInstance("Call Admin Updater - " + wxGetUserId());
+	static wxSingleInstanceChecker checkUpdaterInstance("CallAdmin Client Updater - " + wxGetUserId());
 
-	if (checkInstance.IsAnotherRunning()) {
-		wxMessageBox("Call Admin Client Updater is already running.", "Call Admin Client Updater", wxOK | wxCENTRE | wxICON_WARNING);
+	if (checkUpdaterInstance.IsAnotherRunning()) {
+		wxMessageBox("CallAdmin Client Updater is already running.", "CallAdmin Client Updater", wxOK | wxCENTRE | wxICON_ERROR);
 
 		return false;
 	}
 
-	// Load update dialog
-	wxXmlResource::Get()->InitAllHandlers();
-	wxXmlResource::Get()->Load(GetPath("rc/calladmin-client-updater.xrc"));
+	// The client has to be closed while updating
+	static wxSingleInstanceChecker checkClientInstance("CallAdmin Client - " + wxGetUserId());
 
-	// No update found? -> Delete App
+	if (checkClientInstance.IsAnotherRunning()) {
+		wxMessageBox("CallAdmin Client is running.\nPlease stop it before start updating.", "CallAdmin Client", wxOK | wxCENTRE | wxICON_ERROR);
+
+		return false;
+	}
+
+	// Init XML Resources
+	wxImage::AddHandler(new wxICOHandler());
+
+	wxXmlResource::Get()->InitAllHandlers();
+	InitXmlResource();
+
+	// No update found? -> Exit App
 	if (!CheckForUpdate()) {
 		ExitProgramm();
 
@@ -105,8 +115,8 @@ bool CallAdminUpdater::OnCmdLineParsed(wxCmdLineParser &parser) {
 }
 
 
-// Get a relative from current path
-wxString CallAdminUpdater::GetPath(wxString file) {
+// Get a relative file or path from the executable path
+wxString CallAdminUpdater::GetRelativePath(wxString relativeFileOrPath) {
 	wxString path = wxStandardPaths::Get().GetExecutablePath();
 
 	// Windows format?
@@ -122,9 +132,9 @@ wxString CallAdminUpdater::GetPath(wxString file) {
 
 	// Add file name
 #if defined(__WXMSW__)
-	return path + "\\" + file;
+	return path + "\\" + relativeFileOrPath;
 #else
-	return path + "/" + file;
+	return path + "/" + relativeFileOrPath;
 #endif
 }
 
@@ -139,12 +149,12 @@ bool CallAdminUpdater::CheckForUpdate() {
 
 	if (curl != NULL) {
 		// Error
-		char ebuf[CURL_ERROR_SIZE + 1];
+		char errorBuffer[CURL_ERROR_SIZE + 1];
 
 		// Configurate Curl
 		curl_easy_setopt(curl, CURLOPT_URL, this->callAdminUrl.mb_str().data());
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, ebuf);
+		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
 		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20);
 		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10);
 		curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
@@ -162,7 +172,7 @@ bool CallAdminUpdater::CheckForUpdate() {
 		}
 
 		// Error ):
-		return OnGetVersion(ebuf, stream.str());
+		return OnGetVersion(errorBuffer, stream.str());
 	}
 
 	return OnGetVersion(wxString(), wxString());
@@ -170,12 +180,17 @@ bool CallAdminUpdater::CheckForUpdate() {
 
 
 void CallAdminUpdater::StartUpdate() {
-	this->updateDialog = new UpdateDialog();
+	this->updateFrame = new UpdateFrame();
+
+	// Couldn't show the update frame
+	if (!updateFrame->ShowFrame()) {
+		ExitProgramm();
+	}
 }
 
 
-void CallAdminUpdater::OnUpdateDialogClosed() {
-	this->updateDialog = NULL;
+void CallAdminUpdater::OnUpdateFrameClosed() {
+	this->updateFrame = NULL;
 
 	ExitProgramm();
 }
@@ -186,18 +201,15 @@ void CallAdminUpdater::ExitProgramm() {
 	if (!this->appEnded) {
 		this->appEnded = true;
 
-		// Disappear update dialog
-		if (this->updateDialog != NULL) {
-			this->updateDialog->Show(false);
+		// Disappear and close update frame
+		if (this->updateFrame != NULL) {
+			this->updateFrame->Show(false);
+			this->updateFrame->Close();
 		}
 
-		// Close update dialog
-		if (this->updateDialog != NULL) {
-			this->updateDialog->Close();
-		}
-
-		if (wxMessageBox("Updater ended.\nStart Call Admin Client again?", "End Of Update", wxCANCEL | wxYES_NO | wxCENTRE | wxICON_QUESTION, NULL) == wxYES) {
-			wxExecute(this->GetCallAdminPath());
+		// Start CallAdmin Client again?
+		if (wxMessageBox("Updater ended.\nStart CallAdmin Client again?", "End Of Update", wxCANCEL | wxYES_NO | wxCENTRE | wxICON_QUESTION) == wxYES) {
+			wxExecute(this->GetCallAdminExecutablePath());
 		}
 	}
 }
@@ -212,18 +224,21 @@ bool CallAdminUpdater::OnGetVersion(wxString error, wxString result) {
 		if (result != "") {
 			if (result.length() > 30) {
 				// Maybe an Error Page?
-				wxMessageBox("Error: Result page is too long", "Update Check Failed", wxOK | wxCENTRE | wxICON_EXCLAMATION);
-			} else {
+				wxMessageBox("Error: Result page is too long", "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
+			}
+			else {
 				// Find version in brackets
 				int start = result.find_first_of("{") + 1;
 				int end = result.find_first_of("}");
 
 				newVersion = result.substr(start, end - start);
 			}
-		} else {
-			wxMessageBox("Error: Version check is empty", "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
 		}
-	} else {
+		else {
+			wxMessageBox("Error: Result is empty", "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
+		}
+	}
+	else {
 		wxMessageBox("Error: " + error, "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
 	}
 
@@ -234,9 +249,13 @@ bool CallAdminUpdater::OnGetVersion(wxString error, wxString result) {
 			wxGetApp().StartUpdate();
 
 			return true;
-		} else {
-			wxMessageBox("Your Call Admin Client is up to date", "Up To Date", wxOK | wxCENTRE | wxICON_INFORMATION);
 		}
+		else {
+			wxMessageBox("Your CallAdmin Client is up to date", "Up To Date", wxOK | wxCENTRE | wxICON_INFORMATION);
+		}
+	}
+	else {
+		wxMessageBox("Error: Version is empty", "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
 	}
 
 	return false;
@@ -244,13 +263,13 @@ bool CallAdminUpdater::OnGetVersion(wxString error, wxString result) {
 
 
 // Curl receive data -> write to buffer
-size_t CurlWriteData(void *buffer, size_t size, size_t nmemb, void *userp) {
-	std::ostringstream *data = (std::ostringstream*) userp;
+size_t CurlWriteData(void *data, size_t size, size_t nmemb, void *stream) {
+	std::ostringstream *sstream = (std::ostringstream*) stream;
 
-	if (buffer != NULL) {
+	if (data != NULL) {
 		size_t count = size * nmemb;
 
-		data->write((char*)buffer, count);
+		sstream->write((char*)data, count);
 
 		return count;
 	}
