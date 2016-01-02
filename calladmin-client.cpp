@@ -80,10 +80,10 @@ bool CallAdmin::OnInit() {
 	}
 
 	// Check duplicate
-	static wxSingleInstanceChecker checkInstance("Call Admin - " + wxGetUserId());
+	static wxSingleInstanceChecker checkInstance("Call Admin Client - " + wxGetUserId());
 
 	if (checkInstance.IsAnotherRunning()) {
-		wxMessageBox("Call Admin is already running.", "Call Admin", wxOK | wxCENTRE | wxICON_EXCLAMATION);
+		wxMessageBox("Call Admin Client is already running.", "Call Admin Client", wxOK | wxCENTRE | wxICON_EXCLAMATION);
 
 		return false;
 	}
