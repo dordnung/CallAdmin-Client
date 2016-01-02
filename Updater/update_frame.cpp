@@ -31,7 +31,7 @@
 
 #define FIND_OR_FAIL(var, ptr, str) var = ptr;\
 if (var == NULL) {\
-	wxMessageBox("Error: Couldn't find XRCID " ## str, "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this); \
+	wxMessageBox("Error: Couldn't find XRCID " str, "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this); \
 	return false; \
 }
 
@@ -130,7 +130,7 @@ void UpdateFrame::OnFinish(wxCommandEvent &event) {
 		this->dlStatus->SetLabelText("Status: Error!");
 		this->dlStatus->SetForegroundColour(wxColour("red"));
 
-		wxMessageBox("Couldn't download update\n " + event.GetString(), "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this);
+		wxMessageBox("Couldn't download update\n" + event.GetString(), "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this);
 	}
 
 	// Fit Window
@@ -211,7 +211,15 @@ wxThread::ExitCode UpdateFrame::Entry() {
 
 				// Everything good :)
 				if (res == CURLE_OK) {
-					event.SetString(wxString());
+					// Status should be 200
+					long responseCode;
+					curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
+
+					if (responseCode != 200) {
+						event.SetString("Invalid Response Code: " + wxString() << responseCode);
+					} else {
+						event.SetString(wxString());
+					}
 				} else {
 					// Error ):
 					event.SetString(errorBuffer);

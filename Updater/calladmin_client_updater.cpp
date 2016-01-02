@@ -162,12 +162,20 @@ bool CallAdminUpdater::CheckForUpdate() {
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &stream);
 
 		// Perform Curl
+		long responseCode;
+
 		CURLcode res = curl_easy_perform(curl);
+		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
 
 		// Clean Curl
 		curl_easy_cleanup(curl);
 
 		if (res == CURLE_OK) {
+			// Status should be 200
+			if (responseCode != 200) {
+				return OnGetVersion("Invalid Response Code: " + wxString() << responseCode, stream.str());
+			}
+
 			return OnGetVersion(wxString(), stream.str());
 		}
 
