@@ -21,7 +21,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 #include <wx/cmdline.h>
 #include <wx/snglinst.h>
 #include <wx/stdpaths.h>
@@ -42,13 +41,11 @@ static const wxCmdLineEntryDesc cmdLineDesc[] =
 IMPLEMENT_APP(CallAdmin)
 
 
-wxDEFINE_EVENT(wxEVT_UPDATE_DIALOG_CLOSED, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CALL_DIALOG_CLOSED, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CURL_THREAD_FINISHED, wxCommandEvent);
 
 // Events
 BEGIN_EVENT_TABLE(CallAdmin, wxApp)
-EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_DIALOG_CLOSED, CallAdmin::OnUpdateDialogClosed)
 EVT_COMMAND(wxID_ANY, wxEVT_CURL_THREAD_FINISHED, CallAdmin::OnCurlThread)
 END_EVENT_TABLE()
 
@@ -61,7 +58,6 @@ CallAdmin::CallAdmin() {
 	this->taskBarIcon = NULL;
 	this->steamThread = NULL;
 	this->curlThread = NULL;
-	this->updateDialog = NULL;
 
 	this->startInTaskbar = false;
 
@@ -80,10 +76,10 @@ bool CallAdmin::OnInit() {
 	}
 
 	// Check duplicate
-	static wxSingleInstanceChecker checkInstance("Call Admin Client - " + wxGetUserId());
+	static wxSingleInstanceChecker checkInstance("CallAdmin Client - " + wxGetUserId());
 
 	if (checkInstance.IsAnotherRunning()) {
-		wxMessageBox("Call Admin Client is already running.", "Call Admin Client", wxOK | wxCENTRE | wxICON_EXCLAMATION);
+		wxMessageBox("CallAdmin Client is already running.", "CallAdmin Client", wxOK | wxCENTRE | wxICON_EXCLAMATION);
 
 		return false;
 	}
@@ -111,12 +107,8 @@ bool CallAdmin::OnInit() {
 	this->config = new Config();
 	this->config->ParseConfig();
 
-	// Delete .old file
-	remove(wxStandardPaths::Get().GetExecutablePath() + ".old");
-	remove(wxStandardPaths::Get().GetExecutablePath() + ".new");
-
 	// Create main Dialog
-	this->mainFrame = new MainFrame("Call Admin Client");
+	this->mainFrame = new MainFrame("CallAdmin Client");
 	this->mainFrame->CreateWindow(this->startInTaskbar);
 
 	// Update Call List
@@ -155,11 +147,6 @@ bool CallAdmin::OnCmdLineParsed(wxCmdLineParser &parser) {
 }
 
 
-void CallAdmin::OnUpdateDialogClosed(wxCommandEvent &WXUNUSED(event)) {
-	this->updateDialog = NULL;
-}
-
-
 // Curl thread handled -> Call function
 void CallAdmin::OnCurlThread(wxCommandEvent &event) {
 	// Get Content
@@ -190,13 +177,22 @@ void CallAdmin::StartTimer() {
 
 
 void CallAdmin::StartSteamThread() {
-	delete this->steamThread;
+	if (this->steamThread) {
+		delete this->steamThread;
+	}
+
 	this->steamThread = new SteamThread();
 }
 
 
 void CallAdmin::StartUpdate() {
-	this->updateDialog = new UpdateDialog();
+	ExitProgramm();
+
+#if defined(__WXMSW__)
+	wxExecute(GetRelativePath("calladmin-client-updater.exe"));
+#else
+	wxExecute(GetRelativePath("calladmin-client-updater"));
+#endif
 }
 
 
@@ -218,6 +214,9 @@ void CallAdmin::CreateReconnect(wxString error) {
 	// Log Action
 	LogAction("Create a reconnect window");
 
+	// Stop timer
+	this->timer->Stop();
+
 	mainFrame->SetTitle("Couldn't Connect");
 	mainFrame->GetNotebook()->GetMainPanel()->SetEventText(error);
 	mainFrame->GetNotebook()->GetMainPanel()->SetReconnectButton(true);
@@ -230,9 +229,6 @@ void CallAdmin::CreateReconnect(wxString error) {
 
 	// Go to first page
 	mainFrame->GetNotebook()->SetSelection(0);
-
-	// Stop timer
-	this->timer->Stop();
 }
 
 
@@ -247,41 +243,32 @@ void CallAdmin::ShowError(wxString error, wxString type) {
 
 // Close Taskbar Icon and destroy all dialogs
 void CallAdmin::ExitProgramm() {
-	// At first hide all windows
-	if (this->mainFrame != NULL) {
-		this->mainFrame->Show(false);
-	}
-
-	if (this->updateDialog != NULL) {
-		this->updateDialog->Show(false);
-	}
-
-	for (wxVector<CallDialog *>::iterator callDialog = callDialogs.begin(); callDialog != callDialogs.end(); ++callDialog) {
-		(*callDialog)->Show(false);
-	}
-
 	// First of all stop the timer
 	if (this->timer != NULL) {
 		this->timer->Stop();
 		delete this->timer;
 	}
 
+	// Then hide all windows
+	if (this->mainFrame != NULL) {
+		this->mainFrame->Show(false);
+	}
+
+	for (wxVector<CallDialog *>::iterator callDialog = callDialogs.begin(); callDialog != callDialogs.end(); ++callDialog) {
+		(*callDialog)->Show(false);
+	}
+
 	// Curl thread destroy
 	delete this->curlThread;
 
-	// Delete zhe steam thread
+	// Delete the steam thread
 	delete this->steamThread;
 
 	// Taskbar goodbye :)
 	this->taskBarIcon->RemoveIcon();
 	this->taskBarIcon->Destroy();
 
-	// First delete update dialog
-	if (this->updateDialog != NULL) {
-		this->updateDialog->Close();
-	}
-
-	// Then delete call dialogs
+	// First delete call dialogs
 	for (wxVector<CallDialog *>::iterator callDialog = callDialogs.begin(); callDialog != callDialogs.end(); ++callDialog) {
 		(*callDialog)->Destroy();
 	}
@@ -299,7 +286,7 @@ void CallAdmin::ExitProgramm() {
 
 
 // Get the Path of the App
-wxString CallAdmin::GetAppPath(wxString file) {
+wxString CallAdmin::GetRelativePath(wxString relativeFileOrPath) {
 	wxString path = wxStandardPaths::Get().GetExecutablePath();
 
 	// Windows format?
@@ -314,7 +301,11 @@ wxString CallAdmin::GetAppPath(wxString file) {
 	path = path.replace(start, path.size(), "");
 
 	// Add file name
-	return path + "/" + file;
+#if defined(__WXMSW__)
+	return path + "\\" + relativeFileOrPath;
+#else
+	return path + "/" + relativeFileOrPath;
+#endif
 }
 
 
@@ -328,7 +319,7 @@ void CallAdmin::CheckUpdate() {
 
 
 // Handle Update Page
-void CallAdmin::OnUpdate(char* error, wxString result, int WXUNUSED(x)) {
+void CallAdmin::OnUpdate(wxString error, wxString result, int WXUNUSED(x)) {
 	// Log Action
 	caLogAction("Retrieve information about new version");
 
@@ -336,7 +327,7 @@ void CallAdmin::OnUpdate(char* error, wxString result, int WXUNUSED(x)) {
 
 	if (result != "") {
 		// Everything good :)
-		if (strcmp(error, "") == 0) {
+		if (error == "") {
 			if (result.length() > 30) {
 				// Maybe an Error Page?
 				caGetTaskBarIcon()->ShowMessage("Update Check Failed", "Error: PAGE_TOO_LONG", caGetMainFrame());
@@ -349,8 +340,8 @@ void CallAdmin::OnUpdate(char* error, wxString result, int WXUNUSED(x)) {
 			}
 		} else {
 			// Log Action
-			caLogAction("Update check failed: " + (wxString)error);
-			caGetTaskBarIcon()->ShowMessage("Update Check Failed", "Error: " + (wxString)error, caGetMainFrame());
+			caLogAction("Update check failed: " + error);
+			caGetTaskBarIcon()->ShowMessage("Update Check Failed", "Error: " + error, caGetMainFrame());
 		}
 	}
 
@@ -379,7 +370,7 @@ void CallAdmin::OnUpdate(char* error, wxString result, int WXUNUSED(x)) {
 			// Log Action
 			caLogAction("Version is up to date");
 
-			caGetTaskBarIcon()->ShowMessage("Up to Date", "Your Call Admin Client is up to date", caGetMainFrame());
+			caGetTaskBarIcon()->ShowMessage("Up to Date", "Your CallAdmin Client is up to date", caGetMainFrame());
 		}
 	}
 }

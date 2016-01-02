@@ -28,9 +28,6 @@
     <ClCompile Include="..\call_dialog.cpp">
       <Filter>Dialog</Filter>
     </ClCompile>
-    <ClCompile Include="..\update_dialog.cpp">
-      <Filter>Dialog</Filter>
-    </ClCompile>
     <ClCompile Include="..\about_panel.cpp">
       <Filter>Panel</Filter>
     </ClCompile>
@@ -76,9 +73,6 @@
       <Filter>Frame</Filter>
     </ClInclude>
     <ClInclude Include="..\call_dialog.h">
-      <Filter>Dialog</Filter>
-    </ClInclude>
-    <ClInclude Include="..\update_dialog.h">
       <Filter>Dialog</Filter>
     </ClInclude>
     <ClInclude Include="..\about_panel.h">

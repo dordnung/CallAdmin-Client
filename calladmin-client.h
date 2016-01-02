@@ -24,7 +24,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-// TODO: LOGGING
 #pragma once
 
 #include <wx/wxprec.h>
@@ -38,7 +37,6 @@
 #include "taskbar.h"
 #include "timer.h"
 #include "opensteam.h"
-#include "update_dialog.h"
 #include "call_dialog.h"
 #include "curl_util.h"
 
@@ -46,15 +44,6 @@
 #define CALLADMIN_CLIENT_VERSION "0.47B"
 #define CALLADMIN_UPDATE_URL "http://popoklopsi.de/calladmin/version.txt"
 #define CALLADMIN_UPDATE_EXE "http://popoklopsi.de/calladmin/calladmin-client.exe"
-
-// Font
-#if defined(__WXMSW__)
-#define FONT_FAMILY wxFONTFAMILY_SCRIPT
-#define FONT_WEIGHT_BOLD wxFONTWEIGHT_BOLD
-#else
-#define FONT_FAMILY wxFONTFAMILY_DEFAULT
-#define FONT_WEIGHT_BOLD wxFONTWEIGHT_NORMAL
-#endif
 
 // Helpers
 #define caGetApp wxGetApp
@@ -64,7 +53,6 @@
 #define caGetSteamThread caGetApp().GetSteamThread
 #define caGetTaskBarIcon caGetApp().GetTaskBarIcon
 #define caGetCallDialogs caGetApp().GetCallDialogs
-#define caGetUpdateDialog caGetApp().GetUpdateDialog
 #define caLogAction caGetApp().LogAction
 
 #define caGetMainFrame caGetApp().GetMainFrame
@@ -77,7 +65,6 @@
 
 
 // Custom events
-wxDECLARE_EVENT(wxEVT_UPDATE_DIALOG_CLOSED, wxCommandEvent);
 wxDECLARE_EVENT(wxEVT_CURL_THREAD_FINISHED, wxCommandEvent);
 
 
@@ -90,7 +77,6 @@ private:
 	TaskBarIcon *taskBarIcon;
 	SteamThread *steamThread;
 	CurlThread *curlThread;
-	UpdateDialog *updateDialog;
 
 	wxVector<CallDialog *> callDialogs;
 
@@ -108,10 +94,6 @@ public:
 	void StartUpdate();
 
 	void GetPage(CurlCallback callbackFunction, wxString page, int extra = 0);
-
-	UpdateDialog* GetUpdateDialog() {
-		return this->updateDialog;
-	}
 
 	SteamThread* GetSteamThread() {
 		return this->steamThread;
@@ -145,7 +127,15 @@ public:
 		this->attempts = attempts;
 	}
 
-	wxString GetAppPath(wxString file);
+	wxString GetRelativePath(wxString relativeFileOrPath);
+
+	wxString GetCallAdminExecutablePath() {
+#if defined(__WXMSW__)
+		return GetRelativePath("calladmin-client.exe");
+#else
+		return GetRelativePath("calladmin-client");
+#endif
+	}
 
 	void CheckUpdate();
 	void CreateReconnect(wxString error);
@@ -159,7 +149,7 @@ public:
 		}
 	}
 
-	static void OnUpdate(char* error, wxString result, int extra);
+	static void OnUpdate(wxString error, wxString result, int extra);
 
 protected:
 	// Where all began :)
@@ -172,7 +162,6 @@ protected:
 	virtual void OnInitCmdLine(wxCmdLineParser &parser);
 	virtual bool OnCmdLineParsed(wxCmdLineParser &parser);
 
-	void OnUpdateDialogClosed(wxCommandEvent &event);
 	void OnCurlThread(wxCommandEvent &event);
 
 	DECLARE_EVENT_TABLE()

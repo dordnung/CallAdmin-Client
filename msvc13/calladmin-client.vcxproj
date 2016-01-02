@@ -84,7 +84,6 @@
     <ClCompile Include="..\timer.cpp" />
     <ClCompile Include="..\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="..\trackers_panel.cpp" />
-    <ClCompile Include="..\update_dialog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\calladmin-client.h" />
@@ -102,7 +101,6 @@
     <ClInclude Include="..\timer.h" />
     <ClInclude Include="..\tinyxml2\tinyxml2.h" />
     <ClInclude Include="..\trackers_panel.h" />
-    <ClInclude Include="..\update_dialog.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\resources\calladmin-client.rc" />

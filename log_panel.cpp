@@ -21,7 +21,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 #include "log_panel.h"
 #include "calladmin-client.h"
 
@@ -33,18 +32,11 @@ END_EVENT_TABLE()
 
 // Create Log Panel
 LogPanel::LogPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
-	// Border and Center
-	wxSizerFlags flags;
-
-	// Border and Centre
-	flags.Border(wxALL, 10);
-	flags.Centre();
-
 	// Create Box
 	wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
 
 	this->logBox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_HSCROLL | wxLB_SINGLE);
-	this->logBox->SetFont(wxFont(12, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	this->logBox->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add Log Box
 	sizerTop->Add(this->logBox, 1, wxEXPAND);

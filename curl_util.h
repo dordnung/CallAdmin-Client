@@ -24,7 +24,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 #pragma once
 
 #include <wx/wxprec.h>
@@ -35,8 +34,7 @@
 
 
 // Thread for Curl Performances
-// TODO Char* mit wxString ersetzen
-typedef void(*CurlCallback)(char*, wxString, int);
+typedef void(*CurlCallback)(wxString, wxString, int);
 
 
 class CurlThread : public wxThreadHelper {
@@ -82,13 +80,13 @@ private:
 	wxString content;
 
 	// Error
-	char *error;
+	wxString error;
 
 	// Optional Parameter
 	int extra;
 
 public:
-	CurlThreadData(CurlCallback callbackFunction, wxString content, char *error, int extra)
+	CurlThreadData(CurlCallback callbackFunction, wxString content, wxString error, int extra)
 		: callbackFunction(callbackFunction), content(content), error(error), extra(extra) {}
 
 	CurlCallback GetCallbackFunction() {
@@ -99,7 +97,7 @@ public:
 		return this->content;
 	}
 
-	char* GetError() {
+	wxString GetError() {
 		return this->error;
 	}
 

@@ -21,7 +21,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 #include "tinyxml2/tinyxml2.h"
 
 #include "timer.h"
@@ -85,9 +84,9 @@ void Timer::OnExecute(wxTimerEvent& WXUNUSED(event)) {
 	if (this->isFirstShoot) {
 		this->firstFetch = wxGetUTCTime();
 
-		page = (config->GetPage() + "/notice.php?from=0&from_type=unixtime&key=" + config->GetKey() + "&sort=desc&limit=" + (wxString() << config->GetNumLastCalls()));
+		page = config->GetPage() + "/notice.php?from=0&from_type=unixtime&key=" + config->GetKey() + "&sort=desc&limit=" + (wxString() << config->GetNumLastCalls());
 	} else {
-		page = (config->GetPage() + "/notice.php?from=" + (wxString() << (config->GetStep() * 2)) + "&from_type=interval&key=" + config->GetKey() + "&sort=asc&handled=" + (wxString() << (wxGetUTCTime() - this->firstFetch)));
+		page = config->GetPage() + "/notice.php?from=" + (wxString() << (config->GetStep() * 2)) + "&from_type=interval&key=" + config->GetKey() + "&sort=asc&handled=" + (wxString() << (wxGetUTCTime() - this->firstFetch));
 	}
 
 	// Store Player
@@ -102,11 +101,11 @@ void Timer::OnExecute(wxTimerEvent& WXUNUSED(event)) {
 }
 
 
-void Timer::OnNotice(char* error, wxString result, int firstRun) {
+void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 	// Valid result?
 	if (result != "") {
 		// Everything good :)
-		if (strcmp(error, "") == 0) {
+		if (error == "") {
 			bool foundError = false;
 			bool foundNew = false;
 
@@ -285,20 +284,13 @@ void Timer::OnNotice(char* error, wxString result, int firstRun) {
 							foundNew = true;
 
 							// Add the new Call to the Call box
-							char buffer[80];
-
 							wxString text;
 
 							// But first we need a Time
-							time_t tt = (time_t)newDialog->GetTime();
+							wxDateTime dateTime = wxDateTime((time_t)newDialog->GetTime());
+							newDialog->SetTitle("Call At " + dateTime.Format("%c"));
 
-							struct tm* dt = localtime(&tt);
-
-							strftime(buffer, sizeof(buffer), "%H:%M", dt);
-
-							newDialog->SetTitle("Call At " + (wxString)buffer);
-
-							text = (wxString)buffer + " - " + newDialog->GetServer();
+							text = dateTime.Format("%c") + " - " + newDialog->GetServer();
 
 							// Add the Text
 							newDialog->SetBoxText(text);
@@ -344,9 +336,7 @@ void Timer::OnNotice(char* error, wxString result, int firstRun) {
 #if defined(__WXMSW__)
 						soundfile = new wxSound("calladmin_sound", true);
 #else
-						wxLogNull nolog;
-
-						soundfile = new wxSound(getAppPath("resources/calladmin_sound.wav"), false);
+						soundfile = new wxSound(getRelativePath("resources/calladmin_sound.wav"), false);
 #endif
 						if (soundfile != NULL && soundfile->IsOk()) {
 							soundfile->Play(wxSOUND_ASYNC);
@@ -362,12 +352,12 @@ void Timer::OnNotice(char* error, wxString result, int firstRun) {
 			caGetApp().SetAttempts(caGetApp().GetAttempts() + 1);
 
 			// Log Action
-			caLogAction("New CURL Error: " + (wxString)error);
+			caLogAction("New CURL Error: " + error);
 
 			// Max attempts reached?
 			if (caGetApp().GetAttempts() == caGetConfig()->GetMaxAttempts()) {
 				// Create reconnect main dialog
-				caGetApp().CreateReconnect("CURL Error: " + (wxString)error);
+				caGetApp().CreateReconnect("CURL Error: " + error);
 			} else {
 				// Show the error to client
 				caGetApp().ShowError(error, "CURL");

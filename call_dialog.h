@@ -24,7 +24,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 #pragma once
 
 #include <wx/wxprec.h>
@@ -217,8 +216,8 @@ public:
 	void StartCall(bool show);
 
 	// CURL Callbacks
-	static void OnGetTrackers(char *errors, wxString result, int extra);
-	static void OnChecked(char *error, wxString result, int extra);
+	static void OnGetTrackers(wxString errorStr, wxString result, int extra);
+	static void OnChecked(wxString errorStr, wxString result, int extra);
 
 	// Operator overloadings
 	bool operator==(CallDialog &callDialog) {

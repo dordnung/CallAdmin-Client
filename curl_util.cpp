@@ -21,7 +21,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 #include "curl_util.h"
 #include "calladmin-client.h"
 
@@ -76,7 +75,14 @@ wxThread::ExitCode CurlThread::Entry() {
 
 			// Everything good :)
 			if (res == CURLE_OK) {
-				event.SetClientObject(new CurlThreadData(this->callbackFunction, stream.str(), "", this->extra));
+				long responseCode;
+				curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
+
+				if (responseCode != 200) {
+					event.SetClientObject(new CurlThreadData(this->callbackFunction, stream.str(), "Invalid Response Code: " + wxString() << responseCode, this->extra));
+				} else {
+					event.SetClientObject(new CurlThreadData(this->callbackFunction, stream.str(), "", this->extra));
+				}
 			} else {
 				// Error ):
 				event.SetClientObject(new CurlThreadData(this->callbackFunction, stream.str(), ebuf, this->extra));

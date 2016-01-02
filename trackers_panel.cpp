@@ -21,7 +21,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 #include "trackers_panel.h"
 #include "calladmin-client.h"
 
@@ -50,10 +49,6 @@ TrackerPanel::TrackerPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	// Border and Center
 	wxSizerFlags flags;
 
-	// Border and Centre
-	flags.Border(wxALL, 10);
-	flags.Centre();
-
 	// Create Box
 	wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
 
@@ -66,10 +61,10 @@ TrackerPanel::TrackerPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
 
 	// Hide and Exit Button
-	sizerBtns->Add(new wxButton(this, wxID_UpdateTrackers, "Update Trackers"), flags.Border(wxALL, 5));
+	sizerBtns->Add(new wxButton(this, wxID_UpdateTrackers, "Update Trackers"), 0, wxALL | wxALIGN_CENTER, 5);
 
 	// Add Buttons to Box
-	sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	sizerTop->Add(sizerBtns, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, 10);
 
 	// Auto Size
 	SetSizerAndFit(sizerTop, true);
@@ -84,7 +79,7 @@ void TrackerPanel::OnUpdate(wxCommandEvent& WXUNUSED(event)) {
 
 
 // Refresh Trackers
-void TrackerPanel::RefreshTrackers(char* errors, wxString result, int WXUNUSED(extra)) {
+void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNUSED(extra)) {
 	// Log Action
 	caLogAction("Got Trackers");
 
@@ -96,7 +91,7 @@ void TrackerPanel::RefreshTrackers(char* errors, wxString result, int WXUNUSED(e
 	// Not empty?
 	if (result != "") {
 		// Everything good :)
-		if (strcmp(errors, "") == 0) {
+		if (errorStr == "") {
 			// Proceed XML result!
 			tinyxml2::XMLDocument doc;
 			tinyxml2::XMLNode *node;
@@ -165,7 +160,7 @@ void TrackerPanel::RefreshTrackers(char* errors, wxString result, int WXUNUSED(e
 			}
 		} else {
 			// Curl error
-			error = errors;
+			error = errorStr;
 
 			// Log Action
 			caLogAction("CURL Error " + error);
@@ -192,7 +187,6 @@ void TrackerPanel::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {
 	}
 
 	nameTimers.clear();
-
 	Destroy();
 }
 

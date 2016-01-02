@@ -21,7 +21,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 #include "main_frame.h"
 #include "calladmin-client.h"
 #include "curl_util.h"
@@ -47,8 +46,6 @@ void MainFrame::CreateWindow(bool createInTaskbar) {
 #if defined(__WXMSW__)
 	SetIcon(wxIcon("calladmin_icon", wxBITMAP_TYPE_ICO_RESOURCE));
 #else
-	wxLogNull nolog;
-
 	SetIcon(wxIcon(caGetApp().GetAppPath("resources/calladmin_icon.ico"), wxBITMAP_TYPE_ICON));
 #endif
 

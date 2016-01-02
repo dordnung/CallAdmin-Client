@@ -21,7 +21,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 #include "config_panel.h"
 #include "calladmin-client.h"
 
@@ -64,23 +63,18 @@ ConfigPanel::ConfigPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	gridSizer->AddGrowableCol(0);
 
 	// Flags and Text
-	wxSizerFlags flags;
-	wxStaticText* text;
-
-	// Border and Centre
-	flags.Border(wxALL &~wxBOTTOM, 10);
-	flags.Centre();
+	wxStaticText *text;
 
 	// Add Grid
 	sizerTop->Add(gridSizer, 1, wxALL | wxEXPAND, 10);
 
 	// Ask for Page
 	text = new wxStaticText(this, wxID_ANY, "Your url to the call admin directory: ");
-	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	this->pageText = new wxTextCtrl(this, wxID_ANY, "http://yourpage.com/calladmin/", wxDefaultPosition, wxSize(300, -1));
 	this->pageText->SetMaxLength(256);
-	this->pageText->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	this->pageText->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add to grid
 	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
@@ -88,11 +82,11 @@ ConfigPanel::ConfigPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	// Ask for Key
 	text = new wxStaticText(this, wxID_ANY, "Your private access key: ");
-	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	this->keyText = new wxTextCtrl(this, wxID_ANY, "accesskey");
 	this->keyText->SetMaxLength(64);
-	this->keyText->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	this->keyText->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 
 	// Add to Grid
@@ -104,10 +98,10 @@ ConfigPanel::ConfigPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	// Ask for Step
 	text = new wxStaticText(this, wxID_ANY, "Time intervall to search for calls (in seconds): ");
-	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	this->stepSlider = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 5, 20, 10, "Time Inverall");
-	this->stepSlider->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	this->stepSlider->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add to Grid
 	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
@@ -115,10 +109,10 @@ ConfigPanel::ConfigPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	// Ask for Timeout
 	text = new wxStaticText(this, wxID_ANY, "Timeout for connection (in seconds): ");
-	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	this->timeoutSlider = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 3, 10, 5, "Timeout");
-	this->timeoutSlider->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	this->timeoutSlider->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add to Grid
 	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
@@ -126,10 +120,10 @@ ConfigPanel::ConfigPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	// Ask for Attempts
 	text = new wxStaticText(this, wxID_ANY, "Maximum auto. reconnect attempts: ");
-	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	this->attemptsSlider = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 3, 10, 3, "Max Attempts");
-	this->attemptsSlider->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	this->attemptsSlider->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add to Grid
 	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
@@ -137,10 +131,10 @@ ConfigPanel::ConfigPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	// Ask for Last Calls
 	text = new wxStaticText(this, wxID_ANY, "Number of last calls to load at start: ");
-	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	this->callsSlider = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 0, 50, 25, "Load Calls");
-	this->callsSlider->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	this->callsSlider->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add to Grid
 	gridSizer->Add(text, wxGBPosition(currentPos, 0), wxDefaultSpan, 0, 10);
@@ -151,7 +145,7 @@ ConfigPanel::ConfigPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	// Ask for LogLevel
 	text = new wxStaticText(this, wxID_ANY, "What information should be logged in log panel: ");
-	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// LogLevel choice
 	this->logLevel = new wxChoice(this, wxID_LogLevel, wxDefaultPosition, wxDefaultSize, (sizeof(LogLevelNames) / sizeof(LogLevelNames[0])), LogLevelNames, 0, wxDefaultValidator, "Log Level");
@@ -163,7 +157,7 @@ ConfigPanel::ConfigPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	// Ask for Steam
 	text = new wxStaticText(this, wxID_ANY, "Steam support to write messages and load Avatars: ");
-	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Steam support
 	this->steamEnable = new wxCheckBox(this, wxID_SteamUpdate, "Enable Steam Support");
@@ -175,7 +169,7 @@ ConfigPanel::ConfigPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	// Ask for Show in taskbar
 	text = new wxStaticText(this, wxID_ANY, "Show messages in the Taskbar instead in own window: ");
-	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Show in taskbar
 	this->showInTaskbar = new wxCheckBox(this, wxID_ShowInTaskbarUpdate, "Show messages in Taskbar");
@@ -187,7 +181,7 @@ ConfigPanel::ConfigPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	// Ask for hide on mini
 	text = new wxStaticText(this, wxID_ANY, "Hide windows on minimize: ");
-	text->SetFont(wxFont(11, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add
 	this->hideMini = new wxCheckBox(this, wxID_HideUpdate, "Hide on Minimize");
@@ -200,10 +194,10 @@ ConfigPanel::ConfigPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
 
 	// Hide and Exit Button
-	sizerBtns->Add(new wxButton(this, wxID_SetConfig, "Update Settings"), flags.Border(wxALL, 5));
+	sizerBtns->Add(new wxButton(this, wxID_SetConfig, "Update Settings"), 0, wxALL | wxALIGN_CENTRE, 5);
 
 	// Add Buttons to Box
-	sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	sizerTop->Add(sizerBtns, 0, wxALL | wxALIGN_CENTRE_HORIZONTAL, 5);
 
 	// Auto Size
 	SetSizerAndFit(sizerTop, true);

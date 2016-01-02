@@ -21,7 +21,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 #include "main_panel.h"
 #include "calladmin-client.h"
 
@@ -52,11 +51,11 @@ MainPanel::MainPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	this->sizerBody = new wxBoxSizer(wxHORIZONTAL);
 
 	// Box Body
-	wxStaticBoxSizer* sizerBox = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("Latest Calls")), wxHORIZONTAL);
+	wxStaticBoxSizer* sizerBox = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, "Latest Calls"), wxHORIZONTAL);
 
 	// Box for all Calls
 	this->callBox = new wxListBox(this, wxID_BoxClick, wxDefaultPosition, wxSize(280, -1), 0, NULL, wxLB_HSCROLL | wxLB_SINGLE);
-	this->callBox->SetFont(wxFont(9, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	this->callBox->SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add to Body
 	sizerBox->Add(callBox, 0, wxEXPAND | wxALL, 5);
@@ -71,7 +70,7 @@ MainPanel::MainPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	// Welcome Text
 	text = new wxStaticText(this, wxID_ANY, "The Admin Caller");
 
-	text->SetFont(wxFont(30, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(30, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
 	sizerTop->Add(text, 0, wxBOTTOM | wxLEFT | wxRIGHT | wxALIGN_CENTER, 40);
@@ -84,7 +83,7 @@ MainPanel::MainPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	// Steam Text
 	this->steamText = new wxStaticText(this, wxID_ANY, "Steam is currently not running");
-	this->steamText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	this->steamText->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 	this->steamText->SetForegroundColour(wxColor("red"));
 
 	// Add it
@@ -96,7 +95,7 @@ MainPanel::MainPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	this->eventText = new wxStaticText(this, wxID_ANY, "Starting CallAdmin Client...");
 
-	this->eventText->SetFont(wxFont(16, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	this->eventText->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 	this->eventText->SetForegroundColour(wxColor("blue"));
 
 	sizerTop->Add(this->eventText, 0, wxALL | wxALIGN_CENTER, 10);
@@ -168,7 +167,7 @@ MainPanel::MainPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	// Author + Version Text
 	text = new wxStaticText(this, wxID_ANY, "v" + (wxString)CALLADMIN_CLIENT_VERSION + "  (c) Popoklopsi and Impact");
 
-	text->SetFont(wxFont(8, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
 	sizerTop->Add(text, 0, wxTOP | wxRIGHT | wxLEFT | wxALIGN_RIGHT, 10);

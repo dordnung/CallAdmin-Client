@@ -21,7 +21,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 #include "about_panel.h"
 #include "calladmin-client.h"
 
@@ -48,12 +47,7 @@ END_EVENT_TABLE()
 // Create about Panel
 AboutPanel::AboutPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	// Border and Center
-	wxSizerFlags flags;
 	wxStaticText *text;
-
-	// Border and Centre
-	flags.Border(wxALL, 10);
-	flags.Centre();
 
 	// Create Box
 	this->sizerTop = new wxBoxSizer(wxVERTICAL);
@@ -61,7 +55,7 @@ AboutPanel::AboutPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	// Call Admin
 	text = new wxStaticText(this, wxID_ANY, "The Call Admin Project");
 
-	text->SetFont(wxFont(28, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(28, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
 	this->sizerTop->Add(text, 0, wxALL &~wxBOTTOM | wxALIGN_CENTRE_HORIZONTAL, 10);
@@ -69,7 +63,7 @@ AboutPanel::AboutPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	// By
 	text = new wxStaticText(this, wxID_ANY, "Copyright (C) Popoklopsi and Impact 2013-2016");
 
-	text->SetFont(wxFont(13, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(13, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
 	this->sizerTop->Add(text, 0, wxALL &~wxTOP | wxALIGN_CENTRE_HORIZONTAL, 10);
@@ -77,7 +71,7 @@ AboutPanel::AboutPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	// Banner
 #if defined(__WXMSW__)
-	this->sizerTop->Add(new wxStaticBitmap(this, wxID_ANY, wxBitmap(wxImage("calladmin_banner", wxBITMAP_TYPE_RESOURCE))), flags);
+	this->sizerTop->Add(new wxStaticBitmap(this, wxID_ANY, wxBitmap(wxImage("calladmin_banner", wxBITMAP_TYPE_RESOURCE))), 0, wxALL | wxALIGN_CENTRE, 10);
 #else
 	this->sizerTop->Add(new wxStaticBitmap(this, wxID_ANY, wxBitmap(wxImage(caGetApp().GetAppPath("resources/calladmin_banner.bmp")))), flags);
 #endif
@@ -88,14 +82,14 @@ AboutPanel::AboutPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	// Your Version
 	text = new wxStaticText(this, wxID_ANY, "Your version: " + (wxString)CALLADMIN_CLIENT_VERSION);
 
-	text->SetFont(wxFont(15, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(15, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
 	sizerVersion->Add(text, 0, wxRIGHT | wxLEFT | wxALIGN_CENTRE_HORIZONTAL, 20);
 
 	// Current Version
 	this->currentText = new wxStaticText(this, wxID_ANY, "Current version: " + (wxString)CALLADMIN_CLIENT_VERSION);
-	this->currentText->SetFont(wxFont(15, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	this->currentText->SetFont(wxFont(15, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 	this->currentText->SetForegroundColour(wxColour(34, 139, 34));
 
 	// Add it
@@ -112,7 +106,7 @@ AboutPanel::AboutPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	// WX
 	text = new wxStaticText(this, wxID_ANY, (wxString)wxVERSION_STRING);
-	text->SetFont(wxFont(12, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
 	sizerCredits->Add(text, 0, wxALL | wxALIGN_CENTRE_HORIZONTAL, 10);
@@ -120,7 +114,7 @@ AboutPanel::AboutPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	// Curl
 	text = new wxStaticText(this, wxID_ANY, "CURL " + (wxString)LIBCURL_VERSION);
-	text->SetFont(wxFont(12, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
 	sizerCredits->Add(text, 0, wxALL | wxALIGN_CENTRE_HORIZONTAL, 10);
@@ -128,7 +122,7 @@ AboutPanel::AboutPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 
 	// OSW
 	text = new wxStaticText(this, wxID_ANY, "OpenSteamWorks 2015/12/11");
-	text->SetFont(wxFont(12, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	text->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
 	// Add it
 	sizerCredits->Add(text, 0, wxALL | wxALIGN_CENTRE_HORIZONTAL, 10);
@@ -141,16 +135,16 @@ AboutPanel::AboutPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
 	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
 
 	// Buttons
-	sizerBtns->Add(new wxButton(this, wxID_UpdateAbout, "Check For Update"), flags.Border(wxALL &~wxRIGHT, 5));
+	sizerBtns->Add(new wxButton(this, wxID_UpdateAbout, "Check For Update"), 0, wxTOP | wxBOTTOM | wxLEFT | wxALIGN_CENTRE, 5);
 
 	this->downloadButton = new wxButton(this, wxID_DownloadAbout, "Download Update");
 	this->downloadButton->Enable(false);
 
-	sizerBtns->Add(this->downloadButton, flags.Border(wxALL &~wxLEFT, 5));
+	sizerBtns->Add(this->downloadButton, 0, wxTOP | wxBOTTOM | wxRIGHT | wxALIGN_CENTRE, 5);
 
 
 	// Add Buttons to Box
-	this->sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL));
+	this->sizerTop->Add(sizerBtns, 0, wxTOP | wxBOTTOM | wxRIGHT | wxALIGN_CENTRE_HORIZONTAL, 5);
 
 
 	// Auto Size
@@ -178,14 +172,7 @@ void AboutPanel::OnUpdate(wxCommandEvent& WXUNUSED(event)) {
 void AboutPanel::OnDownload(wxCommandEvent& WXUNUSED(event)) {
 	// Log Action
 	caLogAction("Download new Update");
-
-	// Open Update Dialog
-	if (!caGetApp().GetUpdateDialog()) {
-		caGetApp().StartUpdate();
-	} else {
-		// Update already running
-		caGetTaskBarIcon()->ShowMessage("Update running", "Update is already running", this);
-	}
+	caGetApp().StartUpdate();
 }
 
 void AboutPanel::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {

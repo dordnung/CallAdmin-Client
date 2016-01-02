@@ -24,7 +24,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 #pragma once
 
 #include <wx/wxprec.h>
@@ -86,7 +85,7 @@ public:
 	}
 
 	// Refresh the tracker list
-	static void RefreshTrackers(char *error, wxString result, int extra);
+	static void RefreshTrackers(wxString errorStr, wxString result, int extra);
 
 protected:
 	void OnUpdate(wxCommandEvent &event);
