@@ -308,8 +308,7 @@ static unsigned char xml_res_file_1[] = {
 	32, 32, 60, 47, 111, 98, 106, 101, 99, 116, 62, 10, 32, 32, 60, 47, 111, 98, 106, 101, 99, 116,
 	62, 10, 60, 47, 114, 101, 115, 111, 117, 114, 99, 101, 62, 10 };
 
-void InitXmlResource()
-{
+void InitXmlResource() {
 
 	// Check for memory FS. If not present, load the handler:
 	{

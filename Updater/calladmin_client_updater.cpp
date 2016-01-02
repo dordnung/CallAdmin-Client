@@ -225,20 +225,17 @@ bool CallAdminUpdater::OnGetVersion(wxString error, wxString result) {
 			if (result.length() > 30) {
 				// Maybe an Error Page?
 				wxMessageBox("Error: Result page is too long", "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
-			}
-			else {
+			} else {
 				// Find version in brackets
 				int start = result.find_first_of("{") + 1;
 				int end = result.find_first_of("}");
 
 				newVersion = result.substr(start, end - start);
 			}
-		}
-		else {
+		} else {
 			wxMessageBox("Error: Result is empty", "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
 		}
-	}
-	else {
+	} else {
 		wxMessageBox("Error: " + error, "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
 	}
 
@@ -249,12 +246,10 @@ bool CallAdminUpdater::OnGetVersion(wxString error, wxString result) {
 			wxGetApp().StartUpdate();
 
 			return true;
-		}
-		else {
+		} else {
 			wxMessageBox("Your CallAdmin Client is up to date", "Up To Date", wxOK | wxCENTRE | wxICON_INFORMATION);
 		}
-	}
-	else {
+	} else {
 		wxMessageBox("Error: Version is empty", "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
 	}
 

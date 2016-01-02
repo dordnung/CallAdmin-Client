@@ -59,7 +59,7 @@ bool UpdateFrame::ShowFrame() {
 	// Panel
 	FIND_OR_FAIL(this->panel, XRCCTRL(*this, "updatePanel", wxPanel), "updatePanel");
 
-	// sizer
+	// Sizer
 	FIND_OR_FAIL(this->sizerTop, this->panel->GetSizer(), "sizer");
 
 	// Progress bar
@@ -125,8 +125,7 @@ void UpdateFrame::OnFinish(wxCommandEvent &event) {
 		this->dlStatus->SetForegroundColour(wxColour(34, 139, 34));
 
 		wxMessageBox("Update finished successfully", "Update finished", wxOK | wxCENTRE | wxICON_INFORMATION, this);
-	}
-	else {
+	} else {
 		// Refresh Status
 		this->dlStatus->SetLabelText("Status: Error!");
 		this->dlStatus->SetForegroundColour(wxColour("red"));
@@ -194,8 +193,7 @@ wxThread::ExitCode UpdateFrame::Entry() {
 
 			if (!newFile->IsOpened()) {
 				event.SetString("Couldn't create file " + newFile->GetName());
-			}
-			else {
+			} else {
 				// Configurate Curl
 				curl_easy_setopt(curl, CURLOPT_URL, wxGetApp().GetCallAdminExecutable().mb_str().data());
 				curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
@@ -214,8 +212,7 @@ wxThread::ExitCode UpdateFrame::Entry() {
 				// Everything good :)
 				if (res == CURLE_OK) {
 					event.SetString(wxString());
-				}
-				else {
+				} else {
 					// Error ):
 					event.SetString(errorBuffer);
 				}
@@ -226,8 +223,7 @@ wxThread::ExitCode UpdateFrame::Entry() {
 
 			// Close File
 			newFile->Close();
-		}
-		else {
+		} else {
 			event.SetString("Couldn't init. CURL!");
 		}
 
