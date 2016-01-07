@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
+	<object class="wxPanel" name="aboutPanel">
+		<style>wxNO_BORDER | wxTAB_TRAVERSAL</style>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALIGN_CENTER_HORIZONTAL | wxLEFT | wxRIGHT | wxTOP</flag>
+				<border>10</border>
+				<object class="wxStaticText" name="aboutText">
+					<font>
+						<size>28</size>
+						<style>normal</style>
+						<weight>normal</weight>
+						<underlined>0</underlined>
+					</font>
+					<label>The Call Admin Project</label>
+					<wrap>-1</wrap>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM | wxLEFT | wxRIGHT</flag>
+				<border>10</border>
+				<object class="wxStaticText" name="copyrightText">
+					<font>
+						<size>13</size>
+						<style>normal</style>
+						<weight>normal</weight>
+						<underlined>0</underlined>
+					</font>
+					<label>Copyright (C) Popoklopsi and Impact 2013-2016</label>
+					<wrap>-1</wrap>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALIGN_CENTER | wxALL</flag>
+				<border>10</border>
+				<object class="wxStaticBitmap" name="banner">
+					<bitmap>calladmin_banner.bmp</bitmap>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALIGN_CENTER_HORIZONTAL | wxALL</flag>
+				<border>5</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_HORIZONTAL | wxLEFT | wxRIGHT</flag>
+						<border>20</border>
+						<object class="wxStaticText" name="yourVersion">
+							<font>
+								<size>15</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Your version: </label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_HORIZONTAL | wxLEFT</flag>
+						<border>20</border>
+						<object class="wxStaticText" name="currentVersion">
+							<fg>#228b22</fg>
+							<font>
+								<size>15</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Current version: </label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALIGN_CENTER_HORIZONTAL | wxALL</flag>
+				<border>10</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_HORIZONTAL | wxALL</flag>
+						<border>10</border>
+						<object class="wxStaticText" name="wxVersion">
+							<font>
+								<size>12</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label></label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_HORIZONTAL | wxALL</flag>
+						<border>10</border>
+						<object class="wxStaticText" name="curlVersion">
+							<font>
+								<size>12</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>CURL </label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_HORIZONTAL | wxALL</flag>
+						<border>10</border>
+						<object class="wxStaticText" name="oswVersion">
+							<font>
+								<size>12</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>OpenSteamWorks </label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM | wxRIGHT | wxTOP</flag>
+				<border>5</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER | wxBOTTOM | wxLEFT | wxTOP</flag>
+						<border>5</border>
+						<object class="wxButton" name="checkForUpdate">
+							<label>Check For Update</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER | wxBOTTOM | wxRIGHT | wxTOP</flag>
+						<border>5</border>
+						<object class="wxButton" name="downloadUpdate">
+							<label>Download Update</label>
+							<default>0</default>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
+	<object class="wxPanel" name="mainPanel">
+		<style>wxNO_BORDER | wxTAB_TRAVERSAL</style>
+		<object class="wxBoxSizer">
+			<orient>wxHORIZONTAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL | wxEXPAND</flag>
+				<border>5</border>
+				<object class="wxStaticBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<label>Latest Calls</label>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL | wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxListBox" name="callBox">
+							<style>wxLB_HSCROLL | wxLB_SINGLE</style>
+							<size>280,-1</size>
+							<font>
+								<size>9</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<content />
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALIGN_RIGHT | wxLEFT | wxRIGHT | wxTOP</flag>
+				<border>10</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="spacer">
+						<option>0</option>
+						<flag>wxBOTTOM</flag>
+						<border>15</border>
+						<size>0,0</size>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER | wxBOTTOM | wxLEFT | wxRIGHT</flag>
+						<border>40</border>
+						<object class="wxStaticText" name="mainText">
+							<font>
+								<size>30</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>The Admin Caller</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="spacer">
+						<option>0</option>
+						<flag>wxTOP</flag>
+						<border>20</border>
+						<size>0,0</size>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND | wxALL</flag>
+						<border>5</border>
+						<object class="wxStaticLine" name="staticline">
+							<style>wxLI_HORIZONTAL</style>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER | wxALL</flag>
+						<border>10</border>
+						<object class="wxStaticText" name="steamText">
+							<fg>#ff0000</fg>
+							<font>
+								<size>16</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Steam is currently not running</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND | wxALL</flag>
+						<border>5</border>
+						<object class="wxStaticLine" name="staticline2">
+							<style>wxLI_HORIZONTAL</style>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND | wxALL</flag>
+						<border>5</border>
+						<object class="wxStaticLine" name="staticline3">
+							<style>wxLI_HORIZONTAL</style>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER | wxALL</flag>
+						<border>10</border>
+						<object class="wxStaticText" name="eventText">
+							<fg>#0000ff</fg>
+							<font>
+								<size>16</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Starting CallAdmin Client...</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND | wxALL</flag>
+						<border>5</border>
+						<object class="wxStaticLine" name="staticline4">
+							<style>wxLI_HORIZONTAL</style>
+						</object>
+					</object>
+					<object class="spacer">
+						<option>0</option>
+						<flag>wxBOTTOM</flag>
+						<border>40</border>
+						<size>0,0</size>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_HORIZONTAL | wxRIGHT | wxTOP</flag>
+						<border>5</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER | wxALL</flag>
+								<border>5</border>
+								<object class="wxCheckBox" name="available">
+									<tooltip>You will receive no more calls when you uncheck this.</tooltip>
+									<label>I&apos;m available</label>
+									<checked>0</checked>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER | wxALL</flag>
+								<border>5</border>
+								<object class="wxCheckBox" name="sound">
+									<tooltip>You will hear a notification sound on an incoming call.</tooltip>
+									<label>Sound on call</label>
+									<checked>0</checked>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER | wxALL</flag>
+								<border>5</border>
+								<object class="wxCheckBox" name="store">
+									<tooltip>You will only receive calls but you will not be stored in the trackers database</tooltip>
+									<label>Spectate only</label>
+									<checked>0</checked>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_HORIZONTAL | wxLEFT | wxRIGHT | wxTOP</flag>
+						<border>5</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER | wxLEFT | wxTOP</flag>
+								<border>5</border>
+								<object class="wxButton" name="hide">
+									<label>Hide</label>
+									<default>1</default>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER | wxRIGHT | wxTOP</flag>
+								<border>5</border>
+								<object class="wxButton" name="reconnectButton">
+									<label>Reconnect</label>
+									<default>0</default>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_RIGHT | wxLEFT | wxRIGHT | wxTOP</flag>
+						<border>10</border>
+						<object class="wxStaticText" name="copyrightText">
+							<font>
+								<size>8</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>(c) Popoklopsi and Impact</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

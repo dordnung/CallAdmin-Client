@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
+	<object class="wxDialog" name="callDialog">
+		<style>wxDEFAULT_DIALOG_STYLE | wxMINIMIZE_BOX</style>
+		<title></title>
+		<centered>1</centered>
+		<icon>calladmin_icon.ico</icon>
+		<object class="wxPanel" name="callPanel">
+			<style>wxNO_BORDER | wxTAB_TRAVERSAL</style>
+			<object class="wxBoxSizer">
+				<orient>wxVERTICAL</orient>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALIGN_CENTER | wxLEFT | wxRIGHT | wxTOP</flag>
+					<border>20</border>
+					<object class="wxStaticText" name="contactText">
+						<font>
+							<size>16</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+						</font>
+						<label></label>
+						<wrap>-1</wrap>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALIGN_CENTER | wxLEFT | wxRIGHT</flag>
+					<border>20</border>
+					<object class="wxStaticText" name="callAtText">
+						<font>
+							<size>16</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+						</font>
+						<label>at </label>
+						<wrap>-1</wrap>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALIGN_CENTER | wxBOTTOM | wxLEFT | wxRIGHT</flag>
+					<border>20</border>
+					<object class="wxStaticText" name="doneText">
+						<fg>#ff0000</fg>
+						<font>
+							<size>16</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+						</font>
+						<label></label>
+						<wrap>-1</wrap>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALL | wxEXPAND</flag>
+					<border>5</border>
+					<object class="wxStaticLine" name="staticline">
+						<style>wxLI_HORIZONTAL</style>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALIGN_CENTER | wxALL</flag>
+					<border>10</border>
+					<object class="wxBoxSizer">
+						<orient>wxHORIZONTAL</orient>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_CENTER | wxALL</flag>
+							<border>10</border>
+							<object class="wxStaticBitmap" name="clientAvatar">
+								<bitmap>calladmin_avatar.bmp</bitmap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_CENTER | wxALL</flag>
+							<border>10</border>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER | wxALL</flag>
+									<border>10</border>
+									<object class="wxStaticText" name="clientName">
+										<font>
+											<size>16</size>
+											<style>normal</style>
+											<weight>normal</weight>
+											<underlined>0</underlined>
+										</font>
+										<label></label>
+										<wrap>-1</wrap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM | wxLEFT | wxRIGHT</flag>
+									<border>5</border>
+									<object class="wxButton" name="contactClientButton">
+										<tooltip>This will open a Steam chat with this client.</tooltip>
+										<label>Contact Friend</label>
+										<default>0</default>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALL | wxEXPAND</flag>
+									<border>10</border>
+									<object class="wxTextCtrl" name="clientSteamId">
+										<style>wxTE_CENTRE | wxTE_READONLY</style>
+										<size>220,-1</size>
+										<font>
+											<size>14</size>
+											<style>normal</style>
+											<weight>normal</weight>
+											<underlined>0</underlined>
+										</font>
+										<value></value>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxEXPAND | wxALL</flag>
+					<border>10</border>
+					<object class="wxStaticLine" name="staticline2">
+						<style>wxLI_HORIZONTAL</style>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALIGN_CENTER | wxALL</flag>
+					<border>10</border>
+					<object class="wxStaticText" name="reasonText">
+						<font>
+							<size>14</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+						</font>
+						<label></label>
+						<wrap>-1</wrap>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxEXPAND | wxALL</flag>
+					<border>10</border>
+					<object class="wxStaticLine" name="staticline3">
+						<style>wxLI_HORIZONTAL</style>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALIGN_CENTER | wxALL</flag>
+					<border>10</border>
+					<object class="wxBoxSizer">
+						<orient>wxHORIZONTAL</orient>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_CENTER | wxALL</flag>
+							<border>10</border>
+							<object class="wxStaticBitmap" name="targetAvatar">
+								<bitmap>calladmin_avatar.bmp</bitmap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_CENTER | wxALL</flag>
+							<border>10</border>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER | wxALL</flag>
+									<border>10</border>
+									<object class="wxStaticText" name="targetName">
+										<font>
+											<size>16</size>
+											<style>normal</style>
+											<weight>normal</weight>
+											<underlined>0</underlined>
+										</font>
+										<label></label>
+										<wrap>-1</wrap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM | wxLEFT | wxRIGHT</flag>
+									<border>5</border>
+									<object class="wxButton" name="contactTargetButton">
+										<tooltip>This will open a Steam chat with this client.</tooltip>
+										<label>Contact Friend</label>
+										<default>0</default>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALL | wxEXPAND</flag>
+									<border>10</border>
+									<object class="wxTextCtrl" name="targetSteamId">
+										<style>wxTE_CENTRE | wxTE_READONLY</style>
+										<size>220,-1</size>
+										<font>
+											<size>14</size>
+											<style>normal</style>
+											<weight>normal</weight>
+											<underlined>0</underlined>
+										</font>
+										<value></value>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxEXPAND | wxALL</flag>
+					<border>5</border>
+					<object class="wxStaticLine" name="staticline4">
+						<style>wxLI_HORIZONTAL</style>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALIGN_CENTER | wxALL</flag>
+					<border>10</border>
+					<object class="wxBoxSizer">
+						<orient>wxHORIZONTAL</orient>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxBOTTOM | wxLEFT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxButton" name="connectButton">
+								<label>Connect</label>
+								<default>0</default>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxBOTTOM | wxTOP</flag>
+							<border>5</border>
+							<object class="wxButton" name="takeoverButton">
+								<tooltip>This will mark the call as finished and will ignore it next time.</tooltip>
+								<label>Take Over</label>
+								<default>0</default>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxBOTTOM | wxRIGHT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxButton" name="contactTrackersButton">
+								<tooltip>This will send all available trackers on your friendlist a message.</tooltip>
+								<label>Contact Trackers</label>
+								<default>0</default>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
+	<object class="wxPanel" name="configPanel">
+		<style>wxNO_BORDER | wxTAB_TRAVERSAL</style>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxALL | wxEXPAND</flag>
+				<border>10</border>
+				<object class="wxGridBagSizer">
+					<vgap>5</vgap>
+					<hgap>2</hgap>
+					<growablecols>0</growablecols>
+					<growablerows></growablerows>
+					<object class="sizeritem">
+						<cellpos>1,0</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag></flag>
+						<border>10</border>
+						<object class="wxStaticText" name="callAdminUrlText">
+							<font>
+								<size>11</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Your url to the call admin directory: </label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>1,1</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxTextCtrl" name="callAdminUrl">
+							<size>300,-1</size>
+							<font>
+								<size>11</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<value>http://yourpage.com/calladmin/</value>
+							<maxlength>256</maxlength>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>2,0</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag></flag>
+						<border>10</border>
+						<object class="wxStaticText" name="accessKeyText">
+							<font>
+								<size>11</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Your private access key: </label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>2,1</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxTextCtrl" name="accessKey">
+							<font>
+								<size>11</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<value>accesskey</value>
+							<maxlength>64</maxlength>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>3,0</cellpos>
+						<cellspan>1,2</cellspan>
+						<flag>wxBOTTOM | wxEXPAND | wxTOP</flag>
+						<border>10</border>
+						<object class="wxStaticLine" name="staticline5">
+							<style>wxLI_HORIZONTAL</style>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>4,0</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag></flag>
+						<border>10</border>
+						<object class="wxStaticText" name="stepSliderText">
+							<font>
+								<size>11</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Time intervall to search for calls (in seconds): </label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>4,1</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxSlider" name="stepSlider">
+							<style>wxSL_HORIZONTAL</style>
+							<font>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<value>10</value>
+							<min>5</min>
+							<max>20</max>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>5,0</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag></flag>
+						<border>10</border>
+						<object class="wxStaticText" name="timeoutSliderText">
+							<font>
+								<size>11</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Timeout for connection (in seconds): </label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>5,1</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxSlider" name="timeoutSlider">
+							<style>wxSL_HORIZONTAL</style>
+							<font>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<value>5</value>
+							<min>3</min>
+							<max>10</max>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>6,0</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag></flag>
+						<border>10</border>
+						<object class="wxStaticText" name="attemptsSliderText">
+							<font>
+								<size>11</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Maximum auto. reconnect attempts: </label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>6,1</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxSlider" name="attemptsSlider">
+							<style>wxSL_HORIZONTAL</style>
+							<font>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<value>3</value>
+							<min>3</min>
+							<max>10</max>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>7,0</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag></flag>
+						<border>10</border>
+						<object class="wxStaticText" name="callsSliderText">
+							<font>
+								<size>11</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Number of last calls to load at start: </label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>7,1</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxSlider" name="callsSlider">
+							<style>wxSL_HORIZONTAL</style>
+							<font>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<value>25</value>
+							<min>0</min>
+							<max>50</max>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>8,0</cellpos>
+						<cellspan>1,2</cellspan>
+						<flag>wxBOTTOM | wxTOP</flag>
+						<border>10</border>
+						<object class="wxStaticLine" name="staticline6">
+							<style>wxLI_HORIZONTAL</style>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>9,0</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag></flag>
+						<border>10</border>
+						<object class="wxStaticText" name="logLevelText">
+							<font>
+								<size>11</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>What information should be logged in log panel: </label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>9,1</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag>wxRIGHT</flag>
+						<border>0</border>
+						<object class="wxChoice" name="logLevel">
+							<selection>0</selection>
+							<content>
+								<item>DEBUG</item>
+								<item>INFO</item>
+								<item>WARNING</item>
+								<item>ERROR</item>
+							</content>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>10,0</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag></flag>
+						<border>10</border>
+						<object class="wxStaticText" name="steamEnableText">
+							<font>
+								<size>11</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Steam support to write messages and load Avatars: </label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>10,1</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag>wxRIGHT</flag>
+						<border>0</border>
+						<object class="wxCheckBox" name="steamEnable">
+							<label>Enable Steam Support</label>
+							<checked>1</checked>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>11,0</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag></flag>
+						<border>10</border>
+						<object class="wxStaticText" name="showInTaskbarText">
+							<font>
+								<size>11</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Show messages in the Taskbar instead in own window: </label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>11,1</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag>wxRIGHT</flag>
+						<border>0</border>
+						<object class="wxCheckBox" name="showInTaskbar">
+							<label>Show messages in Taskbar</label>
+							<checked>0</checked>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>12,0</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag></flag>
+						<border>10</border>
+						<object class="wxStaticText" name="hideMinimizedText">
+							<font>
+								<size>11</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Hide windows on minimize: </label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<cellpos>12,1</cellpos>
+						<cellspan>1,1</cellspan>
+						<flag>wxRIGHT</flag>
+						<border>0</border>
+						<object class="wxCheckBox" name="hideMinimized">
+							<label>Hide on Minimize</label>
+							<checked>0</checked>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALIGN_CENTER_HORIZONTAL | wxALL</flag>
+				<border>5</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER | wxALL</flag>
+						<border>5</border>
+						<object class="wxButton" name="updateSettings">
+							<label>Update Settings</label>
+							<default>0</default>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>
