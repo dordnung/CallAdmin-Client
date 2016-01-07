@@ -29,6 +29,7 @@
 
 
 # Builds
+*.exe
 Release*/
 
 # Databases
