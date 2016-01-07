@@ -29,8 +29,7 @@
 #include <wx/xrc/xmlres.h>
 
 
-#define FIND_OR_FAIL(var, ptr, str) var = ptr;\
-if (var == NULL) {\
+#define FIND_OR_FAIL(var, ptr, str) var = ptr; if (var == NULL) {\
 	wxMessageBox("Error: Couldn't find XRCID " str, "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this); \
 	return false; \
 }
