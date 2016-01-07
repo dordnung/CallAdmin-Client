@@ -24,159 +24,86 @@
 #include "main_panel.h"
 #include "calladmin-client.h"
 
+#include <wx/xrc/xmlres.h>
+
 
 wxDEFINE_EVENT(wxEVT_STEAM_STATUS_CHANGED, wxCommandEvent);
 
 // Button Events for about Panel
 BEGIN_EVENT_TABLE(MainPanel, wxPanel)
-EVT_BUTTON(wxID_Hide, MainPanel::OnHide)
-EVT_BUTTON(wxID_Reconnect, MainPanel::OnReconnect)
-EVT_CHECKBOX(wxID_CheckBox, MainPanel::OnCheckBox)
+EVT_BUTTON(XRCID("hide"), MainPanel::OnHide)
+EVT_BUTTON(XRCID("reconnectButton"), MainPanel::OnReconnect)
+
+EVT_CHECKBOX(XRCID("available"), MainPanel::OnCheckBox)
+EVT_CHECKBOX(XRCID("sound"), MainPanel::OnCheckBox)
+EVT_CHECKBOX(XRCID("store"), MainPanel::OnCheckBox)
 
 EVT_COMMAND(wxID_ANY, wxEVT_STEAM_STATUS_CHANGED, MainPanel::OnSteamChange)
 
-EVT_LISTBOX_DCLICK(wxID_BoxClick, MainPanel::OnBoxClick)
-
-EVT_CLOSE(MainPanel::OnCloseWindow)
+EVT_LISTBOX_DCLICK(XRCID("callBox"), MainPanel::OnBoxClick)
 END_EVENT_TABLE()
 
 
 
-// Create main Panel
-MainPanel::MainPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
-	// Border and Center
-	wxStaticText* text;
+// Init. Vars
+MainPanel::MainPanel() {
+	this->store = NULL;
+	this->available = NULL;
+	this->sound = NULL;
 
-	// whole Body
-	this->sizerBody = new wxBoxSizer(wxHORIZONTAL);
+	this->reconnectButton = NULL;
 
-	// Box Body
-	wxStaticBoxSizer* sizerBox = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, "Latest Calls"), wxHORIZONTAL);
+	this->callBox = NULL;
+	this->sizerBody = NULL;
+
+	this->eventText = NULL;
+	this->steamText = NULL;
+}
+
+
+bool MainPanel::InitPanel() {
+	if (!wxXmlResource::Get()->LoadPanel(this, caGetNotebook()->GetWindow(), "mainPanel")) {
+		wxMessageBox("Error: Couldn't find XRCID mainPanel", "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR);
+
+		return false;
+	}
+
+	FIND_OR_FAIL(this->sizerBody, this->GetSizer(), "mainPanelSizerBody");
 
 	// Box for all Calls
-	this->callBox = new wxListBox(this, wxID_BoxClick, wxDefaultPosition, wxSize(280, -1), 0, NULL, wxLB_HSCROLL | wxLB_SINGLE);
-	this->callBox->SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-
-	// Add to Body
-	sizerBox->Add(callBox, 0, wxEXPAND | wxALL, 5);
-	this->sizerBody->Add(sizerBox, 0, wxEXPAND | wxALL, 5);
-
-	// Create Box
-	wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
-
-	// Space
-	sizerTop->Add(0, 0, 0, wxBOTTOM, 15);
-
-	// Welcome Text
-	text = new wxStaticText(this, wxID_ANY, "The Admin Caller");
-
-	text->SetFont(wxFont(30, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-
-	// Add it
-	sizerTop->Add(text, 0, wxBOTTOM | wxLEFT | wxRIGHT | wxALIGN_CENTER, 40);
-
-	// Space
-	sizerTop->Add(0, 0, 0, wxTOP, 20);
-
-	// Static line
-	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
+	FIND_OR_FAIL(this->callBox, XRCCTRL(*this, "callBox", wxListBox), "callBox");
 
 	// Steam Text
-	this->steamText = new wxStaticText(this, wxID_ANY, "Steam is currently not running");
-	this->steamText->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-	this->steamText->SetForegroundColour(wxColor("red"));
+	FIND_OR_FAIL(this->steamText, XRCCTRL(*this, "steamText", wxStaticText), "steamText");
 
-	// Add it
-	sizerTop->Add(this->steamText, 0, wxALL | wxALIGN_CENTER, 10);
-
-	// Static line
-	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
-	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
-
-	this->eventText = new wxStaticText(this, wxID_ANY, "Starting CallAdmin Client...");
-
-	this->eventText->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-	this->eventText->SetForegroundColour(wxColor("blue"));
-
-	sizerTop->Add(this->eventText, 0, wxALL | wxALIGN_CENTER, 10);
-
-	// Static line
-	sizerTop->Add(new wxStaticLine(this, wxID_ANY), 0, wxEXPAND | wxALL, 5);
-
-	// Space
-	sizerTop->Add(0, 0, 0, wxBOTTOM, 40);
-
-	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
-	wxSizer* const sizerChecks = new wxBoxSizer(wxHORIZONTAL);
-
-	// With tooltip :)
-	// ToolTip for first Checkbox
-	wxToolTip* tipAvailable = new wxToolTip("You will receive no more calls when you uncheck this.");
-
-	tipAvailable->SetDelay(500);
-	tipAvailable->Enable(true);
+	// Event Text
+	FIND_OR_FAIL(this->eventText, XRCCTRL(*this, "eventText", wxStaticText), "eventText");
 
 	// The available Checkbox
-	this->available = new wxCheckBox(this, wxID_CheckBox, "I'm available");
+	FIND_OR_FAIL(this->available, XRCCTRL(*this, "available", wxCheckBox), "available");
 	this->available->SetValue(caGetConfig()->GetIsAvailable());
-	this->available->SetToolTip(tipAvailable);
-
-	sizerChecks->Add(this->available, 0, wxALL | wxALIGN_CENTER, 5);
-
-	// ToolTip for second Checkbox
-	wxToolTip* tipSound = new wxToolTip("You will hear a notification sound on an incoming call.");
-
-	tipSound->SetDelay(500);
-	tipSound->Enable(true);
 
 	// The sound Checkbox
-	this->sound = new wxCheckBox(this, wxID_CheckBox, "Sound on call");
+	FIND_OR_FAIL(this->sound, XRCCTRL(*this, "sound", wxCheckBox), "sound");
 	this->sound->SetValue(caGetConfig()->GetWantSound());
-	this->sound->SetToolTip(tipSound);
-
-	sizerChecks->Add(this->sound, 0, wxALL | wxALIGN_CENTER, 5);
-
-	// ToolTip for third Checkbox
-	wxToolTip* specAvailable = new wxToolTip("You will only receive calls but you will not be stored in the trackers database");
-
-	specAvailable->SetDelay(500);
-	specAvailable->Enable(true);
 
 	// The store Checkbox
-	this->store = new wxCheckBox(this, wxID_CheckBox, "Spectate only");
+	FIND_OR_FAIL(this->store, XRCCTRL(*this, "store", wxCheckBox), "store");
 	this->store->SetValue(caGetConfig()->GetIsSpectator());
-	this->store->SetToolTip(specAvailable);
-
-	sizerChecks->Add(this->store, 0, wxALL | wxALIGN_CENTER, 5);
-
-	// Hide, Check
-	sizerBtns->Add(new wxButton(this, wxID_Hide, "Hide"), 0, wxTOP | wxLEFT | wxALIGN_CENTER, 5);
 
 	// If max attempts reached, add a reconnect button
-	this->reconnectButton = new wxButton(this, wxID_Reconnect, "Reconnect");
-	this->reconnectButton->Enable(false);
-
-	sizerBtns->Add(this->reconnectButton, 0, wxTOP | wxRIGHT | wxALIGN_CENTER, 5);
-
-	// Add Checks to Box
-	sizerTop->Add(sizerChecks, 0, wxTOP | wxRIGHT | wxALIGN_CENTER_HORIZONTAL, 5);
-
-	// Add Buttons to Box
-	sizerTop->Add(sizerBtns, 0, wxTOP | wxRIGHT | wxLEFT | wxALIGN_CENTER_HORIZONTAL, 5);
+	FIND_OR_FAIL(this->reconnectButton, XRCCTRL(*this, "reconnectButton", wxButton), "reconnectButton");
 
 	// Author + Version Text
-	text = new wxStaticText(this, wxID_ANY, "v" + (wxString)CALLADMIN_CLIENT_VERSION + "  (c) Popoklopsi and Impact");
+	wxStaticText *text;
 
-	text->SetFont(wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-
-	// Add it
-	sizerTop->Add(text, 0, wxTOP | wxRIGHT | wxLEFT | wxALIGN_RIGHT, 10);
-
-	// Add to Body
-	sizerBody->Add(sizerTop, 0, wxTOP | wxRIGHT | wxLEFT | wxALIGN_RIGHT, 10);
+	FIND_OR_FAIL(text, XRCCTRL(*this, "copyrightText", wxStaticText), "copyrightText");
+	text->SetLabel("v" + (wxString)CALLADMIN_CLIENT_VERSION + text->GetLabel());
 
 	// Auto Size
 	SetSizerAndFit(sizerBody, true);
+
+	return true;
 }
 
 
@@ -188,7 +115,7 @@ void MainPanel::SetEventText(wxString text) {
 
 	SetSizerAndFit(this->sizerBody, false);
 
-	caGetNotebook()->Fit();
+	caGetNotebook()->GetWindow()->Fit();
 	caGetMainFrame()->Fit();
 }
 
@@ -200,7 +127,7 @@ void MainPanel::SetSteamStatus(wxString text, wxColor color) {
 
 	SetSizerAndFit(this->sizerBody, false);
 
-	caGetNotebook()->Fit();
+	caGetNotebook()->GetWindow()->Fit();
 	caGetMainFrame()->Fit();
 }
 
@@ -261,7 +188,7 @@ void MainPanel::OnReconnect(wxCommandEvent& WXUNUSED(event)) {
 	SetEventText("Trying to reconnect...");
 	SetReconnectButton(false);
 
-	caGetMainFrame()->SetTitle("Call Admin Client");
+	caGetMainFrame()->SetTitle("CallAdmin Client");
 	caGetMainFrame()->Show(true);
 	caGetMainFrame()->Restore();
 
@@ -278,7 +205,7 @@ void MainPanel::OnSteamChange(wxCommandEvent &event) {
 	if (id == 0) {
 		SetSteamStatus("Steam support is disabled", wxColour("red"));
 	} else if (id == 1) {
-		SetSteamStatus("Steam is not running", wxColour("red"));
+		SetSteamStatus("Steam is currently not running", wxColour("red"));
 	} else {
 		SetSteamStatus("Steam is running", wxColour(34, 139, 34));
 	}
@@ -294,6 +221,7 @@ void MainPanel::OnBoxClick(wxCommandEvent& WXUNUSED(event)) {
 }
 
 
+// Window Event -> Exit programm
 void MainPanel::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {
 	Destroy();
 }

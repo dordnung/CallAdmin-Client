@@ -39,17 +39,14 @@ private:
 	wxListBox *logBox;
 
 public:
-	LogPanel();
+	LogPanel() : logBox(NULL) {};
+
+	bool InitPanel();
 
 	// Add Action to the logBox
 	void AddLog(wxString log, LogLevel logLevel) {
 		this->logBox->SetSelection(this->logBox->Append("[" + LogLevelNames[logLevel] + "] " + wxString::FromUTF8(wxNow() + " - " + log)));
 	}
-
-protected:
-	void OnCloseWindow(wxCloseEvent &event);
-
-	DECLARE_EVENT_TABLE()
 };
 
 #endif

@@ -37,14 +37,17 @@
     <ClCompile Include="..\log_panel.cpp">
       <Filter>Panel</Filter>
     </ClCompile>
-    <ClCompile Include="..\trackers_panel.cpp">
-      <Filter>Panel</Filter>
-    </ClCompile>
     <ClCompile Include="..\main_panel.cpp">
       <Filter>Panel</Filter>
     </ClCompile>
     <ClCompile Include="..\notebook.cpp">
       <Filter>Notebook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tracker_panel.cpp">
+      <Filter>Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\resource.cpp">
+      <Filter>Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -84,14 +87,14 @@
     <ClInclude Include="..\log_panel.h">
       <Filter>Panel</Filter>
     </ClInclude>
-    <ClInclude Include="..\trackers_panel.h">
-      <Filter>Panel</Filter>
-    </ClInclude>
     <ClInclude Include="..\main_panel.h">
       <Filter>Panel</Filter>
     </ClInclude>
     <ClInclude Include="..\notebook.h">
       <Filter>Notebook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tracker_panel.h">
+      <Filter>Panel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -124,7 +127,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\resources\calladmin-client.rc">
+    <ResourceCompile Include="..\calladmin_client.rc">
       <Filter>Resources</Filter>
     </ResourceCompile>
   </ItemGroup>

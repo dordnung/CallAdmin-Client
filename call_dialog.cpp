@@ -1,6 +1,6 @@
 ﻿/**
  * -----------------------------------------------------
- * File        call_dialog.h
+ * File        call_dialog.cpp
  * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
@@ -27,34 +27,25 @@
 #include <wx/tokenzr.h>
 #include <wx/statline.h>
 #include <wx/tooltip.h>
+#include <wx/xrc/xmlres.h>
 
 #include "tinyxml2/tinyxml2.h"
 
 
-// Event ID's for Call Dialog
-enum {
-	wxID_ConnectCall = wxID_HIGHEST + 50,
-	wxID_CheckDone,
-	wxID_ContactClient,
-	wxID_ContactTarget,
-	wxID_ContactTrackers
-};
-
-
 // Button Events for Call Dialog
 BEGIN_EVENT_TABLE(CallDialog, wxDialog)
-EVT_BUTTON(wxID_ConnectCall, CallDialog::OnConnect)
-EVT_BUTTON(wxID_CheckDone, CallDialog::OnCheck)
-EVT_BUTTON(wxID_ContactClient, CallDialog::OnContactClient)
-EVT_BUTTON(wxID_ContactTarget, CallDialog::OnContactTarget)
-EVT_BUTTON(wxID_ContactTrackers, CallDialog::OnContactTrackers)
+EVT_BUTTON(XRCID("connectButton"), CallDialog::OnConnect)
+EVT_BUTTON(XRCID("takeoverButton"), CallDialog::OnCheck)
+EVT_BUTTON(XRCID("contactClientButton"), CallDialog::OnContactClient)
+EVT_BUTTON(XRCID("contactTargetButton"), CallDialog::OnContactTarget)
+EVT_BUTTON(XRCID("contactTrackersButton"), CallDialog::OnContactTrackers)
 
 EVT_CLOSE(CallDialog::OnCloseWindow)
 EVT_ICONIZE(CallDialog::OnMinimizeWindow)
 END_EVENT_TABLE()
 
 
-CallDialog::CallDialog(const wxString &title) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxMINIMIZE_BOX) {
+CallDialog::CallDialog() {
 	// Initialize vars
 	this->sizerTop = NULL;
 	this->clientAvatar = NULL;
@@ -77,193 +68,99 @@ CallDialog::~CallDialog() {
 
 
 // Start the Call
-void CallDialog::StartCall(bool show) {
-	// Create Box
-	this->sizerTop = new wxBoxSizer(wxVERTICAL);
+bool CallDialog::StartCall(bool show) {
+	if (!wxXmlResource::Get()->LoadDialog(this, NULL, "callDialog")) {
+		wxMessageBox("Error: Couldn't find XRCID callDialog", "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR);
+
+		return false;
+	}
+
+	// Text helper
+	wxStaticText *text;
+	wxTextCtrl *textCtrl;
 
 	// Panel
-	wxPanel *panel = new wxPanel(this, wxID_ANY);
+	wxWindow *panel;
+	FIND_OR_FAIL(panel, this->GetChildren().GetFirst()->GetData(), "callPanel");
 
-	// Border and Center
-	wxStaticText *text;
-	wxTextCtrl *text2;
-
-	// ToolTip for Contact friend 
-	wxToolTip *contactTooltip = new wxToolTip("This will open a Steam chat with this client.");
-
-	contactTooltip->SetDelay(500);
-	contactTooltip->Enable(true);
-
-	// But first we need a Time
-	wxDateTime dateTime = wxDateTime((time_t)GetTime());
+	// Sizer
+	FIND_OR_FAIL(this->sizerTop, panel->GetSizer(), "callDialogSizerTop");
 
 	// New Call
-	text = new wxStaticText(panel, wxID_ANY, wxString::FromUTF8(this->serverName));
-
-	text->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-
-
-	// Add it
-	this->sizerTop->Add(text, 0, wxTOP | wxRIGHT | wxLEFT | wxALIGN_CENTER, 20);
-
+	FIND_OR_FAIL(text, XRCCTRL(*this, "contactText", wxStaticText), "contactText");
+	text->SetLabel(wxString::FromUTF8(this->serverName));
 
 	// New Call At
-	text = new wxStaticText(panel, wxID_ANY, "at " + dateTime.Format("%c"));
+	FIND_OR_FAIL(text, XRCCTRL(*this, "callAtText", wxStaticText), "callAtText");
+	text->SetLabel(text->GetLabel() + wxDateTime((time_t)GetTime()).Format("%c"));
 
-	text->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	// Handled
+	FIND_OR_FAIL(this->doneText, XRCCTRL(*this, "doneText", wxStaticText), "doneText");
 
-	// Add it
-	this->sizerTop->Add(text, 0, wxRIGHT | wxLEFT | wxALIGN_CENTER, 20);
-
-	// New Call At
 	if (!this->isHandled) {
-		this->doneText = new wxStaticText(panel, wxID_ANY, "Unfinished");
-
-		this->doneText->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+		this->doneText->SetLabel("Unfinished");
 		this->doneText->SetForegroundColour(wxColor("red"));
 	} else {
-		this->doneText = new wxStaticText(panel, wxID_ANY, "Finished");
-
-		this->doneText->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+		this->doneText->SetLabel("Finished");
 		this->doneText->SetForegroundColour(wxColour(34, 139, 34));
 	}
 
-	// Add it
-	this->sizerTop->Add(this->doneText, 0, wxBOTTOM | wxRIGHT | wxLEFT | wxALIGN_CENTER, 20);
-
-	// Static line 
-	this->sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 5);
-
-	wxSizer *const clientLayout = new wxBoxSizer(wxHORIZONTAL);
-	wxSizer *const clientDetails = new wxBoxSizer(wxVERTICAL);
-
-	// Avatar
-#if defined(__WXMSW__)
-	this->clientAvatar = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(wxImage("calladmin_avatar", wxBITMAP_TYPE_RESOURCE).Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize())));
-#else
-	this->clientAvatar = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(wxImage(aGetApp().GetAppPath("resources/calladmin_avatar.bmp")).Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize())));
-#endif
-
-	clientLayout->Add(this->clientAvatar, 0, wxALL | wxALIGN_CENTER, 10);
+	// Client Avatar
+	FIND_OR_FAIL(this->clientAvatar, XRCCTRL(*this, "clientAvatar", wxStaticBitmap), "clientAvatar");
 
 	// Caller Name
-	text = new wxStaticText(panel, wxID_ANY, wxString::FromUTF8(this->client));
-	text->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-
-	clientDetails->Add(text, 0, wxALL | wxALIGN_CENTER, 10);
+	FIND_OR_FAIL(text, XRCCTRL(*this, "clientName", wxStaticText), "clientName");
+	text->SetLabel(wxString::FromUTF8(this->client));
 
 	if (caGetSteamThread()->IsConnected() && this->clientCId.IsValid()) {
 		if (caGetSteamThread()->GetSteamFriends()->GetFriendRelationship(this->clientCId) == k_EFriendRelationshipFriend) {
 			// Add Contact Friend button
-			wxButton *contactClient = new wxButton(panel, wxID_ContactClient, "Contact Friend");
+			wxButton *contactClient;
 
-			contactClient->SetToolTip(contactTooltip);
-
-			clientDetails->Add(contactClient, 0, wxALL &~wxTOP | wxALIGN_CENTER_HORIZONTAL, 5);
+			FIND_OR_FAIL(contactClient, XRCCTRL(*this, "contactClientButton", wxButton), "contactClientButton");
+			contactClient->Enable(true);
 		}
 	}
 
 	// Steamid
-	text2 = new wxTextCtrl(panel, wxID_ANY, clientId, wxDefaultPosition, wxSize(220, -1), wxTE_CENTRE | wxTE_READONLY);
-
-	text2->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-
-	clientDetails->Add(text2, 0, wxEXPAND | wxALL | wxHORIZONTAL, 10);
-
-	clientLayout->Add(clientDetails, 0, wxALL | wxALIGN_CENTER, 10);
-	this->sizerTop->Add(clientLayout, 0, wxALL | wxALIGN_CENTER, 10);
-
-
-	// Static line
-	this->sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 10);
+	FIND_OR_FAIL(textCtrl, XRCCTRL(*this, "clientSteamId", wxTextCtrl), "clientSteamId");
+	textCtrl->SetValue(clientId);
 
 	// Reason
-	text = new wxStaticText(panel, wxID_ANY, wxString::FromUTF8("\xe2\x96\xbc") + " reported because of reason: \"" + wxString::FromUTF8(reason) + "\" " + wxString::FromUTF8("\xe2\x96\xbc"));
-	text->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	FIND_OR_FAIL(text, XRCCTRL(*this, "reasonText", wxStaticText), "reasonText");
+	text->SetLabel(wxString::FromUTF8("\xe2\x96\xbc") + " reported because of reason: \"" + wxString::FromUTF8(reason) + "\" " + wxString::FromUTF8("\xe2\x96\xbc"));
 
-	this->sizerTop->Add(text, 0, wxALL | wxALIGN_CENTER, 10);
-
-	// Static line
-	this->sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 10);
-
-	wxSizer *const targetLayout = new wxBoxSizer(wxHORIZONTAL);
-	wxSizer *const targetDetails = new wxBoxSizer(wxVERTICAL);
-
-	// Avatar
-#if defined(__WXMSW__)
-	this->targetAvatar = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(wxImage("calladmin_avatar", wxBITMAP_TYPE_RESOURCE).Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize())));
-#else
-	this->targetAvatar = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(wxImage(caGetApp().GetAppPath("resources/calladmin_avatar.bmp")).Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize())));
-#endif
-
-	targetLayout->Add(this->targetAvatar, 0, wxALL | wxALIGN_CENTER, 10);
+	// Client Avatar
+	FIND_OR_FAIL(this->targetAvatar, XRCCTRL(*this, "targetAvatar", wxStaticBitmap), "targetAvatar");
 
 	// Target Name
-	text = new wxStaticText(panel, wxID_ANY, wxString::FromUTF8(this->target));
-	text->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-
-	targetDetails->Add(text, 0, wxALL | wxALIGN_CENTER, 10);
+	FIND_OR_FAIL(text, XRCCTRL(*this, "targetName", wxStaticText), "targetName");
+	text->SetLabel(wxString::FromUTF8(this->target));
 
 	if (caGetSteamThread()->IsConnected() && this->targetCId.IsValid()) {
 		if (caGetSteamThread()->GetSteamFriends()->GetFriendRelationship(this->targetCId) == k_EFriendRelationshipFriend) {
 			// Add Contact Friend button
-			wxButton *contactTarget = new wxButton(panel, wxID_ContactTarget, "Contact Friend");
+			wxButton *contactTarget;
 
-			contactTarget->SetToolTip(contactTooltip);
-
-			targetDetails->Add(contactTarget, 0, wxALL &~wxTOP | wxALIGN_CENTER_HORIZONTAL, 5);
+			FIND_OR_FAIL(contactTarget, XRCCTRL(*this, "contactTargetButton", wxButton), "contactTargetButton");
+			contactTarget->Enable(true);
 		}
 	}
 
 
 	// Steamid
-	text2 = new wxTextCtrl(panel, wxID_ANY, targetId, wxDefaultPosition, wxSize(220, -1), wxTE_CENTRE | wxTE_READONLY);
-
-	text2->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-
-	targetDetails->Add(text2, 0, wxEXPAND | wxALL | wxHORIZONTAL, 10);
-
-
-	targetLayout->Add(targetDetails, 0, wxALL | wxALIGN_CENTER, 10);
-	this->sizerTop->Add(targetLayout, 0, wxALL | wxALIGN_CENTER, 10);
+	FIND_OR_FAIL(textCtrl, XRCCTRL(*this, "targetSteamId", wxTextCtrl), "targetSteamId");
+	textCtrl->SetValue(targetId);
 
 	// Start the Timers
 	this->avatarTimer = new AvatarTimer(&this->clientCId, &this->targetCId, this->clientAvatar, this->targetAvatar);
 	this->avatarTimer->Start(100);
 
-	// Static line
-	sizerTop->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxALL, 5);
-
-	wxSizer *const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
-
-	// ToolTip for Take over button
-	wxToolTip *takeOverTooltip = new wxToolTip("This will mark the call as finished and will ignore it next time.");
-
-	takeOverTooltip->SetDelay(500);
-	takeOverTooltip->Enable(true);
-
 	// Takeover button
-	this->takeover = new wxButton(panel, wxID_CheckDone, "Take Over");
-	this->takeover->SetToolTip(takeOverTooltip);
-
-	// ToolTip for Contact Trackers button
-	wxToolTip *contactTrackersTooltip = new wxToolTip("This will send all available trackers on your friendlist a message.");
-
-	contactTrackersTooltip->SetDelay(500);
-	contactTrackersTooltip->Enable(true);
+	FIND_OR_FAIL(this->takeover, XRCCTRL(*this, "takeoverButton", wxButton), "takeoverButton");
 
 	// Contect trackers button
-	this->contactTrackers = new wxButton(panel, wxID_ContactTrackers, "Contact Trackers");
-	this->contactTrackers->Enable(true);
-	this->contactTrackers->SetToolTip(contactTrackersTooltip);
-
-	// Hide and Exit Button
-	sizerBtns->Add(new wxButton(panel, wxID_ConnectCall, "Connect"), 0, wxALL &~wxRIGHT, 5);
-	sizerBtns->Add(this->takeover, 0, wxALL &~wxRIGHT &~wxLEFT, 5);
-	sizerBtns->Add(this->contactTrackers, 0, wxALL &~wxLEFT, 5);
-
-	// Add Buttons to Box
-	this->sizerTop->Add(sizerBtns, 0, wxALL | wxALIGN_CENTER, 10);
+	FIND_OR_FAIL(this->contactTrackers, XRCCTRL(*this, "contactTrackersButton", wxButton), "contactTrackersButton");
 
 	// Auto Size
 	panel->SetSizerAndFit(this->sizerTop, true);
@@ -274,15 +171,10 @@ void CallDialog::StartCall(bool show) {
 	// Centre to Screen
 	Centre();
 
-	// Set Icon
-#if defined(__WXMSW__)
-	SetIcon(wxIcon("calladmin_icon", wxBITMAP_TYPE_ICO_RESOURCE));
-#else
-	SetIcon(wxIcon(caGetApp().GetAppPath("resources/calladmin_icon.ico"), wxBITMAP_TYPE_ICON));
-#endif
-
 	// Show the Window
 	Show(show);
+
+	return true;
 }
 
 
@@ -616,6 +508,7 @@ AvatarTimer::AvatarTimer(CSteamID *clientId, CSteamID *targetId, wxStaticBitmap 
 
 
 // Timer to update avatars
+// TODO: Lock?
 void AvatarTimer::Notify() {
 	// Steam available?
 	if (caGetSteamThread()->IsConnected()) {

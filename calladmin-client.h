@@ -59,9 +59,14 @@
 #define caGetNotebook caGetMainFrame()->GetNotebook
 #define caGetMainPanel caGetNotebook()->GetMainPanel
 #define caGetConfigPanel caGetNotebook()->GetConfigPanel
-#define caGetTrackersPanel caGetNotebook()->GetTrackersPanel
+#define caGetTrackerPanel caGetNotebook()->GetTrackerPanel
 #define caGetLogPanel caGetNotebook()->GetLogPanel
 #define caGetAboutPanel caGetNotebook()->GetAboutPanel
+
+#define FIND_OR_FAIL(var, ptr, str) var = ptr; if (var == NULL) {\
+	wxMessageBox("Error: Couldn't find XRCID " str, "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR); \
+	return false; \
+}
 
 
 // Custom events
@@ -85,6 +90,9 @@ private:
 
 	// Start in Taskbar?
 	bool startInTaskbar;
+
+	// App Ended?
+	bool appEnded;
 
 public:
 	CallAdmin();
@@ -127,15 +135,11 @@ public:
 		this->attempts = attempts;
 	}
 
-	wxString GetRelativePath(wxString relativeFileOrPath);
-
-	wxString GetCallAdminExecutablePath() {
-#if defined(__WXMSW__)
-		return GetRelativePath("calladmin-client.exe");
-#else
-		return GetRelativePath("calladmin-client");
-#endif
+	bool AppEnded() {
+		return this->appEnded;
 	}
+
+	wxString GetRelativePath(wxString relativeFileOrPath);
 
 	void CheckUpdate();
 	void CreateReconnect(wxString error);
@@ -144,7 +148,7 @@ public:
 	void ExitProgramm();
 
 	void LogAction(wxString action, LogLevel logLevel = LEVEL_INFO) {
-		if (logLevel >= this->config->GetLogLevel()) {
+		if (!this->appEnded) {
 			this->mainFrame->GetNotebook()->GetLogPanel()->AddLog(action, logLevel);
 		}
 	}
@@ -213,5 +217,7 @@ inline bool isOtherInFullscreen() {
 // Declare the app
 DECLARE_APP(CallAdmin)
 
+// Defined in resource.cpp
+extern void InitXmlResource();
 
 #endif

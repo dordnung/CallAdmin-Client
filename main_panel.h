@@ -36,16 +36,6 @@
 #include <wx/statline.h>
 
 
-// Event ID's
-enum {
-	wxID_Hide = wxID_HIGHEST + 20,
-	wxID_Reconnect,
-	wxID_BoxClick,
-	wxID_CheckBox,
-	wxID_SteamChanged
-};
-
-
 wxDECLARE_EVENT(wxEVT_STEAM_STATUS_CHANGED, wxCommandEvent);
 
 
@@ -69,8 +59,11 @@ private:
 public:
 	MainPanel();
 
-	// Update Window
+	bool InitPanel();
+
+	// Sets the event text
 	void SetEventText(wxString text);
+
 	void SetReconnectButton(bool enable = false) {
 		this->reconnectButton->Enable(enable);
 	}
@@ -78,10 +71,13 @@ public:
 	// Update Call list
 	void UpdateCalls();
 
+	// TODO: Nicht int sondern iterator item
 	void SetHandled(int item);
 
 protected:
 	// Events
+	void OnCloseWindow(wxCloseEvent &event);
+
 	void OnHide(wxCommandEvent &event);
 	void OnReconnect(wxCommandEvent &event);
 
@@ -89,8 +85,6 @@ protected:
 
 	void OnCheckBox(wxCommandEvent &event);
 	void OnSteamChange(wxCommandEvent &event);
-
-	void OnCloseWindow(wxCloseEvent &event);
 
 	DECLARE_EVENT_TABLE()
 };

@@ -36,7 +36,7 @@
 
 #include "main_panel.h"
 #include "config_panel.h"
-#include "trackers_panel.h"
+#include "tracker_panel.h"
 #include "log_panel.h"
 #include "about_panel.h"
 
@@ -44,18 +44,27 @@
 /**
  * Notebook with its panels
  */
-class Notebook : public wxNotebook {
+class Notebook {
 private:
+	wxNotebook *window;
 	MainPanel *mainPanel;
 	ConfigPanel *configPanel;
-	TrackerPanel *trackersPanel;
+	TrackerPanel *trackerPanel;
 	LogPanel *logPanel;
 	AboutPanel *aboutPanel;
 
 public:
-	Notebook();
+	Notebook(wxNotebook *window) : window(window), mainPanel(NULL), configPanel(NULL),
+		trackerPanel(NULL), logPanel(NULL), aboutPanel(NULL) {};
 
-	void CreateAndAddPages();
+	~Notebook();
+
+	bool CreatePages();
+
+	// Notebook window accessor
+	wxNotebook* GetWindow() {
+		return this->window;
+	}
 
 	// Panel accessors
 	MainPanel* GetMainPanel() {
@@ -66,8 +75,8 @@ public:
 		return this->configPanel;
 	}
 
-	TrackerPanel* GetTrackersPanel() {
-		return this->trackersPanel;
+	TrackerPanel* GetTrackerPanel() {
+		return this->trackerPanel;
 	}
 
 	LogPanel* GetLogPanel() {
@@ -77,11 +86,6 @@ public:
 	AboutPanel* GetAboutPanel() {
 		return this->aboutPanel;
 	}
-
-protected:
-	void OnCloseWindow(wxCloseEvent &event);
-
-	DECLARE_EVENT_TABLE()
 };
 
 #endif

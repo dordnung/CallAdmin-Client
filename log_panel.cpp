@@ -24,27 +24,22 @@
 #include "log_panel.h"
 #include "calladmin-client.h"
 
+#include <wx/xrc/xmlres.h>
 
-// Events for Log Panel
-BEGIN_EVENT_TABLE(LogPanel, wxPanel)
-EVT_CLOSE(LogPanel::OnCloseWindow)
-END_EVENT_TABLE()
 
 // Create Log Panel
-LogPanel::LogPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
-	// Create Box
-	wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
+bool LogPanel::InitPanel() {
+	if (!wxXmlResource::Get()->LoadPanel(this, caGetNotebook()->GetWindow(), "logPanel")) {
+		wxMessageBox("Error: Couldn't find XRCID logPanel", "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR);
 
-	this->logBox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_HSCROLL | wxLB_SINGLE);
-	this->logBox->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+		return false;
+	}
 
-	// Add Log Box
-	sizerTop->Add(this->logBox, 1, wxEXPAND);
+	// Box
+	FIND_OR_FAIL(this->logBox, XRCCTRL(*this, "logBox", wxListBox), "logBox");
 
 	// Auto Size
-	SetSizerAndFit(sizerTop, true);
-}
+	SetSizerAndFit(this->GetSizer(), true);
 
-void LogPanel::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {
-	Destroy();
+	return true;
 }

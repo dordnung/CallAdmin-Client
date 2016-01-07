@@ -103,7 +103,7 @@ private:
 	bool isHandled;
 
 public:
-	CallDialog(const wxString &title);
+	CallDialog();
 	~CallDialog();
 
 	// Convert to community ID
@@ -213,7 +213,7 @@ public:
 	void SetFinish();
 
 	// Start the call
-	void StartCall(bool show);
+	bool StartCall(bool show);
 
 	// CURL Callbacks
 	static void OnGetTrackers(wxString errorStr, wxString result, int extra);

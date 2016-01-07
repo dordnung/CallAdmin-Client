@@ -1,9 +1,9 @@
-#ifndef TRACKERS_PANEL_H
-#define TRACKERS_PANEL_H
+#ifndef TRACKER_PANEL_H
+#define TRACKER_PANEL_H
 
 /**
  * -----------------------------------------------------
- * File        trackers_panel.h
+ * File        tracker_panel.h
  * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
@@ -66,7 +66,9 @@ private:
 	wxListBox *trackerBox;
 
 public:
-	TrackerPanel();
+	TrackerPanel() : currentNameTimerId(0), trackerBox(NULL) {};
+
+	bool InitPanel();
 
 	void AddTracker(wxString text) {
 		this->trackerBox->Append(wxString::FromUTF8(text));

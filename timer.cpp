@@ -75,6 +75,7 @@ void Timer::Run(int repeatInterval) {
 
 
 // Timer executed
+// TODO: LOCK fuer exit?
 void Timer::OnExecute(wxTimerEvent& WXUNUSED(event)) {
 	Config *config = caGetConfig();
 
@@ -100,7 +101,7 @@ void Timer::OnExecute(wxTimerEvent& WXUNUSED(event)) {
 	this->isFirstShoot = false;
 }
 
-
+// TODO: LOCK fuer exit?
 void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 	// Valid result?
 	if (result != "") {
@@ -198,7 +199,7 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 						int found = 0;
 
 						// Create the new CallDialog
-						CallDialog *newDialog = new CallDialog("New Incoming Call");
+						CallDialog *newDialog = new CallDialog();
 
 						// Put in ALL needed DATA
 						for (tinyxml2::XMLNode *node3 = node2->FirstChild(); node3; node3 = node3->NextSibling()) {
@@ -278,7 +279,7 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 						// Found all necessary items?
 						if (found != 10 || foundDuplicate) {
 							// Something went wrong or duplicate
-							newDialog->Close();
+							newDialog->Destroy();
 						} else {
 							// New call
 							foundNew = true;
@@ -299,18 +300,25 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 							newDialog->SetId(dialog);
 
 							// Don't show calls on first Run
+							bool success;
+
 							if (firstRun) {
 								foundRows--;
-								newDialog->StartCall(false);
+								success = newDialog->StartCall(false);
 							} else {
 								// Log Action
 								caLogAction("We have a new Call");
-								newDialog->StartCall(caGetConfig()->GetIsAvailable() && !isOtherInFullscreen());
+								success = newDialog->StartCall(caGetConfig()->GetIsAvailable() && !isOtherInFullscreen());
 							}
 
-							newDialog->GetTakeoverButton()->Enable(!newDialog->IsHandled());
+							if (!success) {
+								newDialog->Destroy();
+								caLogAction("A call dialog couldn't be created!", LogLevel::LEVEL_ERROR);
+							} else {
+								newDialog->GetTakeoverButton()->Enable(!newDialog->IsHandled());
 
-							caGetCallDialogs()->push_back(newDialog);
+								caGetCallDialogs()->push_back(newDialog);
+							}
 						}
 					}
 				}

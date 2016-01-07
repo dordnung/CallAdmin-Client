@@ -35,12 +35,16 @@
 
 class AboutPanel : public wxPanel {
 private:
+	wxString currentVersion;
 	wxButton *downloadButton;
 	wxStaticText *currentText;
 	wxSizer *sizerTop;
 
 public:
-	AboutPanel();
+	AboutPanel() : downloadButton(NULL), currentText(NULL),
+		sizerTop(NULL), currentVersion("") {};
+
+	bool InitPanel();
 
 	void EnableDownload(bool enable) {
 		this->downloadButton->Enable(enable);
@@ -51,8 +55,6 @@ public:
 protected:
 	void OnUpdate(wxCommandEvent &event);
 	void OnDownload(wxCommandEvent &event);
-
-	void OnCloseWindow(wxCloseEvent &event);
 
 	DECLARE_EVENT_TABLE()
 };

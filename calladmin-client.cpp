@@ -24,6 +24,7 @@
 #include <wx/cmdline.h>
 #include <wx/snglinst.h>
 #include <wx/stdpaths.h>
+#include <wx/xrc/xmlres.h>
 
 #include "calladmin-client.h"
 #include "curl_util.h"
@@ -41,10 +42,10 @@ static const wxCmdLineEntryDesc cmdLineDesc[] =
 IMPLEMENT_APP(CallAdmin)
 
 
+// Events
 wxDEFINE_EVENT(wxEVT_CALL_DIALOG_CLOSED, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CURL_THREAD_FINISHED, wxCommandEvent);
 
-// Events
 BEGIN_EVENT_TABLE(CallAdmin, wxApp)
 EVT_COMMAND(wxID_ANY, wxEVT_CURL_THREAD_FINISHED, CallAdmin::OnCurlThread)
 END_EVENT_TABLE()
@@ -60,6 +61,7 @@ CallAdmin::CallAdmin() {
 	this->curlThread = NULL;
 
 	this->startInTaskbar = false;
+	this->appEnded = false;
 
 	// Attempts to Zero
 	this->attempts = 0;
@@ -97,19 +99,34 @@ bool CallAdmin::OnInit() {
 		this->avatarSize = 64;
 	}
 
+	// Init XML Resources
+	wxImage::AddHandler(new wxICOHandler());
+	wxImage::AddHandler(new wxBMPHandler());
+
+	wxXmlResource::Get()->InitAllHandlers();
+	InitXmlResource();
+
+	// Create Config
+	this->config = new Config();
+
+	// TODO: IsconfigSet?
+	this->config->ParseConfig();
+
+	// Create MainFrame
+	this->mainFrame = new MainFrame();
+
+	// Init Frame
+	if (!this->mainFrame->InitFrame(this->startInTaskbar)) {
+		ExitProgramm();
+
+		return false;
+	}
+
 	// Create CURL Thread
 	this->curlThread = new CurlThread();
 
 	// Create Icon
 	this->taskBarIcon = new TaskBarIcon();
-
-	// Create Config
-	this->config = new Config();
-	this->config->ParseConfig();
-
-	// Create main Dialog
-	this->mainFrame = new MainFrame("CallAdmin Client");
-	this->mainFrame->CreateWindow(this->startInTaskbar);
 
 	// Update Call List
 	this->mainFrame->GetNotebook()->GetConfigPanel()->ParseConfig();
@@ -125,7 +142,7 @@ bool CallAdmin::OnInit() {
 int CallAdmin::OnExit() {
 	ExitProgramm();
 
-	return 1;
+	return 0;
 }
 
 
@@ -198,7 +215,7 @@ void CallAdmin::StartUpdate() {
 
 // Get the content of a page
 void CallAdmin::GetPage(CurlCallback callbackFunction, wxString page, int extra) {
-	if (!this->curlThread->GetThread()) {
+	if (!this->appEnded && !this->curlThread->GetThread()) {
 		this->curlThread->SetCallbackFunction(callbackFunction);
 		this->curlThread->SetPage(page);
 		this->curlThread->SetExtra(extra);
@@ -228,7 +245,7 @@ void CallAdmin::CreateReconnect(wxString error) {
 	}
 
 	// Go to first page
-	mainFrame->GetNotebook()->SetSelection(0);
+	mainFrame->GetNotebook()->GetWindow()->SetSelection(0);
 }
 
 
@@ -243,14 +260,11 @@ void CallAdmin::ShowError(wxString error, wxString type) {
 
 // Close Taskbar Icon and destroy all dialogs
 void CallAdmin::ExitProgramm() {
-	// First of all stop the timer
-	if (this->timer != NULL) {
-		this->timer->Stop();
-		delete this->timer;
-	}
+	// App ended now
+	this->appEnded = true;
 
 	// Then hide all windows
-	if (this->mainFrame != NULL) {
+	if (this->mainFrame) {
 		this->mainFrame->Show(false);
 	}
 
@@ -260,13 +274,27 @@ void CallAdmin::ExitProgramm() {
 
 	// Curl thread destroy
 	delete this->curlThread;
+	this->curlThread = NULL;
 
 	// Delete the steam thread
 	delete this->steamThread;
+	this->steamThread = NULL;
+
+	// Stop the timer
+	if (this->timer) {
+		this->timer->Stop();
+
+		delete this->timer;
+		this->timer = NULL;
+	}
 
 	// Taskbar goodbye :)
-	this->taskBarIcon->RemoveIcon();
-	this->taskBarIcon->Destroy();
+	if (this->taskBarIcon) {
+		this->taskBarIcon->RemoveIcon();
+		this->taskBarIcon->Destroy();
+
+		this->taskBarIcon = NULL;
+	}
 
 	// First delete call dialogs
 	for (wxVector<CallDialog *>::iterator callDialog = callDialogs.begin(); callDialog != callDialogs.end(); ++callDialog) {
@@ -275,12 +303,11 @@ void CallAdmin::ExitProgramm() {
 
 	callDialogs.clear();
 
-	// Delete notebook
-	this->mainFrame->GetNotebook()->Close();
-
-	// Delete main frame
-	if (this->mainFrame != NULL) {
+	// Destroy mainFrame
+	if (this->mainFrame) {
+		// Delete main frame
 		this->mainFrame->Destroy();
+		this->mainFrame = NULL;
 	}
 }
 
@@ -320,6 +347,10 @@ void CallAdmin::CheckUpdate() {
 
 // Handle Update Page
 void CallAdmin::OnUpdate(wxString error, wxString result, int WXUNUSED(x)) {
+	if (caGetApp().AppEnded()) {
+		return;
+	}
+
 	// Log Action
 	caLogAction("Retrieve information about new version");
 
@@ -363,7 +394,7 @@ void CallAdmin::OnUpdate(wxString error, wxString result, int WXUNUSED(x)) {
 			}
 
 			// Goto About
-			caGetNotebook()->SetSelection(4);
+			caGetNotebook()->GetWindow()->SetSelection(4);
 
 			caGetTaskBarIcon()->ShowMessage("New Version available", "New version " + newVersion + " is now available!", caGetMainFrame());
 		} else {

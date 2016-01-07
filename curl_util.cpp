@@ -45,6 +45,7 @@ CurlThread::~CurlThread() {
 
 
 // Curl Thread started
+// TODO: LOCK fuer app ende
 wxThread::ExitCode CurlThread::Entry() {
 	if (!GetThread()->TestDestroy()) {
 		// Event

@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        trackers_panel.cpp
+ * File        tracker_panel.cpp
  * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
@@ -21,53 +21,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-#include "trackers_panel.h"
+#include "tracker_panel.h"
 #include "calladmin-client.h"
 
 #include "tinyxml2/tinyxml2.h"
 #include "curl_util.h"
 
-
-// Event Id
-enum {
-	wxID_UpdateTrackers = wxID_HIGHEST + 10,
-};
+#include <wx/xrc/xmlres.h>
 
 
 // Events for Trackers Panel
 BEGIN_EVENT_TABLE(TrackerPanel, wxPanel)
-EVT_BUTTON(wxID_UpdateTrackers, TrackerPanel::OnUpdate)
+EVT_BUTTON(XRCID("updateTrackers"), TrackerPanel::OnUpdate)
 
 EVT_CLOSE(TrackerPanel::OnCloseWindow)
 END_EVENT_TABLE()
 
 
 // Create Tracker Panel
-TrackerPanel::TrackerPanel() : wxPanel(caGetNotebook(), wxID_ANY) {
-	this->currentNameTimerId = 0;
+bool TrackerPanel::InitPanel() {
+	if (!wxXmlResource::Get()->LoadPanel(this, caGetMainFrame(), "trackerPanel")) {
+		wxMessageBox("Error: Couldn't find XRCID trackerPanel", "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR);
 
-	// Border and Center
-	wxSizerFlags flags;
+		return false;
+	}
 
-	// Create Box
-	wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
-
-	this->trackerBox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_HSCROLL | wxLB_SINGLE);
-	this->trackerBox->SetFont(wxFont(14, wxFONTFAMILY_ROMAN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-
-	// Add Log Box
-	sizerTop->Add(this->trackerBox, 1, wxEXPAND);
-
-	wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
-
-	// Hide and Exit Button
-	sizerBtns->Add(new wxButton(this, wxID_UpdateTrackers, "Update Trackers"), 0, wxALL | wxALIGN_CENTER, 5);
-
-	// Add Buttons to Box
-	sizerTop->Add(sizerBtns, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, 10);
+	// Box
+	FIND_OR_FAIL(this->trackerBox, XRCCTRL(*this, "trackerBox", wxListBox), "trackerBox");
 
 	// Auto Size
-	SetSizerAndFit(sizerTop, true);
+	SetSizerAndFit(this->GetSizer(), true);
+
+	return true;
 }
 
 
@@ -79,6 +64,7 @@ void TrackerPanel::OnUpdate(wxCommandEvent& WXUNUSED(event)) {
 
 
 // Refresh Trackers
+// TODO: Lock fuer exit?
 void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNUSED(extra)) {
 	// Log Action
 	caLogAction("Got Trackers");
@@ -86,7 +72,7 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 	wxString error = "";
 
 	// Delete old ones
-	caGetTrackersPanel()->DeleteTrackers();
+	caGetTrackerPanel()->DeleteTrackers();
 
 	// Not empty?
 	if (result != "") {
@@ -137,7 +123,7 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 								// Valid Tracker ID?
 								if (steamidTracker.IsValid()) {
 									// Create Name Timer
-									caGetTrackersPanel()->GetNameTimers()->push_back(new NameTimer(steamidTracker, caGetTrackersPanel()->GetAndIncraseCurrentNameTimerId()));
+									caGetTrackerPanel()->GetNameTimers()->push_back(new NameTimer(steamidTracker, caGetTrackerPanel()->GetAndIncraseCurrentNameTimerId()));
 
 									found = true;
 								}
@@ -187,7 +173,6 @@ void TrackerPanel::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {
 	}
 
 	nameTimers.clear();
-	Destroy();
 }
 
 
@@ -206,7 +191,7 @@ NameTimer::~NameTimer() {
 	bool found = false;
 
 	// Remove name timer
-	wxVector<NameTimer *>* nameTimers = caGetTrackersPanel()->GetNameTimers();
+	wxVector<NameTimer *>* nameTimers = caGetTrackerPanel()->GetNameTimers();
 	wxVector<NameTimer *>::iterator nameTimerIterator;
 
 	for (nameTimerIterator = nameTimers->begin(); nameTimerIterator != nameTimers->end(); ++nameTimerIterator) {
@@ -225,6 +210,7 @@ NameTimer::~NameTimer() {
 
 
 // Timer to update trackers
+// TODO: lock fuer exit?
 void NameTimer::Notify() {
 	// Steam available?
 	if (caGetSteamThread()->IsConnected()) {
@@ -252,9 +238,9 @@ void NameTimer::Notify() {
 
 				// Add Tracker
 				if (this->client.Render() != caGetSteamThread()->GetUserSteamId()) {
-					caGetTrackersPanel()->AddTracker("" + (wxString)caGetSteamThread()->GetSteamFriends()->GetFriendPersonaName(this->client) + " - " + (wxString)this->client.Render() + " - " + isFriend + " - " + isOnline);
+					caGetTrackerPanel()->AddTracker("" + (wxString)caGetSteamThread()->GetSteamFriends()->GetFriendPersonaName(this->client) + " - " + (wxString)this->client.Render() + " - " + isFriend + " - " + isOnline);
 				} else {
-					caGetTrackersPanel()->AddTracker("" + (wxString)caGetSteamThread()->GetSteamFriends()->GetFriendPersonaName(this->client) + " - " + (wxString)this->client.Render());
+					caGetTrackerPanel()->AddTracker("" + (wxString)caGetSteamThread()->GetSteamFriends()->GetFriendPersonaName(this->client) + " - " + (wxString)this->client.Render());
 				}
 
 				//Stop

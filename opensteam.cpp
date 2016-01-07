@@ -138,6 +138,7 @@ STEAM_ERROR_TYP SteamThread::Load() {
 
 
 // Thread started
+// LOCK fuer exit?
 void SteamThread::Check() {
 	for (; !GetThread()->TestDestroy(); Sleep(100)) {
 		wxMutexLocker steamLocker(steamLock);
@@ -193,11 +194,12 @@ void SteamThread::Check() {
 			this->lastError = steamError;
 		}
 
-		static unsigned int i = 0;
 		CallbackMsg_t callbackMsg;
 
 		// If connected check if still logged in and Steam is still opened
 		if (this->isConnected) {
+			static unsigned int i = 0;
+
 			if (++i % 50 == 0) {
 				// Check if logged in
 				if (!this->steamUser->BLoggedOn()) {

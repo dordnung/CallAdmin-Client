@@ -24,50 +24,37 @@
 #include "notebook.h"
 #include "calladmin-client.h"
 
-// Events
-BEGIN_EVENT_TABLE(Notebook, wxNotebook)
-EVT_CLOSE(Notebook::OnCloseWindow)
-END_EVENT_TABLE()
+#include <wx/xrc/xmlres.h>
 
-Notebook::Notebook() : wxNotebook(caGetMainFrame(), wxID_ANY) {
-	this->mainPanel = NULL;
-	this->configPanel = NULL;
-	this->trackersPanel = NULL;
-	this->logPanel = NULL;
-	this->aboutPanel = NULL;
-}
 
-// Create Notebook pages
-void Notebook::CreateAndAddPages() {
+// Loads the pages of the notebook
+bool Notebook::CreatePages() {
 	this->mainPanel = new MainPanel();
 	this->configPanel = new ConfigPanel();
-	this->trackersPanel = new TrackerPanel();
+	this->trackerPanel = new TrackerPanel();
 	this->logPanel = new LogPanel();
 	this->aboutPanel = new AboutPanel();
 
-	// Add main Panel
-	AddPage(this->mainPanel, ("Main"));
+	if (!(this->mainPanel->InitPanel() && this->configPanel->InitPanel()
+		&& this->trackerPanel->InitPanel() && this->logPanel->InitPanel() && this->aboutPanel->InitPanel())) {
+		return false;
+	}
 
-	// Add config Panel
-	AddPage(this->configPanel, ("Settings"));
+	this->window->AddPage(this->mainPanel, "Main", true);
+	this->window->AddPage(this->configPanel, "Settings");
+	this->window->AddPage(this->trackerPanel, "Trackers");
+	this->window->AddPage(this->logPanel, "Logging");
+	this->window->AddPage(this->aboutPanel, "About");
 
-	// Add trackers Panel
-	AddPage(this->trackersPanel, ("Trackers"));
-
-	// Add log Panel
-	AddPage(this->logPanel, ("Logging"));
-
-	// Add about Panel
-	AddPage(this->aboutPanel, ("About"));
+	return true;
 }
 
+Notebook::~Notebook() {
+	this->mainPanel->Destroy();
+	this->configPanel->Destroy();
+	this->trackerPanel->Destroy();
+	this->logPanel->Destroy();
+	this->aboutPanel->Destroy();
 
-void Notebook::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {
-	this->mainPanel->Close();
-	this->configPanel->Close();
-	this->trackersPanel->Close();
-	this->logPanel->Close();
-	this->aboutPanel->Close();
-
-	Destroy();
+	this->window->Destroy();
 }
