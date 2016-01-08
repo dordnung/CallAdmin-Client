@@ -93,7 +93,7 @@ protected:
 	void OnUpdate(wxCommandEvent &event);
 	void OnCloseWindow(wxCloseEvent &event);
 
-	DECLARE_EVENT_TABLE()
+	wxDECLARE_EVENT_TABLE();
 };
 
 #endif

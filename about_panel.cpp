@@ -31,10 +31,10 @@
 
 
 // Button Events for about Panel
-BEGIN_EVENT_TABLE(AboutPanel, wxPanel)
+wxBEGIN_EVENT_TABLE(AboutPanel, wxPanel)
 EVT_BUTTON(XRCID("checkForUpdate"), AboutPanel::OnUpdate)
 EVT_BUTTON(XRCID("downloadUpdate"), AboutPanel::OnDownload)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 
 // Create about Panel

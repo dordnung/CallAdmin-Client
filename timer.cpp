@@ -31,9 +31,9 @@
 
 
 // Timer events
-BEGIN_EVENT_TABLE(Timer, wxTimer)
+wxBEGIN_EVENT_TABLE(Timer, wxTimer)
 EVT_TIMER(TIMER_ID, Timer::OnExecute)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 
 // We need something to print for a XML Error!

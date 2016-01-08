@@ -240,7 +240,7 @@ protected:
 	void OnCloseWindow(wxCloseEvent &event);
 	void OnMinimizeWindow(wxIconizeEvent &event);
 
-	DECLARE_EVENT_TABLE()
+	wxDECLARE_EVENT_TABLE();
 };
 
 

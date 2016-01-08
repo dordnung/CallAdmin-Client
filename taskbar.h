@@ -57,7 +57,7 @@ public:
 	// Override CreatePopupMenu
 	virtual wxMenu *CreatePopupMenu();
 
-	DECLARE_EVENT_TABLE()
+	wxDECLARE_EVENT_TABLE();
 };
 
 #endif

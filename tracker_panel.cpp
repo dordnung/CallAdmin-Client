@@ -31,11 +31,11 @@
 
 
 // Events for Trackers Panel
-BEGIN_EVENT_TABLE(TrackerPanel, wxPanel)
+wxBEGIN_EVENT_TABLE(TrackerPanel, wxPanel)
 EVT_BUTTON(XRCID("updateTrackers"), TrackerPanel::OnUpdate)
 
 EVT_CLOSE(TrackerPanel::OnCloseWindow)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 
 // Create Tracker Panel

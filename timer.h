@@ -52,7 +52,7 @@ public:
 
 	static void OnNotice(wxString error, wxString result, int firstRun);
 
-	DECLARE_EVENT_TABLE()
+	wxDECLARE_EVENT_TABLE();
 };
 
 

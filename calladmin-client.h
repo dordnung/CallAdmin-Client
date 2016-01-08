@@ -168,7 +168,7 @@ protected:
 
 	void OnCurlThread(wxCommandEvent &event);
 
-	DECLARE_EVENT_TABLE()
+	wxDECLARE_EVENT_TABLE();
 };
 
 
@@ -215,7 +215,7 @@ inline bool isOtherInFullscreen() {
 
 
 // Declare the app
-DECLARE_APP(CallAdmin)
+wxDECLARE_APP(CallAdmin);
 
 // Defined in resource.cpp
 extern void InitXmlResource();

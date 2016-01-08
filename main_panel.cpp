@@ -30,7 +30,7 @@
 wxDEFINE_EVENT(wxEVT_STEAM_STATUS_CHANGED, wxCommandEvent);
 
 // Button Events for about Panel
-BEGIN_EVENT_TABLE(MainPanel, wxPanel)
+wxBEGIN_EVENT_TABLE(MainPanel, wxPanel)
 EVT_BUTTON(XRCID("hide"), MainPanel::OnHide)
 EVT_BUTTON(XRCID("reconnectButton"), MainPanel::OnReconnect)
 
@@ -41,7 +41,7 @@ EVT_CHECKBOX(XRCID("store"), MainPanel::OnCheckBox)
 EVT_COMMAND(wxID_ANY, wxEVT_STEAM_STATUS_CHANGED, MainPanel::OnSteamChange)
 
 EVT_LISTBOX_DCLICK(XRCID("callBox"), MainPanel::OnBoxClick)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 
 

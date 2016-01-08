@@ -39,7 +39,7 @@ enum {
 
 
 // Taskbar Events
-BEGIN_EVENT_TABLE(TaskBarIcon, wxTaskBarIcon)
+wxBEGIN_EVENT_TABLE(TaskBarIcon, wxTaskBarIcon)
 EVT_MENU(PU_RESTORE, TaskBarIcon::OnMenuRestore)
 EVT_MENU(PU_UPDATE, TaskBarIcon::OnMenuUpdate)
 #if defined(__WXMSW__)
@@ -47,7 +47,7 @@ EVT_MENU(PU_AUTOSTART, TaskBarIcon::OnMenuAutoStart)
 #endif
 EVT_MENU(PU_EXIT, TaskBarIcon::OnMenuExit)
 EVT_TASKBAR_LEFT_DCLICK(TaskBarIcon::OnLeftButtonDClick)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 
 // Constructor: Set Taskbar icon

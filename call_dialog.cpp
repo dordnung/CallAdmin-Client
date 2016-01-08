@@ -33,7 +33,7 @@
 
 
 // Button Events for Call Dialog
-BEGIN_EVENT_TABLE(CallDialog, wxDialog)
+wxBEGIN_EVENT_TABLE(CallDialog, wxDialog)
 EVT_BUTTON(XRCID("connectButton"), CallDialog::OnConnect)
 EVT_BUTTON(XRCID("takeoverButton"), CallDialog::OnCheck)
 EVT_BUTTON(XRCID("contactClientButton"), CallDialog::OnContactClient)
@@ -42,7 +42,7 @@ EVT_BUTTON(XRCID("contactTrackersButton"), CallDialog::OnContactTrackers)
 
 EVT_CLOSE(CallDialog::OnCloseWindow)
 EVT_ICONIZE(CallDialog::OnMinimizeWindow)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 
 CallDialog::CallDialog() {

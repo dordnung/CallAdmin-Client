@@ -39,16 +39,16 @@ static const wxCmdLineEntryDesc cmdLineDesc[] =
 
 
 // Implement the APP
-IMPLEMENT_APP(CallAdmin)
+wxIMPLEMENT_APP(CallAdmin);
 
 
 // Events
 wxDEFINE_EVENT(wxEVT_CALL_DIALOG_CLOSED, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CURL_THREAD_FINISHED, wxCommandEvent);
 
-BEGIN_EVENT_TABLE(CallAdmin, wxApp)
+wxBEGIN_EVENT_TABLE(CallAdmin, wxApp)
 EVT_COMMAND(wxID_ANY, wxEVT_CURL_THREAD_FINISHED, CallAdmin::OnCurlThread)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 
 CallAdmin::CallAdmin() {
@@ -166,7 +166,7 @@ bool CallAdmin::OnCmdLineParsed(wxCmdLineParser &parser) {
 void CallAdmin::OnCurlThread(wxCommandEvent &event) {
 	// Get Content
 	CurlThreadData *data = static_cast<CurlThreadData *>(event.GetClientObject());
-
+	
 	// Get Function
 	CurlCallback function = data->GetCallbackFunction();
 
@@ -277,19 +277,16 @@ void CallAdmin::ExitProgramm() {
 	}
 
 	// Curl thread destroy
-	delete this->curlThread;
-	this->curlThread = NULL;
+	wxDELETE(this->curlThread);
 
 	// Delete the steam thread
-	delete this->steamThread;
-	this->steamThread = NULL;
+	wxDELETE(this->steamThread);
 
 	// Stop the timer
 	if (this->timer) {
 		this->timer->Stop();
 
-		delete this->timer;
-		this->timer = NULL;
+		wxDELETE(this->timer);
 	}
 
 	// Taskbar goodbye :)
@@ -315,8 +312,7 @@ void CallAdmin::ExitProgramm() {
 	}
 
 	// Delete config
-	delete this->config;
-	this->config = NULL;
+	wxDELETE(this->config);
 }
 
 

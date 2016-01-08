@@ -29,7 +29,7 @@
 
 
 // Events for Config Panel
-BEGIN_EVENT_TABLE(ConfigPanel, wxPanel)
+wxBEGIN_EVENT_TABLE(ConfigPanel, wxPanel)
 EVT_BUTTON(XRCID("updateSettings"), ConfigPanel::OnSet)
 
 EVT_CHECKBOX(XRCID("steamEnable"), ConfigPanel::OnSteamUpdate)
@@ -37,7 +37,7 @@ EVT_CHECKBOX(XRCID("showInTaskbar"), ConfigPanel::OnShowInTaskbarUpdate)
 EVT_CHECKBOX(XRCID("hideMinimized"), ConfigPanel::OnHideUpdate)
 
 EVT_CHOICE(XRCID("logLevel"), ConfigPanel::OnLogLevelUpdate)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 
 // Init. Vars
