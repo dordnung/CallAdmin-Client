@@ -96,6 +96,9 @@
     <ClInclude Include="..\tracker_panel.h">
       <Filter>Panel</Filter>
     </ClInclude>
+    <ClInclude Include="..\sound.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TinyXML2">
@@ -127,7 +130,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\calladmin_client.rc">
+    <ResourceCompile Include="..\resources\calladmin_client.rc">
       <Filter>Resources</Filter>
     </ResourceCompile>
   </ItemGroup>

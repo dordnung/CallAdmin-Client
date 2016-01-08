@@ -26,6 +26,7 @@
 #include "timer.h"
 #include "curl_util.h"
 #include "calladmin-client.h"
+#include "sound.h"
 
 #include <wx/sound.h>
 
@@ -340,12 +341,8 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 
 					// Play Sound
 					if (caGetConfig()->GetWantSound() && !firstRun && caGetConfig()->GetIsAvailable()) {
-						wxSound* soundfile;
-#if defined(__WXMSW__)
-						soundfile = new wxSound("calladmin_sound", true);
-#else
-						soundfile = new wxSound(getRelativePath("resources/calladmin_sound.wav"), false);
-#endif
+						wxSound* soundfile = new wxSound(wave_sound_size, wave_sound);
+
 						if (soundfile != NULL && soundfile->IsOk()) {
 							soundfile->Play(wxSOUND_ASYNC);
 

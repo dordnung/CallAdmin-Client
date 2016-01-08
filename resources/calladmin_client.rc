@@ -22,10 +22,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 // Call Admin Icon
-calladmin_icon ICON "calladmin_icon.ico"
-
-// Call Admin Sound
-calladmin_sound WAVE "calladmin_sound.wav"
+calladmin_icon ICON "resources/calladmin_icon.ico"
 
 #define wxUSE_NO_MANIFEST 0
 #include "wx/msw/wx.rc"

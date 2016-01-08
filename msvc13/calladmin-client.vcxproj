@@ -98,13 +98,14 @@
     <ClInclude Include="..\main_panel.h" />
     <ClInclude Include="..\notebook.h" />
     <ClInclude Include="..\opensteam.h" />
+    <ClInclude Include="..\sound.h" />
     <ClInclude Include="..\taskbar.h" />
     <ClInclude Include="..\timer.h" />
     <ClInclude Include="..\tinyxml2\tinyxml2.h" />
     <ClInclude Include="..\tracker_panel.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\calladmin_client.rc" />
+    <ResourceCompile Include="..\resources\calladmin_client.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
