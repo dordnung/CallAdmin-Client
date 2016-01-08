@@ -53,7 +53,7 @@ SteamThread::~SteamThread() {
 	}
 
 	// Wait until thread is finished
-	while (1) {
+	while (true) {
 		if (!GetThread()) {
 			break;
 		}
@@ -140,8 +140,7 @@ STEAM_ERROR_TYP SteamThread::Load() {
 // Thread started
 // LOCK fuer exit?
 void SteamThread::Check() {
-	for (; !GetThread()->TestDestroy(); Sleep(100)) {
-		wxMutexLocker steamLocker(steamLock);
+	for (; !GetThread()->TestDestroy(); wxMilliSleep(100)) {
 		wxCommandEvent event(wxEVT_STEAM_STATUS_CHANGED);
 
 		if (!this->pipeSteam || this->pipeSteam == -1 || !caGetConfig()->GetSteamEnabled()) {

@@ -52,7 +52,7 @@ public:
 #endif
 
 	// Show a information
-	void ShowMessage(wxString title, wxString message, wxWindow *parent);
+	void ShowMessage(wxString title, wxString message, wxWindow *parent = NULL);
 
 	// Override CreatePopupMenu
 	virtual wxMenu *CreatePopupMenu();

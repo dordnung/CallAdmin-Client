@@ -34,6 +34,7 @@
 
 #include <wx/config.h>
 
+
 enum LogLevel {
 	LEVEL_DEBUG = 0,
 	LEVEL_INFO,
@@ -45,6 +46,7 @@ enum LogLevel {
 static wxString LogLevelNames[] = { "DEBUG", "INFO", "WARNING", "ERROR" };
 // statically check that the size of LogLevel fits the number of log levels
 static_assert(sizeof(LogLevelNames) / sizeof(wxString) == LEVEL_SIZE_OF, "Sizes do not match");
+
 
 // Config Class
 class Config : public wxConfig {

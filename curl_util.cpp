@@ -34,7 +34,7 @@ CurlThread::~CurlThread() {
 	}
 
 	// Wait until thread is finished
-	while (1) {
+	while (true) {
 		if (!GetThread()) {
 			break;
 		}
@@ -47,6 +47,7 @@ CurlThread::~CurlThread() {
 // Curl Thread started
 // TODO: LOCK fuer app ende
 wxThread::ExitCode CurlThread::Entry() {
+	// Maybe it's already killed?
 	if (!GetThread()->TestDestroy()) {
 		// Event
 		wxCommandEvent event(wxEVT_CURL_THREAD_FINISHED);

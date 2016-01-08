@@ -21,12 +21,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-#include "tinyxml2/tinyxml2.h"
-
 #include "timer.h"
 #include "curl_util.h"
 #include "calladmin-client.h"
 #include "sound.h"
+#include "tinyxml2/tinyxml2.h"
 
 #include <wx/sound.h>
 
@@ -76,8 +75,12 @@ void Timer::Run(int repeatInterval) {
 
 
 // Timer executed
-// TODO: LOCK fuer exit?
 void Timer::OnExecute(wxTimerEvent& WXUNUSED(event)) {
+	// Check if app already ended
+	if (caGetApp().AppEnded()) {
+		return;
+	}
+
 	Config *config = caGetConfig();
 
 	// Build page
@@ -88,7 +91,8 @@ void Timer::OnExecute(wxTimerEvent& WXUNUSED(event)) {
 
 		page = config->GetPage() + "/notice.php?from=0&from_type=unixtime&key=" + config->GetKey() + "&sort=desc&limit=" + (wxString() << config->GetNumLastCalls());
 	} else {
-		page = config->GetPage() + "/notice.php?from=" + (wxString() << (config->GetStep() * 2)) + "&from_type=interval&key=" + config->GetKey() + "&sort=asc&handled=" + (wxString() << (wxGetUTCTime() - this->firstFetch));
+		page = config->GetPage() + "/notice.php?from=" + (wxString() << (config->GetStep() * 2)) + "&from_type=interval&key=" +
+			config->GetKey() + "&sort=asc&handled=" + (wxString() << (wxGetUTCTime() - this->firstFetch));
 	}
 
 	// Store Player
@@ -102,7 +106,7 @@ void Timer::OnExecute(wxTimerEvent& WXUNUSED(event)) {
 	this->isFirstShoot = false;
 }
 
-// TODO: LOCK fuer exit?
+
 void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 	// Valid result?
 	if (result != "") {
@@ -114,12 +118,11 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 			// Proceed XML result!
 			tinyxml2::XMLDocument doc;
 			tinyxml2::XMLNode *node;
-			tinyxml2::XMLError parseError;
 
 			// Parse the xml data
-			parseError = doc.Parse(result);
+			tinyxml2::XMLError parseError = doc.Parse(result);
 
-			// Parse Error?
+			// Parsing Error?
 			if (parseError != tinyxml2::XML_SUCCESS) {
 				foundError = true;
 				caGetApp().SetAttempts(caGetApp().GetAttempts() + 1);
@@ -147,18 +150,18 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 					node = node->NextSibling();
 				}
 
-				// New Calls?
+				// Are there new calls?
 				if (node != NULL) {
 					// Init. Call List
-					int foundRows = 0;
+					int dialog = caGetCallDialogs()->size();
 
-					// Only if first run
+					// On first run get number of found rows
 					if (firstRun) {
 						for (tinyxml2::XMLNode *node2 = node->FirstChild(); node2; node2 = node2->NextSibling()) {
-							// Search for foundRows
+							// Is foundRows?
 							if ((wxString)node2->Value() == "foundRows") {
-								// Get Rows
-								foundRows = wxAtoi(node2->FirstChild()->Value());
+								// The dialog id is the number of the latest call
+								dialog = wxAtoi(node2->FirstChild()->Value()) - 1;
 
 								// Go on
 								break;
@@ -184,25 +187,18 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 							break;
 						}
 
-						// Row Count
+						// Row Count is not important
 						if ((wxString)node2->Value() == "foundRows") {
 							continue;
 						}
 
-						int dialog = foundRows - 1;
-
-						// First run
-						if (!firstRun) {
-							dialog = caGetCallDialogs()->size();
-						}
-
-						// Api is fine :)
+						// Is API fine?
 						int found = 0;
 
 						// Create the new CallDialog
 						CallDialog *newDialog = new CallDialog();
 
-						// Put in ALL needed DATA
+						// Put in all needed data
 						for (tinyxml2::XMLNode *node3 = node2->FirstChild(); node3; node3 = node3->NextSibling()) {
 							if ((wxString)node3->Value() == "callID") {
 								found++;
@@ -251,37 +247,42 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 
 							if ((wxString)node3->Value() == "callHandled") {
 								found++;
-								newDialog->SetHandled(strcmp(node3->FirstChild()->Value(), "1") == 0);
+								newDialog->SetHandled(wxString(node3->FirstChild()->Value()) == "1");
 							}
 						}
 
 						bool foundDuplicate = false;
 
-						// Check duplicate Entries
-						int index = -1;
-
-						for (wxVector<CallDialog *>::iterator callDialog = caGetCallDialogs()->begin(); callDialog != caGetCallDialogs()->end(); ++callDialog) {
-							index++;
-
-							// Operator overloading :)
-							if ((**callDialog) == (*newDialog)) {
-								foundDuplicate = true;
-
-								// Call is now handled
-								if (newDialog->IsHandled() && !(*callDialog)->IsHandled()) {
-									caGetMainPanel()->SetHandled(index);
-								}
-
-								// That's enough
-								break;
-							}
-						}
-
 						// Found all necessary items?
-						if (found != 10 || foundDuplicate) {
-							// Something went wrong or duplicate
+						if (found != 10) {
 							newDialog->Destroy();
 						} else {
+							// Check for duplicate Entry
+							int index = -1;
+
+							for (wxVector<CallDialog *>::iterator callDialog = caGetCallDialogs()->begin(); callDialog != caGetCallDialogs()->end(); ++callDialog) {
+								index++;
+
+								// Operator overloading :)
+								if ((**callDialog) == (*newDialog)) {
+									foundDuplicate = true;
+
+									// Check if handled state changed
+									if (newDialog->IsHandled() && !(*callDialog)->IsHandled()) {
+										caGetMainPanel()->SetHandled(index);
+									}
+
+									// That's enough
+									break;
+								}
+							}
+
+							if (foundDuplicate) {
+								// Found duplicate Entry
+								newDialog->Destroy();
+								continue;
+							}
+
 							// New call
 							foundNew = true;
 
@@ -304,7 +305,7 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 							bool success;
 
 							if (firstRun) {
-								foundRows--;
+								dialog--;
 								success = newDialog->StartCall(false);
 							} else {
 								// Log Action
@@ -331,7 +332,7 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 				caGetApp().SetAttempts(0);
 
 				// Updated Main Interface
-				caGetMainFrame()->SetTitle("Call Admin Client");
+				caGetMainFrame()->SetTitle("CallAdmin Client");
 				caGetMainPanel()->SetEventText("Waiting for a new report...");
 
 				// Update Call List

@@ -69,7 +69,7 @@
 }
 
 
-// Custom events
+// Thread finished event
 wxDECLARE_EVENT(wxEVT_CURL_THREAD_FINISHED, wxCommandEvent);
 
 

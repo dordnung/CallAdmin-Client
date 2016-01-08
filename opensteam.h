@@ -60,8 +60,6 @@ private:
 	wxString steamid;
 	bool isConnected;
 
-	wxMutex steamLock;
-
 	// Last Steam Error
 	STEAM_ERROR_TYP lastError;
 

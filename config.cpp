@@ -69,6 +69,7 @@ bool Config::ParseConfig() {
 			this->wantSound = ReadBool("sound", true);
 			this->isSpectator = ReadBool("spectate", false);
 
+			Read("key", &this->key, "");
 			Read("page", &this->page, "");
 
 			// Strip last /
@@ -76,8 +77,6 @@ bool Config::ParseConfig() {
 				// Delete it
 				this->page.RemoveLast();
 			}
-
-			Read("key", &this->key, "");
 		} catch (...) {
 			isConfigSet = false;
 		}

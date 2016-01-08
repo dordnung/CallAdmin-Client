@@ -24,12 +24,12 @@
 #include "curl_util.h"
 #include "calladmin-client.h"
 
+#include "tinyxml2/tinyxml2.h"
+
 #include <wx/tokenzr.h>
 #include <wx/statline.h>
 #include <wx/tooltip.h>
 #include <wx/xrc/xmlres.h>
-
-#include "tinyxml2/tinyxml2.h"
 
 
 // Button Events for Call Dialog
@@ -508,8 +508,11 @@ AvatarTimer::AvatarTimer(CSteamID *clientId, CSteamID *targetId, wxStaticBitmap 
 
 
 // Timer to update avatars
-// TODO: Lock?
 void AvatarTimer::Notify() {
+	if (caGetApp().AppEnded()) {
+		return;
+	}
+
 	// Steam available?
 	if (caGetSteamThread()->IsConnected()) {
 		// Do we have information about the users?
@@ -533,6 +536,7 @@ void AvatarTimer::Notify() {
 	if (++this->attempts == 100 || (this->clientLoaded && this->targetLoaded)) {
 		// Enough, stop timer
 		Stop();
+		delete this;
 	}
 }
 
@@ -577,8 +581,8 @@ bool AvatarTimer::SetAvatar(CSteamID *id, wxStaticBitmap *map) {
 				caLogAction("Loaded Avatar of " + (wxString)id->Render());
 
 				// Clean
-				delete size;
 				delete rgbaBuffer;
+				delete size;
 
 				// It's loaded
 				return true;
@@ -586,8 +590,8 @@ bool AvatarTimer::SetAvatar(CSteamID *id, wxStaticBitmap *map) {
 		}
 
 		// Clean
-		delete size;
 		delete rgbaBuffer;
+		delete size;
 	}
 
 	return false;

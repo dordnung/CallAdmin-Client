@@ -51,6 +51,7 @@ END_EVENT_TABLE()
 
 
 // Constructor: Set Taskbar icon
+// TODO: Von resource.cpp laden
 TaskBarIcon::TaskBarIcon() {
 #if defined(__WXMSW__)
 	SetIcon(wxIcon("calladmin_icon", wxBITMAP_TYPE_ICO_RESOURCE), "Call Admin Client");
@@ -68,7 +69,6 @@ void TaskBarIcon::OnMenuRestore(wxCommandEvent& WXUNUSED(event)) {
 
 // On exit -> Exit whole programm
 void TaskBarIcon::OnMenuExit(wxCommandEvent& WXUNUSED(event)) {
-	caLogAction("Closed via taskbar");
 	caGetApp().ExitProgramm();
 }
 
@@ -92,12 +92,12 @@ void TaskBarIcon::OnMenuAutoStart(wxCommandEvent &event) {
 			// Write in
 			regKey.SetValue("CallAdmin-Client", appPath);
 
-			caLogAction("Added Call Admin to the auto start list");
+			caLogAction("Added CallAdmin to the auto start list");
 		} else {
 			// Remove it
 			regKey.DeleteValue("CallAdmin-Client");
 
-			caLogAction("Removed Call Admin from the auto start list");
+			caLogAction("Removed CallAdmin from the auto start list");
 		}
 	}
 }
@@ -121,7 +121,6 @@ void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow *parent
 			return;
 		}
 #endif
-
 		// No taskbar message
 		wxMessageBox(message, title, wxICON_INFORMATION | wxOK, parent);
 	}

@@ -106,16 +106,14 @@ bool CallAdmin::OnInit() {
 	wxXmlResource::Get()->InitAllHandlers();
 	InitXmlResource();
 
-	// Create Config
+	// Create and parse config
 	this->config = new Config();
-
-	// TODO: IsconfigSet?
 	this->config->ParseConfig();
 
 	// Create MainFrame
 	this->mainFrame = new MainFrame();
 
-	// Init Frame
+	// Init MainFrame
 	if (!this->mainFrame->InitFrame(this->startInTaskbar)) {
 		ExitProgramm();
 
@@ -128,10 +126,10 @@ bool CallAdmin::OnInit() {
 	// Create Icon
 	this->taskBarIcon = new TaskBarIcon();
 
-	// Update Call List
+	// Parse the config which starts everything else
 	this->mainFrame->GetNotebook()->GetConfigPanel()->ParseConfig();
-	this->mainFrame->GetNotebook()->GetMainPanel()->UpdateCalls();
 
+	// Check for an update
 	CheckUpdate();
 
 	return true;
@@ -173,7 +171,9 @@ void CallAdmin::OnCurlThread(wxCommandEvent &event) {
 	CurlCallback function = data->GetCallbackFunction();
 
 	// Call it
-	function(data->GetError(), data->GetContent(), data->GetExtra());
+	if (function && !this->appEnded) {
+		function(data->GetError(), data->GetContent(), data->GetExtra());
+	}
 
 	// Delete data
 	delete data;
@@ -215,7 +215,7 @@ void CallAdmin::StartUpdate() {
 
 // Get the content of a page
 void CallAdmin::GetPage(CurlCallback callbackFunction, wxString page, int extra) {
-	if (!this->appEnded && !this->curlThread->GetThread()) {
+	if (!this->curlThread->GetThread()) {
 		this->curlThread->SetCallbackFunction(callbackFunction);
 		this->curlThread->SetPage(page);
 		this->curlThread->SetExtra(extra);
@@ -263,6 +263,10 @@ void CallAdmin::ExitProgramm() {
 	// App ended now
 	this->appEnded = true;
 
+	// Clear Handlers
+	wxImage::CleanUpHandlers();
+	wxXmlResource::Get()->ClearHandlers();
+
 	// Then hide all windows
 	if (this->mainFrame) {
 		this->mainFrame->Show(false);
@@ -296,7 +300,7 @@ void CallAdmin::ExitProgramm() {
 		this->taskBarIcon = NULL;
 	}
 
-	// First delete call dialogs
+	//  Delete call dialogs
 	for (wxVector<CallDialog *>::iterator callDialog = callDialogs.begin(); callDialog != callDialogs.end(); ++callDialog) {
 		(*callDialog)->Destroy();
 	}
@@ -309,6 +313,10 @@ void CallAdmin::ExitProgramm() {
 		this->mainFrame->Destroy();
 		this->mainFrame = NULL;
 	}
+
+	// Delete config
+	delete this->config;
+	this->config = NULL;
 }
 
 
@@ -347,10 +355,6 @@ void CallAdmin::CheckUpdate() {
 
 // Handle Update Page
 void CallAdmin::OnUpdate(wxString error, wxString result, int WXUNUSED(x)) {
-	if (caGetApp().AppEnded()) {
-		return;
-	}
-
 	// Log Action
 	caLogAction("Retrieve information about new version");
 
@@ -359,20 +363,19 @@ void CallAdmin::OnUpdate(wxString error, wxString result, int WXUNUSED(x)) {
 	if (result != "") {
 		// Everything good :)
 		if (error == "") {
-			if (result.length() > 30) {
+			result.Trim();
+
+			if (!result.StartsWith("{") || !result.EndsWith("}")) {
 				// Maybe an Error Page?
-				caGetTaskBarIcon()->ShowMessage("Update Check Failed", "Error: PAGE_TOO_LONG", caGetMainFrame());
+				return caGetTaskBarIcon()->ShowMessage("Update Check Failed", "Error: Invalid Page Content", caGetMainFrame());
 			} else {
 				// Find version in brackets
-				int start = result.find_first_of("{") + 1;
-				int end = result.find_first_of("}");
-
-				newVersion = result.substr(start, end - start);
+				newVersion = result.substr(1, result.length() - 1);
 			}
 		} else {
 			// Log Action
 			caLogAction("Update check failed: " + error);
-			caGetTaskBarIcon()->ShowMessage("Update Check Failed", "Error: " + error, caGetMainFrame());
+			return caGetTaskBarIcon()->ShowMessage("Update Check Failed", "Error: " + error, caGetMainFrame());
 		}
 	}
 

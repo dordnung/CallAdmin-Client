@@ -45,7 +45,7 @@ private:
 	long firstFetch;
 
 public:
-	Timer() : wxTimer(this, TIMER_ID), isFirstShoot(true), firstFetch(0) {};
+	Timer() : wxTimer(this, TIMER_ID), isFirstShoot(true), firstFetch(false) {};
 
 	void Run(int repeatInterval);
 	void OnExecute(wxTimerEvent &event);

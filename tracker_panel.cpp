@@ -64,7 +64,6 @@ void TrackerPanel::OnUpdate(wxCommandEvent& WXUNUSED(event)) {
 
 
 // Refresh Trackers
-// TODO: Lock fuer exit?
 void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNUSED(extra)) {
 	// Log Action
 	caLogAction("Got Trackers");
@@ -210,8 +209,11 @@ NameTimer::~NameTimer() {
 
 
 // Timer to update trackers
-// TODO: lock fuer exit?
 void NameTimer::Notify() {
+	if (caGetApp().AppEnded()) {
+		return;
+	}
+
 	// Steam available?
 	if (caGetSteamThread()->IsConnected()) {
 		if (this->client.IsValid()) {

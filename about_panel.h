@@ -42,7 +42,7 @@ private:
 
 public:
 	AboutPanel() : downloadButton(NULL), currentText(NULL),
-		sizerTop(NULL), currentVersion("") {};
+		sizerTop(NULL), currentVersion(wxString()) {};
 
 	bool InitPanel();
 

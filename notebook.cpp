@@ -35,8 +35,9 @@ bool Notebook::CreatePages() {
 	this->logPanel = new LogPanel();
 	this->aboutPanel = new AboutPanel();
 
-	if (!(this->mainPanel->InitPanel() && this->configPanel->InitPanel()
-		&& this->trackerPanel->InitPanel() && this->logPanel->InitPanel() && this->aboutPanel->InitPanel())) {
+	// Init panels
+	if (!(this->mainPanel->InitPanel() && this->configPanel->InitPanel() &&
+		this->trackerPanel->InitPanel() && this->logPanel->InitPanel() && this->aboutPanel->InitPanel())) {
 		return false;
 	}
 
