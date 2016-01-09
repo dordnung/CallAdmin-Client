@@ -68,7 +68,6 @@ bool UpdateFrame::ShowFrame() {
 	// Download Status
 	FIND_OR_FAIL(this->dlStatus, XRCCTRL(*this->panel, "dlStatus", wxStaticText), "dlStatus");
 
-	Fit();
 	Show(true);
 
 	// Now start the Update
@@ -93,8 +92,7 @@ void UpdateFrame::OnUpdate(wxString infoText, int progress) {
 	// Update Progress Bar
 	this->progressBar->SetValue(progress);
 
-	this->panel->SetSizerAndFit(this->sizerTop, false);
-	Fit();
+	this->sizerTop->Fit(this);
 }
 
 
@@ -131,8 +129,7 @@ void UpdateFrame::OnFinish(wxString error) {
 	}
 
 	// Fit Window
-	this->panel->SetSizerAndFit(this->sizerTop, false);
-	Fit();
+	this->sizerTop->Fit(this);
 
 	wxGetApp().ExitProgramm();
 }
