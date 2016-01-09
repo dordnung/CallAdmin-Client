@@ -35,8 +35,6 @@
 
 #include <curl/curl.h>
 
-wxDECLARE_EVENT(wxEVT_THREAD_UPDATE, wxCommandEvent);
-wxDECLARE_EVENT(wxEVT_THREAD_FINISHED, wxCommandEvent);
 
 // Update Frame Class
 class UpdateFrame : public wxFrame, wxThreadHelper {
@@ -55,22 +53,22 @@ private:
 	wxGauge *progressBar;
 
 public:
-	UpdateFrame()
-		: dlInfo(NULL), dlStatus(NULL), sizerTop(NULL), panel(NULL), progressBar(NULL) {};
+	UpdateFrame() : dlInfo(NULL), dlStatus(NULL),
+		sizerTop(NULL), panel(NULL), progressBar(NULL) {};
 	~UpdateFrame();
 
 	bool ShowFrame();
 
+	// Events
+	void OnUpdate(wxString infoText, int progress);
+	void OnFinish(wxString error);
+
 protected:
 	virtual wxThread::ExitCode Entry();
 
-	// Events
-	void OnUpdate(wxCommandEvent &event);
-	void OnFinish(wxCommandEvent &event);
-
 	void OnCloseWindow(wxCloseEvent &event);
 
-	DECLARE_EVENT_TABLE()
+	wxDECLARE_EVENT_TABLE();
 };
 
 

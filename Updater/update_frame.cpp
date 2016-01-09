@@ -28,23 +28,21 @@
 #include <wx/ffile.h>
 #include <wx/xrc/xmlres.h>
 
+#ifdef __WXMSW__
+// Memory leak detection for debugging 
+#include <wx/msw/msvcrt.h>
+#endif
+
 
 #define FIND_OR_FAIL(var, ptr, str) var = ptr; if (var == NULL) {\
 	wxMessageBox("Error: Couldn't find XRCID " str, "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this); \
 	return false; \
 }
 
-
-wxDEFINE_EVENT(wxEVT_THREAD_UPDATE, wxCommandEvent);
-wxDEFINE_EVENT(wxEVT_THREAD_FINISHED, wxCommandEvent);
-
 // Events for Update Frame
-BEGIN_EVENT_TABLE(UpdateFrame, wxFrame)
-EVT_COMMAND(wxID_ANY, wxEVT_THREAD_UPDATE, UpdateFrame::OnUpdate)
-EVT_COMMAND(wxID_ANY, wxEVT_THREAD_FINISHED, UpdateFrame::OnFinish)
-
+wxBEGIN_EVENT_TABLE(UpdateFrame, wxFrame)
 EVT_CLOSE(UpdateFrame::OnCloseWindow)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 
 // Open Update Frame
@@ -88,12 +86,12 @@ UpdateFrame::~UpdateFrame() {
 
 
 // Progress Update
-void UpdateFrame::OnUpdate(wxCommandEvent &event) {
+void UpdateFrame::OnUpdate(wxString infoText, int progress) {
 	// Set new Text
-	this->dlInfo->SetLabelText(event.GetString());
+	this->dlInfo->SetLabelText(infoText);
 
 	// Update Progress Bar
-	this->progressBar->SetValue(event.GetInt());
+	this->progressBar->SetValue(progress);
 
 	this->panel->SetSizerAndFit(this->sizerTop, false);
 	Fit();
@@ -101,7 +99,7 @@ void UpdateFrame::OnUpdate(wxCommandEvent &event) {
 
 
 // Update Finished
-void UpdateFrame::OnFinish(wxCommandEvent &event) {
+void UpdateFrame::OnFinish(wxString error) {
 	// Update Progress Bar
 	this->progressBar->SetValue(100);
 
@@ -109,7 +107,7 @@ void UpdateFrame::OnFinish(wxCommandEvent &event) {
 	wxString executablePath = wxGetApp().GetCallAdminExecutablePath();
 
 	// Notice finish
-	if (event.GetString() == "") {
+	if (error == "") {
 		// Renaming Files
 		if (wxFileExists(executablePath)) {
 			wxRenameFile(executablePath, executablePath + ".old");
@@ -129,7 +127,7 @@ void UpdateFrame::OnFinish(wxCommandEvent &event) {
 		this->dlStatus->SetLabelText("Status: Error!");
 		this->dlStatus->SetForegroundColour(wxColour("red"));
 
-		wxMessageBox("Couldn't download update\n" + event.GetString(), "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this);
+		wxMessageBox("Couldn't download update\n" + error, "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this);
 	}
 
 	// Fit Window
@@ -174,8 +172,7 @@ void UpdateFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event)) {
 // Curl Thread started
 wxThread::ExitCode UpdateFrame::Entry() {
 	if (!GetThread()->TestDestroy()) {
-		// Event
-		wxCommandEvent event(wxEVT_THREAD_FINISHED);
+		wxString error;
 
 		// Init Curl
 		CURL *curl = curl_easy_init();
@@ -191,7 +188,7 @@ wxThread::ExitCode UpdateFrame::Entry() {
 			wxFFile *newFile = new wxFFile(executablePath + ".new", "wb");
 
 			if (!newFile->IsOpened()) {
-				event.SetString("Couldn't create file " + newFile->GetName());
+				error = "Couldn't create file " + newFile->GetName();
 			} else {
 				// Configurate Curl
 				curl_easy_setopt(curl, CURLOPT_URL, wxGetApp().GetCallAdminExecutable().mb_str().data());
@@ -215,13 +212,11 @@ wxThread::ExitCode UpdateFrame::Entry() {
 					curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
 
 					if (responseCode != 200) {
-						event.SetString("Invalid Response Code: " + wxString() << responseCode);
-					} else {
-						event.SetString(wxString());
+						error = "Invalid Response Code: " + wxString() << responseCode;
 					}
 				} else {
 					// Error ):
-					event.SetString(errorBuffer);
+					error = errorBuffer;
 				}
 
 				// Clean Curl
@@ -230,12 +225,13 @@ wxThread::ExitCode UpdateFrame::Entry() {
 
 			// Close File
 			newFile->Close();
+			delete newFile;
 		} else {
-			event.SetString("Couldn't init. CURL!");
+			error = "Couldn't init. CURL!";
 		}
 
 		// Add Event Handler
-		wxGetApp().GetUpdateFrame()->GetEventHandler()->AddPendingEvent(event);
+		wxGetApp().GetUpdateFrame()->GetEventHandler()->CallAfter(&UpdateFrame::OnFinish, error);
 	}
 
 	return (wxThread::ExitCode)0;
@@ -273,15 +269,12 @@ int ProgressUpdated(void *curlPointer, double dlTotal, double dlNow, double WXUN
 
 		// Valid Data?
 		if (dlTotal > 0) {
-			// Event
-			wxCommandEvent event(wxEVT_THREAD_UPDATE);
-
 			// Set Event Data
-			event.SetString(wxString::Format("%.0f", (dlNow / 1024)) + "kB of " + wxString::Format("%.0f", (dlTotal / 1024)) + "kB (" + wxString::Format("%.0f", ((dlNow / 1024) / curtime)) + "kB/s). Time: " + wxString::Format("%.2f", curtime) + " Seconds");
-			event.SetInt((dlNow / dlTotal) * 100);
+			wxString infoText = wxString::Format("%.0f", (dlNow / 1024)) + "kB of " + wxString::Format("%.0f", (dlTotal / 1024)) + "kB (" + wxString::Format("%.0f", ((dlNow / 1024) / curtime)) + "kB/s). Time: " + wxString::Format("%.2f", curtime) + " Seconds";
+			int progress = (dlNow / dlTotal) * 100;
 
 			// Add Event Handler
-			wxGetApp().GetUpdateFrame()->GetEventHandler()->AddPendingEvent(event);
+			wxGetApp().GetUpdateFrame()->GetEventHandler()->CallAfter(&UpdateFrame::OnUpdate, infoText, progress);
 		}
 	}
 

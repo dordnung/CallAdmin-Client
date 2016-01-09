@@ -46,8 +46,8 @@ private:
 	UpdateFrame *updateFrame;
 
 public:
-	CallAdminUpdater()
-		: appEnded(false), callAdminVersion(wxString()), callAdminUrl(wxString()), callAdminExecutable(wxString()), updateFrame(NULL) {};
+	CallAdminUpdater() : appEnded(false), callAdminVersion(wxString()),
+		callAdminUrl(wxString()), callAdminExecutable(wxString()), updateFrame(NULL) {};
 
 	wxString GetCallAdminVersion() {
 		return this->callAdminVersion;
@@ -91,13 +91,14 @@ protected:
 	virtual bool OnCmdLineParsed(wxCmdLineParser &parser);
 };
 
+// CURL write callback
 size_t CurlWriteData(void *data, size_t size, size_t nmemb, void *stream);
-
-
-// Declare the app
-DECLARE_APP(CallAdminUpdater)
 
 // Defined in resource.cpp
 extern void InitXmlResource();
+
+
+// Declare the app
+wxDECLARE_APP(CallAdminUpdater);
 
 #endif

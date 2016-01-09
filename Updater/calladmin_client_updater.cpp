@@ -32,6 +32,12 @@
 
 #include "calladmin_client_updater.h"
 
+#ifdef __WXMSW__
+// Memory leak detection for debugging 
+#include <wx/msw/msvcrt.h>
+#endif
+
+
 // Help for the CMDLine
 static const wxCmdLineEntryDesc cmdLineDesc[] =
 {
@@ -43,7 +49,7 @@ static const wxCmdLineEntryDesc cmdLineDesc[] =
 
 
 // Implement the APP
-IMPLEMENT_APP(CallAdminUpdater)
+wxIMPLEMENT_APP(CallAdminUpdater);
 
 
 // App Started
@@ -91,7 +97,7 @@ bool CallAdminUpdater::OnInit() {
 int CallAdminUpdater::OnExit() {
 	ExitProgramm();
 
-	return 1;
+	return 0;
 }
 
 
@@ -230,15 +236,14 @@ bool CallAdminUpdater::OnGetVersion(wxString error, wxString result) {
 	if (error == "") {
 		// Everything good :)
 		if (result != "") {
-			if (result.length() > 30) {
+			result.Trim();
+
+			if (!result.StartsWith("{") || !result.EndsWith("}")) {
 				// Maybe an Error Page?
-				wxMessageBox("Error: Result page is too long", "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
+				wxMessageBox("Error: Invalid Page Content", "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
 			} else {
 				// Find version in brackets
-				int start = result.find_first_of("{") + 1;
-				int end = result.find_first_of("}");
-
-				newVersion = result.substr(start, end - start);
+				newVersion = result.substr(1, result.length() - 2);
 			}
 		} else {
 			wxMessageBox("Error: Result is empty", "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
