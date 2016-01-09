@@ -359,7 +359,7 @@ void CallAdmin::OnUpdate(wxString error, wxString result, int WXUNUSED(x)) {
 				return caGetTaskBarIcon()->ShowMessage("Update Check Failed", "Error: Invalid Page Content", caGetMainFrame());
 			} else {
 				// Find version in brackets
-				newVersion = result.substr(1, result.length() - 1);
+				newVersion = result.substr(1, result.length() - 2);
 			}
 		} else {
 			// Log Action
