@@ -24,6 +24,11 @@
 #include "config.h"
 #include "calladmin-client.h"
 
+#ifdef __WXMSW__
+// Memory leak detection for debugging 
+#include <wx/msw/msvcrt.h>
+#endif
+
 
 // Create Config
 Config::Config() : wxConfig("Call Admin") {

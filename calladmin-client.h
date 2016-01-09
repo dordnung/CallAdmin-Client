@@ -68,11 +68,6 @@
 	return false; \
 }
 
-
-// Thread finished event
-wxDECLARE_EVENT(wxEVT_CURL_THREAD_FINISHED, wxCommandEvent);
-
-
 // App Class
 class CallAdmin : public wxApp {
 private:
@@ -155,6 +150,8 @@ public:
 
 	static void OnUpdate(wxString error, wxString result, int extra);
 
+	void OnCurlThread(CurlThreadData *data);
+
 protected:
 	// Where all began :)
 	virtual bool OnInit();
@@ -165,10 +162,6 @@ protected:
 	// Command line arguments
 	virtual void OnInitCmdLine(wxCmdLineParser &parser);
 	virtual bool OnCmdLineParsed(wxCmdLineParser &parser);
-
-	void OnCurlThread(wxCommandEvent &event);
-
-	wxDECLARE_EVENT_TABLE();
 };
 
 

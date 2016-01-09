@@ -29,6 +29,10 @@
 
 #include <wx/sound.h>
 
+#ifdef __WXMSW__
+// Memory leak detection for debugging 
+#include <wx/msw/msvcrt.h>
+#endif
 
 // Timer events
 wxBEGIN_EVENT_TABLE(Timer, wxTimer)

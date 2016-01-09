@@ -29,6 +29,11 @@
 
 #include <wx/xrc/xmlres.h>
 
+#ifdef __WXMSW__
+// Memory leak detection for debugging 
+#include <wx/msw/msvcrt.h>
+#endif
+
 
 // Events for Trackers Panel
 wxBEGIN_EVENT_TABLE(TrackerPanel, wxPanel)

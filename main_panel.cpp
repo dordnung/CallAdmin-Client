@@ -26,8 +26,11 @@
 
 #include <wx/xrc/xmlres.h>
 
+#ifdef __WXMSW__
+// Memory leak detection for debugging 
+#include <wx/msw/msvcrt.h>
+#endif
 
-wxDEFINE_EVENT(wxEVT_STEAM_STATUS_CHANGED, wxCommandEvent);
 
 // Button Events for about Panel
 wxBEGIN_EVENT_TABLE(MainPanel, wxPanel)
@@ -37,8 +40,6 @@ EVT_BUTTON(XRCID("reconnectButton"), MainPanel::OnReconnect)
 EVT_CHECKBOX(XRCID("available"), MainPanel::OnCheckBox)
 EVT_CHECKBOX(XRCID("sound"), MainPanel::OnCheckBox)
 EVT_CHECKBOX(XRCID("store"), MainPanel::OnCheckBox)
-
-EVT_COMMAND(wxID_ANY, wxEVT_STEAM_STATUS_CHANGED, MainPanel::OnSteamChange)
 
 EVT_LISTBOX_DCLICK(XRCID("callBox"), MainPanel::OnBoxClick)
 wxEND_EVENT_TABLE()
@@ -198,13 +199,10 @@ void MainPanel::OnReconnect(wxCommandEvent& WXUNUSED(event)) {
 
 
 // Steam Changed -> Set Text
-void MainPanel::OnSteamChange(wxCommandEvent &event) {
-	// Get Status
-	int id = event.GetInt();
-
-	if (id == 0) {
+void MainPanel::OnSteamChange(int status) {
+	if (status == 0) {
 		SetSteamStatus("Steam support is disabled", wxColour("red"));
-	} else if (id == 1) {
+	} else if (status == 1) {
 		SetSteamStatus("Steam is currently not running", wxColour("red"));
 	} else {
 		SetSteamStatus("Steam is running", wxColour(34, 139, 34));

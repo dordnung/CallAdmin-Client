@@ -36,9 +36,6 @@
 #include <wx/statline.h>
 
 
-wxDECLARE_EVENT(wxEVT_STEAM_STATUS_CHANGED, wxCommandEvent);
-
-
 // Main Panel Class
 class MainPanel : public wxPanel {
 private:
@@ -74,6 +71,8 @@ public:
 	// TODO: Nicht int sondern iterator item
 	void SetHandled(int item);
 
+	void OnSteamChange(int status);
+
 protected:
 	// Events
 	void OnCloseWindow(wxCloseEvent &event);
@@ -84,7 +83,6 @@ protected:
 	void OnBoxClick(wxCommandEvent &event);
 
 	void OnCheckBox(wxCommandEvent &event);
-	void OnSteamChange(wxCommandEvent &event);
 
 	wxDECLARE_EVENT_TABLE();
 };

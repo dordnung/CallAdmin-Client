@@ -29,6 +29,11 @@
 #include "calladmin-client.h"
 #include "curl_util.h"
 
+#ifdef __WXMSW__
+// Memory leak detection for debugging 
+#include <wx/msw/msvcrt.h>
+#endif
+
 
 // Help for the CMDLine
 static const wxCmdLineEntryDesc cmdLineDesc[] =
@@ -40,15 +45,6 @@ static const wxCmdLineEntryDesc cmdLineDesc[] =
 
 // Implement the APP
 wxIMPLEMENT_APP(CallAdmin);
-
-
-// Events
-wxDEFINE_EVENT(wxEVT_CALL_DIALOG_CLOSED, wxCommandEvent);
-wxDEFINE_EVENT(wxEVT_CURL_THREAD_FINISHED, wxCommandEvent);
-
-wxBEGIN_EVENT_TABLE(CallAdmin, wxApp)
-EVT_COMMAND(wxID_ANY, wxEVT_CURL_THREAD_FINISHED, CallAdmin::OnCurlThread)
-wxEND_EVENT_TABLE()
 
 
 CallAdmin::CallAdmin() {
@@ -163,10 +159,7 @@ bool CallAdmin::OnCmdLineParsed(wxCmdLineParser &parser) {
 
 
 // Curl thread handled -> Call function
-void CallAdmin::OnCurlThread(wxCommandEvent &event) {
-	// Get Content
-	CurlThreadData *data = static_cast<CurlThreadData *>(event.GetClientObject());
-	
+void CallAdmin::OnCurlThread(CurlThreadData *data) {
 	// Get Function
 	CurlCallback function = data->GetCallbackFunction();
 

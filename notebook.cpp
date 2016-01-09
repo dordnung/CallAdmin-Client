@@ -26,6 +26,11 @@
 
 #include <wx/xrc/xmlres.h>
 
+#ifdef __WXMSW__
+// Memory leak detection for debugging 
+#include <wx/msw/msvcrt.h>
+#endif
+
 
 // Loads the pages of the notebook
 bool Notebook::CreatePages() {

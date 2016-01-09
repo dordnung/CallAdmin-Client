@@ -27,6 +27,11 @@
 #include <curl/curl.h>
 #include <sstream>
 
+#ifdef __WXMSW__
+// Memory leak detection for debugging 
+#include <wx/msw/msvcrt.h>
+#endif
+
 
 CurlThread::~CurlThread() {
 	if (GetThread()) {
@@ -49,8 +54,8 @@ CurlThread::~CurlThread() {
 wxThread::ExitCode CurlThread::Entry() {
 	// Maybe it's already killed?
 	if (!GetThread()->TestDestroy()) {
-		// Event
-		wxCommandEvent event(wxEVT_CURL_THREAD_FINISHED);
+		// CurlThreadData
+		CurlThreadData *data;
 
 		// Response
 		std::ostringstream stream;
@@ -81,28 +86,28 @@ wxThread::ExitCode CurlThread::Entry() {
 				curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
 
 				if (responseCode != 200) {
-					event.SetClientObject(new CurlThreadData(this->callbackFunction, stream.str(), "Invalid Response Code: " + wxString() << responseCode, this->extra));
+					data = new CurlThreadData(this->callbackFunction, stream.str(), "Invalid Response Code: " + wxString() << responseCode, this->extra);
 				} else {
-					event.SetClientObject(new CurlThreadData(this->callbackFunction, stream.str(), "", this->extra));
+					data = new CurlThreadData(this->callbackFunction, stream.str(), "", this->extra);
 				}
 			} else {
 				// Error ):
-				event.SetClientObject(new CurlThreadData(this->callbackFunction, stream.str(), ebuf, this->extra));
+				data = new CurlThreadData(this->callbackFunction, stream.str(), ebuf, this->extra);
 			}
 
 			// Clean Curl
 			curl_easy_cleanup(curl);
 
 			// Add Event Handler
-			caGetMainFrame()->GetEventHandler()->AddPendingEvent(event);
+			caGetMainFrame()->GetEventHandler()->CallAfter(&CallAdmin::OnCurlThread, data);
 
 			return (wxThread::ExitCode)0;
 		}
 
-		event.SetClientObject(new CurlThreadData(this->callbackFunction, "", "", this->extra));
+		data = new CurlThreadData(this->callbackFunction, "", "", this->extra);
 
-		// Add Event Handler
-		caGetMainFrame()->GetEventHandler()->AddPendingEvent(event);
+		// Call event
+		caGetMainFrame()->GetEventHandler()->CallAfter(&CallAdmin::OnCurlThread, data);
 	}
 
 	return (wxThread::ExitCode)0;

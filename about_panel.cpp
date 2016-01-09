@@ -29,6 +29,11 @@
 
 #include <curl/curlver.h>
 
+#ifdef __WXMSW__
+// Memory leak detection for debugging 
+#include <wx/msw/msvcrt.h>
+#endif
+
 
 // Button Events for about Panel
 wxBEGIN_EVENT_TABLE(AboutPanel, wxPanel)

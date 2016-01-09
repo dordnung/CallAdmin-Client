@@ -31,6 +31,11 @@
 #include <wx/tooltip.h>
 #include <wx/xrc/xmlres.h>
 
+#ifdef __WXMSW__
+// Memory leak detection for debugging 
+#include <wx/msw/msvcrt.h>
+#endif
+
 
 // Button Events for Call Dialog
 wxBEGIN_EVENT_TABLE(CallDialog, wxDialog)

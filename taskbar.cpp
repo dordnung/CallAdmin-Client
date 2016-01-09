@@ -26,6 +26,11 @@
 
 #include <wx/stdpaths.h>
 
+#ifdef __WXMSW__
+// Memory leak detection for debugging 
+#include <wx/msw/msvcrt.h>
+#endif
+
 
 // Taskbar event ID's
 enum {

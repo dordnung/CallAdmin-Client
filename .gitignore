@@ -30,6 +30,7 @@
 
 # Builds
 *.exe
+Debug*/
 Release*/
 
 # Databases

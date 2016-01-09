@@ -26,6 +26,11 @@
 
 #include <wx/xrc/xmlres.h>
 
+#ifdef __WXMSW__
+// Memory leak detection for debugging 
+#include <wx/msw/msvcrt.h>
+#endif
+
 
 // Create Log Panel
 bool LogPanel::InitPanel() {
