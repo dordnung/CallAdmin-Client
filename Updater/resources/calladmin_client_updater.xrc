@@ -14,7 +14,7 @@
 					<flag>wxALL | wxEXPAND</flag>
 					<border>5</border>
 					<object class="wxGauge" name="progressBar">
-						<style>wxGA_HORIZONTAL</style>
+						<style>wxGA_HORIZONTAL | wxGA_SMOOTH</style>
 						<range>100</range>
 						<value>0</value>
 					</object>
