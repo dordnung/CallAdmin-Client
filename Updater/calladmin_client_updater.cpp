@@ -33,8 +33,8 @@
 #include "calladmin_client_updater.h"
 
 #ifdef __WXMSW__
-// Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
 
 
@@ -57,21 +57,12 @@ bool CallAdminUpdater::OnInit() {
 	if (!wxApp::OnInit()) {
 		return false;
 	}
-
+	
 	// Check duplicate
 	static wxSingleInstanceChecker checkUpdaterInstance("CallAdmin Client Updater - " + wxGetUserId());
 
 	if (checkUpdaterInstance.IsAnotherRunning()) {
 		wxMessageBox("CallAdmin Client Updater is already running.", "CallAdmin Client Updater", wxOK | wxCENTRE | wxICON_ERROR);
-
-		return false;
-	}
-
-	// The client has to be closed while updating
-	static wxSingleInstanceChecker checkClientInstance("CallAdmin Client - " + wxGetUserId());
-
-	if (checkClientInstance.IsAnotherRunning()) {
-		wxMessageBox("CallAdmin Client is running.\nPlease stop it before start updating.", "CallAdmin Client", wxOK | wxCENTRE | wxICON_ERROR);
 
 		return false;
 	}
@@ -97,7 +88,7 @@ bool CallAdminUpdater::OnInit() {
 int CallAdminUpdater::OnExit() {
 	ExitProgramm();
 
-	return 0;
+	return wxApp::OnExit();
 }
 
 
@@ -111,7 +102,7 @@ void CallAdminUpdater::OnInitCmdLine(wxCmdLineParser &parser) {
 }
 
 
-// Find -version XXX
+// Find command line arguments
 bool CallAdminUpdater::OnCmdLineParsed(wxCmdLineParser &parser) {
 	parser.Found("version", &this->callAdminVersion);
 	parser.Found("url", &this->callAdminUrl);
@@ -219,6 +210,8 @@ void CallAdminUpdater::ExitProgramm() {
 		if (this->updateFrame != NULL) {
 			this->updateFrame->Show(false);
 			this->updateFrame->Close();
+
+			this->updateFrame = NULL;
 		}
 
 		// Start CallAdmin Client again?
@@ -256,6 +249,15 @@ bool CallAdminUpdater::OnGetVersion(wxString error, wxString result) {
 	if (newVersion != "") {
 		// Check Version
 		if (newVersion != wxGetApp().GetCallAdminVersion()) {
+			// The client has to be closed while updating
+			wxSingleInstanceChecker checkClientInstance("CallAdmin Client - " + wxGetUserId());
+
+			if (checkClientInstance.IsAnotherRunning()) {
+				wxMessageBox("CallAdmin Client is running.\nPlease stop it before start updating.", "CallAdmin Client", wxOK | wxCENTRE | wxICON_ERROR);
+
+				return false;
+			}
+
 			wxGetApp().StartUpdate();
 
 			return true;
