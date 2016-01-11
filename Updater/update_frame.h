@@ -24,24 +24,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 #pragma once
 
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
-#include <wx/wx.h>
+	#include <wx/wx.h>
 #endif
 
 #include <curl/curl.h>
+
+struct UpdateInfo {
+	double totalSize;
+	double downloadedSize;
+	double currentTime;
+};
 
 
 // Update Frame Class
 class UpdateFrame : public wxFrame, wxThreadHelper {
 private:
 	// We need information about the update ;)
-	wxStaticText *dlInfo;
-	wxStaticText *dlStatus;
+	wxStaticText *downloadedSize;
+	wxStaticText *downloadedSizeTotal;
+	wxStaticText *speed;
+	wxStaticText *elapsedTime;
+	wxStaticText *remainingTime;
 
 	// Layout
 	wxSizer *sizerTop;
@@ -53,14 +61,14 @@ private:
 	wxGauge *progressBar;
 
 public:
-	UpdateFrame() : dlInfo(NULL), dlStatus(NULL),
-		sizerTop(NULL), panel(NULL), progressBar(NULL) {};
+	UpdateFrame() : downloadedSize(NULL), downloadedSizeTotal(NULL), speed(NULL), elapsedTime(NULL),
+		remainingTime(NULL), sizerTop(NULL), panel(NULL), progressBar(NULL) {};
 	~UpdateFrame();
 
 	bool ShowFrame();
 
 	// Events
-	void OnUpdate(wxString infoText, int progress);
+	void OnUpdate(UpdateInfo updateInfo);
 	void OnFinish(wxString error);
 
 protected:

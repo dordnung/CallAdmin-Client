@@ -1,52 +1,339 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
-	<object class="wxFrame" name="updateFrame">
-		<style>wxCAPTION | wxCLOSE_BOX | wxMINIMIZE_BOX | wxSYSTEM_MENU</style>
-		<title>Update CallAdmin Client</title>
+	<object class="wxFrame" name="frame">
+		<style>wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxNO_BORDER | wxTAB_TRAVERSAL</style>
+		<title>CallAdmin Client Updater</title>
 		<centered>1</centered>
 		<icon>calladmin_client_updater.ico</icon>
-		<object class="wxPanel" name="updatePanel">
+		<object class="wxPanel" name="panel">
 			<style>wxNO_BORDER | wxTAB_TRAVERSAL</style>
 			<object class="wxBoxSizer">
 				<orient>wxVERTICAL</orient>
 				<object class="sizeritem">
 					<option>0</option>
 					<flag>wxALL | wxEXPAND</flag>
-					<border>5</border>
+					<border>10</border>
 					<object class="wxGauge" name="progressBar">
 						<style>wxGA_HORIZONTAL | wxGA_SMOOTH</style>
+						<size>-1,20</size>
+						<font>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+						</font>
 						<range>100</range>
 						<value>0</value>
 					</object>
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER | wxALL</flag>
-					<border>10</border>
-					<object class="wxStaticText" name="dlInfo">
-						<font>
-							<size>16</size>
-							<style>normal</style>
-							<weight>normal</weight>
-							<underlined>0</underlined>
-						</font>
-						<label>0kB of 0KB (0 kB/s). Time: 0,00 Seconds</label>
-						<wrap>-1</wrap>
-					</object>
-				</object>
-				<object class="sizeritem">
-					<option>0</option>
-					<flag>wxALIGN_CENTER | wxBOTTOM</flag>
+					<flag>wxBOTTOM | wxLEFT | wxRIGHT</flag>
 					<border>20</border>
-					<object class="wxStaticText" name="dlStatus">
-						<font>
-							<size>16</size>
-							<style>normal</style>
-							<weight>normal</weight>
-							<underlined>0</underlined>
-						</font>
-						<label>Status: Downloading</label>
-						<wrap>-1</wrap>
+					<object class="wxFlexGridSizer">
+						<rows>0</rows>
+						<cols>6</cols>
+						<vgap>0</vgap>
+						<hgap>0</hgap>
+						<growablecols></growablecols>
+						<growablerows></growablerows>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_LEFT | wxRIGHT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="downloadedSizeText">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>Downloaded:</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_RIGHT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="downloadedSize">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>0</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_LEFT | wxLEFT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="downloadedSizeUnit">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>kB</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxLEFT | wxRIGHT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="downloadedSizeSeperator">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>/</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_RIGHT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="downloadedSizeTotal">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>0</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxLEFT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="downloadedSizeTotalUnit">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>kB</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_LEFT | wxRIGHT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="speedText">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>Speed:</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_RIGHT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="speed">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>0</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_LEFT | wxLEFT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="speedUnit">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>kB</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxLEFT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="speedUnit1">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>/</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_LEFT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="speedUnit2">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>s</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="spacer">
+							<option>0</option>
+							<flag>wxTOP</flag>
+							<border>5</border>
+							<size>0,0</size>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_LEFT | wxRIGHT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="elapsedTimeText">
+								<style>wxALIGN_RIGHT</style>
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>Elapsed Time:</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_RIGHT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="elapsedTime">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>0</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_LEFT | wxLEFT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="elapsedTimeUnit">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>s</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="spacer">
+							<option>0</option>
+							<flag>wxTOP</flag>
+							<border>5</border>
+							<size>0,0</size>
+						</object>
+						<object class="spacer">
+							<option>0</option>
+							<flag>wxTOP</flag>
+							<border>5</border>
+							<size>0,0</size>
+						</object>
+						<object class="spacer">
+							<option>0</option>
+							<flag>wxTOP</flag>
+							<border>5</border>
+							<size>0,0</size>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_LEFT | wxBOTTOM | wxRIGHT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="remainingTimeText">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>Remaining Time:</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_RIGHT | wxBOTTOM | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="remainingTime">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>0</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxTOP</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="remainingTimeUnit">
+								<font>
+									<size>12</size>
+									<style>normal</style>
+									<weight>normal</weight>
+									<underlined>0</underlined>
+								</font>
+								<label>s</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="spacer">
+							<option>0</option>
+							<flag>wxTOP</flag>
+							<border>5</border>
+							<size>0,0</size>
+						</object>
+						<object class="spacer">
+							<option>0</option>
+							<flag>wxTOP</flag>
+							<border>5</border>
+							<size>0,0</size>
+						</object>
+						<object class="spacer">
+							<option>0</option>
+							<flag>wxTOP</flag>
+							<border>5</border>
+							<size>0,0</size>
+						</object>
 					</object>
 				</object>
 			</object>

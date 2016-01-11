@@ -1,26 +1,26 @@
 ﻿/**
-* -----------------------------------------------------
-* File        update_frame.cpp
-* Authors     David O., Impact
-* License     GPLv3
-* Web         http://popoklopsi.de, http://gugyclan.eu
-* -----------------------------------------------------
-*
-* Copyright (C) 2013-2016 David O., Impact
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>
-*/
+ * -----------------------------------------------------
+ * File        update_frame.cpp
+ * Authors     David O., Impact
+ * License     GPLv3
+ * Web         http://popoklopsi.de, http://gugyclan.eu
+ * -----------------------------------------------------
+ *
+ * Copyright (C) 2013-2016 David O., Impact
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
+ */
 
 #include "update_frame.h"
 #include "calladmin_client_updater.h"
@@ -29,10 +29,9 @@
 #include <wx/xrc/xmlres.h>
 
 #ifdef __WXMSW__
-// Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
-
 
 #define FIND_OR_FAIL(var, ptr, str) var = ptr; if (var == NULL) {\
 	wxMessageBox("Error: Couldn't find XRCID " str, "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this); \
@@ -41,33 +40,43 @@
 
 // Events for Update Frame
 wxBEGIN_EVENT_TABLE(UpdateFrame, wxFrame)
-EVT_CLOSE(UpdateFrame::OnCloseWindow)
+	EVT_CLOSE(UpdateFrame::OnCloseWindow)
 wxEND_EVENT_TABLE()
 
 
 // Open Update Frame
 bool UpdateFrame::ShowFrame() {
-	if (!wxXmlResource::Get()->LoadFrame(this, NULL, "updateFrame")) {
-		wxMessageBox("Error: Couldn't find XRCID updateFrame", "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this);
+	if (!wxXmlResource::Get()->LoadFrame(this, NULL, "frame")) {
+		wxMessageBox("Error: Couldn't find XRCID frame", "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this);
 
 		return false;
 	}
 
 	// Panel
-	FIND_OR_FAIL(this->panel, XRCCTRL(*this, "updatePanel", wxPanel), "updatePanel");
+	FIND_OR_FAIL(this->panel, XRCCTRL(*this, "panel", wxPanel), "panel");
 
 	// Sizer
-	FIND_OR_FAIL(this->sizerTop, this->panel->GetSizer(), "sizer");
+	FIND_OR_FAIL(this->sizerTop, this->panel->GetSizer(), "topSizer");
 
 	// Progress bar
 	FIND_OR_FAIL(this->progressBar, XRCCTRL(*this->panel, "progressBar", wxGauge), "progressBar");
 
-	// Download Info
-	FIND_OR_FAIL(this->dlInfo, XRCCTRL(*this->panel, "dlInfo", wxStaticText), "dlInfo");
+	// Download Size
+	FIND_OR_FAIL(this->downloadedSize, XRCCTRL(*this->panel, "downloadedSize", wxStaticText), "downloadedSize");
 
-	// Download Status
-	FIND_OR_FAIL(this->dlStatus, XRCCTRL(*this->panel, "dlStatus", wxStaticText), "dlStatus");
+	// Total Size
+	FIND_OR_FAIL(this->downloadedSizeTotal, XRCCTRL(*this->panel, "downloadedSizeTotal", wxStaticText), "downloadedSizeTotal");
 
+	// Speed
+	FIND_OR_FAIL(this->speed, XRCCTRL(*this->panel, "speed", wxStaticText), "speed");
+
+	// Elapsed Time
+	FIND_OR_FAIL(this->elapsedTime, XRCCTRL(*this->panel, "elapsedTime", wxStaticText), "elapsedTime");
+
+	// Remaining Time
+	FIND_OR_FAIL(this->remainingTime, XRCCTRL(*this->panel, "remainingTime", wxStaticText), "remainingTime");
+
+	// Show frame
 	Show(true);
 
 	// Now start the Update
@@ -85,21 +94,29 @@ UpdateFrame::~UpdateFrame() {
 
 
 // Progress Update
-void UpdateFrame::OnUpdate(wxString infoText, int progress) {
-	// Set new Text
-	this->dlInfo->SetLabelText(infoText);
-
+void UpdateFrame::OnUpdate(UpdateInfo updateInfo) {
 	// Update Progress Bar
-	this->progressBar->SetValue(progress);
+	this->progressBar->SetValue((updateInfo.downloadedSize / updateInfo.totalSize) * 100);
 
+	// Update download info
+	double speed = (updateInfo.downloadedSize / 1024) / updateInfo.currentTime;
+
+	this->downloadedSize->SetLabelText(wxString::Format("%.0f", updateInfo.downloadedSize / 1024));
+	this->downloadedSizeTotal->SetLabelText(wxString::Format("%.0f", updateInfo.totalSize / 1024));
+	this->speed->SetLabelText(wxString::Format("%.0f", speed));
+	this->elapsedTime->SetLabelText(wxString::Format("%.2f", updateInfo.currentTime));
+	this->remainingTime->SetLabelText(wxString::Format("%.2f", ((updateInfo.totalSize - updateInfo.downloadedSize) / 1024) / speed));
+
+	this->sizerTop->Layout();
 	this->sizerTop->Fit(this);
 }
 
 
 // Update Finished
 void UpdateFrame::OnFinish(wxString error) {
-	// Update Progress Bar
+	// Show correct finish state
 	this->progressBar->SetValue(100);
+	this->remainingTime->SetLabelText("0.00");
 
 	// Path
 	wxString executablePath = wxGetApp().GetCallAdminExecutablePath();
@@ -107,28 +124,18 @@ void UpdateFrame::OnFinish(wxString error) {
 	// Notice finish
 	if (error == "") {
 		// Renaming Files
-		if (wxFileExists(executablePath)) {
+		if (wxFileExists(executablePath) && wxFileExists(executablePath + ".new")) {
 			wxRenameFile(executablePath, executablePath + ".old");
-		}
-
-		if (wxFileExists(executablePath + ".new")) {
 			wxRenameFile(executablePath + ".new", executablePath);
 		}
 
-		// Refresh Status
-		this->dlStatus->SetLabelText("Status: Finished");
-		this->dlStatus->SetForegroundColour(wxColour(34, 139, 34));
-
 		wxMessageBox("Update finished successfully", "Update finished", wxOK | wxCENTRE | wxICON_INFORMATION, this);
 	} else {
-		// Refresh Status
-		this->dlStatus->SetLabelText("Status: Error!");
-		this->dlStatus->SetForegroundColour(wxColour("red"));
-
 		wxMessageBox("Couldn't download update\n" + error, "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this);
 	}
 
 	// Fit Window
+	this->sizerTop->Layout();
 	this->sizerTop->Fit(this);
 
 	wxGetApp().ExitProgramm();
@@ -250,8 +257,8 @@ size_t WriteDataToFile(void *data, size_t size, size_t nmemb, FILE *file) {
 int ProgressUpdated(void *curlPointer, double dlTotal, double dlNow, double WXUNUSED(ulTotal), double WXUNUSED(ulNow)) {
 	static int numUpdates = 0;
 
-	// Update only every 10 times
-	if (++numUpdates % 10 == 0) {
+	// Update only every 50 times
+	if (++numUpdates % 50 == 0) {
 		// Get curl
 		CURL *curl = (CURL *)curlPointer;
 
@@ -266,12 +273,10 @@ int ProgressUpdated(void *curlPointer, double dlTotal, double dlNow, double WXUN
 
 		// Valid Data?
 		if (dlTotal > 0) {
-			// Set Event Data
-			wxString infoText = wxString::Format("%.0f", (dlNow / 1024)) + "kB of " + wxString::Format("%.0f", (dlTotal / 1024)) + "kB (" + wxString::Format("%.0f", ((dlNow / 1024) / curtime)) + "kB/s). Time: " + wxString::Format("%.2f", curtime) + " Seconds";
-			int progress = (dlNow / dlTotal) * 100;
+			UpdateInfo updateInfo = { dlTotal, dlNow, curtime };
 
 			// Add Event Handler
-			wxGetApp().GetUpdateFrame()->GetEventHandler()->CallAfter(&UpdateFrame::OnUpdate, infoText, progress);
+			wxGetApp().GetUpdateFrame()->GetEventHandler()->CallAfter(&UpdateFrame::OnUpdate, updateInfo);
 		}
 	}
 
