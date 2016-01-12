@@ -548,22 +548,24 @@ bool AvatarTimer::SetAvatar(CSteamID *id, wxStaticBitmap *map) {
 
 	// Could it load?
 	if (avatar > 0) {
-		// Buffer to store picture
-		uint8 *rgbaBuffer = new uint8[4 * 184 * 184];
-		uint32 *size = new uint32(184);
+		unsigned int width;
+		unsigned int height;
 
 		// Is Size valid?
-		if (caGetSteamThread()->GetSteamUtils()->GetImageSize(avatar, size, size)) {
+		if (caGetSteamThread()->GetSteamUtils()->GetImageSize(avatar, &width, &height)) {
+			// Buffer to store picture
+			unsigned char *rgbaBuffer = new uint8[4 * width * height];
+
 			// Load Image
-			if (caGetSteamThread()->GetSteamUtils()->GetImageRGBA(avatar, rgbaBuffer, (4 * 184 * 184))) {
+			if (caGetSteamThread()->GetSteamUtils()->GetImageRGBA(avatar, rgbaBuffer, (4 * width * height))) {
 				// Image
-				wxImage image(184, 184);
+				wxImage image(width, height);
 
 				// RGBA to Image
-				for (int y = 0; y < 184; y++) {
-					int start = 184 * y * 4;
+				for (int y = 0; y < width; y++) {
+					int start = height * y * 4;
 
-					for (int x = 0; x < 184; x++) {
+					for (int x = 0; x < height; x++) {
 						// Set Colour
 						image.SetRGB(x, y, rgbaBuffer[start], rgbaBuffer[start + 1], rgbaBuffer[start + 2]);
 
@@ -571,27 +573,22 @@ bool AvatarTimer::SetAvatar(CSteamID *id, wxStaticBitmap *map) {
 					}
 				}
 
-				if (caGetApp().GetAvatarSize() != 184) {
-					image.Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize());
-				}
-
 				// Set new Avatar
+				image.Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize());
 				map->SetBitmap(wxBitmap(image));
 
 				caLogAction("Loaded Avatar of " + (wxString)id->Render());
 
 				// Clean
-				delete rgbaBuffer;
-				delete size;
+				delete[] rgbaBuffer;
 
 				// It's loaded
 				return true;
 			}
-		}
 
-		// Clean
-		delete rgbaBuffer;
-		delete size;
+			// Clean
+			delete[] rgbaBuffer;
+		}
 	}
 
 	return false;
