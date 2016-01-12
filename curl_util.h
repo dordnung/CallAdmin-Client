@@ -29,7 +29,7 @@
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
-#include <wx/wx.h>
+	#include <wx/wx.h>
 #endif
 
 
@@ -64,6 +64,7 @@ public:
 		this->extra = extra;
 	}
 
+protected:
 	virtual wxThread::ExitCode Entry();
 };
 

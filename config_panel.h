@@ -29,7 +29,7 @@
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
-#include <wx/wx.h>
+	#include <wx/wx.h>
 #endif
 
 #include <wx/spinctrl.h>
@@ -51,8 +51,10 @@ private:
 public:
 	ConfigPanel();
 
+	// Load controls
 	bool InitPanel();
 
+	// Parse the config, set the panel values and restart progress
 	void ParseConfig();
 
 protected:

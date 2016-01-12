@@ -29,7 +29,7 @@
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
-#include <wx/wx.h>
+	#include <wx/wx.h>
 #endif
 
 #include <wx/listbox.h>
@@ -56,10 +56,11 @@ private:
 public:
 	MainPanel();
 
+	// Load the controls
 	bool InitPanel();
 
-	// Sets the event text
-	void SetEventText(wxString text);
+	// Set the event text
+	void SetStatusText(wxString text);
 
 	void SetReconnectButton(bool enable = false) {
 		this->reconnectButton->Enable(enable);
@@ -75,14 +76,10 @@ public:
 
 protected:
 	// Events
-	void OnCloseWindow(wxCloseEvent &event);
-
 	void OnHide(wxCommandEvent &event);
 	void OnReconnect(wxCommandEvent &event);
-
-	void OnBoxClick(wxCommandEvent &event);
-
 	void OnCheckBox(wxCommandEvent &event);
+	void OnBoxClick(wxCommandEvent &event);
 
 	wxDECLARE_EVENT_TABLE();
 };

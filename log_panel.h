@@ -29,7 +29,7 @@
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
-#include <wx/wx.h>
+	#include <wx/wx.h>
 #endif
 
 #include "config.h"
@@ -41,6 +41,7 @@ private:
 public:
 	LogPanel() : logBox(NULL) {};
 
+	// Load controls
 	bool InitPanel();
 
 	// Add Action to the logBox

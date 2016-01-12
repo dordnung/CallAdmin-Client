@@ -29,7 +29,7 @@
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
-#include <wx/wx.h>
+	#include <wx/wx.h>
 #endif
 
 #include "opensteam.h"
@@ -104,7 +104,6 @@ private:
 
 public:
 	CallDialog();
-	~CallDialog();
 
 	// Convert to community ID
 	static CSteamID SteamIdtoCSteamId(wxString steamId);

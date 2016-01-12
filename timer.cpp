@@ -30,13 +30,14 @@
 #include <wx/sound.h>
 
 #ifdef __WXMSW__
-// Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
+
 
 // Timer events
 wxBEGIN_EVENT_TABLE(Timer, wxTimer)
-EVT_TIMER(TIMER_ID, Timer::OnExecute)
+	EVT_TIMER(TIMER_ID, Timer::OnExecute)
 wxEND_EVENT_TABLE()
 
 
@@ -74,12 +75,14 @@ void Timer::Run(int repeatInterval) {
 	// Log Action
 	caLogAction("Started the Timer");
 
-	Start(repeatInterval);
+	Start(repeatInterval, wxTIMER_CONTINUOUS);
 }
 
 
 // Timer executed
-void Timer::OnExecute(wxTimerEvent& WXUNUSED(event)) {
+void Timer::OnExecute(wxTimerEvent &WXUNUSED(event)) {
+	wxMutexLocker lock(globalThreadMutex);
+
 	// Check if app already ended
 	if (caGetApp().AppEnded()) {
 		return;
@@ -111,6 +114,7 @@ void Timer::OnExecute(wxTimerEvent& WXUNUSED(event)) {
 }
 
 
+// Got call list page
 void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 	// Valid result?
 	if (result != "") {
@@ -132,7 +136,7 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 				caGetApp().SetAttempts(caGetApp().GetAttempts() + 1);
 
 				// Log Action
-				caLogAction("Found a XML Error: " + XMLErrorString[parseError]);
+				caLogAction("Found a XML Error: " + XMLErrorString[parseError], LogLevel::LEVEL_ERROR);
 
 				// Max attempts reached?
 				if (caGetApp().GetAttempts() == caGetConfig()->GetMaxAttempts()) {
@@ -337,7 +341,7 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 
 				// Updated Main Interface
 				caGetMainFrame()->SetTitle("CallAdmin Client");
-				caGetMainPanel()->SetEventText("Waiting for a new report...");
+				caGetMainPanel()->SetStatusText("Waiting for a new report...");
 
 				// Update Call List
 				if (foundNew) {
@@ -362,7 +366,7 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 			caGetApp().SetAttempts(caGetApp().GetAttempts() + 1);
 
 			// Log Action
-			caLogAction("New CURL Error: " + error);
+			caLogAction("New CURL Error: " + error, LogLevel::LEVEL_ERROR);
 
 			// Max attempts reached?
 			if (caGetApp().GetAttempts() == caGetConfig()->GetMaxAttempts()) {

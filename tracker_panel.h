@@ -29,45 +29,43 @@
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
-#include <wx/wx.h>
+	#include <wx/wx.h>
 #endif
 
 #include "opensteam.h"
 
 
-// Name Timer Class
+// Name Timer to load names from Steam Lib
 class NameTimer : public wxTimer {
 private:
-	int id;
 	int attempts;
 
-	// The ID
+	// The SteamId of the name to load
 	CSteamID client;
 
 public:
 	// Init Timer
-	NameTimer(CSteamID client, int id);
+	NameTimer(CSteamID client);
 	~NameTimer();
 
-	int GetId() {
-		return this->id;
-	}
-
 protected:
+	// Timer executed
 	virtual void Notify();
 };
 
 
 class TrackerPanel : public wxPanel {
 private:
-	int currentNameTimerId;
+	// The running NameTimers
 	wxVector<NameTimer *> nameTimers;
 
 	wxListBox *trackerBox;
 
 public:
-	TrackerPanel() : currentNameTimerId(0), trackerBox(NULL) {};
+	TrackerPanel() : trackerBox(NULL) {};
+	~TrackerPanel();
 
+	// Init Panel with controls
 	bool InitPanel();
 
 	void AddTracker(wxString text) {
@@ -82,16 +80,11 @@ public:
 		return &nameTimers;
 	}
 
-	int GetAndIncraseCurrentNameTimerId() {
-		return currentNameTimerId++;
-	}
-
 	// Refresh the tracker list
 	static void RefreshTrackers(wxString errorStr, wxString result, int extra);
 
 protected:
 	void OnUpdate(wxCommandEvent &event);
-	void OnCloseWindow(wxCloseEvent &event);
 
 	wxDECLARE_EVENT_TABLE();
 };

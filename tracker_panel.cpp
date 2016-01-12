@@ -30,20 +30,32 @@
 #include <wx/xrc/xmlres.h>
 
 #ifdef __WXMSW__
-// Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
 
 
 // Events for Trackers Panel
 wxBEGIN_EVENT_TABLE(TrackerPanel, wxPanel)
-EVT_BUTTON(XRCID("updateTrackers"), TrackerPanel::OnUpdate)
-
-EVT_CLOSE(TrackerPanel::OnCloseWindow)
+	EVT_BUTTON(XRCID("updateTrackers"), TrackerPanel::OnUpdate)
 wxEND_EVENT_TABLE()
 
 
-// Create Tracker Panel
+// Clean Up
+TrackerPanel::~TrackerPanel() {
+	wxVector<NameTimer *>::iterator nameTimer = nameTimers.begin();
+
+	while (nameTimer != nameTimers.end()) {
+		// Ensure that destructor of NameTimer does not delete something out of the vector
+		wxVector<NameTimer *>::iterator oldNameTimer = nameTimer;
+		nameTimer = nameTimers.erase(nameTimer);
+
+		delete (*oldNameTimer);
+	}
+}
+
+
+// Init Panel with controls
 bool TrackerPanel::InitPanel() {
 	if (!wxXmlResource::Get()->LoadPanel(this, caGetMainFrame(), "trackerPanel")) {
 		wxMessageBox("Error: Couldn't find XRCID trackerPanel", "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR);
@@ -54,28 +66,27 @@ bool TrackerPanel::InitPanel() {
 	// Box
 	FIND_OR_FAIL(this->trackerBox, XRCCTRL(*this, "trackerBox", wxListBox), "trackerBox");
 
-	// Auto Size
-	SetSizerAndFit(this->GetSizer(), true);
-
 	return true;
 }
 
 
 // Button Event -> Update List
 void TrackerPanel::OnUpdate(wxCommandEvent& WXUNUSED(event)) {
+	caLogAction("Retrieving current trackers");
+
 	// Get the Trackers Page
 	caGetApp().GetPage(TrackerPanel::RefreshTrackers, caGetConfig()->GetPage() + "/trackers.php?from=20&from_type=interval&key=" + caGetConfig()->GetKey());
 }
 
 
-// Refresh Trackers
+// Got current trackers
 void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNUSED(extra)) {
 	// Log Action
-	caLogAction("Got Trackers");
+	caLogAction("Retrieved current trackers");
 
 	wxString error = "";
 
-	// Delete old ones
+	// First delete old ones
 	caGetTrackerPanel()->DeleteTrackers();
 
 	// Not empty?
@@ -114,20 +125,25 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 							break;
 						}
 
-
-						// Search admin steamids
+						// Search for steamid
 						for (tinyxml2::XMLNode *node3 = node2->FirstChild(); node3; node3 = node3->NextSibling()) {
-							// Found steamid
+							// Found tracker steamid
 							if ((wxString)node3->Value() == "trackerID") {
 								wxString steamidString = node3->FirstChild()->Value();
 
 								// Build csteamid
-								CSteamID steamidTracker = CallDialog::SteamIdtoCSteamId((char*)steamidString.mb_str().data());
+								CSteamID steamidTracker = CallDialog::SteamIdtoCSteamId(steamidString);
 
 								// Valid Tracker ID?
 								if (steamidTracker.IsValid()) {
-									// Create Name Timer
-									caGetTrackerPanel()->GetNameTimers()->push_back(new NameTimer(steamidTracker, caGetTrackerPanel()->GetAndIncraseCurrentNameTimerId()));
+									// Just add SteamId if Steam is not available
+									if (caGetSteamThread()->IsConnected()) {
+										// Create Name Timer
+										NameTimer *nameTimer = new NameTimer(steamidTracker);
+										caGetTrackerPanel()->GetNameTimers()->push_back(nameTimer);
+									} else {
+										caGetTrackerPanel()->AddTracker(steamidTracker.Render());
+									}
 
 									found = true;
 								}
@@ -135,8 +151,8 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 						}
 					}
 
-					// Have we found something?
-					if (found) {
+					// Have we found something and there is no error
+					if (found && error == "") {
 						// We are finished :)
 						return;
 					}
@@ -144,16 +160,10 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 			} else {
 				// XML ERROR
 				error = "XML ERROR: Couldn't parse the trackers API!";
-
-				// Log Action
-				caLogAction("XML Error in trackers API");
 			}
 		} else {
 			// Curl error
 			error = errorStr;
-
-			// Log Action
-			caLogAction("CURL Error " + error);
 		}
 	} else {
 		// Curl error
@@ -161,107 +171,101 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 	}
 
 
-	// Seems we found no one
+	// Seems we found no tracker
 	if (error == "") {
-		error = "Found no available trackers!";
+		caGetTrackerPanel()->AddTracker("No trackers available");
+	} else {
+		caLogAction("Couldn't retrieve trackers! " + error, LogLevel::LEVEL_ERROR);
+		caGetTaskBarIcon()->ShowMessage("Couldn't retrieve trackers!", error, NULL);
+
 	}
-
-	caGetTaskBarIcon()->ShowMessage("Coulnd't retrieve trackers!", error, NULL);
-}
-
-
-void TrackerPanel::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {
-	for (wxVector<NameTimer *>::iterator nameTimer = nameTimers.begin(); nameTimer != nameTimers.end(); ++nameTimer) {
-		(*nameTimer)->Stop();
-		delete (*nameTimer);
-	}
-
-	nameTimers.clear();
 }
 
 
 
-
-NameTimer::NameTimer(CSteamID client, int id) : wxTimer(this, -1) {
+// Name Timer to load names from Steam Lib
+NameTimer::NameTimer(CSteamID client) : wxTimer(this, -1) {
 	this->client = client;
-	this->id = id;
 	this->attempts = 0;
 
 	Start(100, wxTIMER_CONTINUOUS);
 }
 
 
+// Clean Up
 NameTimer::~NameTimer() {
-	bool found = false;
-
 	// Remove name timer
 	wxVector<NameTimer *>* nameTimers = caGetTrackerPanel()->GetNameTimers();
-	wxVector<NameTimer *>::iterator nameTimerIterator;
 
-	for (nameTimerIterator = nameTimers->begin(); nameTimerIterator != nameTimers->end(); ++nameTimerIterator) {
+	for (wxVector<NameTimer *>::iterator nameTimerIterator = nameTimers->begin(); nameTimerIterator != nameTimers->end(); ++nameTimerIterator) {
 		NameTimer *nameTimer = *nameTimerIterator;
 
-		if (nameTimer->GetId() == this->id) {
-			found = true;
+		if (nameTimer == this) {
+			nameTimers->erase(nameTimerIterator);
 			break;
 		}
-	}
-
-	if (found) {
-		nameTimers->erase(nameTimerIterator);
 	}
 }
 
 
-// Timer to update trackers
+// Timer to find tracker name
 void NameTimer::Notify() {
+	wxMutexLocker lock(globalThreadMutex);
+
+	// Only if app not already ended
 	if (caGetApp().AppEnded()) {
+		delete this;
+
 		return;
 	}
 
 	// Steam available?
 	if (caGetSteamThread()->IsConnected()) {
-		if (this->client.IsValid()) {
-			if (!caGetSteamThread()->GetSteamFriends()->RequestUserInformation(this->client, true)) {
-				wxString isFriend = "No Friends";
-				wxString isOnline = "Offline";
+		if (!caGetSteamThread()->GetSteamFriends()->RequestUserInformation(this->client, true)) {
+			bool isFriend = false;
+			bool isOnline = false;
 
-				// Is Friend?
-				if (caGetSteamThread()->GetSteamFriends()->GetFriendRelationship(this->client) == k_EFriendRelationshipFriend) {
-					isFriend = "Friends";
-				}
+			// Is Friend?
+			if (caGetSteamThread()->GetSteamFriends()->GetFriendRelationship(this->client) == k_EFriendRelationshipFriend) {
+				isFriend = true;
+			}
 
-				// Is Online?
-				if (caGetSteamThread()->GetSteamFriends()->GetFriendPersonaState(this->client) != k_EPersonaStateOffline) {
-					// Online
-					if (isFriend == "Friends") {
-						isOnline = "Online";
+			// Is Online?
+			if (caGetSteamThread()->GetSteamFriends()->GetFriendPersonaState(this->client) != k_EPersonaStateOffline) {
+				isOnline = true;
+			}
+
+			// Format tracker Text
+			wxString trackerText = (wxString)caGetSteamThread()->GetSteamFriends()->GetFriendPersonaName(this->client) + " - " + (wxString)this->client.Render();
+
+			if (this->client.Render() != caGetSteamThread()->GetUserSteamId()) {
+				if (isFriend) {
+					trackerText += " - Friend";
+
+					if (isOnline) {
+						trackerText += " - Online";
 					} else {
-						// We can't know
-						isOnline = "Unknown Status";
+						trackerText += " - Offline";
 					}
 				}
-
-
-				// Add Tracker
-				if (this->client.Render() != caGetSteamThread()->GetUserSteamId()) {
-					caGetTrackerPanel()->AddTracker("" + (wxString)caGetSteamThread()->GetSteamFriends()->GetFriendPersonaName(this->client) + " - " + (wxString)this->client.Render() + " - " + isFriend + " - " + isOnline);
-				} else {
-					caGetTrackerPanel()->AddTracker("" + (wxString)caGetSteamThread()->GetSteamFriends()->GetFriendPersonaName(this->client) + " - " + (wxString)this->client.Render());
-				}
-
-				//Stop
-				Stop();
-				delete this;
+			} else {
+				trackerText = "Yourself: " + trackerText;
 			}
+
+			// Finally add tracker
+			caGetTrackerPanel()->AddTracker(trackerText);
+
+			// Stop and delete
+			Stop();
+			delete this;
 		}
 	}
 
-
-	// All loaded or 5 seconds gone?
+	// 5 seconds gone?
 	if (++this->attempts == 50) {
-		// Enough, stop timer
-		Stop();
+		caGetTrackerPanel()->AddTracker(this->client.Render());
+
+		// Enough, stop and delete timer
 		delete this;
 	}
 }

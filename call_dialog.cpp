@@ -32,21 +32,21 @@
 #include <wx/xrc/xmlres.h>
 
 #ifdef __WXMSW__
-// Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
 
 
 // Button Events for Call Dialog
 wxBEGIN_EVENT_TABLE(CallDialog, wxDialog)
-EVT_BUTTON(XRCID("connectButton"), CallDialog::OnConnect)
-EVT_BUTTON(XRCID("takeoverButton"), CallDialog::OnCheck)
-EVT_BUTTON(XRCID("contactClientButton"), CallDialog::OnContactClient)
-EVT_BUTTON(XRCID("contactTargetButton"), CallDialog::OnContactTarget)
-EVT_BUTTON(XRCID("contactTrackersButton"), CallDialog::OnContactTrackers)
+	EVT_BUTTON(XRCID("connectButton"), CallDialog::OnConnect)
+	EVT_BUTTON(XRCID("takeoverButton"), CallDialog::OnCheck)
+	EVT_BUTTON(XRCID("contactClientButton"), CallDialog::OnContactClient)
+	EVT_BUTTON(XRCID("contactTargetButton"), CallDialog::OnContactTarget)
+	EVT_BUTTON(XRCID("contactTrackersButton"), CallDialog::OnContactTrackers)
 
-EVT_CLOSE(CallDialog::OnCloseWindow)
-EVT_ICONIZE(CallDialog::OnMinimizeWindow)
+	EVT_CLOSE(CallDialog::OnCloseWindow)
+	EVT_ICONIZE(CallDialog::OnMinimizeWindow)
 wxEND_EVENT_TABLE()
 
 
@@ -61,14 +61,6 @@ CallDialog::CallDialog() {
 	this->takeover = NULL;
 	this->contactTrackers = NULL;
 	this->avatarTimer = NULL;
-}
-
-
-CallDialog::~CallDialog() {
-	if (this->avatarTimer != NULL) {
-		this->avatarTimer->Stop();
-		delete this->avatarTimer;
-	}
 }
 
 
@@ -152,14 +144,13 @@ bool CallDialog::StartCall(bool show) {
 		}
 	}
 
-
 	// Steamid
 	FIND_OR_FAIL(textCtrl, XRCCTRL(*this, "targetSteamId", wxTextCtrl), "targetSteamId");
 	textCtrl->SetValue(targetId);
 
 	// Start the Timers
 	this->avatarTimer = new AvatarTimer(&this->clientCId, &this->targetCId, this->clientAvatar, this->targetAvatar);
-	this->avatarTimer->Start(100);
+	this->avatarTimer->Start(100, wxTIMER_CONTINUOUS);
 
 	// Takeover button
 	FIND_OR_FAIL(this->takeover, XRCCTRL(*this, "takeoverButton", wxButton), "takeoverButton");
@@ -168,7 +159,8 @@ bool CallDialog::StartCall(bool show) {
 	FIND_OR_FAIL(this->contactTrackers, XRCCTRL(*this, "contactTrackersButton", wxButton), "contactTrackersButton");
 
 	// Auto Size
-	panel->SetSizerAndFit(this->sizerTop, true);
+	this->sizerTop->Layout();
+	this->sizerTop->Fit(panel);
 
 	// Fit
 	Fit();
@@ -234,11 +226,11 @@ void CallDialog::OnConnect(wxCommandEvent &WXUNUSED(event)) {
 	// Log Action
 	caLogAction("Connected to the Server " + this->fullIP);
 
-#if defined(__WXMSW__)
-	wxExecute("steam://connect/" + this->fullIP);
-#else
-	wxExecute("xdg-open steam://connect/" + this->fullIP);
-#endif
+	#if defined(__WXMSW__)
+		wxExecute("steam://connect/" + this->fullIP);
+	#else
+		wxExecute("xdg-open steam://connect/" + this->fullIP);
+	#endif
 
 	Show(false);
 }
@@ -247,7 +239,7 @@ void CallDialog::OnConnect(wxCommandEvent &WXUNUSED(event)) {
 // Mark it checked
 void CallDialog::OnCheck(wxCommandEvent &WXUNUSED(event)) {
 	// Log Action
-	caLogAction("Marke call " + this->callId + " as finished");
+	caLogAction("Mark call " + this->callId + " as finished");
 
 	// page
 	wxString page = caGetConfig()->GetPage() + "/takeover.php?callid=" + this->callId + "&key=" + caGetConfig()->GetKey();
@@ -258,35 +250,35 @@ void CallDialog::OnCheck(wxCommandEvent &WXUNUSED(event)) {
 
 
 // Contact Client
-void CallDialog::OnContactClient(wxCommandEvent& WXUNUSED(event)) {
+void CallDialog::OnContactClient(wxCommandEvent &WXUNUSED(event)) {
 	// Log Action
 	caLogAction("Contacted Client " + (wxString)this->clientCId.Render());
 
 	// Open Chat
-#if defined(__WXMSW__)
-	wxExecute("steam://friends/message/" + wxString() << this->clientCId.ConvertToUint64());
-#else
-	wxExecute("xdg-open steam://friends/message/" + wxString() << this->clientCId.ConvertToUint64());
-#endif
+	#if defined(__WXMSW__)
+		wxExecute("steam://friends/message/" + wxString() << this->clientCId.ConvertToUint64());
+	#else
+		wxExecute("xdg-open steam://friends/message/" + wxString() << this->clientCId.ConvertToUint64());
+	#endif
 }
 
 
 // Contact Target
-void CallDialog::OnContactTarget(wxCommandEvent& WXUNUSED(event)) {
+void CallDialog::OnContactTarget(wxCommandEvent &WXUNUSED(event)) {
 	// Log Action
 	caLogAction("Contacted Client " + (wxString)this->targetCId.Render());
 
 	// Open Chat
-#if defined(__WXMSW__)
-	wxExecute("steam://friends/message/" + wxString() << this->targetCId.ConvertToUint64());
-#else
-	wxExecute("xdg-open steam://friends/message/" + wxString() << this->targetCId.ConvertToUint64());
-#endif
+	#if defined(__WXMSW__)
+		wxExecute("steam://friends/message/" + wxString() << this->targetCId.ConvertToUint64());
+	#else
+		wxExecute("xdg-open steam://friends/message/" + wxString() << this->targetCId.ConvertToUint64());
+	#endif
 }
 
 
 // Contact Trackers
-void CallDialog::OnContactTrackers(wxCommandEvent& WXUNUSED(event)) {
+void CallDialog::OnContactTrackers(wxCommandEvent &WXUNUSED(event)) {
 	// Log Action
 	caLogAction("Contacting current Trackers");
 
@@ -300,7 +292,7 @@ void CallDialog::OnContactTrackers(wxCommandEvent& WXUNUSED(event)) {
 		return;
 	}
 
-	caGetTaskBarIcon()->ShowMessage("Couldn't contact trackers!", "You're not connected with STEAM!", this);
+	caGetTaskBarIcon()->ShowMessage("Couldn't contact trackers!", "You're not connected to STEAM!", this);
 }
 
 
@@ -384,14 +376,14 @@ void CallDialog::OnGetTrackers(wxString errorStr, wxString result, int x) {
 				error = "XML ERROR: Couldn't parse the trackers API!";
 
 				// Log Action
-				caLogAction("XML Error in trackers API");
+				caLogAction("XML Error in trackers API", LogLevel::LEVEL_ERROR);
 			}
 		} else {
 			// Curl error
 			error = errorStr;
 
 			// Log Action
-			caLogAction("CURL Error " + error);
+			caLogAction("CURL Error " + error, LogLevel::LEVEL_ERROR);
 		}
 	} else {
 		// Curl error
@@ -514,7 +506,11 @@ AvatarTimer::AvatarTimer(CSteamID *clientId, CSteamID *targetId, wxStaticBitmap 
 
 // Timer to update avatars
 void AvatarTimer::Notify() {
+	wxMutexLocker lock(globalThreadMutex);
+
 	if (caGetApp().AppEnded()) {
+		delete this;
+
 		return;
 	}
 
@@ -540,7 +536,6 @@ void AvatarTimer::Notify() {
 	// All loaded or 10 seconds gone?
 	if (++this->attempts == 100 || (this->clientLoaded && this->targetLoaded)) {
 		// Enough, stop timer
-		Stop();
 		delete this;
 	}
 }

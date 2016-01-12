@@ -25,8 +25,8 @@
 #include "calladmin-client.h"
 
 #ifdef __WXMSW__
-// Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
 
 
@@ -65,8 +65,6 @@ SteamThread::~SteamThread() {
 
 		wxThread::This()->Sleep(1);
 	}
-
-	Clean();
 }
 
 
@@ -143,10 +141,15 @@ STEAM_ERROR_TYP SteamThread::Load() {
 
 
 // Thread started
-// LOCK fuer exit?
 void SteamThread::Check() {
 	for (; !GetThread()->TestDestroy(); wxMilliSleep(100)) {
-		if (!this->pipeSteam || this->pipeSteam == -1 || !caGetConfig()->GetSteamEnabled()) {
+		wxMutexLocker lock(globalThreadMutex);
+
+		if (caGetApp().AppEnded()) {
+			break;
+		}
+
+		if (!this->pipeSteam > 0) {
 			// Load Steam
 			STEAM_ERROR_TYP steamError = Load();
 
@@ -157,7 +160,7 @@ void SteamThread::Check() {
 					if (this->isConnected) {
 						// Notice changes to main panel
 						caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
-						caLogAction("Disonnected from Steam");
+						caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Disonnected from Steam", LogLevel::LEVEL_INFO);
 
 						// Clean
 						Clean();
@@ -167,12 +170,12 @@ void SteamThread::Check() {
 					if (this->lastError != STEAM_DISABLED) {
 						// Notice changes to main panel
 						caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 0);
-
-						// Clean
-						Clean();
 					}
+
+					// Clean
+					Clean();
 				}
-				
+
 				this->isConnected = false;
 				this->steamid = "";
 			} else {
@@ -181,7 +184,7 @@ void SteamThread::Check() {
 
 				// Notice changes to main panel
 				caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 2);
-				caLogAction("Connected to Steam");
+				caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Connected to Steam", LogLevel::LEVEL_INFO);
 
 				this->isConnected = true;
 			}
@@ -189,8 +192,6 @@ void SteamThread::Check() {
 
 			this->lastError = steamError;
 		}
-
-		CallbackMsg_t callbackMsg;
 
 		// If connected check if still logged in and Steam is still opened
 		if (this->isConnected) {
@@ -201,7 +202,7 @@ void SteamThread::Check() {
 				if (!this->steamUser->BLoggedOn()) {
 					// Notice changes to main panel
 					caGetMainFrame()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
-					caLogAction("Disonnected from Steam");
+					caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Disonnected from Steam", LogLevel::LEVEL_INFO);
 
 					// Clean Steam
 					Clean();
@@ -210,11 +211,17 @@ void SteamThread::Check() {
 				}
 			}
 
-			while (Steam_BGetCallback(this->pipeSteam, &callbackMsg)) {
-				if (callbackMsg.m_iCallback == IPCFailure_t::k_iCallback) {
+			CallbackMsg_t callbackMsg;
+
+			/*while (Steam_BGetCallback(this->pipeSteam, &callbackMsg)) {
+				if (callbackMsg.m_iCallback == IPCFailure_t::k_iCallback || callbackMsg.m_iCallback == SteamServerConnectFailure_t::k_iCallback
+					|| callbackMsg.m_iCallback == SteamServersDisconnected_t::k_iCallback) {
 					// Notice changes to main panel
 					caGetMainFrame()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
-					caLogAction("Disonnected from Steam");
+					caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Disonnected from Steam", LogLevel::LEVEL_INFO);
+
+					// Free Callback
+					Steam_FreeLastCallback(this->pipeSteam);
 
 					// Clean Steam
 					Clean();
@@ -223,16 +230,19 @@ void SteamThread::Check() {
 				}
 
 				Steam_FreeLastCallback(this->pipeSteam);
-			}
+			}*/
 		}
 	}
+
+	// Clean on end
+	Clean();
 }
 
 
 // Clean Up Steam Stuff
 void SteamThread::Clean() {
 	// Close Steam Stuff
-	if (this->pipeSteam && this->pipeSteam != -1 && this->steamClient) {
+	if (this->pipeSteam > 0 && this->steamClient) {
 		if (this->clientUser) {
 			this->steamClient->ReleaseUser(this->pipeSteam, this->clientUser);
 		}

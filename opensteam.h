@@ -29,7 +29,7 @@
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
-#include <wx/wx.h>
+	#include <wx/wx.h>
 #endif
 
 // Steamworks warning -> disable
@@ -67,8 +67,6 @@ public:
 	SteamThread();
 	~SteamThread();
 
-	virtual wxThread::ExitCode Entry();
-
 	wxString GetUserSteamId() {
 		return this->steamid;
 	}
@@ -90,6 +88,9 @@ public:
 
 	// Cleanup Steam
 	void Clean();
+
+protected:
+	virtual wxThread::ExitCode Entry();
 };
 
 #endif

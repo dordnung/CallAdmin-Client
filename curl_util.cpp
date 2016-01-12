@@ -28,8 +28,8 @@
 #include <sstream>
 
 #ifdef __WXMSW__
-// Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
 
 
@@ -50,8 +50,13 @@ CurlThread::~CurlThread() {
 
 
 // Curl Thread started
-// TODO: LOCK fuer app ende
 wxThread::ExitCode CurlThread::Entry() {
+	wxMutexLocker lock(globalThreadMutex);
+
+	if (caGetApp().AppEnded()) {
+		return (wxThread::ExitCode)0;
+	}
+
 	// Maybe it's already killed?
 	if (!GetThread()->TestDestroy()) {
 		// CurlThreadData

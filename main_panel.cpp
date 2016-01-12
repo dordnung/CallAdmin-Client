@@ -27,23 +27,22 @@
 #include <wx/xrc/xmlres.h>
 
 #ifdef __WXMSW__
-// Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
 
 
 // Button Events for about Panel
 wxBEGIN_EVENT_TABLE(MainPanel, wxPanel)
-EVT_BUTTON(XRCID("hide"), MainPanel::OnHide)
-EVT_BUTTON(XRCID("reconnectButton"), MainPanel::OnReconnect)
+	EVT_BUTTON(XRCID("hide"), MainPanel::OnHide)
+	EVT_BUTTON(XRCID("reconnectButton"), MainPanel::OnReconnect)
 
-EVT_CHECKBOX(XRCID("available"), MainPanel::OnCheckBox)
-EVT_CHECKBOX(XRCID("sound"), MainPanel::OnCheckBox)
-EVT_CHECKBOX(XRCID("store"), MainPanel::OnCheckBox)
+	EVT_CHECKBOX(XRCID("available"), MainPanel::OnCheckBox)
+	EVT_CHECKBOX(XRCID("sound"), MainPanel::OnCheckBox)
+	EVT_CHECKBOX(XRCID("store"), MainPanel::OnCheckBox)
 
-EVT_LISTBOX_DCLICK(XRCID("callBox"), MainPanel::OnBoxClick)
+	EVT_LISTBOX_DCLICK(XRCID("callBox"), MainPanel::OnBoxClick)
 wxEND_EVENT_TABLE()
-
 
 
 // Init. Vars
@@ -62,6 +61,7 @@ MainPanel::MainPanel() {
 }
 
 
+// Load the controls
 bool MainPanel::InitPanel() {
 	if (!wxXmlResource::Get()->LoadPanel(this, caGetNotebook()->GetWindow(), "mainPanel")) {
 		wxMessageBox("Error: Couldn't find XRCID mainPanel", "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR);
@@ -77,7 +77,7 @@ bool MainPanel::InitPanel() {
 	// Steam Text
 	FIND_OR_FAIL(this->steamText, XRCCTRL(*this, "steamText", wxStaticText), "steamText");
 
-	// Event Text
+	// Status Text
 	FIND_OR_FAIL(this->eventText, XRCCTRL(*this, "eventText", wxStaticText), "eventText");
 
 	// The available Checkbox
@@ -102,56 +102,66 @@ bool MainPanel::InitPanel() {
 	text->SetLabel("v" + (wxString)CALLADMIN_CLIENT_VERSION + text->GetLabel());
 
 	// Auto Size
-	SetSizerAndFit(sizerBody, true);
+	this->sizerBody->Layout();
+	this->sizerBody->Fit(this);
 
 	return true;
 }
 
 
 // Update Window
-void MainPanel::SetEventText(wxString text) {
+void MainPanel::SetStatusText(wxString text) {
 	this->eventText->SetLabelText(text);
+
+	// TODO: Benötigt?
+	//this->eventText->Refresh();
 	this->sizerBody->Layout();
-	this->eventText->Refresh();
+	this->sizerBody->Fit(this);
 
-	SetSizerAndFit(this->sizerBody, false);
-
-	caGetNotebook()->GetWindow()->Fit();
-	caGetMainFrame()->Fit();
+	// TODO: Benötigt?
+	//caGetNotebook()->GetWindow()->Fit();
+	//caGetMainFrame()->Fit();
 }
 
 
 void MainPanel::SetSteamStatus(wxString text, wxColor color) {
 	this->steamText->SetLabelText(text);
 	this->steamText->SetForegroundColour(color);
+
 	this->sizerBody->Layout();
+	this->sizerBody->Fit(this);
 
-	SetSizerAndFit(this->sizerBody, false);
-
-	caGetNotebook()->GetWindow()->Fit();
-	caGetMainFrame()->Fit();
+	// TODO: Benötigt?
+	//caGetNotebook()->GetWindow()->Fit();
+	//caGetMainFrame()->Fit();
 }
 
 
 // Update Call List
 void MainPanel::UpdateCalls() {
+	int item = -1;
+
+	// First clear calls
 	this->callBox->Clear();
 
 	for (wxVector<CallDialog *>::iterator callDialog = caGetCallDialogs()->begin(); callDialog != caGetCallDialogs()->end(); ++callDialog) {
 		CallDialog *currentDialog = *callDialog;
-		int item;
 
 		if (currentDialog->IsHandled()) {
 			item = this->callBox->Append("F - " + wxString::FromUTF8(currentDialog->GetBoxText()));
 		} else {
 			item = this->callBox->Append("U - " + wxString::FromUTF8(currentDialog->GetBoxText()));
 		}
+	}
 
+	if (item > -1) {
+		// Select newest call
 		this->callBox->SetSelection(item);
 	}
 }
 
 
+// The call is now handled
 void MainPanel::SetHandled(int item) {
 	this->callBox->SetString(item, "F - " + wxString::FromUTF8(caGetCallDialogs()->at(item)->GetBoxText()));
 
@@ -161,20 +171,26 @@ void MainPanel::SetHandled(int item) {
 
 
 // Button Event -> Hide to Taskbar
-void MainPanel::OnHide(wxCommandEvent& WXUNUSED(event)) {
-	// Log Action
-	caLogAction("Hided Window");
+void MainPanel::OnHide(wxCommandEvent &WXUNUSED(event)) {
+	caLogAction("Hided main frame through window", LogLevel::LEVEL_DEBUG);
 
-	if (caGetTaskBarIcon()->IsAvailable()) {
-		caGetMainFrame()->Show(false);
-	} else {
-		caGetMainFrame()->Iconize(true);
+	if (caGetConfig()->GetHideOnMinimize()) {
+		if (caGetTaskBarIcon()->IsAvailable()) {
+			// Log Action
+			caLogAction("Hided main frame to taskbar", LogLevel::LEVEL_DEBUG);
+
+			caGetMainFrame()->Show(false);
+		} else {
+			caLogAction("Hided main frame (Taskbar not available)", LogLevel::LEVEL_DEBUG);
+
+			caGetMainFrame()->Iconize(true);
+		}
 	}
 }
 
 
 // Check Box Event -> Write To Config
-void MainPanel::OnCheckBox(wxCommandEvent& WXUNUSED(event)) {
+void MainPanel::OnCheckBox(wxCommandEvent &WXUNUSED(event)) {
 	caGetConfig()->SetIsAvailable(this->available->IsChecked());
 	caGetConfig()->SetWantSound(this->sound->IsChecked());
 	caGetConfig()->SetIsSpectator(this->store->IsChecked());
@@ -182,16 +198,14 @@ void MainPanel::OnCheckBox(wxCommandEvent& WXUNUSED(event)) {
 
 
 // Button Event -> Reconnect
-void MainPanel::OnReconnect(wxCommandEvent& WXUNUSED(event)) {
+void MainPanel::OnReconnect(wxCommandEvent &WXUNUSED(event)) {
 	// Log Action
-	caLogAction("Reconnecting...");
+	caLogAction("Trying to reconnect...");
 
-	SetEventText("Trying to reconnect...");
+	SetStatusText("Trying to reconnect...");
 	SetReconnectButton(false);
 
 	caGetMainFrame()->SetTitle("CallAdmin Client");
-	caGetMainFrame()->Show(true);
-	caGetMainFrame()->Restore();
 
 	// Start the Timer again
 	caGetApp().StartTimer();
@@ -211,15 +225,8 @@ void MainPanel::OnSteamChange(int status) {
 
 
 // Window Event -> Open Call
-void MainPanel::OnBoxClick(wxCommandEvent& WXUNUSED(event)) {
+void MainPanel::OnBoxClick(wxCommandEvent &WXUNUSED(event)) {
 	int selection = this->callBox->GetSelection();
 
 	caGetCallDialogs()->at(selection)->Show(true);
-	caGetCallDialogs()->at(selection)->Restore();
-}
-
-
-// Window Event -> Exit programm
-void MainPanel::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {
-	Destroy();
 }

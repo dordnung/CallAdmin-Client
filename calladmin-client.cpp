@@ -30,8 +30,8 @@
 #include "curl_util.h"
 
 #ifdef __WXMSW__
-// Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
 
 
@@ -116,6 +116,8 @@ bool CallAdmin::OnInit() {
 		return false;
 	}
 
+	SetTopWindow(this->mainFrame);
+
 	// Create CURL Thread
 	this->curlThread = new CurlThread();
 
@@ -123,7 +125,7 @@ bool CallAdmin::OnInit() {
 	this->taskBarIcon = new TaskBarIcon();
 
 	// Parse the config which starts everything else
-	this->mainFrame->GetNotebook()->GetConfigPanel()->ParseConfig();
+	caGetConfigPanel()->ParseConfig();
 
 	// Check for an update
 	CheckUpdate();
@@ -175,7 +177,6 @@ void CallAdmin::OnCurlThread(CurlThreadData *data) {
 
 void CallAdmin::StartTimer() {
 	if (this->timer) {
-		this->timer->Stop();
 		delete this->timer;
 	}
 
@@ -222,19 +223,19 @@ void CallAdmin::GetPage(CurlCallback callbackFunction, wxString page, int extra)
 // Create the Window as a reconnecter
 void CallAdmin::CreateReconnect(wxString error) {
 	// Log Action
-	LogAction("Create a reconnect window");
+	LogAction("Too much errors. Manual reconnect needed", LogLevel::LEVEL_ERROR);
 
 	// Stop timer
 	this->timer->Stop();
 
-	mainFrame->SetTitle("Couldn't Connect");
-	mainFrame->GetNotebook()->GetMainPanel()->SetEventText(error);
+	mainFrame->SetTitle("Error: Couldn't Connect");
+	mainFrame->GetNotebook()->GetMainPanel()->SetStatusText(error);
 	mainFrame->GetNotebook()->GetMainPanel()->SetReconnectButton(true);
 
 	// Show it
 	if (!isOtherInFullscreen()) {
-		mainFrame->Show(true);
 		mainFrame->Restore();
+		mainFrame->Show(true);
 	}
 
 	// Go to first page
@@ -253,6 +254,8 @@ void CallAdmin::ShowError(wxString error, wxString type) {
 
 // Close Taskbar Icon and destroy all dialogs
 void CallAdmin::ExitProgramm() {
+	wxMutexLocker lock(globalThreadMutex);
+
 	// App ended now
 	this->appEnded = true;
 
@@ -277,8 +280,6 @@ void CallAdmin::ExitProgramm() {
 
 	// Stop the timer
 	if (this->timer) {
-		this->timer->Stop();
-
 		wxDELETE(this->timer);
 	}
 
@@ -299,7 +300,9 @@ void CallAdmin::ExitProgramm() {
 
 	// Destroy mainFrame
 	if (this->mainFrame) {
-		// Delete main frame
+		// Delete notebook and main frame
+		delete this->mainFrame->GetNotebook();
+
 		this->mainFrame->Destroy();
 		this->mainFrame = NULL;
 	}
@@ -356,6 +359,8 @@ void CallAdmin::OnUpdate(wxString error, wxString result, int WXUNUSED(x)) {
 
 			if (!result.StartsWith("{") || !result.EndsWith("}")) {
 				// Maybe an Error Page?
+				caLogAction("Update check failed: Invalid Page Content", LogLevel::LEVEL_ERROR);
+
 				return caGetTaskBarIcon()->ShowMessage("Update Check Failed", "Error: Invalid Page Content", caGetMainFrame());
 			} else {
 				// Find version in brackets
@@ -363,7 +368,8 @@ void CallAdmin::OnUpdate(wxString error, wxString result, int WXUNUSED(x)) {
 			}
 		} else {
 			// Log Action
-			caLogAction("Update check failed: " + error);
+			caLogAction("Update check failed: " + error, LogLevel::LEVEL_ERROR);
+
 			return caGetTaskBarIcon()->ShowMessage("Update Check Failed", "Error: " + error, caGetMainFrame());
 		}
 	}
@@ -381,8 +387,8 @@ void CallAdmin::OnUpdate(wxString error, wxString result, int WXUNUSED(x)) {
 
 			// Show Main, but only if no other app is in fullscreen
 			if (!isOtherInFullscreen()) {
-				caGetMainFrame()->Show(true);
 				caGetMainFrame()->Restore();
+				caGetMainFrame()->Show(true);
 			}
 
 			// Goto About

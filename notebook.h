@@ -29,7 +29,7 @@
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
-#include <wx/wx.h>
+	#include <wx/wx.h>
 #endif
 
 #include <wx/notebook.h>
@@ -56,9 +56,9 @@ private:
 public:
 	Notebook(wxNotebook *window) : window(window), mainPanel(NULL), configPanel(NULL),
 		trackerPanel(NULL), logPanel(NULL), aboutPanel(NULL) {};
-
 	~Notebook();
 
+	// Create the pages of the notebook
 	bool CreatePages();
 
 	// Notebook window accessor

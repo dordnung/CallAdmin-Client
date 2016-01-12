@@ -27,12 +27,12 @@
 #include <wx/xrc/xmlres.h>
 
 #ifdef __WXMSW__
-// Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
 
 
-// Create Log Panel
+// Load controls
 bool LogPanel::InitPanel() {
 	if (!wxXmlResource::Get()->LoadPanel(this, caGetNotebook()->GetWindow(), "logPanel")) {
 		wxMessageBox("Error: Couldn't find XRCID logPanel", "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR);
@@ -42,9 +42,6 @@ bool LogPanel::InitPanel() {
 
 	// Box
 	FIND_OR_FAIL(this->logBox, XRCCTRL(*this, "logBox", wxListBox), "logBox");
-
-	// Auto Size
-	SetSizerAndFit(this->GetSizer(), true);
 
 	return true;
 }

@@ -28,20 +28,20 @@
 #include <wx/xrc/xmlres.h>
 
 #ifdef __WXMSW__
-// Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
 
 
 // Events for Config Panel
 wxBEGIN_EVENT_TABLE(ConfigPanel, wxPanel)
-EVT_BUTTON(XRCID("updateSettings"), ConfigPanel::OnSet)
+	EVT_BUTTON(XRCID("updateSettings"), ConfigPanel::OnSet)
 
-EVT_CHECKBOX(XRCID("steamEnable"), ConfigPanel::OnSteamUpdate)
-EVT_CHECKBOX(XRCID("showInTaskbar"), ConfigPanel::OnShowInTaskbarUpdate)
-EVT_CHECKBOX(XRCID("hideMinimized"), ConfigPanel::OnHideUpdate)
+	EVT_CHECKBOX(XRCID("steamEnable"), ConfigPanel::OnSteamUpdate)
+	EVT_CHECKBOX(XRCID("showInTaskbar"), ConfigPanel::OnShowInTaskbarUpdate)
+	EVT_CHECKBOX(XRCID("hideMinimized"), ConfigPanel::OnHideUpdate)
 
-EVT_CHOICE(XRCID("logLevel"), ConfigPanel::OnLogLevelUpdate)
+	EVT_CHOICE(XRCID("logLevel"), ConfigPanel::OnLogLevelUpdate)
 wxEND_EVENT_TABLE()
 
 
@@ -60,16 +60,13 @@ ConfigPanel::ConfigPanel() {
 }
 
 
+// Load controls
 bool ConfigPanel::InitPanel() {
 	if (!wxXmlResource::Get()->LoadPanel(this, caGetNotebook()->GetWindow(), "configPanel")) {
 		wxMessageBox("Error: Couldn't find XRCID configPanel", "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR);
 
 		return false;
 	}
-
-	// Sizer
-	wxSizer *sizerTop;
-	FIND_OR_FAIL(sizerTop, this->GetSizer(), "configPanelSizerTop");
 
 	// URL
 	FIND_OR_FAIL(this->pageText, XRCCTRL(*this, "callAdminUrl", wxTextCtrl), "callAdminUrl");
@@ -102,15 +99,12 @@ bool ConfigPanel::InitPanel() {
 	// Ask for hide on mini
 	FIND_OR_FAIL(this->hideMinimized, XRCCTRL(*this, "hideMinimized", wxCheckBox), "hideMinimized");
 
-	// Auto Size
-	SetSizerAndFit(sizerTop, true);
-
 	return true;
 }
 
 
 // Log Level Updated -> Set Config
-void ConfigPanel::OnLogLevelUpdate(wxCommandEvent& WXUNUSED(event)) {
+void ConfigPanel::OnLogLevelUpdate(wxCommandEvent &WXUNUSED(event)) {
 	// Write to config file
 	caGetConfig()->SetLogLevel((LogLevel) this->logLevel->GetSelection());
 
@@ -120,7 +114,7 @@ void ConfigPanel::OnLogLevelUpdate(wxCommandEvent& WXUNUSED(event)) {
 
 
 // Steam Updated -> Set Config
-void ConfigPanel::OnSteamUpdate(wxCommandEvent& WXUNUSED(event)) {
+void ConfigPanel::OnSteamUpdate(wxCommandEvent &WXUNUSED(event)) {
 	// Write to config file
 	caGetConfig()->SetSteamEnabled(this->steamEnable->GetValue());
 
@@ -130,7 +124,7 @@ void ConfigPanel::OnSteamUpdate(wxCommandEvent& WXUNUSED(event)) {
 
 
 // Show in Taskbar Updated -> Set Config
-void ConfigPanel::OnShowInTaskbarUpdate(wxCommandEvent& WXUNUSED(event)) {
+void ConfigPanel::OnShowInTaskbarUpdate(wxCommandEvent &WXUNUSED(event)) {
 	// Write to config file
 	caGetConfig()->SetShowInTaskbar(this->showInTaskbar->GetValue());
 
@@ -140,7 +134,7 @@ void ConfigPanel::OnShowInTaskbarUpdate(wxCommandEvent& WXUNUSED(event)) {
 
 
 // Hide On Minimize Updated -> Set Config
-void ConfigPanel::OnHideUpdate(wxCommandEvent& WXUNUSED(event)) {
+void ConfigPanel::OnHideUpdate(wxCommandEvent &WXUNUSED(event)) {
 	// Write to config file
 	caGetConfig()->SetHideOnMinimize(this->hideMinimized->GetValue());
 
@@ -150,7 +144,7 @@ void ConfigPanel::OnHideUpdate(wxCommandEvent& WXUNUSED(event)) {
 
 
 // Button Event -> Try to set new config
-void ConfigPanel::OnSet(wxCommandEvent& WXUNUSED(event)) {
+void ConfigPanel::OnSet(wxCommandEvent &WXUNUSED(event)) {
 	// Write to new config file
 	caGetConfig()->Write("step", this->stepSlider->GetValue());
 	caGetConfig()->Write("timeout", this->timeoutSlider->GetValue());
@@ -161,7 +155,7 @@ void ConfigPanel::OnSet(wxCommandEvent& WXUNUSED(event)) {
 
 	// Refresh main dialog
 	caGetMainFrame()->SetTitle("CallAdmin Client");
-	caGetMainPanel()->SetEventText("Enable new Settings...");
+	caGetMainPanel()->SetStatusText("Enable new Settings...");
 
 	// Log Action
 	caLogAction("Saved the config");
@@ -216,11 +210,11 @@ void ConfigPanel::ParseConfig() {
 		caGetApp().StartTimer();
 
 		// Log Action
-		caLogAction("Loaded the config");
+		caLogAction("Loaded the config successfully");
 	} else {
 		// Refresh main dialog
 		caGetMainFrame()->SetTitle("CallAdmin Client");
-		caGetMainPanel()->SetEventText("Please configurate your settings...");
+		caGetMainPanel()->SetStatusText("Please configurate your settings.");
 
 		// Log Action
 		caLogAction("Couldn't load/find the config");

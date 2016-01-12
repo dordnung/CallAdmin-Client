@@ -30,19 +30,19 @@
 #include <curl/curlver.h>
 
 #ifdef __WXMSW__
-// Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
 
 
 // Button Events for about Panel
 wxBEGIN_EVENT_TABLE(AboutPanel, wxPanel)
-EVT_BUTTON(XRCID("checkForUpdate"), AboutPanel::OnUpdate)
-EVT_BUTTON(XRCID("downloadUpdate"), AboutPanel::OnDownload)
+	EVT_BUTTON(XRCID("checkForUpdate"), AboutPanel::OnUpdate)
+	EVT_BUTTON(XRCID("downloadUpdate"), AboutPanel::OnDownload)
 wxEND_EVENT_TABLE()
 
 
-// Create about Panel
+// Load controls
 bool AboutPanel::InitPanel() {
 	if (!wxXmlResource::Get()->LoadPanel(this, caGetNotebook()->GetWindow(), "aboutPanel")) {
 		wxMessageBox("Error: Couldn't find XRCID mainPanel", "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR);
@@ -82,7 +82,8 @@ bool AboutPanel::InitPanel() {
 	FIND_OR_FAIL(this->downloadButton, XRCCTRL(*this, "downloadUpdate", wxButton), "downloadUpdate");
 
 	// Auto Size
-	SetSizerAndFit(this->sizerTop, true);
+	this->sizerTop->Layout();
+	this->sizerTop->Fit(this);
 
 	return true;
 }
@@ -98,11 +99,12 @@ void AboutPanel::UpdateVersionText(wxString currentVersion, wxColor color) {
 	this->currentVersion = currentVersion;
 
 	this->sizerTop->Layout();
+	this->sizerTop->Fit(this);
 }
 
 
 // Button Event -> Check for Update
-void AboutPanel::OnUpdate(wxCommandEvent& WXUNUSED(event)) {
+void AboutPanel::OnUpdate(wxCommandEvent &WXUNUSED(event)) {
 	// Log Action
 	caLogAction("Check for a new Update");
 	caGetApp().CheckUpdate();
@@ -110,7 +112,7 @@ void AboutPanel::OnUpdate(wxCommandEvent& WXUNUSED(event)) {
 
 
 // Button Event -> Download Update
-void AboutPanel::OnDownload(wxCommandEvent& WXUNUSED(event)) {
+void AboutPanel::OnDownload(wxCommandEvent &WXUNUSED(event)) {
 	// Log Action
 	caLogAction("Download new Update");
 	caGetApp().StartUpdate();

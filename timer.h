@@ -29,7 +29,7 @@
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
-#include <wx/wx.h>
+	#include <wx/wx.h>
 #endif
 
 #include <wx/timer.h>
@@ -48,12 +48,13 @@ public:
 	Timer() : wxTimer(this, TIMER_ID), isFirstShoot(true), firstFetch(false) {};
 
 	void Run(int repeatInterval);
-	void OnExecute(wxTimerEvent &event);
 
 	static void OnNotice(wxString error, wxString result, int firstRun);
 
+protected:
+	void OnExecute(wxTimerEvent &event);
+
 	wxDECLARE_EVENT_TABLE();
 };
-
 
 #endif

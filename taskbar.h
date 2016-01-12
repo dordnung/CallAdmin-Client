@@ -29,30 +29,31 @@
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
-#include <wx/wx.h>
+	#include <wx/wx.h>
 #endif
 
 #include <wx/taskbar.h>
 
 
-// Taskbar Class
+// Taskbar Icon for Windows
 class TaskBarIcon : public wxTaskBarIcon {
 public:
 	TaskBarIcon();
 
+	// Show a information whether in the taskbar or as dialog on unix
+	void ShowMessage(wxString title, wxString message, wxWindow *parent = NULL);
+
+protected:
 	// Taskbar Events
-	void OnLeftButtonDClick(wxTaskBarIconEvent &event);
 	void OnMenuRestore(wxCommandEvent &event);
 	void OnMenuExit(wxCommandEvent &event);
 	void OnMenuUpdate(wxCommandEvent &event);
+	#if defined(__WXMSW__)
+		// Autostart only for Windows
+		void OnMenuAutoStart(wxCommandEvent &event);
+	#endif
 
-#if defined(__WXMSW__)
-	// Autostart only for Windows
-	void OnMenuAutoStart(wxCommandEvent &event);
-#endif
-
-	// Show a information
-	void ShowMessage(wxString title, wxString message, wxWindow *parent = NULL);
+	void OnLeftButtonDClick(wxTaskBarIconEvent &event);
 
 	// Override CreatePopupMenu
 	virtual wxMenu *CreatePopupMenu();

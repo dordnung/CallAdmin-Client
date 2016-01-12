@@ -29,7 +29,7 @@
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
-#include <wx/wx.h>
+	#include <wx/wx.h>
 #endif
 
 
@@ -41,11 +41,13 @@ private:
 	wxSizer *sizerTop;
 
 public:
-	AboutPanel() : downloadButton(NULL), currentText(NULL),
-		sizerTop(NULL), currentVersion(wxString()) {};
+	AboutPanel() : currentText(NULL), downloadButton(NULL),
+		currentVersion(wxString()), sizerTop(NULL) {};
 
+	// Load controls
 	bool InitPanel();
 
+	// Enable the download button
 	void EnableDownload(bool enable) {
 		this->downloadButton->Enable(enable);
 	}

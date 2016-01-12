@@ -27,13 +27,14 @@
 #include <wx/xrc/xmlres.h>
 
 #ifdef __WXMSW__
-// Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
 
 
 // Loads the pages of the notebook
 bool Notebook::CreatePages() {
+	// Create the panels
 	this->mainPanel = new MainPanel();
 	this->configPanel = new ConfigPanel();
 	this->trackerPanel = new TrackerPanel();
@@ -46,6 +47,7 @@ bool Notebook::CreatePages() {
 		return false;
 	}
 
+	// Now add the pages
 	this->window->AddPage(this->mainPanel, "Main", true);
 	this->window->AddPage(this->configPanel, "Settings");
 	this->window->AddPage(this->trackerPanel, "Trackers");

@@ -28,15 +28,15 @@
 #include <wx/xrc/xmlres.h>
 
 #ifdef __WXMSW__
-// Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
 
 
 // Events for Main Frame
 BEGIN_EVENT_TABLE(MainFrame, wxFrame)
-EVT_CLOSE(MainFrame::OnCloseWindow)
-EVT_ICONIZE(MainFrame::OnMinimizeWindow)
+	EVT_CLOSE(MainFrame::OnCloseWindow)
+	EVT_ICONIZE(MainFrame::OnMinimizeWindow)
 END_EVENT_TABLE()
 
 
@@ -77,8 +77,6 @@ bool MainFrame::InitFrame(bool createInTaskbar) {
 
 // Window Event -> Exit programm
 void MainFrame::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {
-	delete this->notebook;
-
 	caGetApp().ExitProgramm();
 }
 

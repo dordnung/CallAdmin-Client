@@ -1,7 +1,7 @@
 /**
  * -----------------------------------------------------
  * File        taskbar.cpp
- * Authors     David David O., Impact
+ * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
  * -----------------------------------------------------
@@ -25,10 +25,11 @@
 #include "calladmin-client.h"
 
 #include <wx/stdpaths.h>
+#include <wx/mstream.h>
 
 #ifdef __WXMSW__
-// Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
 
 
@@ -36,57 +37,89 @@
 enum {
 	PU_RESTORE = wxID_HIGHEST + 1,
 	PU_UPDATE,
-#if defined(__WXMSW__)
-	PU_AUTOSTART,
-#endif
+	#if defined(__WXMSW__)
+		PU_AUTOSTART,
+	#endif
 	PU_EXIT,
 };
 
 
 // Taskbar Events
 wxBEGIN_EVENT_TABLE(TaskBarIcon, wxTaskBarIcon)
-EVT_MENU(PU_RESTORE, TaskBarIcon::OnMenuRestore)
-EVT_MENU(PU_UPDATE, TaskBarIcon::OnMenuUpdate)
-#if defined(__WXMSW__)
-EVT_MENU(PU_AUTOSTART, TaskBarIcon::OnMenuAutoStart)
-#endif
-EVT_MENU(PU_EXIT, TaskBarIcon::OnMenuExit)
-EVT_TASKBAR_LEFT_DCLICK(TaskBarIcon::OnLeftButtonDClick)
+	EVT_MENU(PU_RESTORE, TaskBarIcon::OnMenuRestore)
+	EVT_MENU(PU_EXIT, TaskBarIcon::OnMenuExit)
+	EVT_MENU(PU_UPDATE, TaskBarIcon::OnMenuUpdate)
+	#if defined(__WXMSW__)
+		EVT_MENU(PU_AUTOSTART, TaskBarIcon::OnMenuAutoStart)
+	#endif
+
+	EVT_TASKBAR_LEFT_DCLICK(TaskBarIcon::OnLeftButtonDClick)
 wxEND_EVENT_TABLE()
 
 
 // Constructor: Set Taskbar icon
-// TODO: Von resource.cpp laden
 TaskBarIcon::TaskBarIcon() {
-#if defined(__WXMSW__)
-	SetIcon(wxIcon("calladmin_icon", wxBITMAP_TYPE_ICO_RESOURCE), "Call Admin Client");
-#else
-	SetIcon(wxIcon(caGetApp().GetAppPath("resources/calladmin_icon.ico"), wxBITMAP_TYPE_ICON), "Call Admin Client");
-#endif
+	wxImage image;
+	wxIcon icon;
+
+	// Load icon from resource.cpp
+	wxMemoryInputStream iconStream(&xml_res_file_2, xml_res_size_2);
+
+	// Load data into image and convert to the image to an icon
+	image.LoadFile(iconStream, wxBITMAP_TYPE_ICO);
+	icon.CopyFromBitmap(image);
+
+	SetIcon(icon, "CallAdmin Client");
 }
 
 
-// Restore main dialog
-void TaskBarIcon::OnMenuRestore(wxCommandEvent& WXUNUSED(event)) {
+// Show a information whether in the taskbar or as dialog on unix
+void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow *parent) {
+	// Only if not other app is in fullscreen, otherwise it would be minimized
+	if (!isOtherInFullscreen()) {
+		#if defined(__WXMSW__) && defined(wxUSE_TASKBARICON_BALLOONS) && wxUSE_TASKBARICON_BALLOONS
+			if (caGetConfig()->GetShowInTaskbar()) {
+				// Show as balloon
+				ShowBalloon(title, message, 15000, wxICON_INFORMATION);
+
+				return;
+			}
+		#endif
+
+		// No taskbar balloon available or disabled, so show as message dialog
+		wxMessageBox(message, title, wxICON_INFORMATION | wxOK, parent);
+	}
+}
+
+
+// Restore main frame
+void TaskBarIcon::OnMenuRestore(wxCommandEvent &WXUNUSED(event)) {
+	caGetMainFrame()->Restore();
 	caGetMainFrame()->Show(true);
 }
 
 
 // On exit -> Exit whole programm
-void TaskBarIcon::OnMenuExit(wxCommandEvent& WXUNUSED(event)) {
+void TaskBarIcon::OnMenuExit(wxCommandEvent &WXUNUSED(event)) {
 	caGetApp().ExitProgramm();
 }
 
 
+// Check for update
+void TaskBarIcon::OnMenuUpdate(wxCommandEvent &WXUNUSED(event)) {
+	caGetApp().CheckUpdate();
+}
+
+
 #if defined(__WXMSW__)
-// Append/Remove to Autostart
+// Append/Remove from Autostart
 void TaskBarIcon::OnMenuAutoStart(wxCommandEvent &event) {
-	// Registry Key
+	// Autostart Registry Key
 	wxRegKey regKey(wxRegKey::HKCU, "Software\\Microsoft\\Windows\\CurrentVersion\\Run\\");
 
 	// Check key exists
 	if (regKey.Exists()) {
-		// He checked it
+		// User want autostart
 		if (event.IsChecked()) {
 			// Get App Path
 			wxString appPath = wxStandardPaths::Get().GetExecutablePath();
@@ -109,33 +142,10 @@ void TaskBarIcon::OnMenuAutoStart(wxCommandEvent &event) {
 #endif
 
 
-// Check for update
-void TaskBarIcon::OnMenuUpdate(wxCommandEvent& WXUNUSED(event)) {
-	caGetApp().CheckUpdate();
-}
-
-
-// Shows a Message
-void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow *parent) {
-	// Only if not other app is in fullscreen, otherwise it would be minimized
-	if (!isOtherInFullscreen()) {
-#if defined(__WXMSW__) && defined(wxUSE_TASKBARICON_BALLOONS) && wxUSE_TASKBARICON_BALLOONS
-		if (caGetConfig()->GetShowInTaskbar()) {
-			ShowBalloon(title, message, 15000, wxICON_INFORMATION);
-
-			return;
-		}
-#endif
-		// No taskbar message
-		wxMessageBox(message, title, wxICON_INFORMATION | wxOK, parent);
-	}
-}
-
-
-// On doppel left click -> open Menu
+// On double left click -> open main frame
 void TaskBarIcon::OnLeftButtonDClick(wxTaskBarIconEvent& WXUNUSED(event)) {
-	caGetMainFrame()->Show(true);
 	caGetMainFrame()->Restore();
+	caGetMainFrame()->Show(true);
 }
 
 
@@ -143,34 +153,34 @@ void TaskBarIcon::OnLeftButtonDClick(wxTaskBarIconEvent& WXUNUSED(event)) {
 wxMenu* TaskBarIcon::CreatePopupMenu() {
 	wxMenu *menu = new wxMenu();
 
-	menu->Append(PU_RESTORE, "Restore Windows");
+	menu->Append(PU_RESTORE, "Restore CallAdmin");
 	menu->AppendSeparator();
 	menu->Append(PU_UPDATE, "Check For Update");
 
-#if defined(__WXMSW__)
-	wxMenuItem *autostartItem = menu->Append(PU_AUTOSTART, "Start With Windows", wxEmptyString, wxITEM_CHECK);
+	#if defined(__WXMSW__)
+		wxMenuItem *autostartItem = menu->Append(PU_AUTOSTART, "Start With Windows", wxEmptyString, wxITEM_CHECK);
 
-	// Do not check the autostart item by default
-	autostartItem->Check(false);
+		// Do not check the autostart item by default
+		autostartItem->Check(false);
 
-	// Check Auto run Key
-	wxRegKey regKey(wxRegKey::HKCU, "Software\\Microsoft\\Windows\\CurrentVersion\\Run\\");
+		// Check Autorun Key
+		wxRegKey regKey(wxRegKey::HKCU, "Software\\Microsoft\\Windows\\CurrentVersion\\Run\\");
 
-	// Check if it exists
-	if (regKey.Exists() && regKey.HasValue("CallAdmin-Client")) {
-		// String to store value in
-		wxString value;
+		// Check if it exists and has CallAdmin value
+		if (regKey.Exists() && regKey.HasValue("CallAdmin-Client")) {
+			// String to store value in
+			wxString value;
 
-		// Look for CallAdmin-Client
-		if (regKey.QueryValue("CallAdmin-Client", value)) {
-			// Is Path the same?
-			if (value.Contains(wxStandardPaths::Get().GetExecutablePath())) {
-				// So it's on
-				autostartItem->Check(true);
+			// Look for CallAdmin-Client value
+			if (regKey.QueryValue("CallAdmin-Client", value)) {
+				// Is Path the same?
+				if (value.Contains(wxStandardPaths::Get().GetExecutablePath())) {
+					// So it's on
+					autostartItem->Check(true);
+				}
 			}
 		}
-	}
-#endif
+	#endif
 
 	menu->AppendSeparator();
 	menu->Append(PU_EXIT, "Exit");

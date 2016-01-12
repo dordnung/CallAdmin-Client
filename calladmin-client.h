@@ -29,7 +29,7 @@
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
-#include <wx/wx.h>
+	#include <wx/wx.h>
 #endif
 
 #include "config.h"
@@ -39,6 +39,7 @@
 #include "opensteam.h"
 #include "call_dialog.h"
 #include "curl_util.h"
+
 
 // Version, update URL and update exe
 #define CALLADMIN_CLIENT_VERSION "0.47B"
@@ -50,8 +51,8 @@
 
 #define caGetConfig caGetApp().GetConfig
 #define caGetTimer caGetApp().GetTimer
-#define caGetSteamThread caGetApp().GetSteamThread
 #define caGetTaskBarIcon caGetApp().GetTaskBarIcon
+#define caGetSteamThread caGetApp().GetSteamThread
 #define caGetCallDialogs caGetApp().GetCallDialogs
 #define caLogAction caGetApp().LogAction
 
@@ -67,6 +68,7 @@
 	wxMessageBox("Error: Couldn't find XRCID " str, "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR); \
 	return false; \
 }
+
 
 // App Class
 class CallAdmin : public wxApp {
@@ -98,10 +100,6 @@ public:
 
 	void GetPage(CurlCallback callbackFunction, wxString page, int extra = 0);
 
-	SteamThread* GetSteamThread() {
-		return this->steamThread;
-	}
-
 	Config* GetConfig() {
 		return this->config;
 	}
@@ -112,6 +110,10 @@ public:
 
 	TaskBarIcon* GetTaskBarIcon() {
 		return this->taskBarIcon;
+	}
+
+	SteamThread* GetSteamThread() {
+		return this->steamThread;
 	}
 
 	wxVector<CallDialog *>* GetCallDialogs() {
@@ -207,10 +209,15 @@ inline bool isOtherInFullscreen() {
 }
 
 
+static wxMutex globalThreadMutex;
+
 // Declare the app
 wxDECLARE_APP(CallAdmin);
 
+
 // Defined in resource.cpp
+extern size_t xml_res_size_2;
+extern unsigned char xml_res_file_2[];
 extern void InitXmlResource();
 
 #endif
