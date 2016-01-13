@@ -254,6 +254,11 @@ void CallAdmin::ExitProgramm() {
 		(*callDialog)->Show(false);
 	}
 
+	// Taskbar Icon goodbye :)
+	if (this->taskBarIcon) {
+		this->taskBarIcon->RemoveIcon();
+	}
+
 	// Delete threads before windows
 	wxDELETE(this->curlThread);
 	wxDELETE(this->steamThread);
@@ -271,12 +276,10 @@ void CallAdmin::ExitProgramm() {
 	if (this->timer) {
 		wxDELETE(this->timer);
 	}
-
+	
 	// Taskbar goodbye :)
 	if (this->taskBarIcon) {
-		this->taskBarIcon->RemoveIcon();
 		this->taskBarIcon->Destroy();
-
 		this->taskBarIcon = NULL;
 	}
 

@@ -119,8 +119,8 @@ void MainPanel::SetStatusText(wxString text) {
 	this->sizerBody->Fit(this);
 
 	// TODO: Benötigt?
-	//caGetNotebook()->GetWindow()->Fit();
-	//caGetMainFrame()->Fit();
+	caGetNotebook()->GetWindow()->Fit();
+	caGetMainFrame()->Fit();
 }
 
 
@@ -132,8 +132,8 @@ void MainPanel::SetSteamStatus(wxString text, wxColor color) {
 	this->sizerBody->Fit(this);
 
 	// TODO: Benötigt?
-	//caGetNotebook()->GetWindow()->Fit();
-	//caGetMainFrame()->Fit();
+	caGetNotebook()->GetWindow()->Fit();
+	caGetMainFrame()->Fit();
 }
 
 
