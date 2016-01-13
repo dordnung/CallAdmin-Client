@@ -57,7 +57,6 @@ CallAdmin::CallAdmin() {
 	this->curlThread = NULL;
 
 	this->startInTaskbar = false;
-	this->appEnded = false;
 
 	// Attempts to Zero
 	this->attempts = 0;
@@ -134,14 +133,6 @@ bool CallAdmin::OnInit() {
 }
 
 
-// Clean Up
-int CallAdmin::OnExit() {
-	ExitProgramm();
-
-	return 0;
-}
-
-
 // Set Help text
 void CallAdmin::OnInitCmdLine(wxCmdLineParser &parser) {
 	// Add Help
@@ -166,10 +157,10 @@ void CallAdmin::OnCurlThread(CurlThreadData *data) {
 	CurlCallback function = data->GetCallbackFunction();
 
 	// Call it
-	if (function && !this->appEnded) {
+	if (function) {
 		function(data->GetError(), data->GetContent(), data->GetExtra());
 	}
-
+	
 	// Delete data
 	delete data;
 }
@@ -239,7 +230,7 @@ void CallAdmin::CreateReconnect(wxString error) {
 	}
 
 	// Go to first page
-	mainFrame->GetNotebook()->GetWindow()->SetSelection(0);
+	mainFrame->GetNotebook()->GetWindow()->ChangeSelection(0);
 }
 
 
@@ -254,16 +245,7 @@ void CallAdmin::ShowError(wxString error, wxString type) {
 
 // Close Taskbar Icon and destroy all dialogs
 void CallAdmin::ExitProgramm() {
-	wxMutexLocker lock(globalThreadMutex);
-
-	// App ended now
-	this->appEnded = true;
-
-	// Clear Handlers
-	wxImage::CleanUpHandlers();
-	wxXmlResource::Get()->ClearHandlers();
-
-	// Then hide all windows
+	// Hide all windows
 	if (this->mainFrame) {
 		this->mainFrame->Show(false);
 	}
@@ -272,11 +254,18 @@ void CallAdmin::ExitProgramm() {
 		(*callDialog)->Show(false);
 	}
 
-	// Curl thread destroy
+	// Delete threads before windows
 	wxDELETE(this->curlThread);
-
-	// Delete the steam thread
 	wxDELETE(this->steamThread);
+
+	// Then process pending events
+	if (HasPendingEvents()) {
+		ProcessPendingEvents();
+	}
+
+	// Clear Handlers
+	wxImage::CleanUpHandlers();
+	wxXmlResource::Get()->ClearHandlers();
 
 	// Stop the timer
 	if (this->timer) {
@@ -392,7 +381,7 @@ void CallAdmin::OnUpdate(wxString error, wxString result, int WXUNUSED(x)) {
 			}
 
 			// Goto About
-			caGetNotebook()->GetWindow()->SetSelection(4);
+			caGetNotebook()->GetWindow()->ChangeSelection(4);
 
 			caGetTaskBarIcon()->ShowMessage("New Version available", "New version " + newVersion + " is now available!", caGetMainFrame());
 		} else {

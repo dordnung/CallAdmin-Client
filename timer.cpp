@@ -81,13 +81,6 @@ void Timer::Run(int repeatInterval) {
 
 // Timer executed
 void Timer::OnExecute(wxTimerEvent &WXUNUSED(event)) {
-	wxMutexLocker lock(globalThreadMutex);
-
-	// Check if app already ended
-	if (caGetApp().AppEnded()) {
-		return;
-	}
-
 	Config *config = caGetConfig();
 
 	// Build page

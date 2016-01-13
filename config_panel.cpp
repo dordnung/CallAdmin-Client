@@ -161,7 +161,7 @@ void ConfigPanel::OnSet(wxCommandEvent &WXUNUSED(event)) {
 	caLogAction("Saved the config");
 
 	// Goto Main
-	caGetNotebook()->GetWindow()->SetSelection(0);
+	caGetNotebook()->GetWindow()->ChangeSelection(0);
 
 	// Parse again
 	ParseConfig();

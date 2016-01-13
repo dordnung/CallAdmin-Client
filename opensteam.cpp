@@ -143,13 +143,7 @@ STEAM_ERROR_TYP SteamThread::Load() {
 // Thread started
 void SteamThread::Check() {
 	for (; !GetThread()->TestDestroy(); wxMilliSleep(100)) {
-		wxMutexLocker lock(globalThreadMutex);
-
-		if (caGetApp().AppEnded()) {
-			break;
-		}
-
-		if (!this->pipeSteam > 0) {
+		if (this->pipeSteam <= 0) {
 			// Load Steam
 			STEAM_ERROR_TYP steamError = Load();
 

@@ -57,7 +57,7 @@ TrackerPanel::~TrackerPanel() {
 
 // Init Panel with controls
 bool TrackerPanel::InitPanel() {
-	if (!wxXmlResource::Get()->LoadPanel(this, caGetMainFrame(), "trackerPanel")) {
+	if (!wxXmlResource::Get()->LoadPanel(this, caGetNotebook()->GetWindow(), "trackerPanel")) {
 		wxMessageBox("Error: Couldn't find XRCID trackerPanel", "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR);
 
 		return false;
@@ -210,15 +210,6 @@ NameTimer::~NameTimer() {
 
 // Timer to find tracker name
 void NameTimer::Notify() {
-	wxMutexLocker lock(globalThreadMutex);
-
-	// Only if app not already ended
-	if (caGetApp().AppEnded()) {
-		delete this;
-
-		return;
-	}
-
 	// Steam available?
 	if (caGetSteamThread()->IsConnected()) {
 		if (!caGetSteamThread()->GetSteamFriends()->RequestUserInformation(this->client, true)) {

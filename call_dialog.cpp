@@ -506,14 +506,6 @@ AvatarTimer::AvatarTimer(CSteamID *clientId, CSteamID *targetId, wxStaticBitmap 
 
 // Timer to update avatars
 void AvatarTimer::Notify() {
-	wxMutexLocker lock(globalThreadMutex);
-
-	if (caGetApp().AppEnded()) {
-		delete this;
-
-		return;
-	}
-
 	// Steam available?
 	if (caGetSteamThread()->IsConnected()) {
 		// Do we have information about the users?
@@ -562,10 +554,10 @@ bool AvatarTimer::SetAvatar(CSteamID *id, wxStaticBitmap *map) {
 				wxImage image(width, height);
 
 				// RGBA to Image
-				for (int y = 0; y < width; y++) {
+				for (unsigned int y = 0; y < width; y++) {
 					int start = height * y * 4;
 
-					for (int x = 0; x < height; x++) {
+					for (unsigned int x = 0; x < height; x++) {
 						// Set Colour
 						image.SetRGB(x, y, rgbaBuffer[start], rgbaBuffer[start + 1], rgbaBuffer[start + 2]);
 

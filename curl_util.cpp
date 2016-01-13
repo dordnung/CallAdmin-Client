@@ -51,12 +51,6 @@ CurlThread::~CurlThread() {
 
 // Curl Thread started
 wxThread::ExitCode CurlThread::Entry() {
-	wxMutexLocker lock(globalThreadMutex);
-
-	if (caGetApp().AppEnded()) {
-		return (wxThread::ExitCode)0;
-	}
-
 	// Maybe it's already killed?
 	if (!GetThread()->TestDestroy()) {
 		// CurlThreadData

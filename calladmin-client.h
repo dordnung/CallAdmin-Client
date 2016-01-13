@@ -132,10 +132,6 @@ public:
 		this->attempts = attempts;
 	}
 
-	bool AppEnded() {
-		return this->appEnded;
-	}
-
 	wxString GetRelativePath(wxString relativeFileOrPath);
 
 	void CheckUpdate();
@@ -157,9 +153,6 @@ public:
 protected:
 	// Where all began :)
 	virtual bool OnInit();
-
-	// Where all end ;)
-	virtual int OnExit();
 
 	// Command line arguments
 	virtual void OnInitCmdLine(wxCmdLineParser &parser);
@@ -208,8 +201,6 @@ inline bool isOtherInFullscreen() {
 #endif
 }
 
-
-static wxMutex globalThreadMutex;
 
 // Declare the app
 wxDECLARE_APP(CallAdmin);
