@@ -252,13 +252,12 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 							}
 						}
 
-						bool foundDuplicate = false;
-
 						// Found all necessary items?
 						if (found != 10) {
 							newDialog->Destroy();
 						} else {
 							// Check for duplicate Entry
+							bool foundDuplicate = false;
 							int index = -1;
 
 							for (wxVector<CallDialog *>::iterator callDialog = caGetCallDialogs()->begin(); callDialog != caGetCallDialogs()->end(); ++callDialog) {

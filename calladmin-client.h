@@ -88,9 +88,6 @@ private:
 	// Start in Taskbar?
 	bool startInTaskbar;
 
-	// App Ended?
-	bool appEnded;
-
 public:
 	CallAdmin();
 
@@ -141,9 +138,7 @@ public:
 	void ExitProgramm();
 
 	void LogAction(wxString action, LogLevel logLevel = LEVEL_INFO) {
-		if (!this->appEnded) {
-			this->mainFrame->GetNotebook()->GetLogPanel()->AddLog(action, logLevel);
-		}
+		this->mainFrame->GetNotebook()->GetLogPanel()->AddLog(action, logLevel);
 	}
 
 	static void OnUpdate(wxString error, wxString result, int extra);

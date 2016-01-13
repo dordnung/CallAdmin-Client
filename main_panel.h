@@ -69,9 +69,7 @@ public:
 	// Update Call list
 	void UpdateCalls();
 
-	// TODO: Nicht int sondern iterator item
 	void SetHandled(int item);
-
 	void OnSteamChange(int status);
 
 protected:

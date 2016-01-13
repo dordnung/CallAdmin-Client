@@ -113,14 +113,8 @@ bool MainPanel::InitPanel() {
 void MainPanel::SetStatusText(wxString text) {
 	this->eventText->SetLabelText(text);
 
-	// TODO: Benötigt?
-	//this->eventText->Refresh();
 	this->sizerBody->Layout();
 	this->sizerBody->Fit(this);
-
-	// TODO: Benötigt?
-	caGetNotebook()->GetWindow()->Fit();
-	caGetMainFrame()->Fit();
 }
 
 
@@ -130,10 +124,6 @@ void MainPanel::SetSteamStatus(wxString text, wxColor color) {
 
 	this->sizerBody->Layout();
 	this->sizerBody->Fit(this);
-
-	// TODO: Benötigt?
-	caGetNotebook()->GetWindow()->Fit();
-	caGetMainFrame()->Fit();
 }
 
 

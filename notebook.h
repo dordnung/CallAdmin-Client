@@ -54,7 +54,7 @@ private:
 	AboutPanel *aboutPanel;
 
 public:
-	Notebook(wxNotebook *window) : window(window), mainPanel(NULL), configPanel(NULL),
+	explicit Notebook(wxNotebook *window) : window(window), mainPanel(NULL), configPanel(NULL),
 		trackerPanel(NULL), logPanel(NULL), aboutPanel(NULL) {};
 	~Notebook();
 

@@ -45,7 +45,7 @@ private:
 
 public:
 	// Init Timer
-	NameTimer(CSteamID client);
+	explicit NameTimer(CSteamID client);
 	~NameTimer();
 
 protected:
