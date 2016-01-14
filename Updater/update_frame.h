@@ -63,7 +63,6 @@ private:
 public:
 	UpdateFrame() : downloadedSize(NULL), downloadedSizeTotal(NULL), speed(NULL), elapsedTime(NULL),
 		remainingTime(NULL), sizerTop(NULL), panel(NULL), progressBar(NULL) {};
-	~UpdateFrame();
 
 	bool ShowFrame();
 

@@ -38,6 +38,7 @@
 	return false; \
 }
 
+
 // Events for Update Frame
 wxBEGIN_EVENT_TABLE(UpdateFrame, wxFrame)
 	EVT_CLOSE(UpdateFrame::OnCloseWindow)
@@ -87,12 +88,6 @@ bool UpdateFrame::ShowFrame() {
 }
 
 
-UpdateFrame::~UpdateFrame() {
-	// Notice app that update is finished
-	wxGetApp().OnUpdateFrameClosed();
-}
-
-
 // Progress Update
 void UpdateFrame::OnUpdate(UpdateInfo updateInfo) {
 	// Update Progress Bar
@@ -114,15 +109,15 @@ void UpdateFrame::OnUpdate(UpdateInfo updateInfo) {
 
 // Update Finished
 void UpdateFrame::OnFinish(wxString error) {
-	// Show correct finish state
-	this->progressBar->SetValue(100);
-	this->remainingTime->SetLabelText("0.00");
-
 	// Path
 	wxString executablePath = wxGetApp().GetCallAdminExecutablePath();
 
 	// Notice finish
 	if (error == "") {
+		// Show correct finish state
+		this->progressBar->SetValue(100);
+		this->remainingTime->SetLabelText("0.00");
+
 		// Renaming Files
 		if (wxFileExists(executablePath) && wxFileExists(executablePath + ".new")) {
 			wxRenameFile(executablePath, executablePath + ".old");
@@ -163,6 +158,8 @@ void UpdateFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event)) {
 
 		wxThread::This()->Sleep(1);
 	}
+
+	wxGetApp().OnUpdateFrameClosed();
 
 	// Delete .new file
 	if (wxFileExists(wxGetApp().GetCallAdminExecutablePath() + ".new")) {
@@ -236,6 +233,8 @@ wxThread::ExitCode UpdateFrame::Entry() {
 
 		// Add Event Handler
 		wxGetApp().GetUpdateFrame()->GetEventHandler()->CallAfter(&UpdateFrame::OnFinish, error);
+	} else {
+		wxGetApp().ExitProgramm();
 	}
 
 	return (wxThread::ExitCode)0;

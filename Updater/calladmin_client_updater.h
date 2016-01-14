@@ -83,9 +83,6 @@ protected:
 	// Where all began :)
 	virtual bool OnInit();
 
-	// Where all end ;)
-	virtual int OnExit();
-
 	// Command line arguments
 	virtual void OnInitCmdLine(wxCmdLineParser &parser);
 	virtual bool OnCmdLineParsed(wxCmdLineParser &parser);

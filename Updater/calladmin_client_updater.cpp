@@ -84,14 +84,6 @@ bool CallAdminUpdater::OnInit() {
 }
 
 
-// Clean Up
-int CallAdminUpdater::OnExit() {
-	ExitProgramm();
-
-	return wxApp::OnExit();
-}
-
-
 // Set Help text
 void CallAdminUpdater::OnInitCmdLine(wxCmdLineParser &parser) {
 	// Add Help
@@ -191,33 +183,29 @@ void CallAdminUpdater::StartUpdate() {
 	if (!updateFrame->ShowFrame()) {
 		ExitProgramm();
 	}
+
+	SetTopWindow(this->updateFrame);
 }
 
 
 void CallAdminUpdater::OnUpdateFrameClosed() {
 	this->updateFrame = NULL;
-
-	ExitProgramm();
 }
 
 
 // End App
 void CallAdminUpdater::ExitProgramm() {
-	if (!this->appEnded) {
-		this->appEnded = true;
+	// Disappear and close update frame
+	if (this->updateFrame != NULL) {
+		this->updateFrame->Show(false);
+		this->updateFrame->Close();
 
-		// Disappear and close update frame
-		if (this->updateFrame != NULL) {
-			this->updateFrame->Show(false);
-			this->updateFrame->Close();
+		this->updateFrame = NULL;
+	}
 
-			this->updateFrame = NULL;
-		}
-
-		// Start CallAdmin Client again?
-		if (wxMessageBox("Updater ended.\nStart CallAdmin Client again?", "End Of Update", wxCANCEL | wxYES_NO | wxCENTRE | wxICON_QUESTION) == wxYES) {
-			wxExecute(this->GetCallAdminExecutablePath());
-		}
+	// Start CallAdmin Client again?
+	if (wxMessageBox("Updater ended.\nStart CallAdmin Client again?", "End Of Update", wxCANCEL | wxYES_NO | wxCENTRE | wxICON_QUESTION) == wxYES) {
+		wxExecute(this->GetCallAdminExecutablePath());
 	}
 }
 
@@ -237,35 +225,35 @@ bool CallAdminUpdater::OnGetVersion(wxString error, wxString result) {
 			} else {
 				// Find version in brackets
 				newVersion = result.substr(1, result.length() - 2);
+
+				// We got something
+				if (newVersion != "") {
+					// Check Version
+					if (newVersion != wxGetApp().GetCallAdminVersion()) {
+						// The client has to be closed while updating
+						wxSingleInstanceChecker checkClientInstance("CallAdmin Client - " + wxGetUserId());
+
+						if (checkClientInstance.IsAnotherRunning()) {
+							wxMessageBox("CallAdmin Client is running.\nPlease stop it before start updating.", "CallAdmin Client", wxOK | wxCENTRE | wxICON_ERROR);
+
+							return false;
+						}
+
+						wxGetApp().StartUpdate();
+
+						return true;
+					} else {
+						wxMessageBox("Your CallAdmin Client is up to date", "Up To Date", wxOK | wxCENTRE | wxICON_INFORMATION);
+					}
+				} else {
+					wxMessageBox("Error: Version is empty", "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
+				}
 			}
 		} else {
 			wxMessageBox("Error: Result is empty", "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
 		}
 	} else {
 		wxMessageBox("Error: " + error, "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
-	}
-
-	// We got something
-	if (newVersion != "") {
-		// Check Version
-		if (newVersion != wxGetApp().GetCallAdminVersion()) {
-			// The client has to be closed while updating
-			wxSingleInstanceChecker checkClientInstance("CallAdmin Client - " + wxGetUserId());
-
-			if (checkClientInstance.IsAnotherRunning()) {
-				wxMessageBox("CallAdmin Client is running.\nPlease stop it before start updating.", "CallAdmin Client", wxOK | wxCENTRE | wxICON_ERROR);
-
-				return false;
-			}
-
-			wxGetApp().StartUpdate();
-
-			return true;
-		} else {
-			wxMessageBox("Your CallAdmin Client is up to date", "Up To Date", wxOK | wxCENTRE | wxICON_INFORMATION);
-		}
-	} else {
-		wxMessageBox("Error: Version is empty", "Update Check Failed", wxOK | wxCENTRE | wxICON_ERROR);
 	}
 
 	return false;
