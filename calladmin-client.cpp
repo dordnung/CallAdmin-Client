@@ -191,9 +191,11 @@ void CallAdmin::StartUpdate() {
 	ExitProgramm();
 
 #if defined(__WXMSW__)
-	wxExecute(GetRelativePath("calladmin-client-updater.exe"));
+	wxExecute(GetRelativePath("calladmin-client-updater.exe -version " + wxString(CALLADMIN_CLIENT_VERSION) + 
+			  " -url " + wxString(CALLADMIN_UPDATE_URL) + " -executable " + wxString(CALLADMIN_UPDATE_EXE)));
 #else
-	wxExecute(GetRelativePath("calladmin-client-updater"));
+	wxExecute(GetRelativePath("calladmin-client-updater -version " + wxString(CALLADMIN_CLIENT_VERSION) + 
+			  " -url " + wxString(CALLADMIN_UPDATE_URL) + " -executable " + wxString(CALLADMIN_UPDATE_EXE)));
 #endif
 }
 
