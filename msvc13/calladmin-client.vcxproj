@@ -131,6 +131,7 @@
     <ClCompile Include="..\main_panel.cpp" />
     <ClCompile Include="..\notebook.cpp" />
     <ClCompile Include="..\opensteam.cpp" />
+    <ClCompile Include="..\opensteam_helper.cpp" />
     <ClCompile Include="..\resource.cpp" />
     <ClCompile Include="..\taskbar.cpp" />
     <ClCompile Include="..\timer.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="..\main_panel.h" />
     <ClInclude Include="..\notebook.h" />
     <ClInclude Include="..\opensteam.h" />
+    <ClInclude Include="..\opensteam_helper.h" />
     <ClInclude Include="..\sound.h" />
     <ClInclude Include="..\taskbar.h" />
     <ClInclude Include="..\timer.h" />
