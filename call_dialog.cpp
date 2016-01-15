@@ -52,6 +52,7 @@ wxEND_EVENT_TABLE()
 
 CallDialog::CallDialog() {
 	// Initialize vars
+	this->avatarsLoaded = false;
 	this->sizerTop = NULL;
 	this->clientAvatar = NULL;
 	this->targetAvatar = NULL;
@@ -60,7 +61,6 @@ CallDialog::CallDialog() {
 	this->isHandled = false;
 	this->takeover = NULL;
 	this->contactTrackers = NULL;
-	this->avatarTimer = NULL;
 }
 
 
@@ -110,7 +110,7 @@ bool CallDialog::StartCall(bool show) {
 	text->SetLabel(wxString::FromUTF8(this->client));
 
 	if (caGetSteamThread()->IsConnected() && this->clientCId.IsValid()) {
-		if (caGetSteamThread()->GetSteamFriends()->GetFriendRelationship(this->clientCId) == k_EFriendRelationshipFriend) {
+		if (OpenSteamHelper::GetInstance()->SteamFriends()->GetFriendRelationship(this->clientCId) == k_EFriendRelationshipFriend) {
 			// Add Contact Friend button
 			wxButton *contactClient;
 
@@ -121,7 +121,7 @@ bool CallDialog::StartCall(bool show) {
 
 	// Steamid
 	FIND_OR_FAIL(textCtrl, XRCCTRL(*this, "clientSteamId", wxTextCtrl), "clientSteamId");
-	textCtrl->SetValue(clientId);
+	textCtrl->SetValue(this->clientId);
 
 	// Reason
 	FIND_OR_FAIL(text, XRCCTRL(*this, "reasonText", wxStaticText), "reasonText");
@@ -135,7 +135,7 @@ bool CallDialog::StartCall(bool show) {
 	text->SetLabel(wxString::FromUTF8(this->target));
 
 	if (caGetSteamThread()->IsConnected() && this->targetCId.IsValid()) {
-		if (caGetSteamThread()->GetSteamFriends()->GetFriendRelationship(this->targetCId) == k_EFriendRelationshipFriend) {
+		if (OpenSteamHelper::GetInstance()->SteamFriends()->GetFriendRelationship(this->targetCId) == k_EFriendRelationshipFriend) {
 			// Add Contact Friend button
 			wxButton *contactTarget;
 
@@ -148,15 +148,14 @@ bool CallDialog::StartCall(bool show) {
 	FIND_OR_FAIL(textCtrl, XRCCTRL(*this, "targetSteamId", wxTextCtrl), "targetSteamId");
 	textCtrl->SetValue(targetId);
 
-	// Start the Timers
-	this->avatarTimer = new AvatarTimer(&this->clientCId, &this->targetCId, this->clientAvatar, this->targetAvatar);
-	this->avatarTimer->Start(100, wxTIMER_CONTINUOUS);
-
 	// Takeover button
 	FIND_OR_FAIL(this->takeover, XRCCTRL(*this, "takeoverButton", wxButton), "takeoverButton");
 
 	// Contect trackers button
 	FIND_OR_FAIL(this->contactTrackers, XRCCTRL(*this, "contactTrackersButton", wxButton), "contactTrackersButton");
+
+	// Load avatars
+	LoadAvatars();
 
 	// Auto Size
 	this->sizerTop->Layout();
@@ -172,6 +171,15 @@ bool CallDialog::StartCall(bool show) {
 	Show(show);
 
 	return true;
+}
+
+
+void CallDialog::LoadAvatars() {
+	if (!this->avatarsLoaded) {
+		// Start the Timer (It will be killed by itself)
+		AvatarTimer *timer = new AvatarTimer(this, &this->clientCId, &this->targetCId, this->clientAvatar, this->targetAvatar);
+		timer->Start(100, wxTIMER_CONTINUOUS);
+	}
 }
 
 
@@ -227,9 +235,9 @@ void CallDialog::OnConnect(wxCommandEvent &WXUNUSED(event)) {
 	caLogAction("Connected to the Server " + this->fullIP);
 
 	#if defined(__WXMSW__)
-		wxExecute("steam://connect/" + this->fullIP);
+		wxExecute("explorer steam://connect/" + this->fullIP);
 	#else
-		wxExecute("xdg-open steam://connect/" + this->fullIP);
+		wxExecute("steam steam://connect/" + this->fullIP);
 	#endif
 
 	Show(false);
@@ -256,9 +264,9 @@ void CallDialog::OnContactClient(wxCommandEvent &WXUNUSED(event)) {
 
 	// Open Chat
 	#if defined(__WXMSW__)
-		wxExecute("steam://friends/message/" + wxString() << this->clientCId.ConvertToUint64());
+		wxExecute("explorer steam://friends/message/" + wxString() << this->clientCId.ConvertToUint64());
 	#else
-		wxExecute("xdg-open steam://friends/message/" + wxString() << this->clientCId.ConvertToUint64());
+		wxExecute("steam steam://friends/message/" + wxString() << this->clientCId.ConvertToUint64());
 	#endif
 }
 
@@ -270,9 +278,9 @@ void CallDialog::OnContactTarget(wxCommandEvent &WXUNUSED(event)) {
 
 	// Open Chat
 	#if defined(__WXMSW__)
-		wxExecute("steam://friends/message/" + wxString() << this->targetCId.ConvertToUint64());
+		wxExecute("explorer steam://friends/message/" + wxString() << this->targetCId.ConvertToUint64());
 	#else
-		wxExecute("xdg-open steam://friends/message/" + wxString() << this->targetCId.ConvertToUint64());
+		wxExecute("steam steam://friends/message/" + wxString() << this->targetCId.ConvertToUint64());
 	#endif
 }
 
@@ -348,9 +356,9 @@ void CallDialog::OnGetTrackers(wxString errorStr, wxString result, int x) {
 								CSteamID steamidTracker = caGetCallDialogs()->at(x)->SteamIdtoCSteamId(steamidString);
 
 								// Are we friends and is tracker online? :))
-								if (steamidTracker.IsValid() && caGetSteamThread()->GetSteamFriends()->GetFriendRelationship(steamidTracker) == k_EFriendRelationshipFriend && caGetSteamThread()->GetSteamFriends()->GetFriendPersonaState(steamidTracker) != k_EPersonaStateOffline) {
+								if (steamidTracker.IsValid() && OpenSteamHelper::GetInstance()->SteamFriends()->GetFriendRelationship(steamidTracker) == k_EFriendRelationshipFriend && OpenSteamHelper::GetInstance()->SteamFriends()->GetFriendPersonaState(steamidTracker) != k_EPersonaStateOffline) {
 									// Now we write a message
-									caGetSteamThread()->GetSteamFriends()->ReplyToFriendMessage(steamidTracker, "Hey, i contact you because of the call from " + caGetCallDialogs()->at(x)->GetClient() + " about " + caGetCallDialogs()->at(x)->GetTarget());
+									OpenSteamHelper::GetInstance()->SteamFriends()->ReplyToFriendMessage(steamidTracker, "Hey, i contact you because of the call from " + caGetCallDialogs()->at(x)->GetClient() + " about " + caGetCallDialogs()->at(x)->GetTarget());
 
 									// And we found someone :)
 									if (!found) {
@@ -483,11 +491,15 @@ void CallDialog::OnMinimizeWindow(wxIconizeEvent& WXUNUSED(event)) {
 
 
 // Init. Timer
-AvatarTimer::AvatarTimer(CSteamID *clientId, CSteamID *targetId, wxStaticBitmap *clientAvatar, wxStaticBitmap *targetAvatar) : wxTimer(this, -1) {
+AvatarTimer::AvatarTimer(CallDialog *dialog, CSteamID *clientId, CSteamID *targetId, wxStaticBitmap *clientAvatar, wxStaticBitmap *targetAvatar) : wxTimer(this, -1) {
+	this->dialog = dialog;
+
 	this->clientId = clientId;
 	this->targetId = targetId;
+
 	this->clientAvatar = clientAvatar;
 	this->targetAvatar = targetAvatar;
+
 	this->attempts = 0;
 
 	this->clientLoaded = false;
@@ -511,14 +523,14 @@ void AvatarTimer::Notify() {
 		// Do we have information about the users?
 		// Load the images
 		if (!this->clientLoaded) {
-			if (!caGetSteamThread()->GetSteamFriends()->RequestUserInformation(*this->clientId, false)) {
+			if (!OpenSteamHelper::GetInstance()->SteamFriends()->RequestUserInformation(*this->clientId, false)) {
 				// Try to laod caller avatar
 				this->clientLoaded = SetAvatar(this->clientId, this->clientAvatar);
 			}
 		}
 
 		if (!this->targetLoaded) {
-			if (!caGetSteamThread()->GetSteamFriends()->RequestUserInformation(*this->targetId, false)) {
+			if (!OpenSteamHelper::GetInstance()->SteamFriends()->RequestUserInformation(*this->targetId, false)) {
 				// Try to laod target avatar
 				this->targetLoaded = SetAvatar(this->targetId, this->targetAvatar);
 			}
@@ -527,6 +539,8 @@ void AvatarTimer::Notify() {
 
 	// All loaded or 10 seconds gone?
 	if (++this->attempts == 100 || (this->clientLoaded && this->targetLoaded)) {
+		this->dialog->SetAvatarsLoaded();
+
 		// Enough, stop timer
 		delete this;
 	}
@@ -536,7 +550,7 @@ void AvatarTimer::Notify() {
 // Set new Avatar
 bool AvatarTimer::SetAvatar(CSteamID *id, wxStaticBitmap *map) {
 	// Load avatar
-	int avatar = caGetSteamThread()->GetSteamFriends()->GetLargeFriendAvatar(*id);
+	int avatar = OpenSteamHelper::GetInstance()->SteamFriends()->GetLargeFriendAvatar(*id);
 
 	// Could it load?
 	if (avatar > 0) {
@@ -544,12 +558,12 @@ bool AvatarTimer::SetAvatar(CSteamID *id, wxStaticBitmap *map) {
 		unsigned int height;
 
 		// Is Size valid?
-		if (caGetSteamThread()->GetSteamUtils()->GetImageSize(avatar, &width, &height)) {
+		if (OpenSteamHelper::GetInstance()->SteamUtils()->GetImageSize(avatar, &width, &height)) {
 			// Buffer to store picture
 			unsigned char *rgbaBuffer = new uint8[4 * width * height];
 
 			// Load Image
-			if (caGetSteamThread()->GetSteamUtils()->GetImageRGBA(avatar, rgbaBuffer, (4 * width * height))) {
+			if (OpenSteamHelper::GetInstance()->SteamUtils()->GetImageRGBA(avatar, rgbaBuffer, (4 * width * height))) {
 				// Image
 				wxImage image(width, height);
 

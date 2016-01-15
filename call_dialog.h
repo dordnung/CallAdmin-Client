@@ -34,11 +34,16 @@
 
 #include "opensteam.h"
 
+class CallDialog;
+
 
 // Avatar Timer Class
 class AvatarTimer : public wxTimer {
 private:
 	int attempts;
+
+	// The dialog
+	CallDialog *dialog;
 
 	// The ID's
 	CSteamID *clientId;
@@ -53,7 +58,7 @@ private:
 
 public:
 	// Init Timer
-	AvatarTimer(CSteamID *clientId, CSteamID *targetId, wxStaticBitmap *clientAvatar, wxStaticBitmap *targetAvatar);
+	AvatarTimer(CallDialog *dialog, CSteamID *clientId, CSteamID *targetId, wxStaticBitmap *clientAvatar, wxStaticBitmap *targetAvatar);
 
 	bool SetAvatar(CSteamID *id, wxStaticBitmap *map);
 
@@ -63,10 +68,11 @@ protected:
 
 
 // Call Dialog Class
+// TODO: No vars for information
 class CallDialog : public wxDialog {
 private:
-	// Timer
-	AvatarTimer *avatarTimer;
+	// Avatars
+	bool avatarsLoaded;
 
 	// We need information about a call ;)
 	wxString callId;
@@ -108,7 +114,13 @@ public:
 	// Convert to community ID
 	static CSteamID SteamIdtoCSteamId(wxString steamId);
 
+	void LoadAvatars();
+
 	// Privat -> Get Methods
+	bool GetAvatarsLoaded() {
+		return this->avatarsLoaded;
+	}
+
 	long GetTime() {
 		return this->reportedAt;
 	}
@@ -133,10 +145,6 @@ public:
 		return this->boxText;
 	}
 
-	AvatarTimer* GetAvatarTimer() {
-		return this->avatarTimer;
-	}
-
 	wxButton* GetContactTrackersButton() {
 		return this->contactTrackers;
 	}
@@ -158,6 +166,10 @@ public:
 	}
 
 	// Privat -> Set Methods
+	void SetAvatarsLoaded() {
+		this->avatarsLoaded = true;
+	}
+
 	void SetCallId(wxString id) {
 		this->callId = id;
 	}

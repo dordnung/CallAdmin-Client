@@ -212,22 +212,24 @@ NameTimer::~NameTimer() {
 void NameTimer::Notify() {
 	// Steam available?
 	if (caGetSteamThread()->IsConnected()) {
-		if (!caGetSteamThread()->GetSteamFriends()->RequestUserInformation(this->client, true)) {
+		OpenSteamHelper *helper = OpenSteamHelper::GetInstance();
+
+		if (!helper->SteamFriends()->RequestUserInformation(this->client, true)) {
 			bool isFriend = false;
 			bool isOnline = false;
 
 			// Is Friend?
-			if (caGetSteamThread()->GetSteamFriends()->GetFriendRelationship(this->client) == k_EFriendRelationshipFriend) {
+			if (helper->SteamFriends()->GetFriendRelationship(this->client) == k_EFriendRelationshipFriend) {
 				isFriend = true;
 			}
 
 			// Is Online?
-			if (caGetSteamThread()->GetSteamFriends()->GetFriendPersonaState(this->client) != k_EPersonaStateOffline) {
+			if (helper->SteamFriends()->GetFriendPersonaState(this->client) != k_EPersonaStateOffline) {
 				isOnline = true;
 			}
 
 			// Format tracker Text
-			wxString trackerText = (wxString)caGetSteamThread()->GetSteamFriends()->GetFriendPersonaName(this->client) + " - " + (wxString)this->client.Render();
+			wxString trackerText = (wxString)helper->SteamFriends()->GetFriendPersonaName(this->client) + " - " + (wxString)this->client.Render();
 
 			if (this->client.Render() != caGetSteamThread()->GetUserSteamId()) {
 				if (isFriend) {
