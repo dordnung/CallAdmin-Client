@@ -32,14 +32,7 @@
 	#include <wx/wx.h>
 #endif
 
-// Steamworks warning -> disable
-#pragma warning(disable: 4245)
-
-#include "Steamworks.h"
-
-// Steamworks warning -> enable
-#pragma warning(default: 4245)
-
+#include "opensteam_helper.h"
 
 enum STEAM_ERROR_TYP {
 	STEAM_NO_ERROR = 0,
@@ -50,13 +43,6 @@ enum STEAM_ERROR_TYP {
 
 class SteamThread : public wxThreadHelper {
 private:
-	HSteamPipe pipeSteam;
-	HSteamUser clientUser;
-	ISteamFriends015 *steamFriends;
-	ISteamClient017 *steamClient;
-	ISteamUser017 *steamUser;
-	ISteamUtils007 *steamUtils;
-
 	wxString steamid;
 	bool isConnected;
 
@@ -75,16 +61,7 @@ public:
 		return this->isConnected;
 	}
 
-	ISteamFriends015* GetSteamFriends() {
-		return this->steamFriends;
-	}
-
-	ISteamUtils007* GetSteamUtils() {
-		return this->steamUtils;
-	}
-
 	STEAM_ERROR_TYP Load();
-	void Check();
 
 	// Cleanup Steam
 	void Clean();

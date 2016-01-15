@@ -32,14 +32,6 @@
 
 // The Thread Class
 SteamThread::SteamThread() {
-	// Reset
-	this->pipeSteam = 0;
-	this->clientUser = 0;
-	this->steamClient = NULL;
-	this->steamFriends = NULL;
-	this->steamUser = NULL;
-	this->steamUtils = NULL;
-
 	this->steamid = "";
 	this->isConnected = false;
 
@@ -68,96 +60,24 @@ SteamThread::~SteamThread() {
 }
 
 
-STEAM_ERROR_TYP SteamThread::Load() {
-	if (!caGetConfig()->GetSteamEnabled()) {
-		// Don't want Steam
-		return STEAM_DISABLED;
-	}
-
-	// Load Factory
-	CSteamAPILoader loader = CSteamAPILoader(CSteamAPILoader::k_ESearchOrderSteamInstallFirst);
-	CreateInterfaceFn factory = loader.GetSteam3Factory();
-
-	if (!factory) {
-		return STEAM_ERROR;
-	}
-
-	// Load Steam Client
-	this->steamClient = (ISteamClient017*)factory(STEAMCLIENT_INTERFACE_VERSION_017, NULL);
-
-	if (!this->steamClient) {
-		return STEAM_ERROR;
-	}
-
-	// Create Pipe
-	this->pipeSteam = this->steamClient->CreateSteamPipe();
-
-	if (!this->pipeSteam || this->pipeSteam == -1) {
-		return STEAM_ERROR;
-	}
-
-	// Workaround for deadlock
-	this->steamClient->BReleaseSteamPipe(this->pipeSteam);
-	wxMilliSleep(5000);
-
-	// Create Pipe again
-	this->pipeSteam = this->steamClient->CreateSteamPipe();
-
-	if (!this->pipeSteam || this->pipeSteam == -1) {
-		return STEAM_ERROR;
-	}
-
-	// Connect User
-	this->clientUser = this->steamClient->ConnectToGlobalUser(this->pipeSteam);
-
-	if (!this->clientUser) {
-		return STEAM_ERROR;
-	}
-
-	// Load SteamFriends
-	this->steamFriends = (ISteamFriends015*)this->steamClient->GetISteamFriends(this->clientUser, this->pipeSteam, STEAMFRIENDS_INTERFACE_VERSION_015);
-
-	if (!this->steamFriends) {
-		return STEAM_ERROR;
-	}
-
-	// Load Steam User
-	this->steamUser = (ISteamUser017*)this->steamClient->GetISteamUser(this->clientUser, this->pipeSteam, STEAMUSER_INTERFACE_VERSION_017);
-
-	if (!this->steamUser) {
-		return STEAM_ERROR;
-	}
-
-	// Load Steam Utils
-	this->steamUtils = (ISteamUtils007*)this->steamClient->GetISteamUtils(this->pipeSteam, STEAMUTILS_INTERFACE_VERSION_007);
-
-	if (!this->steamUtils) {
-		return STEAM_ERROR;
-	}
-
-	// Everything is good :)
-	return STEAM_NO_ERROR;
-}
-
-
 // Thread started
-void SteamThread::Check() {
+wxThread::ExitCode SteamThread::Entry() {
 	for (; !GetThread()->TestDestroy(); wxMilliSleep(100)) {
-		if (this->pipeSteam <= 0) {
+		if (!this->isConnected) {
 			// Load Steam
 			STEAM_ERROR_TYP steamError = Load();
 
 			// Handling
 			if (steamError != STEAM_NO_ERROR) {
+				// Clean
+				Clean();
+
 				if (steamError == STEAM_ERROR) {
 					// Only if connected before
 					if (this->isConnected) {
 						// Notice changes to main panel
 						caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
 						caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Disonnected from Steam", LogLevel::LEVEL_INFO);
-
-						// Clean
-						Clean();
 					}
 				} else {
 					// Disabled
@@ -165,22 +85,23 @@ void SteamThread::Check() {
 						// Notice changes to main panel
 						caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 0);
 					}
-
-					// Clean
-					Clean();
 				}
-
-				this->isConnected = false;
-				this->steamid = "";
 			} else {
 				// Connected :)
-				this->steamid = this->steamUser->GetSteamID().Render();
+				this->steamid = OpenSteamHelper::GetInstance()->SteamUser()->GetSteamID().Render();
 
 				// Notice changes to main panel
+				this->isConnected = true;
+
 				caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 2);
 				caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Connected to Steam", LogLevel::LEVEL_INFO);
 
-				this->isConnected = true;
+				// Load avatars that not loaded, yet
+				for (wxVector<CallDialog *>::iterator callDialog = caGetCallDialogs()->begin(); callDialog != caGetCallDialogs()->end(); ++callDialog) {
+					if (!(*callDialog)->GetAvatarsLoaded()) {
+						(*callDialog)->GetEventHandler()->CallAfter(&CallDialog::LoadAvatars);
+					}
+				}
 			}
 
 
@@ -191,9 +112,9 @@ void SteamThread::Check() {
 		if (this->isConnected) {
 			static unsigned int i = 0;
 
-			if (++i % 50 == 0) {
+			if (++i % 10 == 0) {
 				// Check if logged in
-				if (!this->steamUser->BLoggedOn()) {
+				if (!OpenSteamHelper::GetInstance()->SteamAPI_IsSteamRunning()) {
 					// Notice changes to main panel
 					caGetMainFrame()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
 					caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Disonnected from Steam", LogLevel::LEVEL_INFO);
@@ -204,64 +125,36 @@ void SteamThread::Check() {
 					continue;
 				}
 			}
-
-			CallbackMsg_t callbackMsg;
-
-			/*while (Steam_BGetCallback(this->pipeSteam, &callbackMsg)) {
-				if (callbackMsg.m_iCallback == IPCFailure_t::k_iCallback || callbackMsg.m_iCallback == SteamServerConnectFailure_t::k_iCallback
-					|| callbackMsg.m_iCallback == SteamServersDisconnected_t::k_iCallback) {
-					// Notice changes to main panel
-					caGetMainFrame()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
-					caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Disonnected from Steam", LogLevel::LEVEL_INFO);
-
-					// Free Callback
-					Steam_FreeLastCallback(this->pipeSteam);
-
-					// Clean Steam
-					Clean();
-
-					break;
-				}
-
-				Steam_FreeLastCallback(this->pipeSteam);
-			}*/
 		}
 	}
 
 	// Clean on end
 	Clean();
+
+	return (wxThread::ExitCode)0;
+}
+
+
+STEAM_ERROR_TYP SteamThread::Load() {
+	if (!caGetConfig()->GetSteamEnabled()) {
+		// Don't want Steam
+		return STEAM_DISABLED;
+	}
+
+	if (!OpenSteamHelper::GetInstance()->SteamAPI_Init()) {
+		return STEAM_ERROR;
+	}
+
+	// Everything is good :)
+	return STEAM_NO_ERROR;
 }
 
 
 // Clean Up Steam Stuff
 void SteamThread::Clean() {
-	// Close Steam Stuff
-	if (this->pipeSteam > 0 && this->steamClient) {
-		if (this->clientUser) {
-			this->steamClient->ReleaseUser(this->pipeSteam, this->clientUser);
-		}
-
-		this->steamClient->BShutdownIfAllPipesClosed();
-		this->steamClient->BReleaseSteamPipe(this->pipeSteam);
-	}
-
 	// Reset
 	this->isConnected = false;
 	this->steamid = "";
 
-	this->pipeSteam = 0;
-	this->clientUser = 0;
-	this->steamClient = NULL;
-	this->steamFriends = NULL;
-	this->steamUser = NULL;
-	this->steamUtils = NULL;
-}
-
-
-
-wxThread::ExitCode SteamThread::Entry() {
-	// Check Steam
-	Check();
-
-	return (wxThread::ExitCode)0;
+	OpenSteamHelper::GetInstance()->SteamAPI_Shutdown();
 }
