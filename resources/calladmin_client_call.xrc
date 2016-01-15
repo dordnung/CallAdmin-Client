@@ -103,6 +103,7 @@
 									<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM | wxLEFT | wxRIGHT</flag>
 									<border>5</border>
 									<object class="wxButton" name="contactClientButton">
+										<enabled>0</enabled>
 										<tooltip>This will open a Steam chat with this client.</tooltip>
 										<label>Contact Friend</label>
 										<default>0</default>
@@ -199,6 +200,7 @@
 									<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM | wxLEFT | wxRIGHT</flag>
 									<border>5</border>
 									<object class="wxButton" name="contactTargetButton">
+										<enabled>0</enabled>
 										<tooltip>This will open a Steam chat with this client.</tooltip>
 										<label>Contact Friend</label>
 										<default>0</default>
@@ -252,6 +254,7 @@
 							<flag>wxBOTTOM | wxTOP</flag>
 							<border>5</border>
 							<object class="wxButton" name="takeoverButton">
+								<enable>0</enable>
 								<tooltip>This will mark the call as finished and will ignore it next time.</tooltip>
 								<label>Take Over</label>
 								<default>0</default>
@@ -262,6 +265,7 @@
 							<flag>wxBOTTOM | wxRIGHT | wxTOP</flag>
 							<border>5</border>
 							<object class="wxButton" name="contactTrackersButton">
+								<enable>0</enable>
 								<tooltip>This will send all available trackers on your friendlist a message.</tooltip>
 								<label>Contact Trackers</label>
 								<default>0</default>
