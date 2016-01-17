@@ -98,7 +98,7 @@ wxThread::ExitCode CurlThread::Entry() {
 			curl_easy_cleanup(curl);
 
 			// Add Event Handler
-			caGetMainFrame()->GetEventHandler()->CallAfter(&CallAdmin::OnCurlThread, data);
+			caGetApp().CallAfter(&CallAdmin::OnCurlThread, data);
 
 			return (wxThread::ExitCode)0;
 		}
@@ -106,7 +106,7 @@ wxThread::ExitCode CurlThread::Entry() {
 		data = new CurlThreadData(this->callbackFunction, "", "", this->extra);
 
 		// Call event
-		caGetMainFrame()->GetEventHandler()->CallAfter(&CallAdmin::OnCurlThread, data);
+		caGetApp().CallAfter(&CallAdmin::OnCurlThread, data);
 	}
 
 	return (wxThread::ExitCode)0;

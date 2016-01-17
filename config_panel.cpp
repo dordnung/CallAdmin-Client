@@ -207,6 +207,10 @@ void ConfigPanel::ParseConfig() {
 		this->attemptsSlider->SetValue(config->GetMaxAttempts());
 		this->callsSlider->SetValue(config->GetNumLastCalls());
 
+		// Notice changed values to slider values
+		wxCommandEvent dummyEvent;
+		OnSliderChanged(dummyEvent);
+
 		this->pageText->SetValue(config->GetPage());
 		this->keyText->SetValue(config->GetKey());
 

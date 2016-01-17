@@ -175,7 +175,7 @@ bool CallDialog::StartCall(bool show) {
 
 
 void CallDialog::LoadAvatars() {
-	if (!this->avatarsLoaded) {
+	if (!this->avatarsLoaded && caGetApp().IsRunning()) {
 		// Start the Timer (It will be killed by itself)
 		AvatarTimer *timer = new AvatarTimer(this, &this->clientCId, &this->targetCId, this->clientAvatar, this->targetAvatar);
 		timer->Start(100, wxTIMER_CONTINUOUS);

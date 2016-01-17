@@ -116,7 +116,7 @@ wxThread::ExitCode SteamThread::Entry() {
 				// Check if logged in
 				if (!OpenSteamHelper::GetInstance()->SteamAPI_IsSteamRunning()) {
 					// Notice changes to main panel
-					caGetMainFrame()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
+					caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
 					caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Disonnected from Steam", LogLevel::LEVEL_INFO);
 
 					// Clean Steam

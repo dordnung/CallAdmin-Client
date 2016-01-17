@@ -57,6 +57,7 @@ CallAdmin::CallAdmin() {
 	this->curlThread = NULL;
 
 	this->startInTaskbar = false;
+	this->isRunning = true;
 
 	// Attempts to Zero
 	this->attempts = 0;
@@ -153,6 +154,12 @@ bool CallAdmin::OnCmdLineParsed(wxCmdLineParser &parser) {
 
 // Curl thread handled -> Call function
 void CallAdmin::OnCurlThread(CurlThreadData *data) {
+	if (!this->isRunning) {
+		delete data;
+
+		return;
+	}
+
 	// Get Function
 	CurlCallback function = data->GetCallbackFunction();
 
@@ -247,6 +254,8 @@ void CallAdmin::ShowError(wxString error, wxString type) {
 
 // Close Taskbar Icon and destroy all dialogs
 void CallAdmin::ExitProgramm() {
+	this->isRunning = false;
+
 	// Hide all windows
 	if (this->mainFrame) {
 		this->mainFrame->Show(false);
@@ -269,10 +278,6 @@ void CallAdmin::ExitProgramm() {
 	if (HasPendingEvents()) {
 		ProcessPendingEvents();
 	}
-
-	// Clear Handlers
-	wxImage::CleanUpHandlers();
-	wxXmlResource::Get()->ClearHandlers();
 
 	// Stop the timer
 	if (this->timer) {

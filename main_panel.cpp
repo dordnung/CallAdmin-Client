@@ -204,12 +204,14 @@ void MainPanel::OnReconnect(wxCommandEvent &WXUNUSED(event)) {
 
 // Steam Changed -> Set Text
 void MainPanel::OnSteamChange(int status) {
-	if (status == 0) {
-		SetSteamStatus("Steam support is disabled", wxColour("red"));
-	} else if (status == 1) {
-		SetSteamStatus("Steam is currently not running", wxColour("red"));
-	} else {
-		SetSteamStatus("Steam is running", wxColour(34, 139, 34));
+	if (caGetApp().IsRunning()) {
+		if (status == 0) {
+			SetSteamStatus("Steam support is disabled", wxColour("red"));
+		} else if (status == 1) {
+			SetSteamStatus("Steam is currently not running", wxColour("red"));
+		} else {
+			SetSteamStatus("Steam is running", wxColour(34, 139, 34));
+		}
 	}
 }
 

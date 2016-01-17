@@ -45,3 +45,10 @@ bool LogPanel::InitPanel() {
 
 	return true;
 }
+
+// Add Action to the logBox
+void LogPanel::AddLog(wxString log, LogLevel logLevel) {
+	if (caGetApp().IsRunning() && this->logBox) {
+		this->logBox->SetSelection(this->logBox->Append("[" + LogLevelNames[logLevel] + "] " + wxString::FromUTF8(wxNow() + " - " + log)));
+	}
+}

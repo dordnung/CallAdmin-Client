@@ -88,6 +88,9 @@ private:
 	// Start in Taskbar?
 	bool startInTaskbar;
 
+	// Still running?
+	bool isRunning;
+
 public:
 	CallAdmin();
 
@@ -96,6 +99,10 @@ public:
 	void StartUpdate();
 
 	void GetPage(CurlCallback callbackFunction, wxString page, int extra = 0);
+
+	bool IsRunning() {
+		return this->isRunning;
+	}
 
 	Config* GetConfig() {
 		return this->config;
