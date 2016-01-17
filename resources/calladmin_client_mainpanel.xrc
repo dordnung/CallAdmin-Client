@@ -2,22 +2,25 @@
 <resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
 	<object class="wxPanel" name="mainPanel">
 		<style>wxNO_BORDER | wxTAB_TRAVERSAL</style>
-		<object class="wxBoxSizer">
-			<orient>wxHORIZONTAL</orient>
+		<object class="wxGridBagSizer">
+			<vgap>0</vgap>
+			<hgap>15</hgap>
+			<growablecols>0</growablecols>
+			<growablerows>0</growablerows>
 			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxALL | wxEXPAND</flag>
+				<cellpos>0,0</cellpos>
+				<cellspan>1,2</cellspan>
+				<flag>wxEXPAND | wxTOP</flag>
 				<border>5</border>
 				<object class="wxStaticBoxSizer">
 					<orient>wxHORIZONTAL</orient>
 					<label>Latest Calls</label>
 					<object class="sizeritem">
-						<option>0</option>
+						<option>1</option>
 						<flag>wxALL | wxEXPAND</flag>
 						<border>5</border>
 						<object class="wxListBox" name="callBox">
 							<style>wxLB_HSCROLL | wxLB_SINGLE</style>
-							<size>280,-1</size>
 							<font>
 								<size>9</size>
 								<style>normal</style>
@@ -30,9 +33,10 @@
 				</object>
 			</object>
 			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxALIGN_RIGHT | wxLEFT | wxRIGHT | wxTOP</flag>
-				<border>10</border>
+				<cellpos>0,2</cellpos>
+				<cellspan>1,8</cellspan>
+				<flag>wxEXPAND | wxTOP</flag>
+				<border>5</border>
 				<object class="wxBoxSizer">
 					<orient>wxVERTICAL</orient>
 					<object class="spacer">
@@ -134,13 +138,13 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER_HORIZONTAL | wxRIGHT | wxTOP</flag>
+						<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM | wxTOP</flag>
 						<border>5</border>
 						<object class="wxBoxSizer">
 							<orient>wxHORIZONTAL</orient>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxALIGN_CENTER | wxALL</flag>
+								<flag>wxALIGN_CENTER | wxRIGHT</flag>
 								<border>5</border>
 								<object class="wxCheckBox" name="available">
 									<tooltip>You will receive no more calls when you uncheck this.</tooltip>
@@ -150,7 +154,7 @@
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxALIGN_CENTER | wxALL</flag>
+								<flag>wxALIGN_CENTER | wxLEFT | wxRIGHT</flag>
 								<border>5</border>
 								<object class="wxCheckBox" name="sound">
 									<tooltip>You will hear a notification sound on an incoming call.</tooltip>
@@ -160,7 +164,7 @@
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxALIGN_CENTER | wxALL</flag>
+								<flag>wxALIGN_CENTER | wxLEFT</flag>
 								<border>5</border>
 								<object class="wxCheckBox" name="store">
 									<tooltip>You will only receive calls but you will not be stored in the trackers database</tooltip>
@@ -178,7 +182,7 @@
 							<orient>wxHORIZONTAL</orient>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxALIGN_CENTER | wxLEFT | wxTOP</flag>
+								<flag>wxALIGN_CENTER | wxTOP</flag>
 								<border>5</border>
 								<object class="wxButton" name="hide">
 									<label>Hide</label>
@@ -187,7 +191,7 @@
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxALIGN_CENTER | wxRIGHT | wxTOP</flag>
+								<flag>wxALIGN_CENTER | wxTOP</flag>
 								<border>5</border>
 								<object class="wxButton" name="reconnectButton">
 									<enabled>0</enabled>
@@ -201,7 +205,7 @@
 						<option>0</option>
 						<flag>wxALIGN_RIGHT | wxLEFT | wxRIGHT | wxTOP</flag>
 						<border>10</border>
-						<object class="wxStaticText" name="copyrightText">
+						<object class="wxStaticText" name="copyrightTextMain">
 							<font>
 								<size>8</size>
 								<style>normal</style>

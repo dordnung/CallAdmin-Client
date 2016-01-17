@@ -37,12 +37,16 @@
 
 class ConfigPanel : public wxPanel {
 private:
-	wxSlider *stepSlider;
-	wxSlider *timeoutSlider;
-	wxSlider *attemptsSlider;
-	wxSlider *callsSlider;
 	wxTextCtrl *pageText;
 	wxTextCtrl *keyText;
+	wxSlider *stepSlider;
+	wxStaticText *stepSliderValue;
+	wxSlider *timeoutSlider;
+	wxStaticText *timeoutSliderValue;
+	wxSlider *attemptsSlider;
+	wxStaticText *attemptsSliderValue;
+	wxSlider *callsSlider;
+	wxStaticText *callsSliderValue;
 	wxChoice *logLevel;
 	wxCheckBox *steamEnable;
 	wxCheckBox *showInTaskbar;
@@ -59,6 +63,7 @@ public:
 
 protected:
 	void OnSet(wxCommandEvent &event);
+	void OnSliderChanged(wxCommandEvent &event);
 	void OnLogLevelUpdate(wxCommandEvent &event);
 	void OnSteamUpdate(wxCommandEvent &event);
 	void OnShowInTaskbarUpdate(wxCommandEvent &event);

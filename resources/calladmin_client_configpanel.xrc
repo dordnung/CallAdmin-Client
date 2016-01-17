@@ -17,7 +17,7 @@
 						<cellpos>1,0</cellpos>
 						<cellspan>1,1</cellspan>
 						<flag></flag>
-						<border>10</border>
+						<border>0</border>
 						<object class="wxStaticText" name="callAdminUrlText">
 							<font>
 								<size>11</size>
@@ -50,7 +50,7 @@
 						<cellpos>2,0</cellpos>
 						<cellspan>1,1</cellspan>
 						<flag></flag>
-						<border>10</border>
+						<border>0</border>
 						<object class="wxStaticText" name="accessKeyText">
 							<font>
 								<size>11</size>
@@ -91,7 +91,7 @@
 						<cellpos>4,0</cellpos>
 						<cellspan>1,1</cellspan>
 						<flag></flag>
-						<border>10</border>
+						<border>0</border>
 						<object class="wxStaticText" name="stepSliderText">
 							<font>
 								<size>11</size>
@@ -108,23 +108,47 @@
 						<cellspan>1,1</cellspan>
 						<flag>wxEXPAND</flag>
 						<border>0</border>
-						<object class="wxSlider" name="stepSlider">
-							<style>wxSL_HORIZONTAL</style>
-							<font>
-								<style>normal</style>
-								<weight>normal</weight>
-								<underlined>0</underlined>
-							</font>
-							<value>10</value>
-							<min>5</min>
-							<max>20</max>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag></flag>
+								<border>0</border>
+								<object class="wxSlider" name="stepSlider">
+									<style>wxSL_HORIZONTAL</style>
+									<font>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+									</font>
+									<value>10</value>
+									<min>5</min>
+									<max>20</max>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag></flag>
+								<border>5</border>
+								<object class="wxStaticText" name="stepSliderValue">
+									<style>wxALIGN_CENTRE</style>
+									<font>
+										<size>11</size>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+									</font>
+									<label>10</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
 						</object>
 					</object>
 					<object class="sizeritem">
 						<cellpos>5,0</cellpos>
 						<cellspan>1,1</cellspan>
 						<flag></flag>
-						<border>10</border>
+						<border>0</border>
 						<object class="wxStaticText" name="timeoutSliderText">
 							<font>
 								<size>11</size>
@@ -141,23 +165,47 @@
 						<cellspan>1,1</cellspan>
 						<flag>wxEXPAND</flag>
 						<border>0</border>
-						<object class="wxSlider" name="timeoutSlider">
-							<style>wxSL_HORIZONTAL</style>
-							<font>
-								<style>normal</style>
-								<weight>normal</weight>
-								<underlined>0</underlined>
-							</font>
-							<value>5</value>
-							<min>3</min>
-							<max>10</max>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag></flag>
+								<border>0</border>
+								<object class="wxSlider" name="timeoutSlider">
+									<style>wxSL_HORIZONTAL</style>
+									<font>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+									</font>
+									<value>5</value>
+									<min>3</min>
+									<max>10</max>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag></flag>
+								<border>0</border>
+								<object class="wxStaticText" name="timeoutSliderValue">
+									<style>wxALIGN_CENTRE</style>
+									<font>
+										<size>11</size>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+									</font>
+									<label>05</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
 						</object>
 					</object>
 					<object class="sizeritem">
 						<cellpos>6,0</cellpos>
 						<cellspan>1,1</cellspan>
 						<flag></flag>
-						<border>10</border>
+						<border>0</border>
 						<object class="wxStaticText" name="attemptsSliderText">
 							<font>
 								<size>11</size>
@@ -174,23 +222,47 @@
 						<cellspan>1,1</cellspan>
 						<flag>wxEXPAND</flag>
 						<border>0</border>
-						<object class="wxSlider" name="attemptsSlider">
-							<style>wxSL_HORIZONTAL</style>
-							<font>
-								<style>normal</style>
-								<weight>normal</weight>
-								<underlined>0</underlined>
-							</font>
-							<value>3</value>
-							<min>3</min>
-							<max>10</max>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag></flag>
+								<border>0</border>
+								<object class="wxSlider" name="attemptsSlider">
+									<style>wxSL_HORIZONTAL</style>
+									<font>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+									</font>
+									<value>3</value>
+									<min>3</min>
+									<max>10</max>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag></flag>
+								<border>0</border>
+								<object class="wxStaticText" name="attemptsSliderValue">
+									<style>wxALIGN_CENTRE</style>
+									<font>
+										<size>11</size>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+									</font>
+									<label>03</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
 						</object>
 					</object>
 					<object class="sizeritem">
 						<cellpos>7,0</cellpos>
 						<cellspan>1,1</cellspan>
 						<flag></flag>
-						<border>10</border>
+						<border>0</border>
 						<object class="wxStaticText" name="callsSliderText">
 							<font>
 								<size>11</size>
@@ -207,22 +279,46 @@
 						<cellspan>1,1</cellspan>
 						<flag>wxEXPAND</flag>
 						<border>0</border>
-						<object class="wxSlider" name="callsSlider">
-							<style>wxSL_HORIZONTAL</style>
-							<font>
-								<style>normal</style>
-								<weight>normal</weight>
-								<underlined>0</underlined>
-							</font>
-							<value>25</value>
-							<min>0</min>
-							<max>50</max>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag></flag>
+								<border>0</border>
+								<object class="wxSlider" name="callsSlider">
+									<style>wxSL_HORIZONTAL</style>
+									<font>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+									</font>
+									<value>25</value>
+									<min>0</min>
+									<max>50</max>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag></flag>
+								<border>0</border>
+								<object class="wxStaticText" name="callsSliderValue">
+									<style>wxALIGN_CENTRE</style>
+									<font>
+										<size>11</size>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+									</font>
+									<label>25</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
 						</object>
 					</object>
 					<object class="sizeritem">
 						<cellpos>8,0</cellpos>
 						<cellspan>1,2</cellspan>
-						<flag>wxBOTTOM | wxTOP</flag>
+						<flag>wxBOTTOM | wxEXPAND | wxTOP</flag>
 						<border>10</border>
 						<object class="wxStaticLine" name="staticline6">
 							<style>wxLI_HORIZONTAL</style>
@@ -232,7 +328,7 @@
 						<cellpos>9,0</cellpos>
 						<cellspan>1,1</cellspan>
 						<flag></flag>
-						<border>10</border>
+						<border>0</border>
 						<object class="wxStaticText" name="logLevelText">
 							<font>
 								<size>11</size>
@@ -247,7 +343,7 @@
 					<object class="sizeritem">
 						<cellpos>9,1</cellpos>
 						<cellspan>1,1</cellspan>
-						<flag>wxRIGHT</flag>
+						<flag>wxEXPAND</flag>
 						<border>0</border>
 						<object class="wxChoice" name="logLevel">
 							<selection>0</selection>
@@ -263,7 +359,7 @@
 						<cellpos>10,0</cellpos>
 						<cellspan>1,1</cellspan>
 						<flag></flag>
-						<border>10</border>
+						<border>0</border>
 						<object class="wxStaticText" name="steamEnableText">
 							<font>
 								<size>11</size>
@@ -278,7 +374,7 @@
 					<object class="sizeritem">
 						<cellpos>10,1</cellpos>
 						<cellspan>1,1</cellspan>
-						<flag>wxRIGHT</flag>
+						<flag></flag>
 						<border>0</border>
 						<object class="wxCheckBox" name="steamEnable">
 							<label>Enable Steam Support</label>
@@ -289,7 +385,7 @@
 						<cellpos>11,0</cellpos>
 						<cellspan>1,1</cellspan>
 						<flag></flag>
-						<border>10</border>
+						<border>0</border>
 						<object class="wxStaticText" name="showInTaskbarText">
 							<font>
 								<size>11</size>
@@ -304,7 +400,7 @@
 					<object class="sizeritem">
 						<cellpos>11,1</cellpos>
 						<cellspan>1,1</cellspan>
-						<flag>wxRIGHT</flag>
+						<flag></flag>
 						<border>0</border>
 						<object class="wxCheckBox" name="showInTaskbar">
 							<label>Show messages in Taskbar</label>
@@ -315,7 +411,7 @@
 						<cellpos>12,0</cellpos>
 						<cellspan>1,1</cellspan>
 						<flag></flag>
-						<border>10</border>
+						<border>0</border>
 						<object class="wxStaticText" name="hideMinimizedText">
 							<font>
 								<size>11</size>
@@ -330,25 +426,18 @@
 					<object class="sizeritem">
 						<cellpos>12,1</cellpos>
 						<cellspan>1,1</cellspan>
-						<flag>wxRIGHT</flag>
+						<flag></flag>
 						<border>0</border>
 						<object class="wxCheckBox" name="hideMinimized">
 							<label>Hide on Minimize</label>
 							<checked>0</checked>
 						</object>
 					</object>
-				</object>
-			</object>
-			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxALIGN_CENTER_HORIZONTAL | wxALL</flag>
-				<border>5</border>
-				<object class="wxBoxSizer">
-					<orient>wxHORIZONTAL</orient>
 					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALIGN_CENTER | wxALL</flag>
-						<border>5</border>
+						<cellpos>13,0</cellpos>
+						<cellspan>1,2</cellspan>
+						<flag>wxALIGN_CENTER | wxTOP</flag>
+						<border>15</border>
 						<object class="wxButton" name="updateSettings">
 							<label>Update Settings</label>
 							<default>1</default>

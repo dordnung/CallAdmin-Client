@@ -44,7 +44,7 @@
             <property name="minimum_size"></property>
             <property name="name">callDialog</property>
             <property name="pos"></property>
-            <property name="size"></property>
+            <property name="size">-1,-1</property>
             <property name="style">wxDEFAULT_DIALOG_STYLE|wxMINIMIZE_BOX</property>
             <property name="subclass"></property>
             <property name="title"></property>
@@ -169,7 +169,7 @@
                     <property name="permission">none</property>
                     <object class="sizeritem" expanded="1">
                         <property name="border">20</property>
-                        <property name="flag">wxALIGN_CENTER|wxLEFT|wxRIGHT|wxTOP</property>
+                        <property name="flag">wxALIGN_CENTER|wxTOP</property>
                         <property name="proportion">0</property>
                         <object class="wxStaticText" expanded="1">
                             <property name="BottomDockable">1</property>
@@ -251,8 +251,8 @@
                         </object>
                     </object>
                     <object class="sizeritem" expanded="1">
-                        <property name="border">20</property>
-                        <property name="flag">wxALIGN_CENTER|wxLEFT|wxRIGHT</property>
+                        <property name="border">0</property>
+                        <property name="flag">wxALIGN_CENTER</property>
                         <property name="proportion">0</property>
                         <object class="wxStaticText" expanded="1">
                             <property name="BottomDockable">1</property>
@@ -335,7 +335,7 @@
                     </object>
                     <object class="sizeritem" expanded="1">
                         <property name="border">20</property>
-                        <property name="flag">wxALIGN_CENTER|wxBOTTOM|wxLEFT|wxRIGHT</property>
+                        <property name="flag">wxALIGN_CENTER|wxBOTTOM</property>
                         <property name="proportion">0</property>
                         <object class="wxStaticText" expanded="1">
                             <property name="BottomDockable">1</property>
@@ -681,7 +681,7 @@
                                     </object>
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">5</property>
-                                        <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxLEFT|wxRIGHT</property>
+                                        <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxBOTTOM</property>
                                         <property name="proportion">0</property>
                                         <object class="wxButton" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -711,7 +711,7 @@
                                             <property name="font"></property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
-                                            <property name="id">wxID_ContactClient</property>
+                                            <property name="id">wxID_ANY</property>
                                             <property name="label">Contact Friend</property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
@@ -741,7 +741,7 @@
                                             <property name="window_extra_style"></property>
                                             <property name="window_name"></property>
                                             <property name="window_style"></property>
-                                            <event name="OnButtonClick">OnContactClient</event>
+                                            <event name="OnButtonClick"></event>
                                             <event name="OnChar"></event>
                                             <event name="OnEnterWindow"></event>
                                             <event name="OnEraseBackground"></event>
@@ -1291,7 +1291,7 @@
                                     </object>
                                     <object class="sizeritem" expanded="1">
                                         <property name="border">5</property>
-                                        <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxLEFT|wxRIGHT</property>
+                                        <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxBOTTOM</property>
                                         <property name="proportion">0</property>
                                         <object class="wxButton" expanded="1">
                                             <property name="BottomDockable">1</property>
@@ -1321,7 +1321,7 @@
                                             <property name="font"></property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
-                                            <property name="id">wxID_ContactTarget</property>
+                                            <property name="id">wxID_ANY</property>
                                             <property name="label">Contact Friend</property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
@@ -1351,7 +1351,7 @@
                                             <property name="window_extra_style"></property>
                                             <property name="window_name"></property>
                                             <property name="window_style"></property>
-                                            <event name="OnButtonClick">OnContactTarget</event>
+                                            <event name="OnButtonClick"></event>
                                             <event name="OnChar"></event>
                                             <event name="OnEnterWindow"></event>
                                             <event name="OnEraseBackground"></event>
@@ -1564,7 +1564,7 @@
                             <property name="permission">none</property>
                             <object class="sizeritem" expanded="1">
                                 <property name="border">5</property>
-                                <property name="flag">wxBOTTOM|wxLEFT|wxTOP</property>
+                                <property name="flag">wxBOTTOM|wxRIGHT|wxTOP</property>
                                 <property name="proportion">0</property>
                                 <object class="wxButton" expanded="1">
                                     <property name="BottomDockable">1</property>
@@ -1594,7 +1594,7 @@
                                     <property name="font"></property>
                                     <property name="gripper">0</property>
                                     <property name="hidden">0</property>
-                                    <property name="id">wxID_ConnectCall</property>
+                                    <property name="id">wxID_ANY</property>
                                     <property name="label">Connect</property>
                                     <property name="max_size"></property>
                                     <property name="maximize_button">0</property>
@@ -1624,7 +1624,7 @@
                                     <property name="window_extra_style"></property>
                                     <property name="window_name"></property>
                                     <property name="window_style"></property>
-                                    <event name="OnButtonClick">OnConnect</event>
+                                    <event name="OnButtonClick"></event>
                                     <event name="OnChar"></event>
                                     <event name="OnEnterWindow"></event>
                                     <event name="OnEraseBackground"></event>
@@ -1652,7 +1652,7 @@
                             </object>
                             <object class="sizeritem" expanded="1">
                                 <property name="border">5</property>
-                                <property name="flag">wxBOTTOM|wxTOP</property>
+                                <property name="flag">wxTOP</property>
                                 <property name="proportion">0</property>
                                 <object class="wxButton" expanded="1">
                                     <property name="BottomDockable">1</property>
@@ -1682,7 +1682,7 @@
                                     <property name="font"></property>
                                     <property name="gripper">0</property>
                                     <property name="hidden">0</property>
-                                    <property name="id">wxID_CheckDone</property>
+                                    <property name="id">wxID_ANY</property>
                                     <property name="label">Take Over</property>
                                     <property name="max_size"></property>
                                     <property name="maximize_button">0</property>
@@ -1712,7 +1712,7 @@
                                     <property name="window_extra_style"></property>
                                     <property name="window_name"></property>
                                     <property name="window_style"></property>
-                                    <event name="OnButtonClick">OnCheck</event>
+                                    <event name="OnButtonClick"></event>
                                     <event name="OnChar"></event>
                                     <event name="OnEnterWindow"></event>
                                     <event name="OnEraseBackground"></event>
@@ -1740,7 +1740,7 @@
                             </object>
                             <object class="sizeritem" expanded="1">
                                 <property name="border">5</property>
-                                <property name="flag">wxBOTTOM|wxRIGHT|wxTOP</property>
+                                <property name="flag">wxLEFT|wxTOP</property>
                                 <property name="proportion">0</property>
                                 <object class="wxButton" expanded="1">
                                     <property name="BottomDockable">1</property>
@@ -1770,7 +1770,7 @@
                                     <property name="font"></property>
                                     <property name="gripper">0</property>
                                     <property name="hidden">0</property>
-                                    <property name="id">wxID_ContactTrackers</property>
+                                    <property name="id">wxID_ANY</property>
                                     <property name="label">Contact Trackers</property>
                                     <property name="max_size"></property>
                                     <property name="maximize_button">0</property>
@@ -1800,7 +1800,7 @@
                                     <property name="window_extra_style"></property>
                                     <property name="window_name"></property>
                                     <property name="window_style"></property>
-                                    <event name="OnButtonClick">OnContactTrackers</event>
+                                    <event name="OnButtonClick"></event>
                                     <event name="OnChar"></event>
                                     <event name="OnEnterWindow"></event>
                                     <event name="OnEraseBackground"></event>

@@ -98,7 +98,7 @@ bool MainPanel::InitPanel() {
 	// Author + Version Text
 	wxStaticText *text;
 
-	FIND_OR_FAIL(text, XRCCTRL(*this, "copyrightText", wxStaticText), "copyrightText");
+	FIND_OR_FAIL(text, XRCCTRL(*this, "copyrightTextMain", wxStaticText), "copyrightTextMain");
 	text->SetLabel("v" + (wxString)CALLADMIN_CLIENT_VERSION + text->GetLabel());
 
 	// Auto Size

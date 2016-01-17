@@ -37,22 +37,31 @@
 wxBEGIN_EVENT_TABLE(ConfigPanel, wxPanel)
 	EVT_BUTTON(XRCID("updateSettings"), ConfigPanel::OnSet)
 
+	EVT_SLIDER(XRCID("stepSlider"), ConfigPanel::OnSliderChanged)
+	EVT_SLIDER(XRCID("timeoutSlider"), ConfigPanel::OnSliderChanged)
+	EVT_SLIDER(XRCID("attemptsSlider"), ConfigPanel::OnSliderChanged)
+	EVT_SLIDER(XRCID("callsSlider"), ConfigPanel::OnSliderChanged)
+
+	EVT_CHOICE(XRCID("logLevel"), ConfigPanel::OnLogLevelUpdate)
+
 	EVT_CHECKBOX(XRCID("steamEnable"), ConfigPanel::OnSteamUpdate)
 	EVT_CHECKBOX(XRCID("showInTaskbar"), ConfigPanel::OnShowInTaskbarUpdate)
 	EVT_CHECKBOX(XRCID("hideMinimized"), ConfigPanel::OnHideUpdate)
-
-	EVT_CHOICE(XRCID("logLevel"), ConfigPanel::OnLogLevelUpdate)
 wxEND_EVENT_TABLE()
 
 
 // Init. Vars
 ConfigPanel::ConfigPanel() {
-	this->stepSlider = NULL;
-	this->timeoutSlider = NULL;
-	this->attemptsSlider = NULL;
-	this->callsSlider = NULL;
 	this->pageText = NULL;
 	this->keyText = NULL;
+	this->stepSlider = NULL;
+	this->stepSliderValue = NULL;
+	this->timeoutSlider = NULL;
+	this->timeoutSliderValue = NULL;
+	this->attemptsSlider = NULL;
+	this->attemptsSliderValue = NULL;
+	this->callsSlider = NULL;
+	this->callsSliderValue = NULL;
 	this->logLevel = NULL;
 	this->steamEnable = NULL;
 	this->showInTaskbar = NULL;
@@ -74,17 +83,21 @@ bool ConfigPanel::InitPanel() {
 	// Ask for Key
 	FIND_OR_FAIL(this->keyText, XRCCTRL(*this, "accessKey", wxTextCtrl), "accessKey");
 
-	// Ask for Step
+	// Ask for 
 	FIND_OR_FAIL(this->stepSlider, XRCCTRL(*this, "stepSlider", wxSlider), "stepSlider");
+	FIND_OR_FAIL(this->stepSliderValue, XRCCTRL(*this, "stepSliderValue", wxStaticText), "stepSliderValue");
 
 	// Ask for Timeout
 	FIND_OR_FAIL(this->timeoutSlider, XRCCTRL(*this, "timeoutSlider", wxSlider), "timeoutSlider");
+	FIND_OR_FAIL(this->timeoutSliderValue, XRCCTRL(*this, "timeoutSliderValue", wxStaticText), "timeoutSliderValue");
 
 	// Ask for Attempts
 	FIND_OR_FAIL(this->attemptsSlider, XRCCTRL(*this, "attemptsSlider", wxSlider), "attemptsSlider");
+	FIND_OR_FAIL(this->attemptsSliderValue, XRCCTRL(*this, "attemptsSliderValue", wxStaticText), "attemptsSliderValue");
 
 	// Ask for Last Calls
 	FIND_OR_FAIL(this->callsSlider, XRCCTRL(*this, "callsSlider", wxSlider), "callsSlider");
+	FIND_OR_FAIL(this->callsSliderValue, XRCCTRL(*this, "callsSliderValue", wxStaticText), "callsSliderValue");
 
 	// Ask for LogLevel
 	FIND_OR_FAIL(this->logLevel, XRCCTRL(*this, "logLevel", wxChoice), "logLevel");
@@ -100,6 +113,15 @@ bool ConfigPanel::InitPanel() {
 	FIND_OR_FAIL(this->hideMinimized, XRCCTRL(*this, "hideMinimized", wxCheckBox), "hideMinimized");
 
 	return true;
+}
+
+
+// A slider changed, set values
+void ConfigPanel::OnSliderChanged(wxCommandEvent &WXUNUSED(event)) {
+	this->stepSliderValue->SetLabel(wxString::Format("%02d", this->stepSlider->GetValue()));
+	this->timeoutSliderValue->SetLabel(wxString::Format("%02d", this->timeoutSlider->GetValue()));
+	this->attemptsSliderValue->SetLabel(wxString::Format("%02d", this->attemptsSlider->GetValue()));
+	this->callsSliderValue->SetLabel(wxString::Format("%02d", this->callsSlider->GetValue()));
 }
 
 

@@ -11,7 +11,7 @@
 				<orient>wxVERTICAL</orient>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER | wxLEFT | wxRIGHT | wxTOP</flag>
+					<flag>wxALIGN_CENTER | wxTOP</flag>
 					<border>20</border>
 					<object class="wxStaticText" name="contactText">
 						<font>
@@ -26,8 +26,8 @@
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER | wxLEFT | wxRIGHT</flag>
-					<border>20</border>
+					<flag>wxALIGN_CENTER</flag>
+					<border>0</border>
 					<object class="wxStaticText" name="callAtText">
 						<font>
 							<size>16</size>
@@ -41,7 +41,7 @@
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER | wxBOTTOM | wxLEFT | wxRIGHT</flag>
+					<flag>wxALIGN_CENTER | wxBOTTOM</flag>
 					<border>20</border>
 					<object class="wxStaticText" name="doneText">
 						<fg>#ff0000</fg>
@@ -100,7 +100,7 @@
 								</object>
 								<object class="sizeritem">
 									<option>0</option>
-									<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM | wxLEFT | wxRIGHT</flag>
+									<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM</flag>
 									<border>5</border>
 									<object class="wxButton" name="contactClientButton">
 										<enabled>0</enabled>
@@ -197,7 +197,7 @@
 								</object>
 								<object class="sizeritem">
 									<option>0</option>
-									<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM | wxLEFT | wxRIGHT</flag>
+									<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM</flag>
 									<border>5</border>
 									<object class="wxButton" name="contactTargetButton">
 										<enabled>0</enabled>
@@ -242,7 +242,7 @@
 						<orient>wxHORIZONTAL</orient>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxBOTTOM | wxLEFT | wxTOP</flag>
+							<flag>wxBOTTOM | wxRIGHT | wxTOP</flag>
 							<border>5</border>
 							<object class="wxButton" name="connectButton">
 								<label>Connect</label>
@@ -251,10 +251,10 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxBOTTOM | wxTOP</flag>
+							<flag>wxTOP</flag>
 							<border>5</border>
 							<object class="wxButton" name="takeoverButton">
-								<enable>0</enable>
+								<enabled>0</enabled>
 								<tooltip>This will mark the call as finished and will ignore it next time.</tooltip>
 								<label>Take Over</label>
 								<default>0</default>
@@ -262,10 +262,10 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxBOTTOM | wxRIGHT | wxTOP</flag>
+							<flag>wxLEFT | wxTOP</flag>
 							<border>5</border>
 							<object class="wxButton" name="contactTrackersButton">
-								<enable>0</enable>
+								<enabled>0</enabled>
 								<tooltip>This will send all available trackers on your friendlist a message.</tooltip>
 								<label>Contact Trackers</label>
 								<default>0</default>
