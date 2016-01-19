@@ -76,8 +76,7 @@ bool CallDialog::StartCall(bool show) {
 	wxTextCtrl *textCtrl;
 
 	// Panel
-	wxWindow *panel;
-	FIND_OR_FAIL(panel, this->GetChildren().GetFirst()->GetData(), "callPanel");
+	FIND_OR_FAIL(this->panel, (wxPanel *)this->GetChildren().GetFirst()->GetData(), "callPanel");
 
 	// New Call
 	FIND_OR_FAIL(text, XRCCTRL(*this, "contactText", wxStaticText), "contactText");
@@ -121,7 +120,7 @@ bool CallDialog::StartCall(bool show) {
 
 	// Reason
 	FIND_OR_FAIL(text, XRCCTRL(*this, "reasonText", wxStaticText), "reasonText");
-	text->SetLabel(wxString::FromUTF8("\xe2\x96\xbc") + " reported because of reason: \"" + wxString::FromUTF8(reason) + "\" " + wxString::FromUTF8("\xe2\x96\xbc"));
+	text->SetLabel(wxString::FromUTF8(reason));
 
 	// Client Avatar
 	FIND_OR_FAIL(this->targetAvatar, XRCCTRL(*this, "targetAvatar", wxStaticBitmap), "targetAvatar");
@@ -154,7 +153,8 @@ bool CallDialog::StartCall(bool show) {
 	LoadAvatars();
 
 	// Fit panel
-	panel->Fit();
+	this->panel->Layout();
+	this->panel->Fit();
 
 	// Fit
 	Fit();
@@ -182,7 +182,7 @@ void CallDialog::SetFinish() {
 	this->doneText->SetLabelText("Finished");
 	this->doneText->SetForegroundColour(wxColour(34, 139, 34));
 
-	Layout();
+	this->panel->Layout();
 }
 
 

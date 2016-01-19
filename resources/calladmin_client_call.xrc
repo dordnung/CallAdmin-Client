@@ -6,12 +6,12 @@
 		<centered>1</centered>
 		<icon>calladmin_icon.ico</icon>
 		<object class="wxPanel" name="callPanel">
-			<style>wxNO_BORDER | wxTAB_TRAVERSAL</style>
+			<style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
 			<object class="wxBoxSizer">
 				<orient>wxVERTICAL</orient>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER | wxTOP</flag>
+					<flag>wxALIGN_CENTER|wxTOP</flag>
 					<border>20</border>
 					<object class="wxStaticText" name="contactText">
 						<font>
@@ -41,7 +41,7 @@
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER | wxBOTTOM</flag>
+					<flag>wxALIGN_CENTER|wxBOTTOM</flag>
 					<border>20</border>
 					<object class="wxStaticText" name="doneText">
 						<fg>#ff0000</fg>
@@ -57,7 +57,7 @@
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALL | wxEXPAND</flag>
+					<flag>wxALL|wxEXPAND</flag>
 					<border>5</border>
 					<object class="wxStaticLine" name="staticline">
 						<style>wxLI_HORIZONTAL</style>
@@ -65,13 +65,13 @@
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER | wxALL</flag>
+					<flag>wxALIGN_CENTER|wxALL</flag>
 					<border>10</border>
 					<object class="wxBoxSizer">
 						<orient>wxHORIZONTAL</orient>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_CENTER | wxALL</flag>
+							<flag>wxALIGN_CENTER|wxALL</flag>
 							<border>10</border>
 							<object class="wxStaticBitmap" name="clientAvatar">
 								<bitmap>calladmin_avatar.bmp</bitmap>
@@ -79,13 +79,13 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_CENTER | wxALL</flag>
+							<flag>wxALIGN_CENTER|wxALL</flag>
 							<border>10</border>
 							<object class="wxBoxSizer">
 								<orient>wxVERTICAL</orient>
 								<object class="sizeritem">
 									<option>0</option>
-									<flag>wxALIGN_CENTER | wxALL</flag>
+									<flag>wxALIGN_CENTER|wxALL</flag>
 									<border>10</border>
 									<object class="wxStaticText" name="clientName">
 										<font>
@@ -100,7 +100,7 @@
 								</object>
 								<object class="sizeritem">
 									<option>0</option>
-									<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM</flag>
+									<flag>wxALIGN_CENTER_HORIZONTAL|wxBOTTOM</flag>
 									<border>5</border>
 									<object class="wxButton" name="contactClientButton">
 										<enabled>0</enabled>
@@ -111,10 +111,10 @@
 								</object>
 								<object class="sizeritem">
 									<option>0</option>
-									<flag>wxALL | wxEXPAND</flag>
+									<flag>wxALL|wxEXPAND</flag>
 									<border>10</border>
 									<object class="wxTextCtrl" name="clientSteamId">
-										<style>wxTE_CENTRE | wxTE_READONLY</style>
+										<style>wxTE_CENTRE|wxTE_READONLY</style>
 										<size>220,-1</size>
 										<font>
 											<size>14</size>
@@ -139,8 +139,23 @@
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER | wxALL</flag>
+					<flag>wxALIGN_CENTER|wxALL</flag>
 					<border>10</border>
+					<object class="wxStaticText" name="reasonPreText">
+						<font>
+							<size>14</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+						</font>
+						<label>▼ reported because of reason: ▼</label>
+						<wrap>-1</wrap>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALIGN_CENTER_HORIZONTAL</flag>
+					<border>5</border>
 					<object class="wxStaticText" name="reasonText">
 						<font>
 							<size>14</size>
@@ -148,7 +163,7 @@
 							<weight>normal</weight>
 							<underlined>0</underlined>
 						</font>
-						<label></label>
+						<label>TESTTEST</label>
 						<wrap>-1</wrap>
 					</object>
 				</object>
@@ -162,13 +177,13 @@
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER | wxALL</flag>
+					<flag>wxALIGN_CENTER|wxALL</flag>
 					<border>10</border>
 					<object class="wxBoxSizer">
 						<orient>wxHORIZONTAL</orient>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_CENTER | wxALL</flag>
+							<flag>wxALIGN_CENTER|wxALL</flag>
 							<border>10</border>
 							<object class="wxStaticBitmap" name="targetAvatar">
 								<bitmap>calladmin_avatar.bmp</bitmap>
@@ -176,13 +191,13 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_CENTER | wxALL</flag>
+							<flag>wxALIGN_CENTER|wxALL</flag>
 							<border>10</border>
 							<object class="wxBoxSizer">
 								<orient>wxVERTICAL</orient>
 								<object class="sizeritem">
 									<option>0</option>
-									<flag>wxALIGN_CENTER | wxALL</flag>
+									<flag>wxALIGN_CENTER|wxALL</flag>
 									<border>10</border>
 									<object class="wxStaticText" name="targetName">
 										<font>
@@ -197,7 +212,7 @@
 								</object>
 								<object class="sizeritem">
 									<option>0</option>
-									<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM</flag>
+									<flag>wxALIGN_CENTER_HORIZONTAL|wxBOTTOM</flag>
 									<border>5</border>
 									<object class="wxButton" name="contactTargetButton">
 										<enabled>0</enabled>
@@ -208,10 +223,10 @@
 								</object>
 								<object class="sizeritem">
 									<option>0</option>
-									<flag>wxALL | wxEXPAND</flag>
+									<flag>wxALL|wxEXPAND</flag>
 									<border>10</border>
 									<object class="wxTextCtrl" name="targetSteamId">
-										<style>wxTE_CENTRE | wxTE_READONLY</style>
+										<style>wxTE_CENTRE|wxTE_READONLY</style>
 										<size>220,-1</size>
 										<font>
 											<size>14</size>
@@ -236,13 +251,13 @@
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER | wxALL</flag>
+					<flag>wxALIGN_CENTER|wxALL</flag>
 					<border>10</border>
 					<object class="wxBoxSizer">
 						<orient>wxHORIZONTAL</orient>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxBOTTOM | wxRIGHT | wxTOP</flag>
+							<flag>wxBOTTOM|wxRIGHT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxButton" name="connectButton">
 								<label>Connect</label>
@@ -262,7 +277,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxLEFT | wxTOP</flag>
+							<flag>wxLEFT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxButton" name="contactTrackersButton">
 								<enabled>0</enabled>

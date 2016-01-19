@@ -86,6 +86,9 @@ private:
 	wxString boxText;
 	long reportedAt;
 
+	// The panel
+	wxPanel *panel;
+
 	// Avatars
 	wxStaticBitmap *clientAvatar;
 	wxStaticBitmap *targetAvatar;
@@ -165,6 +168,7 @@ public:
 	// Privat -> Set Methods
 	void SetAvatarsLoaded() {
 		this->avatarsLoaded = true;
+		this->panel->Layout();
 	}
 
 	void SetCallId(wxString id) {
