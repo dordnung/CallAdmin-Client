@@ -202,6 +202,12 @@ NameTimer::~NameTimer() {
 
 // Timer to find tracker name
 void NameTimer::Notify() {
+	if (!caGetApp().IsRunning()) {
+		// App already ended
+		delete this;
+		return;
+	}
+
 	// Steam available?
 	if (caGetSteamThread()->IsConnected()) {
 		OpenSteamHelper *helper = OpenSteamHelper::GetInstance();

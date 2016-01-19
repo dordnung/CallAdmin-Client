@@ -517,8 +517,13 @@ AvatarTimer::AvatarTimer(CallDialog *dialog, CSteamID *clientId, CSteamID *targe
 
 
 // Timer to update avatars
-// TODO: CRASH IsConnected
 void AvatarTimer::Notify() {
+	if (!caGetApp().IsRunning()) {
+		// Already ended
+		delete this;
+		return;
+	}
+
 	// Steam available?
 	if (caGetSteamThread()->IsConnected()) {
 		// Do we have information about the users?

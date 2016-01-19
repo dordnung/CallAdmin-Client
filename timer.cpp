@@ -30,14 +30,14 @@
 #include <wx/sound.h>
 
 #ifdef __WXMSW__
- // Memory leak detection for debugging 
-#include <wx/msw/msvcrt.h>
+	// Memory leak detection for debugging 
+	#include <wx/msw/msvcrt.h>
 #endif
 
 
 // Timer events
 wxBEGIN_EVENT_TABLE(Timer, wxTimer)
-EVT_TIMER(TIMER_ID, Timer::OnExecute)
+	EVT_TIMER(TIMER_ID, Timer::OnExecute)
 wxEND_EVENT_TABLE()
 
 
@@ -81,6 +81,10 @@ void Timer::Run(int repeatInterval) {
 
 // Timer executed
 void Timer::OnExecute(wxTimerEvent &WXUNUSED(event)) {
+	if (!caGetApp().IsRunning()) {
+		return;
+	}
+
 	Config *config = caGetConfig();
 
 	// Build page
@@ -134,8 +138,8 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 			if (caGetApp().GetAttempts() >= caGetConfig()->GetMaxAttempts()) {
 				// Close Dialogs and create reconnect main dialog
 				caGetApp().CreateReconnect("XML Error: " + XMLErrorString[parseError]);
-			} 
-			
+			}
+
 			if (caGetApp().GetAttempts() <= caGetConfig()->GetMaxAttempts()) {
 				// Create Parse Error
 				caGetApp().ShowError(XMLErrorString[parseError], "XML");
@@ -181,8 +185,8 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 						if (caGetApp().GetAttempts() >= caGetConfig()->GetMaxAttempts()) {
 							// Close Dialogs and create reconnect main dialog
 							caGetApp().CreateReconnect("API Error: " + (wxString)node2->FirstChild()->Value());
-						} 
-						
+						}
+
 						if (caGetApp().GetAttempts() <= caGetConfig()->GetMaxAttempts()) {
 							// API Errpr
 							caGetApp().ShowError(node2->FirstChild()->Value(), "API");
@@ -365,7 +369,7 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 			// Create reconnect main dialog
 			caGetApp().CreateReconnect("CURL Error: " + error);
 		}
-		
+
 		if (caGetApp().GetAttempts() <= caGetConfig()->GetMaxAttempts()) {
 			caGetApp().ShowError(error, "CURL");
 		}
