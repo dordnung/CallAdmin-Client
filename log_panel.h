@@ -34,7 +34,7 @@
 
 #include "config.h"
 
-class LogPanel : public wxPanel {
+class LogPanel : public wxScrolledWindow {
 private:
 	wxListBox *logBox;
 

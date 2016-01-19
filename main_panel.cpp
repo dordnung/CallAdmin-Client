@@ -101,9 +101,7 @@ bool MainPanel::InitPanel() {
 	FIND_OR_FAIL(text, XRCCTRL(*this, "copyrightTextMain", wxStaticText), "copyrightTextMain");
 	text->SetLabel("v" + (wxString)CALLADMIN_CLIENT_VERSION + text->GetLabel());
 
-	// Auto Size
-	this->sizerBody->Layout();
-	this->sizerBody->Fit(this);
+	Layout();
 
 	return true;
 }
@@ -113,8 +111,7 @@ bool MainPanel::InitPanel() {
 void MainPanel::SetStatusText(wxString text) {
 	this->eventText->SetLabelText(text);
 
-	this->sizerBody->Layout();
-	this->sizerBody->Fit(this);
+	Layout();
 }
 
 
@@ -122,8 +119,7 @@ void MainPanel::SetSteamStatus(wxString text, wxColor color) {
 	this->steamText->SetLabelText(text);
 	this->steamText->SetForegroundColour(color);
 
-	this->sizerBody->Layout();
-	this->sizerBody->Fit(this);
+	Layout();
 }
 
 

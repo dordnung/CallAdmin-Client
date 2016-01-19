@@ -209,8 +209,6 @@ wxDECLARE_APP(CallAdmin);
 
 
 // Defined in resource.cpp
-extern size_t xml_res_size_2;
-extern unsigned char xml_res_file_2[];
 extern void InitXmlResource();
 
 #endif

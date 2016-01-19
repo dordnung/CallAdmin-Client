@@ -81,9 +81,7 @@ bool AboutPanel::InitPanel() {
 	// Download Button
 	FIND_OR_FAIL(this->downloadButton, XRCCTRL(*this, "downloadUpdate", wxButton), "downloadUpdate");
 
-	// Auto Size
-	this->sizerTop->Layout();
-	this->sizerTop->Fit(this);
+	Layout();
 
 	return true;
 }
@@ -97,8 +95,8 @@ void AboutPanel::UpdateVersionText(wxString currentVersion, wxColor color) {
 	this->currentText->SetForegroundColour(color);
 
 	this->currentVersion = currentVersion;
-	this->sizerTop->Layout();
-	this->sizerTop->Fit(this);
+
+	Layout();
 }
 
 

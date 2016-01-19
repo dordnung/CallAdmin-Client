@@ -34,7 +34,7 @@
 
 // Load controls
 bool LogPanel::InitPanel() {
-	if (!wxXmlResource::Get()->LoadPanel(this, caGetNotebook()->GetWindow(), "logPanel")) {
+	if (!wxXmlResource::Get()->LoadObject(this, caGetNotebook()->GetWindow(), "logPanel", "wxScrolledWindow")) {
 		wxMessageBox("Error: Couldn't find XRCID logPanel", "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR);
 
 		return false;

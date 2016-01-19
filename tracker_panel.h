@@ -54,7 +54,7 @@ protected:
 };
 
 
-class TrackerPanel : public wxPanel {
+class TrackerPanel : public wxScrolledWindow {
 private:
 	// The running NameTimers
 	wxVector<NameTimer *> nameTimers;
@@ -80,13 +80,10 @@ public:
 		return &nameTimers;
 	}
 
+	void UpdateTrackerList();
+
 	// Refresh the tracker list
 	static void RefreshTrackers(wxString errorStr, wxString result, int extra);
-
-protected:
-	void OnUpdate(wxCommandEvent &event);
-
-	wxDECLARE_EVENT_TABLE();
 };
 
 #endif

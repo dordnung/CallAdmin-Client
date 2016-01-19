@@ -35,12 +35,6 @@
 #endif
 
 
-// Events for Trackers Panel
-wxBEGIN_EVENT_TABLE(TrackerPanel, wxPanel)
-	EVT_BUTTON(XRCID("updateTrackers"), TrackerPanel::OnUpdate)
-wxEND_EVENT_TABLE()
-
-
 // Clean Up
 TrackerPanel::~TrackerPanel() {
 	wxVector<NameTimer *>::iterator nameTimer = nameTimers.begin();
@@ -57,7 +51,7 @@ TrackerPanel::~TrackerPanel() {
 
 // Init Panel with controls
 bool TrackerPanel::InitPanel() {
-	if (!wxXmlResource::Get()->LoadPanel(this, caGetNotebook()->GetWindow(), "trackerPanel")) {
+	if (!wxXmlResource::Get()->LoadObject(this, caGetNotebook()->GetWindow(), "trackerPanel", "wxScrolledWindow")) {
 		wxMessageBox("Error: Couldn't find XRCID trackerPanel", "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR);
 
 		return false;
@@ -70,10 +64,8 @@ bool TrackerPanel::InitPanel() {
 }
 
 
-// Button Event -> Update List
-void TrackerPanel::OnUpdate(wxCommandEvent& WXUNUSED(event)) {
-	caLogAction("Retrieving current trackers");
-
+// Update Trackers List
+void TrackerPanel::UpdateTrackerList() {
 	// Get the Trackers Page
 	caGetApp().GetPage(TrackerPanel::RefreshTrackers, caGetConfig()->GetPage() + "/trackers.php?from=20&from_type=interval&key=" + caGetConfig()->GetKey());
 }
@@ -172,7 +164,7 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 
 
 	// Seems we found no tracker
-	if (error == "") {
+	if (error != "") {
 		caGetTrackerPanel()->AddTracker("No trackers available");
 	} else {
 		caLogAction("Couldn't retrieve trackers! " + error, LogLevel::LEVEL_ERROR);

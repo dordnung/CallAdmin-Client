@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
 	<object class="wxPanel" name="mainPanel">
-		<style>wxNO_BORDER | wxTAB_TRAVERSAL</style>
+		<style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
 		<object class="wxGridBagSizer">
 			<vgap>0</vgap>
-			<hgap>15</hgap>
-			<growablecols>0</growablecols>
+			<hgap>5</hgap>
+			<flexibledirection>wxVERTICAL</flexibledirection>
+			<nonflexiblegrowmode>wxFLEX_GROWMODE_ALL</nonflexiblegrowmode>
+			<growablecols></growablecols>
 			<growablerows>0</growablerows>
 			<object class="sizeritem">
 				<cellpos>0,0</cellpos>
-				<cellspan>1,2</cellspan>
-				<flag>wxEXPAND | wxTOP</flag>
+				<cellspan>1,3</cellspan>
+				<flag>wxEXPAND|wxTOP</flag>
 				<border>5</border>
 				<object class="wxStaticBoxSizer">
 					<orient>wxHORIZONTAL</orient>
 					<label>Latest Calls</label>
 					<object class="sizeritem">
 						<option>1</option>
-						<flag>wxALL | wxEXPAND</flag>
-						<border>5</border>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
 						<object class="wxListBox" name="callBox">
-							<style>wxLB_HSCROLL | wxLB_SINGLE</style>
+							<style>wxLB_HSCROLL|wxLB_SINGLE</style>
 							<font>
 								<size>9</size>
 								<style>normal</style>
@@ -33,10 +35,10 @@
 				</object>
 			</object>
 			<object class="sizeritem">
-				<cellpos>0,2</cellpos>
-				<cellspan>1,8</cellspan>
-				<flag>wxEXPAND | wxTOP</flag>
-				<border>5</border>
+				<cellpos>0,3</cellpos>
+				<cellspan>1,4</cellspan>
+				<flag>wxEXPAND</flag>
+				<border>0</border>
 				<object class="wxBoxSizer">
 					<orient>wxVERTICAL</orient>
 					<object class="spacer">
@@ -47,8 +49,8 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER | wxBOTTOM | wxLEFT | wxRIGHT</flag>
-						<border>40</border>
+						<flag>wxALIGN_CENTER|wxBOTTOM|wxLEFT|wxRIGHT</flag>
+						<border>35</border>
 						<object class="wxStaticText" name="mainText">
 							<font>
 								<size>30</size>
@@ -68,7 +70,7 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxEXPAND | wxALL</flag>
+						<flag>wxEXPAND|wxLEFT|wxTOP</flag>
 						<border>5</border>
 						<object class="wxStaticLine" name="staticline">
 							<style>wxLI_HORIZONTAL</style>
@@ -76,7 +78,22 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER | wxALL</flag>
+						<flag>wxLEFT</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="steamStatusText">
+							<font>
+								<size>8</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Steam:</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER|wxBOTTOM</flag>
 						<border>10</border>
 						<object class="wxStaticText" name="steamText">
 							<fg>#ff0000</fg>
@@ -92,7 +109,7 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxEXPAND | wxALL</flag>
+						<flag>wxBOTTOM|wxEXPAND|wxLEFT|wxTOP</flag>
 						<border>5</border>
 						<object class="wxStaticLine" name="staticline2">
 							<style>wxLI_HORIZONTAL</style>
@@ -100,7 +117,7 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxEXPAND | wxALL</flag>
+						<flag>wxEXPAND|wxLEFT|wxTOP</flag>
 						<border>5</border>
 						<object class="wxStaticLine" name="staticline3">
 							<style>wxLI_HORIZONTAL</style>
@@ -108,7 +125,22 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER | wxALL</flag>
+						<flag>wxLEFT</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="statusText">
+							<font>
+								<size>8</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Status:</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER|wxBOTTOM</flag>
 						<border>10</border>
 						<object class="wxStaticText" name="eventText">
 							<fg>#0000ff</fg>
@@ -118,13 +150,13 @@
 								<weight>normal</weight>
 								<underlined>0</underlined>
 							</font>
-							<label>Starting CallAdmin Client...</label>
+							<label>Initializing CallAdmin Client</label>
 							<wrap>-1</wrap>
 						</object>
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxEXPAND | wxALL</flag>
+						<flag>wxBOTTOM|wxEXPAND|wxLEFT|wxTOP</flag>
 						<border>5</border>
 						<object class="wxStaticLine" name="staticline4">
 							<style>wxLI_HORIZONTAL</style>
@@ -138,13 +170,13 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM | wxTOP</flag>
+						<flag>wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxTOP</flag>
 						<border>5</border>
 						<object class="wxBoxSizer">
 							<orient>wxHORIZONTAL</orient>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxALIGN_CENTER | wxRIGHT</flag>
+								<flag>wxALIGN_CENTER|wxRIGHT</flag>
 								<border>5</border>
 								<object class="wxCheckBox" name="available">
 									<tooltip>You will receive no more calls when you uncheck this.</tooltip>
@@ -154,7 +186,7 @@
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxALIGN_CENTER | wxLEFT | wxRIGHT</flag>
+								<flag>wxALIGN_CENTER|wxLEFT|wxRIGHT</flag>
 								<border>5</border>
 								<object class="wxCheckBox" name="sound">
 									<tooltip>You will hear a notification sound on an incoming call.</tooltip>
@@ -164,7 +196,7 @@
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxALIGN_CENTER | wxLEFT</flag>
+								<flag>wxALIGN_CENTER|wxLEFT</flag>
 								<border>5</border>
 								<object class="wxCheckBox" name="store">
 									<tooltip>You will only receive calls but you will not be stored in the trackers database</tooltip>
@@ -176,13 +208,13 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER_HORIZONTAL | wxLEFT | wxRIGHT | wxTOP</flag>
+						<flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
 						<border>5</border>
 						<object class="wxBoxSizer">
 							<orient>wxHORIZONTAL</orient>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxALIGN_CENTER | wxTOP</flag>
+								<flag>wxALIGN_CENTER|wxRIGHT|wxTOP</flag>
 								<border>5</border>
 								<object class="wxButton" name="hide">
 									<label>Hide</label>
@@ -191,7 +223,7 @@
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxALIGN_CENTER | wxTOP</flag>
+								<flag>wxALIGN_CENTER|wxLEFT|wxTOP</flag>
 								<border>5</border>
 								<object class="wxButton" name="reconnectButton">
 									<enabled>0</enabled>
@@ -202,18 +234,34 @@
 						</object>
 					</object>
 					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALIGN_RIGHT | wxLEFT | wxRIGHT | wxTOP</flag>
-						<border>10</border>
-						<object class="wxStaticText" name="copyrightTextMain">
-							<font>
-								<size>8</size>
-								<style>normal</style>
-								<weight>normal</weight>
-								<underlined>0</underlined>
-							</font>
-							<label>(c) Popoklopsi and Impact</label>
-							<wrap>-1</wrap>
+						<option>1</option>
+						<flag>wxALIGN_BOTTOM|wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALIGN_BOTTOM</flag>
+								<border>0</border>
+								<object class="wxBoxSizer">
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_BOTTOM|wxALIGN_RIGHT|wxALL|wxBOTTOM|wxRIGHT</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="copyrightTextMain">
+											<font>
+												<size>8</size>
+												<style>normal</style>
+												<weight>normal</weight>
+												<underlined>0</underlined>
+											</font>
+											<label> (c) Popoklopsi and Impact</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+								</object>
+							</object>
 						</object>
 					</object>
 				</object>

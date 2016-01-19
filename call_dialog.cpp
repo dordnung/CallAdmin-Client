@@ -517,6 +517,7 @@ AvatarTimer::AvatarTimer(CallDialog *dialog, CSteamID *clientId, CSteamID *targe
 
 
 // Timer to update avatars
+// TODO: CRASH IsConnected
 void AvatarTimer::Notify() {
 	// Steam available?
 	if (caGetSteamThread()->IsConnected()) {

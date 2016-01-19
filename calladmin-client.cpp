@@ -229,7 +229,7 @@ void CallAdmin::CreateReconnect(wxString error) {
 	this->timer->Stop();
 
 	mainFrame->SetTitle("Error: Couldn't Connect");
-	mainFrame->GetNotebook()->GetMainPanel()->SetStatusText(error);
+	mainFrame->GetNotebook()->GetMainPanel()->SetStatusText("Error: Please reconnect manually");
 	mainFrame->GetNotebook()->GetMainPanel()->SetReconnectButton(true);
 
 	// Show it
@@ -246,9 +246,9 @@ void CallAdmin::CreateReconnect(wxString error) {
 // Create an new Error Dialog
 void CallAdmin::ShowError(wxString error, wxString type) {
 	// Log Action
-	LogAction(type + " Error: " + error);
+	LogAction(type + " Error: " + error, LogLevel::LEVEL_ERROR);
 
-	this->taskBarIcon->ShowMessage("An error occured", type + " Error : " + error + "\nTry again... " + (wxString() << attempts) + "/" + (wxString() << config->GetMaxAttempts()), this->mainFrame);
+	this->taskBarIcon->ShowMessage("An error occured", type + " Error : " + error + "\nRetry " + (wxString() << attempts) + " of " + (wxString() << config->GetMaxAttempts()), this->mainFrame);
 }
 
 

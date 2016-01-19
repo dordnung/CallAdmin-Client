@@ -169,7 +169,7 @@
                 <object class="notebookpage" expanded="1">
                     <property name="bitmap"></property>
                     <property name="label">Main</property>
-                    <property name="select">0</property>
+                    <property name="select">1</property>
                     <object class="wxPanel" expanded="1">
                         <property name="BottomDockable">1</property>
                         <property name="LeftDockable">1</property>
@@ -246,18 +246,18 @@
                         <event name="OnUpdateUI"></event>
                         <object class="wxGridBagSizer" expanded="1">
                             <property name="empty_cell_size"></property>
-                            <property name="flexible_direction">wxBOTH</property>
-                            <property name="growablecols">0</property>
+                            <property name="flexible_direction">wxVERTICAL</property>
+                            <property name="growablecols"></property>
                             <property name="growablerows">0</property>
-                            <property name="hgap">15</property>
+                            <property name="hgap">5</property>
                             <property name="minimum_size"></property>
                             <property name="name">mainPanelGridSizer</property>
-                            <property name="non_flexible_grow_mode">wxFLEX_GROWMODE_SPECIFIED</property>
+                            <property name="non_flexible_grow_mode">wxFLEX_GROWMODE_ALL</property>
                             <property name="permission">none</property>
                             <property name="vgap">0</property>
                             <object class="gbsizeritem" expanded="1">
                                 <property name="border">5</property>
-                                <property name="colspan">2</property>
+                                <property name="colspan">3</property>
                                 <property name="column">0</property>
                                 <property name="flag">wxEXPAND|wxTOP</property>
                                 <property name="row">0</property>
@@ -271,8 +271,8 @@
                                     <property name="permission">none</property>
                                     <event name="OnUpdateUI"></event>
                                     <object class="sizeritem" expanded="0">
-                                        <property name="border">5</property>
-                                        <property name="flag">wxALL|wxEXPAND</property>
+                                        <property name="border">0</property>
+                                        <property name="flag">wxEXPAND</property>
                                         <property name="proportion">1</property>
                                         <object class="wxListBox" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -360,14 +360,14 @@
                                     </object>
                                 </object>
                             </object>
-                            <object class="gbsizeritem" expanded="1">
-                                <property name="border">5</property>
-                                <property name="colspan">8</property>
-                                <property name="column">2</property>
-                                <property name="flag">wxEXPAND|wxTOP</property>
+                            <object class="gbsizeritem" expanded="0">
+                                <property name="border">0</property>
+                                <property name="colspan">4</property>
+                                <property name="column">3</property>
+                                <property name="flag">wxEXPAND</property>
                                 <property name="row">0</property>
                                 <property name="rowspan">1</property>
-                                <object class="wxBoxSizer" expanded="1">
+                                <object class="wxBoxSizer" expanded="0">
                                     <property name="minimum_size"></property>
                                     <property name="name">sizerTop</property>
                                     <property name="orient">wxVERTICAL</property>
@@ -383,7 +383,7 @@
                                         </object>
                                     </object>
                                     <object class="sizeritem" expanded="0">
-                                        <property name="border">40</property>
+                                        <property name="border">35</property>
                                         <property name="flag">wxALIGN_CENTER|wxBOTTOM|wxLEFT|wxRIGHT</property>
                                         <property name="proportion">0</property>
                                         <object class="wxStaticText" expanded="0">
@@ -477,7 +477,7 @@
                                     </object>
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">5</property>
-                                        <property name="flag">wxEXPAND | wxALL</property>
+                                        <property name="flag">wxEXPAND|wxLEFT|wxTOP</property>
                                         <property name="proportion">0</property>
                                         <object class="wxStaticLine" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -557,8 +557,91 @@
                                         </object>
                                     </object>
                                     <object class="sizeritem" expanded="0">
+                                        <property name="border">5</property>
+                                        <property name="flag">wxLEFT</property>
+                                        <property name="proportion">0</property>
+                                        <object class="wxStaticText" expanded="0">
+                                            <property name="BottomDockable">1</property>
+                                            <property name="LeftDockable">1</property>
+                                            <property name="RightDockable">1</property>
+                                            <property name="TopDockable">1</property>
+                                            <property name="aui_layer"></property>
+                                            <property name="aui_name"></property>
+                                            <property name="aui_position"></property>
+                                            <property name="aui_row"></property>
+                                            <property name="best_size"></property>
+                                            <property name="bg"></property>
+                                            <property name="caption"></property>
+                                            <property name="caption_visible">1</property>
+                                            <property name="center_pane">0</property>
+                                            <property name="close_button">1</property>
+                                            <property name="context_help"></property>
+                                            <property name="context_menu">1</property>
+                                            <property name="default_pane">0</property>
+                                            <property name="dock">Dock</property>
+                                            <property name="dock_fixed">0</property>
+                                            <property name="docking">Left</property>
+                                            <property name="enabled">1</property>
+                                            <property name="fg"></property>
+                                            <property name="floatable">1</property>
+                                            <property name="font">,90,90,8,70,0</property>
+                                            <property name="gripper">0</property>
+                                            <property name="hidden">0</property>
+                                            <property name="id">wxID_ANY</property>
+                                            <property name="label">Steam:</property>
+                                            <property name="max_size"></property>
+                                            <property name="maximize_button">0</property>
+                                            <property name="maximum_size"></property>
+                                            <property name="min_size"></property>
+                                            <property name="minimize_button">0</property>
+                                            <property name="minimum_size"></property>
+                                            <property name="moveable">1</property>
+                                            <property name="name">steamStatusText</property>
+                                            <property name="pane_border">1</property>
+                                            <property name="pane_position"></property>
+                                            <property name="pane_size"></property>
+                                            <property name="permission">protected</property>
+                                            <property name="pin_button">1</property>
+                                            <property name="pos"></property>
+                                            <property name="resize">Resizable</property>
+                                            <property name="show">1</property>
+                                            <property name="size"></property>
+                                            <property name="style"></property>
+                                            <property name="subclass"></property>
+                                            <property name="toolbar_pane">0</property>
+                                            <property name="tooltip"></property>
+                                            <property name="window_extra_style"></property>
+                                            <property name="window_name"></property>
+                                            <property name="window_style"></property>
+                                            <property name="wrap">-1</property>
+                                            <event name="OnChar"></event>
+                                            <event name="OnEnterWindow"></event>
+                                            <event name="OnEraseBackground"></event>
+                                            <event name="OnKeyDown"></event>
+                                            <event name="OnKeyUp"></event>
+                                            <event name="OnKillFocus"></event>
+                                            <event name="OnLeaveWindow"></event>
+                                            <event name="OnLeftDClick"></event>
+                                            <event name="OnLeftDown"></event>
+                                            <event name="OnLeftUp"></event>
+                                            <event name="OnMiddleDClick"></event>
+                                            <event name="OnMiddleDown"></event>
+                                            <event name="OnMiddleUp"></event>
+                                            <event name="OnMotion"></event>
+                                            <event name="OnMouseEvents"></event>
+                                            <event name="OnMouseWheel"></event>
+                                            <event name="OnPaint"></event>
+                                            <event name="OnRightDClick"></event>
+                                            <event name="OnRightDown"></event>
+                                            <event name="OnRightUp"></event>
+                                            <event name="OnSetFocus"></event>
+                                            <event name="OnSize"></event>
+                                            <event name="OnUpdateUI"></event>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem" expanded="0">
                                         <property name="border">10</property>
-                                        <property name="flag">wxALIGN_CENTER|wxALL</property>
+                                        <property name="flag">wxALIGN_CENTER|wxBOTTOM</property>
                                         <property name="proportion">0</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -641,7 +724,7 @@
                                     </object>
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">5</property>
-                                        <property name="flag">wxEXPAND | wxALL</property>
+                                        <property name="flag">wxBOTTOM|wxEXPAND|wxLEFT|wxTOP</property>
                                         <property name="proportion">0</property>
                                         <object class="wxStaticLine" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -722,7 +805,7 @@
                                     </object>
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">5</property>
-                                        <property name="flag">wxEXPAND | wxALL</property>
+                                        <property name="flag">wxEXPAND|wxLEFT|wxTOP</property>
                                         <property name="proportion">0</property>
                                         <object class="wxStaticLine" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -802,8 +885,91 @@
                                         </object>
                                     </object>
                                     <object class="sizeritem" expanded="0">
+                                        <property name="border">5</property>
+                                        <property name="flag">wxLEFT</property>
+                                        <property name="proportion">0</property>
+                                        <object class="wxStaticText" expanded="0">
+                                            <property name="BottomDockable">1</property>
+                                            <property name="LeftDockable">1</property>
+                                            <property name="RightDockable">1</property>
+                                            <property name="TopDockable">1</property>
+                                            <property name="aui_layer"></property>
+                                            <property name="aui_name"></property>
+                                            <property name="aui_position"></property>
+                                            <property name="aui_row"></property>
+                                            <property name="best_size"></property>
+                                            <property name="bg"></property>
+                                            <property name="caption"></property>
+                                            <property name="caption_visible">1</property>
+                                            <property name="center_pane">0</property>
+                                            <property name="close_button">1</property>
+                                            <property name="context_help"></property>
+                                            <property name="context_menu">1</property>
+                                            <property name="default_pane">0</property>
+                                            <property name="dock">Dock</property>
+                                            <property name="dock_fixed">0</property>
+                                            <property name="docking">Left</property>
+                                            <property name="enabled">1</property>
+                                            <property name="fg"></property>
+                                            <property name="floatable">1</property>
+                                            <property name="font">,90,90,8,70,0</property>
+                                            <property name="gripper">0</property>
+                                            <property name="hidden">0</property>
+                                            <property name="id">wxID_ANY</property>
+                                            <property name="label">Status:</property>
+                                            <property name="max_size"></property>
+                                            <property name="maximize_button">0</property>
+                                            <property name="maximum_size"></property>
+                                            <property name="min_size"></property>
+                                            <property name="minimize_button">0</property>
+                                            <property name="minimum_size"></property>
+                                            <property name="moveable">1</property>
+                                            <property name="name">statusText</property>
+                                            <property name="pane_border">1</property>
+                                            <property name="pane_position"></property>
+                                            <property name="pane_size"></property>
+                                            <property name="permission">protected</property>
+                                            <property name="pin_button">1</property>
+                                            <property name="pos"></property>
+                                            <property name="resize">Resizable</property>
+                                            <property name="show">1</property>
+                                            <property name="size"></property>
+                                            <property name="style"></property>
+                                            <property name="subclass"></property>
+                                            <property name="toolbar_pane">0</property>
+                                            <property name="tooltip"></property>
+                                            <property name="window_extra_style"></property>
+                                            <property name="window_name"></property>
+                                            <property name="window_style"></property>
+                                            <property name="wrap">-1</property>
+                                            <event name="OnChar"></event>
+                                            <event name="OnEnterWindow"></event>
+                                            <event name="OnEraseBackground"></event>
+                                            <event name="OnKeyDown"></event>
+                                            <event name="OnKeyUp"></event>
+                                            <event name="OnKillFocus"></event>
+                                            <event name="OnLeaveWindow"></event>
+                                            <event name="OnLeftDClick"></event>
+                                            <event name="OnLeftDown"></event>
+                                            <event name="OnLeftUp"></event>
+                                            <event name="OnMiddleDClick"></event>
+                                            <event name="OnMiddleDown"></event>
+                                            <event name="OnMiddleUp"></event>
+                                            <event name="OnMotion"></event>
+                                            <event name="OnMouseEvents"></event>
+                                            <event name="OnMouseWheel"></event>
+                                            <event name="OnPaint"></event>
+                                            <event name="OnRightDClick"></event>
+                                            <event name="OnRightDown"></event>
+                                            <event name="OnRightUp"></event>
+                                            <event name="OnSetFocus"></event>
+                                            <event name="OnSize"></event>
+                                            <event name="OnUpdateUI"></event>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem" expanded="0">
                                         <property name="border">10</property>
-                                        <property name="flag">wxALIGN_CENTER|wxALL</property>
+                                        <property name="flag">wxALIGN_CENTER|wxBOTTOM</property>
                                         <property name="proportion">0</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -833,7 +999,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">Starting CallAdmin Client...</property>
+                                            <property name="label">Initializing CallAdmin Client</property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>
@@ -886,7 +1052,7 @@
                                     </object>
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">5</property>
-                                        <property name="flag">wxEXPAND | wxALL</property>
+                                        <property name="flag">wxBOTTOM|wxEXPAND|wxLEFT|wxTOP</property>
                                         <property name="proportion">0</property>
                                         <object class="wxStaticLine" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -1261,7 +1427,7 @@
                                             <property name="permission">none</property>
                                             <object class="sizeritem" expanded="0">
                                                 <property name="border">5</property>
-                                                <property name="flag">wxALIGN_CENTER|wxTOP</property>
+                                                <property name="flag">wxALIGN_CENTER|wxRIGHT|wxTOP</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxButton" expanded="0">
                                                     <property name="BottomDockable">1</property>
@@ -1349,7 +1515,7 @@
                                             </object>
                                             <object class="sizeritem" expanded="0">
                                                 <property name="border">5</property>
-                                                <property name="flag">wxALIGN_CENTER|wxTOP</property>
+                                                <property name="flag">wxALIGN_CENTER|wxLEFT|wxTOP</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxButton" expanded="0">
                                                     <property name="BottomDockable">1</property>
@@ -1438,86 +1604,108 @@
                                         </object>
                                     </object>
                                     <object class="sizeritem" expanded="0">
-                                        <property name="border">10</property>
-                                        <property name="flag">wxALIGN_RIGHT|wxLEFT|wxRIGHT|wxTOP</property>
-                                        <property name="proportion">0</property>
-                                        <object class="wxStaticText" expanded="0">
-                                            <property name="BottomDockable">1</property>
-                                            <property name="LeftDockable">1</property>
-                                            <property name="RightDockable">1</property>
-                                            <property name="TopDockable">1</property>
-                                            <property name="aui_layer"></property>
-                                            <property name="aui_name"></property>
-                                            <property name="aui_position"></property>
-                                            <property name="aui_row"></property>
-                                            <property name="best_size"></property>
-                                            <property name="bg"></property>
-                                            <property name="caption"></property>
-                                            <property name="caption_visible">1</property>
-                                            <property name="center_pane">0</property>
-                                            <property name="close_button">1</property>
-                                            <property name="context_help"></property>
-                                            <property name="context_menu">1</property>
-                                            <property name="default_pane">0</property>
-                                            <property name="dock">Dock</property>
-                                            <property name="dock_fixed">0</property>
-                                            <property name="docking">Left</property>
-                                            <property name="enabled">1</property>
-                                            <property name="fg"></property>
-                                            <property name="floatable">1</property>
-                                            <property name="font">,90,90,8,70,0</property>
-                                            <property name="gripper">0</property>
-                                            <property name="hidden">0</property>
-                                            <property name="id">wxID_ANY</property>
-                                            <property name="label">(c) Popoklopsi and Impact</property>
-                                            <property name="max_size"></property>
-                                            <property name="maximize_button">0</property>
-                                            <property name="maximum_size"></property>
-                                            <property name="min_size"></property>
-                                            <property name="minimize_button">0</property>
+                                        <property name="border">0</property>
+                                        <property name="flag">wxALIGN_BOTTOM|wxEXPAND</property>
+                                        <property name="proportion">1</property>
+                                        <object class="wxBoxSizer" expanded="0">
                                             <property name="minimum_size"></property>
-                                            <property name="moveable">1</property>
-                                            <property name="name">copyrightTextMain</property>
-                                            <property name="pane_border">1</property>
-                                            <property name="pane_position"></property>
-                                            <property name="pane_size"></property>
-                                            <property name="permission">protected</property>
-                                            <property name="pin_button">1</property>
-                                            <property name="pos"></property>
-                                            <property name="resize">Resizable</property>
-                                            <property name="show">1</property>
-                                            <property name="size"></property>
-                                            <property name="style"></property>
-                                            <property name="subclass"></property>
-                                            <property name="toolbar_pane">0</property>
-                                            <property name="tooltip"></property>
-                                            <property name="window_extra_style"></property>
-                                            <property name="window_name"></property>
-                                            <property name="window_style"></property>
-                                            <property name="wrap">-1</property>
-                                            <event name="OnChar"></event>
-                                            <event name="OnEnterWindow"></event>
-                                            <event name="OnEraseBackground"></event>
-                                            <event name="OnKeyDown"></event>
-                                            <event name="OnKeyUp"></event>
-                                            <event name="OnKillFocus"></event>
-                                            <event name="OnLeaveWindow"></event>
-                                            <event name="OnLeftDClick"></event>
-                                            <event name="OnLeftDown"></event>
-                                            <event name="OnLeftUp"></event>
-                                            <event name="OnMiddleDClick"></event>
-                                            <event name="OnMiddleDown"></event>
-                                            <event name="OnMiddleUp"></event>
-                                            <event name="OnMotion"></event>
-                                            <event name="OnMouseEvents"></event>
-                                            <event name="OnMouseWheel"></event>
-                                            <event name="OnPaint"></event>
-                                            <event name="OnRightDClick"></event>
-                                            <event name="OnRightDown"></event>
-                                            <event name="OnRightUp"></event>
-                                            <event name="OnSetFocus"></event>
-                                            <event name="OnSize"></event>
-                                            <event name="OnUpdateUI"></event>
+                                            <property name="name">copyrightBottomSizer</property>
+                                            <property name="orient">wxHORIZONTAL</property>
+                                            <property name="permission">none</property>
+                                            <object class="sizeritem" expanded="0">
+                                                <property name="border">0</property>
+                                                <property name="flag">wxALIGN_BOTTOM</property>
+                                                <property name="proportion">1</property>
+                                                <object class="wxBoxSizer" expanded="0">
+                                                    <property name="minimum_size"></property>
+                                                    <property name="name">copyrightRightSizer</property>
+                                                    <property name="orient">wxVERTICAL</property>
+                                                    <property name="permission">none</property>
+                                                    <object class="sizeritem" expanded="0">
+                                                        <property name="border">5</property>
+                                                        <property name="flag">wxALIGN_BOTTOM|wxALIGN_RIGHT|wxALL|wxBOTTOM|wxRIGHT</property>
+                                                        <property name="proportion">0</property>
+                                                        <object class="wxStaticText" expanded="0">
+                                                            <property name="BottomDockable">1</property>
+                                                            <property name="LeftDockable">1</property>
+                                                            <property name="RightDockable">1</property>
+                                                            <property name="TopDockable">1</property>
+                                                            <property name="aui_layer"></property>
+                                                            <property name="aui_name"></property>
+                                                            <property name="aui_position"></property>
+                                                            <property name="aui_row"></property>
+                                                            <property name="best_size"></property>
+                                                            <property name="bg"></property>
+                                                            <property name="caption"></property>
+                                                            <property name="caption_visible">1</property>
+                                                            <property name="center_pane">0</property>
+                                                            <property name="close_button">1</property>
+                                                            <property name="context_help"></property>
+                                                            <property name="context_menu">1</property>
+                                                            <property name="default_pane">0</property>
+                                                            <property name="dock">Dock</property>
+                                                            <property name="dock_fixed">0</property>
+                                                            <property name="docking">Left</property>
+                                                            <property name="enabled">1</property>
+                                                            <property name="fg"></property>
+                                                            <property name="floatable">1</property>
+                                                            <property name="font">,90,90,8,70,0</property>
+                                                            <property name="gripper">0</property>
+                                                            <property name="hidden">0</property>
+                                                            <property name="id">wxID_ANY</property>
+                                                            <property name="label"> (c) Popoklopsi and Impact</property>
+                                                            <property name="max_size"></property>
+                                                            <property name="maximize_button">0</property>
+                                                            <property name="maximum_size"></property>
+                                                            <property name="min_size"></property>
+                                                            <property name="minimize_button">0</property>
+                                                            <property name="minimum_size"></property>
+                                                            <property name="moveable">1</property>
+                                                            <property name="name">copyrightTextMain</property>
+                                                            <property name="pane_border">1</property>
+                                                            <property name="pane_position"></property>
+                                                            <property name="pane_size"></property>
+                                                            <property name="permission">protected</property>
+                                                            <property name="pin_button">1</property>
+                                                            <property name="pos"></property>
+                                                            <property name="resize">Resizable</property>
+                                                            <property name="show">1</property>
+                                                            <property name="size"></property>
+                                                            <property name="style"></property>
+                                                            <property name="subclass"></property>
+                                                            <property name="toolbar_pane">0</property>
+                                                            <property name="tooltip"></property>
+                                                            <property name="window_extra_style"></property>
+                                                            <property name="window_name"></property>
+                                                            <property name="window_style"></property>
+                                                            <property name="wrap">-1</property>
+                                                            <event name="OnChar"></event>
+                                                            <event name="OnEnterWindow"></event>
+                                                            <event name="OnEraseBackground"></event>
+                                                            <event name="OnKeyDown"></event>
+                                                            <event name="OnKeyUp"></event>
+                                                            <event name="OnKillFocus"></event>
+                                                            <event name="OnLeaveWindow"></event>
+                                                            <event name="OnLeftDClick"></event>
+                                                            <event name="OnLeftDown"></event>
+                                                            <event name="OnLeftUp"></event>
+                                                            <event name="OnMiddleDClick"></event>
+                                                            <event name="OnMiddleDown"></event>
+                                                            <event name="OnMiddleUp"></event>
+                                                            <event name="OnMotion"></event>
+                                                            <event name="OnMouseEvents"></event>
+                                                            <event name="OnMouseWheel"></event>
+                                                            <event name="OnPaint"></event>
+                                                            <event name="OnRightDClick"></event>
+                                                            <event name="OnRightDown"></event>
+                                                            <event name="OnRightUp"></event>
+                                                            <event name="OnSetFocus"></event>
+                                                            <event name="OnSize"></event>
+                                                            <event name="OnUpdateUI"></event>
+                                                        </object>
+                                                    </object>
+                                                </object>
+                                            </object>
                                         </object>
                                     </object>
                                 </object>
@@ -1525,11 +1713,11 @@
                         </object>
                     </object>
                 </object>
-                <object class="notebookpage" expanded="1">
+                <object class="notebookpage" expanded="0">
                     <property name="bitmap"></property>
                     <property name="label">Settings</property>
                     <property name="select">0</property>
-                    <object class="wxPanel" expanded="1">
+                    <object class="wxPanel" expanded="0">
                         <property name="BottomDockable">1</property>
                         <property name="LeftDockable">1</property>
                         <property name="RightDockable">1</property>
@@ -1603,32 +1791,32 @@
                         <event name="OnSetFocus"></event>
                         <event name="OnSize"></event>
                         <event name="OnUpdateUI"></event>
-                        <object class="wxBoxSizer" expanded="1">
+                        <object class="wxBoxSizer" expanded="0">
                             <property name="minimum_size"></property>
-                            <property name="name">configSizerTop</property>
+                            <property name="name">configOuterSizer</property>
                             <property name="orient">wxVERTICAL</property>
                             <property name="permission">none</property>
-                            <object class="sizeritem" expanded="1">
+                            <object class="sizeritem" expanded="0">
                                 <property name="border">10</property>
-                                <property name="flag">wxALL|wxEXPAND</property>
+                                <property name="flag">wxALL</property>
                                 <property name="proportion">1</property>
-                                <object class="wxGridBagSizer" expanded="1">
+                                <object class="wxGridBagSizer" expanded="0">
                                     <property name="empty_cell_size"></property>
                                     <property name="flexible_direction">wxBOTH</property>
                                     <property name="growablecols">0</property>
                                     <property name="growablerows"></property>
-                                    <property name="hgap">2</property>
+                                    <property name="hgap">30</property>
                                     <property name="minimum_size"></property>
                                     <property name="name">gridSizer</property>
                                     <property name="non_flexible_grow_mode">wxFLEX_GROWMODE_SPECIFIED</property>
                                     <property name="permission">none</property>
-                                    <property name="vgap">5</property>
+                                    <property name="vgap">7</property>
                                     <object class="gbsizeritem" expanded="0">
-                                        <property name="border">0</property>
+                                        <property name="border">7</property>
                                         <property name="colspan">1</property>
                                         <property name="column">0</property>
-                                        <property name="flag"></property>
-                                        <property name="row">1</property>
+                                        <property name="flag">wxTOP</property>
+                                        <property name="row">0</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -1658,7 +1846,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">Your url to the call admin directory: </property>
+                                            <property name="label">Your url to the CallAdmin directory: </property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>
@@ -1710,11 +1898,11 @@
                                         </object>
                                     </object>
                                     <object class="gbsizeritem" expanded="0">
-                                        <property name="border">0</property>
+                                        <property name="border">7</property>
                                         <property name="colspan">1</property>
                                         <property name="column">1</property>
-                                        <property name="flag">wxEXPAND</property>
-                                        <property name="row">1</property>
+                                        <property name="flag">wxEXPAND|wxTOP</property>
+                                        <property name="row">0</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxTextCtrl" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -1808,7 +1996,7 @@
                                         <property name="colspan">1</property>
                                         <property name="column">0</property>
                                         <property name="flag"></property>
-                                        <property name="row">2</property>
+                                        <property name="row">1</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -1894,7 +2082,7 @@
                                         <property name="colspan">1</property>
                                         <property name="column">1</property>
                                         <property name="flag">wxEXPAND</property>
-                                        <property name="row">2</property>
+                                        <property name="row">1</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxTextCtrl" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -1988,7 +2176,7 @@
                                         <property name="colspan">2</property>
                                         <property name="column">0</property>
                                         <property name="flag">wxBOTTOM|wxEXPAND|wxTOP</property>
-                                        <property name="row">3</property>
+                                        <property name="row">2</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxStaticLine" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -2072,7 +2260,7 @@
                                         <property name="colspan">1</property>
                                         <property name="column">0</property>
                                         <property name="flag"></property>
-                                        <property name="row">4</property>
+                                        <property name="row">3</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -2153,14 +2341,14 @@
                                             <event name="OnUpdateUI"></event>
                                         </object>
                                     </object>
-                                    <object class="gbsizeritem" expanded="1">
+                                    <object class="gbsizeritem" expanded="0">
                                         <property name="border">0</property>
                                         <property name="colspan">1</property>
                                         <property name="column">1</property>
                                         <property name="flag">wxEXPAND</property>
-                                        <property name="row">4</property>
+                                        <property name="row">3</property>
                                         <property name="rowspan">1</property>
-                                        <object class="wxBoxSizer" expanded="1">
+                                        <object class="wxBoxSizer" expanded="0">
                                             <property name="minimum_size"></property>
                                             <property name="name">stepSizer</property>
                                             <property name="orient">wxHORIZONTAL</property>
@@ -2363,7 +2551,7 @@
                                         <property name="colspan">1</property>
                                         <property name="column">0</property>
                                         <property name="flag"></property>
-                                        <property name="row">5</property>
+                                        <property name="row">4</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -2393,7 +2581,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">Timeout for connection (in seconds): </property>
+                                            <property name="label">Timeout for connections (in seconds): </property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>
@@ -2444,14 +2632,14 @@
                                             <event name="OnUpdateUI"></event>
                                         </object>
                                     </object>
-                                    <object class="gbsizeritem" expanded="1">
+                                    <object class="gbsizeritem" expanded="0">
                                         <property name="border">0</property>
                                         <property name="colspan">1</property>
                                         <property name="column">1</property>
                                         <property name="flag">wxEXPAND</property>
-                                        <property name="row">5</property>
+                                        <property name="row">4</property>
                                         <property name="rowspan">1</property>
-                                        <object class="wxBoxSizer" expanded="1">
+                                        <object class="wxBoxSizer" expanded="0">
                                             <property name="minimum_size"></property>
                                             <property name="name">timeoutSizer</property>
                                             <property name="orient">wxHORIZONTAL</property>
@@ -2654,7 +2842,7 @@
                                         <property name="colspan">1</property>
                                         <property name="column">0</property>
                                         <property name="flag"></property>
-                                        <property name="row">6</property>
+                                        <property name="row">5</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -2735,14 +2923,14 @@
                                             <event name="OnUpdateUI"></event>
                                         </object>
                                     </object>
-                                    <object class="gbsizeritem" expanded="1">
+                                    <object class="gbsizeritem" expanded="0">
                                         <property name="border">0</property>
                                         <property name="colspan">1</property>
                                         <property name="column">1</property>
                                         <property name="flag">wxEXPAND</property>
-                                        <property name="row">6</property>
+                                        <property name="row">5</property>
                                         <property name="rowspan">1</property>
-                                        <object class="wxBoxSizer" expanded="1">
+                                        <object class="wxBoxSizer" expanded="0">
                                             <property name="minimum_size"></property>
                                             <property name="name">attemptsSizer</property>
                                             <property name="orient">wxHORIZONTAL</property>
@@ -2945,7 +3133,7 @@
                                         <property name="colspan">1</property>
                                         <property name="column">0</property>
                                         <property name="flag"></property>
-                                        <property name="row">7</property>
+                                        <property name="row">6</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -3026,14 +3214,14 @@
                                             <event name="OnUpdateUI"></event>
                                         </object>
                                     </object>
-                                    <object class="gbsizeritem" expanded="1">
+                                    <object class="gbsizeritem" expanded="0">
                                         <property name="border">0</property>
                                         <property name="colspan">1</property>
                                         <property name="column">1</property>
                                         <property name="flag">wxEXPAND</property>
-                                        <property name="row">7</property>
+                                        <property name="row">6</property>
                                         <property name="rowspan">1</property>
-                                        <object class="wxBoxSizer" expanded="1">
+                                        <object class="wxBoxSizer" expanded="0">
                                             <property name="minimum_size"></property>
                                             <property name="name">callsSizer</property>
                                             <property name="orient">wxHORIZONTAL</property>
@@ -3236,7 +3424,7 @@
                                         <property name="colspan">2</property>
                                         <property name="column">0</property>
                                         <property name="flag">wxBOTTOM|wxEXPAND|wxTOP</property>
-                                        <property name="row">8</property>
+                                        <property name="row">7</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxStaticLine" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -3320,7 +3508,7 @@
                                         <property name="colspan">1</property>
                                         <property name="column">0</property>
                                         <property name="flag"></property>
-                                        <property name="row">9</property>
+                                        <property name="row">8</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -3350,7 +3538,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">What information should be logged in log panel: </property>
+                                            <property name="label">What information should be logged: </property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>
@@ -3406,7 +3594,7 @@
                                         <property name="colspan">1</property>
                                         <property name="column">1</property>
                                         <property name="flag">wxEXPAND</property>
-                                        <property name="row">9</property>
+                                        <property name="row">8</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxChoice" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -3452,7 +3640,7 @@
                                             <property name="pin_button">1</property>
                                             <property name="pos"></property>
                                             <property name="resize">Resizable</property>
-                                            <property name="selection">0</property>
+                                            <property name="selection">1</property>
                                             <property name="show">1</property>
                                             <property name="size"></property>
                                             <property name="style"></property>
@@ -3497,7 +3685,7 @@
                                         <property name="colspan">1</property>
                                         <property name="column">0</property>
                                         <property name="flag"></property>
-                                        <property name="row">10</property>
+                                        <property name="row">9</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -3583,7 +3771,7 @@
                                         <property name="colspan">1</property>
                                         <property name="column">1</property>
                                         <property name="flag"></property>
-                                        <property name="row">10</property>
+                                        <property name="row">9</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxCheckBox" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -3674,7 +3862,7 @@
                                         <property name="colspan">1</property>
                                         <property name="column">0</property>
                                         <property name="flag"></property>
-                                        <property name="row">11</property>
+                                        <property name="row">10</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -3704,7 +3892,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">Show messages in the Taskbar instead in own window: </property>
+                                            <property name="label">Show messages in the Taskbar instead in a window: </property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>
@@ -3760,7 +3948,7 @@
                                         <property name="colspan">1</property>
                                         <property name="column">1</property>
                                         <property name="flag"></property>
-                                        <property name="row">11</property>
+                                        <property name="row">10</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxCheckBox" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -3851,7 +4039,7 @@
                                         <property name="colspan">1</property>
                                         <property name="column">0</property>
                                         <property name="flag"></property>
-                                        <property name="row">12</property>
+                                        <property name="row">11</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -3881,7 +4069,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">Hide windows on minimize: </property>
+                                            <property name="label">Hide window to taskbar on minimize: </property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>
@@ -3937,7 +4125,7 @@
                                         <property name="colspan">1</property>
                                         <property name="column">1</property>
                                         <property name="flag"></property>
-                                        <property name="row">12</property>
+                                        <property name="row">11</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxCheckBox" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -4028,7 +4216,7 @@
                                         <property name="colspan">2</property>
                                         <property name="column">0</property>
                                         <property name="flag">wxALIGN_CENTER|wxTOP</property>
-                                        <property name="row">13</property>
+                                        <property name="row">12</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxButton" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -4123,7 +4311,7 @@
                     <property name="bitmap"></property>
                     <property name="label">Trackers</property>
                     <property name="select">0</property>
-                    <object class="wxPanel" expanded="0">
+                    <object class="wxScrolledWindow" expanded="1">
                         <property name="BottomDockable">1</property>
                         <property name="LeftDockable">1</property>
                         <property name="RightDockable">1</property>
@@ -4166,6 +4354,8 @@
                         <property name="pin_button">1</property>
                         <property name="pos"></property>
                         <property name="resize">Resizable</property>
+                        <property name="scroll_rate_x">15</property>
+                        <property name="scroll_rate_y">15</property>
                         <property name="show">1</property>
                         <property name="size"></property>
                         <property name="subclass"></property>
@@ -4173,7 +4363,7 @@
                         <property name="tooltip"></property>
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
-                        <property name="window_style">wxNO_BORDER|wxTAB_TRAVERSAL</property>
+                        <property name="window_style">wxHSCROLL|wxVSCROLL</property>
                         <event name="OnChar"></event>
                         <event name="OnEnterWindow"></event>
                         <event name="OnEraseBackground"></event>
@@ -4197,7 +4387,7 @@
                         <event name="OnSetFocus"></event>
                         <event name="OnSize"></event>
                         <event name="OnUpdateUI"></event>
-                        <object class="wxBoxSizer" expanded="0">
+                        <object class="wxBoxSizer" expanded="1">
                             <property name="minimum_size"></property>
                             <property name="name">trackerSizerTop</property>
                             <property name="orient">wxVERTICAL</property>
@@ -4220,7 +4410,7 @@
                                     <property name="caption"></property>
                                     <property name="caption_visible">1</property>
                                     <property name="center_pane">0</property>
-                                    <property name="choices"></property>
+                                    <property name="choices">&quot;No trackers available&quot;</property>
                                     <property name="close_button">1</property>
                                     <property name="context_help"></property>
                                     <property name="context_menu">1</property>
@@ -4290,94 +4480,6 @@
                                     <event name="OnUpdateUI"></event>
                                 </object>
                             </object>
-                            <object class="sizeritem" expanded="0">
-                                <property name="border">10</property>
-                                <property name="flag">wxALIGN_CENTER|wxALL</property>
-                                <property name="proportion">0</property>
-                                <object class="wxButton" expanded="0">
-                                    <property name="BottomDockable">1</property>
-                                    <property name="LeftDockable">1</property>
-                                    <property name="RightDockable">1</property>
-                                    <property name="TopDockable">1</property>
-                                    <property name="aui_layer"></property>
-                                    <property name="aui_name"></property>
-                                    <property name="aui_position"></property>
-                                    <property name="aui_row"></property>
-                                    <property name="best_size"></property>
-                                    <property name="bg"></property>
-                                    <property name="caption"></property>
-                                    <property name="caption_visible">1</property>
-                                    <property name="center_pane">0</property>
-                                    <property name="close_button">1</property>
-                                    <property name="context_help"></property>
-                                    <property name="context_menu">1</property>
-                                    <property name="default">1</property>
-                                    <property name="default_pane">0</property>
-                                    <property name="dock">Dock</property>
-                                    <property name="dock_fixed">0</property>
-                                    <property name="docking">Left</property>
-                                    <property name="enabled">1</property>
-                                    <property name="fg"></property>
-                                    <property name="floatable">1</property>
-                                    <property name="font"></property>
-                                    <property name="gripper">0</property>
-                                    <property name="hidden">0</property>
-                                    <property name="id">wxID_ANY</property>
-                                    <property name="label">Update Trackers</property>
-                                    <property name="max_size"></property>
-                                    <property name="maximize_button">0</property>
-                                    <property name="maximum_size"></property>
-                                    <property name="min_size"></property>
-                                    <property name="minimize_button">0</property>
-                                    <property name="minimum_size"></property>
-                                    <property name="moveable">1</property>
-                                    <property name="name">updateTrackers</property>
-                                    <property name="pane_border">1</property>
-                                    <property name="pane_position"></property>
-                                    <property name="pane_size"></property>
-                                    <property name="permission">protected</property>
-                                    <property name="pin_button">1</property>
-                                    <property name="pos"></property>
-                                    <property name="resize">Resizable</property>
-                                    <property name="show">1</property>
-                                    <property name="size"></property>
-                                    <property name="style"></property>
-                                    <property name="subclass"></property>
-                                    <property name="toolbar_pane">0</property>
-                                    <property name="tooltip"></property>
-                                    <property name="validator_data_type"></property>
-                                    <property name="validator_style">wxFILTER_NONE</property>
-                                    <property name="validator_type">wxDefaultValidator</property>
-                                    <property name="validator_variable"></property>
-                                    <property name="window_extra_style"></property>
-                                    <property name="window_name"></property>
-                                    <property name="window_style"></property>
-                                    <event name="OnButtonClick"></event>
-                                    <event name="OnChar"></event>
-                                    <event name="OnEnterWindow"></event>
-                                    <event name="OnEraseBackground"></event>
-                                    <event name="OnKeyDown"></event>
-                                    <event name="OnKeyUp"></event>
-                                    <event name="OnKillFocus"></event>
-                                    <event name="OnLeaveWindow"></event>
-                                    <event name="OnLeftDClick"></event>
-                                    <event name="OnLeftDown"></event>
-                                    <event name="OnLeftUp"></event>
-                                    <event name="OnMiddleDClick"></event>
-                                    <event name="OnMiddleDown"></event>
-                                    <event name="OnMiddleUp"></event>
-                                    <event name="OnMotion"></event>
-                                    <event name="OnMouseEvents"></event>
-                                    <event name="OnMouseWheel"></event>
-                                    <event name="OnPaint"></event>
-                                    <event name="OnRightDClick"></event>
-                                    <event name="OnRightDown"></event>
-                                    <event name="OnRightUp"></event>
-                                    <event name="OnSetFocus"></event>
-                                    <event name="OnSize"></event>
-                                    <event name="OnUpdateUI"></event>
-                                </object>
-                            </object>
                         </object>
                     </object>
                 </object>
@@ -4385,7 +4487,7 @@
                     <property name="bitmap"></property>
                     <property name="label">Logging</property>
                     <property name="select">0</property>
-                    <object class="wxPanel" expanded="0">
+                    <object class="wxScrolledWindow" expanded="1">
                         <property name="BottomDockable">1</property>
                         <property name="LeftDockable">1</property>
                         <property name="RightDockable">1</property>
@@ -4428,6 +4530,8 @@
                         <property name="pin_button">1</property>
                         <property name="pos"></property>
                         <property name="resize">Resizable</property>
+                        <property name="scroll_rate_x">15</property>
+                        <property name="scroll_rate_y">15</property>
                         <property name="show">1</property>
                         <property name="size"></property>
                         <property name="subclass"></property>
@@ -4435,7 +4539,7 @@
                         <property name="tooltip"></property>
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
-                        <property name="window_style">wxNO_BORDER|wxTAB_TRAVERSAL</property>
+                        <property name="window_style">wxHSCROLL|wxVSCROLL</property>
                         <event name="OnChar"></event>
                         <event name="OnEnterWindow"></event>
                         <event name="OnEraseBackground"></event>
@@ -4459,7 +4563,7 @@
                         <event name="OnSetFocus"></event>
                         <event name="OnSize"></event>
                         <event name="OnUpdateUI"></event>
-                        <object class="wxBoxSizer" expanded="0">
+                        <object class="wxBoxSizer" expanded="1">
                             <property name="minimum_size"></property>
                             <property name="name">logSizerTop</property>
                             <property name="orient">wxVERTICAL</property>
@@ -4558,7 +4662,7 @@
                 <object class="notebookpage" expanded="1">
                     <property name="bitmap"></property>
                     <property name="label">About</property>
-                    <property name="select">1</property>
+                    <property name="select">0</property>
                     <object class="wxPanel" expanded="1">
                         <property name="BottomDockable">1</property>
                         <property name="LeftDockable">1</property>
@@ -4633,14 +4737,14 @@
                         <event name="OnSetFocus"></event>
                         <event name="OnSize"></event>
                         <event name="OnUpdateUI"></event>
-                        <object class="wxBoxSizer" expanded="1">
+                        <object class="wxBoxSizer" expanded="0">
                             <property name="minimum_size"></property>
                             <property name="name">aboutSizerTop</property>
                             <property name="orient">wxVERTICAL</property>
                             <property name="permission">none</property>
                             <object class="sizeritem" expanded="0">
                                 <property name="border">10</property>
-                                <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</property>
+                                <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxTOP</property>
                                 <property name="proportion">0</property>
                                 <object class="wxStaticText" expanded="0">
                                     <property name="BottomDockable">1</property>
@@ -4670,7 +4774,7 @@
                                     <property name="gripper">0</property>
                                     <property name="hidden">0</property>
                                     <property name="id">wxID_ANY</property>
-                                    <property name="label">The Call Admin Project</property>
+                                    <property name="label">The CallAdmin Project</property>
                                     <property name="max_size"></property>
                                     <property name="maximize_button">0</property>
                                     <property name="maximum_size"></property>
@@ -4723,7 +4827,7 @@
                             </object>
                             <object class="sizeritem" expanded="0">
                                 <property name="border">10</property>
-                                <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxLEFT|wxRIGHT</property>
+                                <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxBOTTOM</property>
                                 <property name="proportion">0</property>
                                 <object class="wxStaticText" expanded="0">
                                     <property name="BottomDockable">1</property>
@@ -4806,7 +4910,7 @@
                             </object>
                             <object class="sizeritem" expanded="0">
                                 <property name="border">10</property>
-                                <property name="flag">wxALIGN_CENTER|wxALL</property>
+                                <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxALL</property>
                                 <property name="proportion">0</property>
                                 <object class="wxStaticBitmap" expanded="0">
                                     <property name="BottomDockable">1</property>
@@ -4885,9 +4989,9 @@
                                     <event name="OnUpdateUI"></event>
                                 </object>
                             </object>
-                            <object class="sizeritem" expanded="1">
+                            <object class="sizeritem" expanded="0">
                                 <property name="border">5</property>
-                                <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxALL</property>
+                                <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxTOP</property>
                                 <property name="proportion">0</property>
                                 <object class="wxBoxSizer" expanded="0">
                                     <property name="minimum_size"></property>
@@ -4895,8 +4999,8 @@
                                     <property name="orient">wxHORIZONTAL</property>
                                     <property name="permission">none</property>
                                     <object class="sizeritem" expanded="0">
-                                        <property name="border">20</property>
-                                        <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT</property>
+                                        <property name="border">10</property>
+                                        <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxRIGHT</property>
                                         <property name="proportion">0</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -4978,7 +5082,7 @@
                                         </object>
                                     </object>
                                     <object class="sizeritem" expanded="0">
-                                        <property name="border">20</property>
+                                        <property name="border">10</property>
                                         <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxLEFT</property>
                                         <property name="proportion">0</property>
                                         <object class="wxStaticText" expanded="0">
@@ -5062,9 +5166,9 @@
                                     </object>
                                 </object>
                             </object>
-                            <object class="sizeritem" expanded="1">
+                            <object class="sizeritem" expanded="0">
                                 <property name="border">10</property>
-                                <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxALL</property>
+                                <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxTOP</property>
                                 <property name="proportion">0</property>
                                 <object class="wxBoxSizer" expanded="0">
                                     <property name="minimum_size"></property>
@@ -5073,7 +5177,7 @@
                                     <property name="permission">none</property>
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">10</property>
-                                        <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxALL</property>
+                                        <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxRIGHT</property>
                                         <property name="proportion">0</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -5156,7 +5260,7 @@
                                     </object>
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">10</property>
-                                        <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxALL</property>
+                                        <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT</property>
                                         <property name="proportion">0</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -5239,7 +5343,7 @@
                                     </object>
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">10</property>
-                                        <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxALL</property>
+                                        <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxLEFT</property>
                                         <property name="proportion">0</property>
                                         <object class="wxStaticText" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -5322,18 +5426,18 @@
                                     </object>
                                 </object>
                             </object>
-                            <object class="sizeritem" expanded="1">
-                                <property name="border">5</property>
-                                <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxRIGHT|wxTOP</property>
+                            <object class="sizeritem" expanded="0">
+                                <property name="border">10</property>
+                                <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxTOP</property>
                                 <property name="proportion">0</property>
-                                <object class="wxBoxSizer" expanded="1">
+                                <object class="wxBoxSizer" expanded="0">
                                     <property name="minimum_size"></property>
                                     <property name="name">aboutSizerBtns</property>
                                     <property name="orient">wxHORIZONTAL</property>
                                     <property name="permission">none</property>
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">5</property>
-                                        <property name="flag">wxALIGN_CENTER|wxBOTTOM|wxLEFT|wxTOP</property>
+                                        <property name="flag">wxALIGN_CENTER|wxRIGHT|wxTOP</property>
                                         <property name="proportion">0</property>
                                         <object class="wxButton" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -5421,7 +5525,7 @@
                                     </object>
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">5</property>
-                                        <property name="flag">wxALIGN_CENTER|wxBOTTOM|wxRIGHT|wxTOP</property>
+                                        <property name="flag">wxALIGN_CENTER|wxLEFT|wxTOP</property>
                                         <property name="proportion">0</property>
                                         <object class="wxButton" expanded="0">
                                             <property name="BottomDockable">1</property>

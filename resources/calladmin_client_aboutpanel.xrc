@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
 	<object class="wxPanel" name="aboutPanel">
-		<style>wxNO_BORDER | wxTAB_TRAVERSAL</style>
+		<style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxALIGN_CENTER_HORIZONTAL | wxLEFT | wxRIGHT | wxTOP</flag>
+				<flag>wxALIGN_CENTER_HORIZONTAL|wxTOP</flag>
 				<border>10</border>
 				<object class="wxStaticText" name="aboutText">
 					<font>
@@ -15,13 +15,13 @@
 						<weight>normal</weight>
 						<underlined>0</underlined>
 					</font>
-					<label>The Call Admin Project</label>
+					<label>The CallAdmin Project</label>
 					<wrap>-1</wrap>
 				</object>
 			</object>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM | wxLEFT | wxRIGHT</flag>
+				<flag>wxALIGN_CENTER_HORIZONTAL|wxBOTTOM</flag>
 				<border>10</border>
 				<object class="wxStaticText" name="copyrightText">
 					<font>
@@ -36,7 +36,7 @@
 			</object>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxALIGN_CENTER | wxALL</flag>
+				<flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
 				<border>10</border>
 				<object class="wxStaticBitmap" name="banner">
 					<bitmap>calladmin_banner.bmp</bitmap>
@@ -44,14 +44,14 @@
 			</object>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxALIGN_CENTER_HORIZONTAL | wxALL</flag>
+				<flag>wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxTOP</flag>
 				<border>5</border>
 				<object class="wxBoxSizer">
 					<orient>wxHORIZONTAL</orient>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER_HORIZONTAL | wxLEFT | wxRIGHT</flag>
-						<border>20</border>
+						<flag>wxALIGN_CENTER_HORIZONTAL|wxRIGHT</flag>
+						<border>10</border>
 						<object class="wxStaticText" name="yourVersion">
 							<font>
 								<size>15</size>
@@ -65,8 +65,8 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER_HORIZONTAL | wxLEFT</flag>
-						<border>20</border>
+						<flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT</flag>
+						<border>10</border>
 						<object class="wxStaticText" name="currentVersion">
 							<fg>#228b22</fg>
 							<font>
@@ -83,13 +83,13 @@
 			</object>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxALIGN_CENTER_HORIZONTAL | wxALL</flag>
+				<flag>wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxTOP</flag>
 				<border>10</border>
 				<object class="wxBoxSizer">
 					<orient>wxHORIZONTAL</orient>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER_HORIZONTAL | wxALL</flag>
+						<flag>wxALIGN_CENTER_HORIZONTAL|wxRIGHT</flag>
 						<border>10</border>
 						<object class="wxStaticText" name="wxVersion">
 							<font>
@@ -104,7 +104,7 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER_HORIZONTAL | wxALL</flag>
+						<flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT</flag>
 						<border>10</border>
 						<object class="wxStaticText" name="curlVersion">
 							<font>
@@ -119,7 +119,7 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER_HORIZONTAL | wxALL</flag>
+						<flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT</flag>
 						<border>10</border>
 						<object class="wxStaticText" name="oswVersion">
 							<font>
@@ -136,13 +136,13 @@
 			</object>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxALIGN_CENTER_HORIZONTAL | wxBOTTOM | wxRIGHT | wxTOP</flag>
-				<border>5</border>
+				<flag>wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxTOP</flag>
+				<border>10</border>
 				<object class="wxBoxSizer">
 					<orient>wxHORIZONTAL</orient>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER | wxBOTTOM | wxLEFT | wxTOP</flag>
+						<flag>wxALIGN_CENTER|wxRIGHT|wxTOP</flag>
 						<border>5</border>
 						<object class="wxButton" name="checkForUpdate">
 							<label>Check For Update</label>
@@ -151,7 +151,7 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER | wxBOTTOM | wxRIGHT | wxTOP</flag>
+						<flag>wxALIGN_CENTER|wxLEFT|wxTOP</flag>
 						<border>5</border>
 						<object class="wxButton" name="downloadUpdate">
 							<enabled>0</enabled>

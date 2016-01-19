@@ -59,17 +59,7 @@ wxEND_EVENT_TABLE()
 
 // Constructor: Set Taskbar icon
 TaskBarIcon::TaskBarIcon() {
-	wxImage image;
-	wxIcon icon;
-
-	// Load icon from resource.cpp
-	wxMemoryInputStream iconStream(&xml_res_file_2, xml_res_size_2);
-
-	// Load data into image and convert to the image to an icon
-	image.LoadFile(iconStream, wxBITMAP_TYPE_ICO);
-	icon.CopyFromBitmap(image);
-
-	SetIcon(icon, "CallAdmin Client");
+	SetIcon(caGetMainFrame()->GetIcon(), "CallAdmin Client");
 }
 
 
