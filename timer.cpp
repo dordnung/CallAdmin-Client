@@ -107,6 +107,9 @@ void Timer::OnExecute(wxTimerEvent &WXUNUSED(event)) {
 	// Get the Page
 	caGetApp().GetPage(Timer::OnNotice, page, this->isFirstShoot);
 
+	// Update trackers
+	caGetTrackerPanel()->UpdateTrackerList();
+
 	this->isFirstShoot = false;
 }
 
@@ -340,7 +343,7 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 
 			// Updated Main Interface
 			caGetMainFrame()->SetTitle("CallAdmin Client");
-			caGetMainPanel()->SetStatusText("Waiting for a new report...");
+			caGetMainPanel()->SetStatusText("Waiting for a new report");
 
 			// Update Call List
 			if (foundNew) {

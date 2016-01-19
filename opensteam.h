@@ -34,6 +34,7 @@
 
 #include "opensteam_helper.h"
 
+
 enum STEAM_ERROR_TYP {
 	STEAM_NO_ERROR = 0,
 	STEAM_DISABLED,

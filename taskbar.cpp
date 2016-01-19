@@ -63,7 +63,7 @@ TaskBarIcon::TaskBarIcon() {
 }
 
 
-// Show a information whether in the taskbar or as dialog on unix
+// Show a information whether in the taskbar or as dialog if taskbar messages are not available
 void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow *parent) {
 	// Only if not other app is in fullscreen, otherwise it would be minimized
 	if (!isOtherInFullscreen()) {
@@ -120,12 +120,12 @@ void TaskBarIcon::OnMenuAutoStart(wxCommandEvent &event) {
 			// Write in
 			regKey.SetValue("CallAdmin-Client", appPath);
 
-			caLogAction("Added CallAdmin to the auto start list");
+			caLogAction("Added CallAdmin to the autostart list");
 		} else {
 			// Remove it
 			regKey.DeleteValue("CallAdmin-Client");
 
-			caLogAction("Removed CallAdmin from the auto start list");
+			caLogAction("Removed CallAdmin from the autostart list");
 		}
 	}
 }

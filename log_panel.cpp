@@ -40,7 +40,7 @@ bool LogPanel::InitPanel() {
 		return false;
 	}
 
-	// Box
+	// The log box
 	FIND_OR_FAIL(this->logBox, XRCCTRL(*this, "logBox", wxListBox), "logBox");
 
 	return true;

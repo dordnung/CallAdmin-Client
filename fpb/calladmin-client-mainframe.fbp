@@ -360,14 +360,14 @@
                                     </object>
                                 </object>
                             </object>
-                            <object class="gbsizeritem" expanded="0">
+                            <object class="gbsizeritem" expanded="1">
                                 <property name="border">0</property>
                                 <property name="colspan">4</property>
                                 <property name="column">3</property>
                                 <property name="flag">wxEXPAND</property>
                                 <property name="row">0</property>
                                 <property name="rowspan">1</property>
-                                <object class="wxBoxSizer" expanded="0">
+                                <object class="wxBoxSizer" expanded="1">
                                     <property name="minimum_size"></property>
                                     <property name="name">sizerTop</property>
                                     <property name="orient">wxVERTICAL</property>
@@ -588,7 +588,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">Steam:</property>
+                                            <property name="label">Steam</property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>
@@ -916,7 +916,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">Status:</property>
+                                            <property name="label">Status</property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>

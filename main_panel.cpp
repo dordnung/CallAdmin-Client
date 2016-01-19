@@ -32,7 +32,7 @@
 #endif
 
 
-// Button Events for about Panel
+// Events for main panel
 wxBEGIN_EVENT_TABLE(MainPanel, wxPanel)
 	EVT_BUTTON(XRCID("hide"), MainPanel::OnHide)
 	EVT_BUTTON(XRCID("reconnectButton"), MainPanel::OnReconnect)
@@ -54,7 +54,6 @@ MainPanel::MainPanel() {
 	this->reconnectButton = NULL;
 
 	this->callBox = NULL;
-	this->sizerBody = NULL;
 
 	this->eventText = NULL;
 	this->steamText = NULL;
@@ -68,8 +67,6 @@ bool MainPanel::InitPanel() {
 
 		return false;
 	}
-
-	FIND_OR_FAIL(this->sizerBody, this->GetSizer(), "mainPanelSizerBody");
 
 	// Box for all Calls
 	FIND_OR_FAIL(this->callBox, XRCCTRL(*this, "callBox", wxListBox), "callBox");
@@ -107,7 +104,7 @@ bool MainPanel::InitPanel() {
 }
 
 
-// Update Window
+// Sets the status text
 void MainPanel::SetStatusText(wxString text) {
 	this->eventText->SetLabelText(text);
 
@@ -115,6 +112,7 @@ void MainPanel::SetStatusText(wxString text) {
 }
 
 
+// Sets the steam text
 void MainPanel::SetSteamStatus(wxString text, wxColor color) {
 	this->steamText->SetLabelText(text);
 	this->steamText->SetForegroundColour(color);
@@ -188,7 +186,7 @@ void MainPanel::OnReconnect(wxCommandEvent &WXUNUSED(event)) {
 	// Log Action
 	caLogAction("Trying to reconnect...");
 
-	SetStatusText("Trying to reconnect...");
+	SetStatusText("Trying to reconnect");
 	SetReconnectButton(false);
 
 	caGetMainFrame()->SetTitle("CallAdmin Client");

@@ -80,6 +80,7 @@ public:
 		return &nameTimers;
 	}
 
+	// Update the tracker list
 	void UpdateTrackerList();
 
 	// Refresh the tracker list

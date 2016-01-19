@@ -26,6 +26,8 @@
  */
 #pragma once
 
+
+// The notification sound in bytes :)
 static size_t wave_sound_size = 47376;
 static unsigned char wave_sound[] = { 82, 73, 70, 70, 8, 185, 0, 0, 87, 65, 86, 69, 102,
 109, 116, 32, 16, 0, 0, 0, 1, 0, 2, 0, 224, 46,

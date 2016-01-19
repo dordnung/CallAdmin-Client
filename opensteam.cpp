@@ -67,7 +67,7 @@ wxThread::ExitCode SteamThread::Entry() {
 			// Load Steam
 			STEAM_ERROR_TYP steamError = Load();
 
-			// Handling
+			// Check if steam could be loaded
 			if (steamError != STEAM_NO_ERROR) {
 				// Clean
 				Clean();
@@ -77,7 +77,7 @@ wxThread::ExitCode SteamThread::Entry() {
 					if (this->isConnected) {
 						// Notice changes to main panel
 						caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
-						caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Disonnected from Steam", LogLevel::LEVEL_INFO);
+						caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Couldn't connect to Steam", LogLevel::LEVEL_ERROR);
 					}
 				} else {
 					// Disabled
@@ -117,7 +117,7 @@ wxThread::ExitCode SteamThread::Entry() {
 				if (!OpenSteamHelper::GetInstance()->SteamAPI_IsSteamRunning()) {
 					// Notice changes to main panel
 					caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
-					caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Disonnected from Steam", LogLevel::LEVEL_INFO);
+					caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Disconnected from Steam", LogLevel::LEVEL_INFO);
 
 					// Clean Steam
 					Clean();
@@ -141,6 +141,7 @@ STEAM_ERROR_TYP SteamThread::Load() {
 		return STEAM_DISABLED;
 	}
 
+	// Use Steam helper
 	if (!OpenSteamHelper::GetInstance()->SteamAPI_Init()) {
 		return STEAM_ERROR;
 	}
@@ -156,5 +157,6 @@ void SteamThread::Clean() {
 	this->isConnected = false;
 	this->steamid = "";
 
+	// Use Steam helper
 	OpenSteamHelper::GetInstance()->SteamAPI_Shutdown();
 }

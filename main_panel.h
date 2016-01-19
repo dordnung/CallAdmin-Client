@@ -46,7 +46,6 @@ private:
 	wxButton *reconnectButton;
 
 	wxListBox *callBox;
-	wxSizer *sizerBody;
 
 	wxStaticText *eventText;
 	wxStaticText *steamText;

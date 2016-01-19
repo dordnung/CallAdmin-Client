@@ -209,7 +209,7 @@ void CallAdmin::StartUpdate() {
 
 // Get the content of a page
 void CallAdmin::GetPage(CurlCallback callbackFunction, wxString page, int extra) {
-	if (!this->curlThread->GetThread()) {
+	if (this->isRunning && !this->curlThread->GetThread()) {
 		this->curlThread->SetCallbackFunction(callbackFunction);
 		this->curlThread->SetPage(page);
 		this->curlThread->SetExtra(extra);

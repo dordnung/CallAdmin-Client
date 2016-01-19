@@ -70,12 +70,14 @@ OpenSteamHelper *OpenSteamHelper::GetInstance() {
 }
 
 
-
+// Initalize the Steam API
 bool OpenSteamHelper::SteamAPI_Init() {
+	// Already initalized
 	if (this->steamClient) {
 		return true;
 	}
 
+	// Steam has to run
 	if (!SteamAPI_IsSteamRunning()) {
 		return false;
 	}
@@ -91,13 +93,13 @@ bool OpenSteamHelper::SteamAPI_Init() {
 		return false;
 	}
 
-	// Load steamclient library
 #ifdef _WIN32
 	// steamclient.dll expects to be able to load tier0_s without an absolute
 	// path, so we'll need to add the steam dir to the search path.
 	SetDllDirectoryA(steamPath);
 #endif
 
+	// Load steamclient library
 	this->library = new DynamicLibrary(libraryFile);
 
 	if (!this->library->IsLoaded()) {
@@ -107,6 +109,7 @@ bool OpenSteamHelper::SteamAPI_Init() {
 		return false;
 	}
 
+	// Create the factory
 	CreateInterfaceFn factory = (CreateInterfaceFn)this->library->GetSymbol("CreateInterface");
 
 	if (!factory) {
@@ -116,6 +119,7 @@ bool OpenSteamHelper::SteamAPI_Init() {
 		return false;
 	}
 
+	// Load the steam client
 	this->steamClient = (ISteamClient017*)factory(STEAMCLIENT_INTERFACE_VERSION_017, NULL);
 
 	if (!this->steamClient) {
@@ -125,10 +129,12 @@ bool OpenSteamHelper::SteamAPI_Init() {
 		return false;
 	}
 
+	// Create a pipe to steam and initalize the global user
 	this->hSteamPipe = this->steamClient->CreateSteamPipe();
 	this->hSteamUser = this->steamClient->ConnectToGlobalUser(this->hSteamPipe);
 
 	if (!this->hSteamPipe || !this->hSteamUser || !InitializeSteamInterfaces()) {
+		// Shutdown on error
 		SteamAPI_Shutdown();
 
 		return false;
@@ -138,8 +144,10 @@ bool OpenSteamHelper::SteamAPI_Init() {
 }
 
 
+// Checks if Steam is still running
 bool OpenSteamHelper::SteamAPI_IsSteamRunning() {
 #ifdef _WIN32
+	// On windows get PID ID in registry and check if it's still active
 	HKEY phkResult;
 
 	// Open Steam registry key
@@ -152,6 +160,7 @@ bool OpenSteamHelper::SteamAPI_IsSteamRunning() {
 			HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, 0, data);
 			DWORD exitCode = 0;
 
+			// Send an pseudo kill signal to the process to check if it response
 			if (process) {
 				if (GetExitCodeProcess(process, &exitCode) && exitCode == STILL_ACTIVE) {
 					CloseHandle(process);
@@ -171,6 +180,7 @@ bool OpenSteamHelper::SteamAPI_IsSteamRunning() {
 		RegCloseKey(phkResult);
 	}
 #elif __linux__
+	// On linux get the PID from $HOME/.steam/steam.pid
 	char data;
 	char *home = getenv("HOME");
 	snprintf(&data, PATH_MAX, "%s/.steam/steam.pid", home);
@@ -189,6 +199,7 @@ bool OpenSteamHelper::SteamAPI_IsSteamRunning() {
 		if (pid > 0) {
 			__int32 pidInt = strtol(&resolved, 0, 10);
 
+			// Also send pseudo kill signal
 			if (pidInt <= 0 || kill(pidInt, 0)) {
 				return false;
 			}
@@ -207,6 +218,7 @@ bool OpenSteamHelper::SteamAPI_IsSteamRunning() {
 }
 
 
+// Shutdown the Steam API
 bool OpenSteamHelper::SteamAPI_Shutdown() {
 	/* Use if implemented
 	if (this->steamHTMLSurface) {
@@ -235,6 +247,7 @@ bool OpenSteamHelper::SteamAPI_Shutdown() {
 	this->steamInventory = NULL;
 	this->steamVideo = NULL;
 
+	// If Steam is running and there is a valid pipe then close it
 	if (SteamAPI_IsSteamRunning() && this->hSteamPipe && this->steamClient) {
 		if (this->hSteamUser) {
 			this->steamClient->ReleaseUser(this->hSteamPipe, this->hSteamUser);
@@ -248,6 +261,7 @@ bool OpenSteamHelper::SteamAPI_Shutdown() {
 	this->hSteamPipe = 0;
 	this->steamClient = NULL;
 
+	// Also free the dynamic library
 	if (this->library) {
 		delete this->library;
 		this->library = NULL;
@@ -257,8 +271,10 @@ bool OpenSteamHelper::SteamAPI_Shutdown() {
 }
 
 
+// Finds the path to the dynamic library of the steamclient
 bool OpenSteamHelper::FindSteamClientLibrary(char *libraryFile, size_t size) {
 #ifdef _WIN32
+	// On Windows get the path to the steamclient.dll from the registry
 	HKEY phkResult;
 
 	// Open Steam registry key
@@ -278,6 +294,7 @@ bool OpenSteamHelper::FindSteamClientLibrary(char *libraryFile, size_t size) {
 		RegCloseKey(phkResult);
 	}
 #elif __linux__
+	// On linux it's located in $HOME/.steam/sdk32/steamclient.so
 	char data[PATH_LENGTH] = { 0 };
 	char *home = getenv("HOME");
 	snprintf(data, PATH_MAX, "%s/.steam/sdk32", home);
@@ -307,8 +324,10 @@ bool OpenSteamHelper::FindSteamClientLibrary(char *libraryFile, size_t size) {
 }
 
 
+// Finds where Steam is installed
 bool OpenSteamHelper::FindSteamPath(char *steamPath, size_t size) {
 #ifdef _WIN32
+	// On Windows get the path to steam from the registry
 	HKEY phkResult;
 
 	// Open Steam registry key
@@ -327,12 +346,16 @@ bool OpenSteamHelper::FindSteamPath(char *steamPath, size_t size) {
 
 		RegCloseKey(phkResult);
 	}
-#endif
 
 	return false;
+#else
+	// Not needed for other Operating Systems
+	return true;
+#endif
 }
 
 
+// Initialize all Steam interfaces
 bool OpenSteamHelper::InitializeSteamInterfaces() {
 	SetOrReturn(this->steamUser, (ISteamUser017*)this->steamClient->GetISteamUser(this->hSteamUser, this->hSteamPipe, STEAMUSER_INTERFACE_VERSION_017));
 	SetOrReturn(this->steamFriends, (ISteamFriends015*)this->steamClient->GetISteamFriends(this->hSteamUser, this->hSteamPipe, STEAMFRIENDS_INTERFACE_VERSION_015));
@@ -359,6 +382,7 @@ bool OpenSteamHelper::InitializeSteamInterfaces() {
 }
 
 
+/* Getters to the interfaces */
 ISteamClient017 *OpenSteamHelper::SteamClient() {
 	return this->steamClient;
 }

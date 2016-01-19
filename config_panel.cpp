@@ -177,7 +177,7 @@ void ConfigPanel::OnSet(wxCommandEvent &WXUNUSED(event)) {
 
 	// Refresh main dialog
 	caGetMainFrame()->SetTitle("CallAdmin Client");
-	caGetMainPanel()->SetStatusText("Enable new Settings...");
+	caGetMainPanel()->SetStatusText("Enable new Settings");
 
 	// Log Action
 	caLogAction("Saved the config");
@@ -240,7 +240,7 @@ void ConfigPanel::ParseConfig() {
 	} else {
 		// Refresh main dialog
 		caGetMainFrame()->SetTitle("CallAdmin Client");
-		caGetMainPanel()->SetStatusText("Please configurate your settings.");
+		caGetMainPanel()->SetStatusText("Please configurate your settings");
 
 		// Log Action
 		caLogAction("Couldn't load/find the config");

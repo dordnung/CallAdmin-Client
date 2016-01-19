@@ -52,9 +52,6 @@ bool AboutPanel::InitPanel() {
 
 	this->currentVersion = wxString(CALLADMIN_CLIENT_VERSION);
 
-	// Sizer
-	FIND_OR_FAIL(this->sizerTop, this->GetSizer(), "aboutPanelSizerTop");
-
 	// Help value for static texts
 	wxStaticText *text;
 

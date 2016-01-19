@@ -38,11 +38,10 @@ private:
 	wxString currentVersion;
 	wxButton *downloadButton;
 	wxStaticText *currentText;
-	wxSizer *sizerTop;
 
 public:
 	AboutPanel() : currentText(NULL), downloadButton(NULL),
-		currentVersion(wxString()), sizerTop(NULL) {};
+		currentVersion(wxString()) {};
 
 	// Load controls
 	bool InitPanel();

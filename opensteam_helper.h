@@ -91,17 +91,28 @@ private:
 	OpenSteamHelper(OpenSteamHelper const&);
 	void operator=(OpenSteamHelper const&);
 
+	// Finds the path to the dynamic library of the steamclient
 	bool FindSteamClientLibrary(char *libraryFile, size_t size);
+
+	// Finds where Steam is installed
 	bool FindSteamPath(char *steamPath, size_t size);
+
+	// Initialize all Steam interfaces
 	bool InitializeSteamInterfaces();
 
 public:
 	static OpenSteamHelper *GetInstance();
 
+	// Initalize the Steam API
 	bool SteamAPI_Init();
+
+	// Checks if Steam is still running
 	bool SteamAPI_IsSteamRunning();
+
+	// Shutdown the Steam API
 	bool SteamAPI_Shutdown();
 
+	/* Getters to the interfaces */
 	ISteamClient017 *SteamClient();
 	ISteamUser017 *SteamUser();
 	ISteamFriends015 *SteamFriends();

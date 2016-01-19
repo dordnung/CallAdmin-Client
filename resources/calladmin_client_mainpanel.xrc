@@ -87,7 +87,7 @@
 								<weight>normal</weight>
 								<underlined>0</underlined>
 							</font>
-							<label>Steam:</label>
+							<label>Steam</label>
 							<wrap>-1</wrap>
 						</object>
 					</object>
@@ -134,7 +134,7 @@
 								<weight>normal</weight>
 								<underlined>0</underlined>
 							</font>
-							<label>Status:</label>
+							<label>Status</label>
 							<wrap>-1</wrap>
 						</object>
 					</object>

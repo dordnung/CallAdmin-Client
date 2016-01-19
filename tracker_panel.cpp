@@ -51,13 +51,14 @@ TrackerPanel::~TrackerPanel() {
 
 // Init Panel with controls
 bool TrackerPanel::InitPanel() {
+	// TrackerPanel is a ScrolledWindows, but a ScrolledWindow is also a panel
 	if (!wxXmlResource::Get()->LoadObject(this, caGetNotebook()->GetWindow(), "trackerPanel", "wxScrolledWindow")) {
 		wxMessageBox("Error: Couldn't find XRCID trackerPanel", "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR);
 
 		return false;
 	}
 
-	// Box
+	// The tracker list box
 	FIND_OR_FAIL(this->trackerBox, XRCCTRL(*this, "trackerBox", wxListBox), "trackerBox");
 
 	return true;
@@ -131,8 +132,7 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 									// Just add SteamId if Steam is not available
 									if (caGetSteamThread()->IsConnected()) {
 										// Create Name Timer
-										NameTimer *nameTimer = new NameTimer(steamidTracker);
-										caGetTrackerPanel()->GetNameTimers()->push_back(nameTimer);
+										caGetTrackerPanel()->GetNameTimers()->push_back(new NameTimer(steamidTracker));
 									} else {
 										caGetTrackerPanel()->AddTracker(steamidTracker.Render());
 									}
@@ -168,7 +168,7 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 		caGetTrackerPanel()->AddTracker("No trackers available");
 	} else {
 		caLogAction("Couldn't retrieve trackers! " + error, LogLevel::LEVEL_ERROR);
-		caGetTaskBarIcon()->ShowMessage("Couldn't retrieve trackers!", error, NULL);
+		caGetTaskBarIcon()->ShowMessage("Couldn't retrieve trackers!", error, caGetTrackerPanel());
 
 	}
 }
@@ -186,7 +186,7 @@ NameTimer::NameTimer(CSteamID client) : wxTimer(this, -1) {
 
 // Clean Up
 NameTimer::~NameTimer() {
-	// Remove name timer
+	// Remove name timer from name timers list
 	wxVector<NameTimer *>* nameTimers = caGetTrackerPanel()->GetNameTimers();
 
 	for (wxVector<NameTimer *>::iterator nameTimerIterator = nameTimers->begin(); nameTimerIterator != nameTimers->end(); ++nameTimerIterator) {
@@ -246,8 +246,7 @@ void NameTimer::Notify() {
 			// Finally add tracker
 			caGetTrackerPanel()->AddTracker(trackerText);
 
-			// Stop and delete
-			Stop();
+			// Delete because it's finished
 			delete this;
 		}
 	}
@@ -256,7 +255,7 @@ void NameTimer::Notify() {
 	if (++this->attempts == 50) {
 		caGetTrackerPanel()->AddTracker(this->client.Render());
 
-		// Enough, stop and delete timer
+		// Enough, delete timer
 		delete this;
 	}
 }

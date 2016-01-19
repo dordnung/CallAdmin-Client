@@ -86,9 +86,6 @@ private:
 	wxString boxText;
 	long reportedAt;
 
-	// Layout
-	wxSizer *sizerTop;
-
 	// Avatars
 	wxStaticBitmap *clientAvatar;
 	wxStaticBitmap *targetAvatar;

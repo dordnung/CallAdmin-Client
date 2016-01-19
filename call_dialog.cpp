@@ -53,7 +53,6 @@ wxEND_EVENT_TABLE()
 CallDialog::CallDialog() {
 	// Initialize vars
 	this->avatarsLoaded = false;
-	this->sizerTop = NULL;
 	this->clientAvatar = NULL;
 	this->targetAvatar = NULL;
 	this->doneText = NULL;
@@ -79,9 +78,6 @@ bool CallDialog::StartCall(bool show) {
 	// Panel
 	wxWindow *panel;
 	FIND_OR_FAIL(panel, this->GetChildren().GetFirst()->GetData(), "callPanel");
-
-	// Sizer
-	FIND_OR_FAIL(this->sizerTop, panel->GetSizer(), "callDialogSizerTop");
 
 	// New Call
 	FIND_OR_FAIL(text, XRCCTRL(*this, "contactText", wxStaticText), "contactText");
@@ -157,9 +153,8 @@ bool CallDialog::StartCall(bool show) {
 	// Load avatars
 	LoadAvatars();
 
-	// Auto Size
-	this->sizerTop->Layout();
-	this->sizerTop->Fit(panel);
+	// Fit panel
+	panel->Fit();
 
 	// Fit
 	Fit();
@@ -187,7 +182,7 @@ void CallDialog::SetFinish() {
 	this->doneText->SetLabelText("Finished");
 	this->doneText->SetForegroundColour(wxColour(34, 139, 34));
 
-	this->sizerTop->Layout();
+	Layout();
 }
 
 
@@ -232,7 +227,7 @@ CSteamID CallDialog::SteamIdtoCSteamId(wxString steamId) {
 // Button Event -> Connect to Server
 void CallDialog::OnConnect(wxCommandEvent &WXUNUSED(event)) {
 	// Log Action
-	caLogAction("Connected to the Server " + this->fullIP);
+	caLogAction("Connect to the Server " + this->fullIP);
 
 	#if defined(__WXMSW__)
 		wxExecute("explorer steam://connect/" + this->fullIP);
@@ -244,7 +239,7 @@ void CallDialog::OnConnect(wxCommandEvent &WXUNUSED(event)) {
 }
 
 
-// Mark it checked
+// Mark it as finished
 void CallDialog::OnCheck(wxCommandEvent &WXUNUSED(event)) {
 	// Log Action
 	caLogAction("Mark call " + this->callId + " as finished");
@@ -274,7 +269,7 @@ void CallDialog::OnContactClient(wxCommandEvent &WXUNUSED(event)) {
 // Contact Target
 void CallDialog::OnContactTarget(wxCommandEvent &WXUNUSED(event)) {
 	// Log Action
-	caLogAction("Contacted Client " + (wxString)this->targetCId.Render());
+	caLogAction("Contacted target " + (wxString)this->targetCId.Render());
 
 	// Open Chat
 	#if defined(__WXMSW__)
@@ -307,7 +302,7 @@ void CallDialog::OnContactTrackers(wxCommandEvent &WXUNUSED(event)) {
 // Contact Client
 void CallDialog::OnGetTrackers(wxString errorStr, wxString result, int x) {
 	// Log Action
-	caLogAction("Got Trackers");
+	caLogAction("Got Trackers for call dialog");
 
 	wxString error = "";
 
@@ -474,7 +469,7 @@ void CallDialog::OnChecked(wxString errorStr, wxString result, int x) {
 }
 
 
-// Window Event -> disable Window
+// Window Event -> Hide Window
 void CallDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event)) {
 	Show(false);
 }
