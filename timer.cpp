@@ -98,15 +98,15 @@ void Timer::OnExecute(wxTimerEvent &WXUNUSED(event)) {
 	// Get the Page
 	caGetApp().GetPage(Timer::OnNotice, page, this->isFirstShoot);
 
-	// Update trackers
-	caGetTrackerPanel()->UpdateTrackerList();
-
 	this->isFirstShoot = false;
 }
 
 
 // Got call list page
 void Timer::OnNotice(wxString error, wxString result, int firstRun) {
+	// Update trackers
+	caGetTrackerPanel()->UpdateTrackerList();
+
 	// Valid result?
 	if (result != "" && error == "") {
 		// Everything good :)

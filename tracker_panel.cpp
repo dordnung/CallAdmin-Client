@@ -74,9 +74,6 @@ void TrackerPanel::UpdateTrackerList() {
 
 // Got current trackers
 void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNUSED(extra)) {
-	// Log Action
-	caLogAction("Retrieved current trackers", LogLevel::LEVEL_DEBUG);
-
 	wxString error = "";
 
 	// First delete old ones
@@ -168,7 +165,6 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 		caGetTrackerPanel()->AddTracker("No trackers available", "");
 	} else {
 		caGetTaskBarIcon()->ShowMessage("Couldn't retrieve trackers!", error, caGetTrackerPanel(), true);
-
 	}
 }
 
