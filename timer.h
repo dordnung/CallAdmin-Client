@@ -44,15 +44,17 @@ private:
 	bool isFirstShoot;
 	long firstFetch;
 
+protected:
+	void OnExecute(wxTimerEvent &event);
+
 public:
 	Timer() : wxTimer(this, TIMER_ID), isFirstShoot(true), firstFetch(false) {};
 
-	void Run(int repeatInterval);
-
 	static void OnNotice(wxString error, wxString result, int firstRun);
 
-protected:
-	void OnExecute(wxTimerEvent &event);
+	void Run(int repeatInterval) {
+		Start(repeatInterval, wxTIMER_CONTINUOUS);
+	}
 
 	wxDECLARE_EVENT_TABLE();
 };

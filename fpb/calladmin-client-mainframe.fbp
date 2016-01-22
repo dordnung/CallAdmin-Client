@@ -1713,11 +1713,11 @@
                         </object>
                     </object>
                 </object>
-                <object class="notebookpage" expanded="0">
+                <object class="notebookpage" expanded="1">
                     <property name="bitmap"></property>
                     <property name="label">Settings</property>
                     <property name="select">0</property>
-                    <object class="wxPanel" expanded="0">
+                    <object class="wxPanel" expanded="1">
                         <property name="BottomDockable">1</property>
                         <property name="LeftDockable">1</property>
                         <property name="RightDockable">1</property>
@@ -1791,16 +1791,16 @@
                         <event name="OnSetFocus"></event>
                         <event name="OnSize"></event>
                         <event name="OnUpdateUI"></event>
-                        <object class="wxBoxSizer" expanded="0">
+                        <object class="wxBoxSizer" expanded="1">
                             <property name="minimum_size"></property>
                             <property name="name">configOuterSizer</property>
                             <property name="orient">wxVERTICAL</property>
                             <property name="permission">none</property>
-                            <object class="sizeritem" expanded="0">
+                            <object class="sizeritem" expanded="1">
                                 <property name="border">10</property>
                                 <property name="flag">wxALL</property>
                                 <property name="proportion">1</property>
-                                <object class="wxGridBagSizer" expanded="0">
+                                <object class="wxGridBagSizer" expanded="1">
                                     <property name="empty_cell_size"></property>
                                     <property name="flexible_direction">wxBOTH</property>
                                     <property name="growablecols">0</property>
@@ -4247,7 +4247,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">Update Settings</property>
+                                            <property name="label">Apply Settings</property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>

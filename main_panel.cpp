@@ -132,9 +132,9 @@ void MainPanel::UpdateCalls() {
 		CallDialog *currentDialog = *callDialog;
 
 		if (currentDialog->IsHandled()) {
-			item = this->callBox->Append("F - " + wxString::FromUTF8(currentDialog->GetBoxText()));
+			item = this->callBox->Append("F - " + currentDialog->GetTime() + " - " + currentDialog->GetServer());
 		} else {
-			item = this->callBox->Append("U - " + wxString::FromUTF8(currentDialog->GetBoxText()));
+			item = this->callBox->Append("U - " + currentDialog->GetTime() + " - " + currentDialog->GetServer());
 		}
 	}
 
@@ -147,52 +147,10 @@ void MainPanel::UpdateCalls() {
 
 // The call is now handled
 void MainPanel::SetHandled(int item) {
-	this->callBox->SetString(item, "F - " + wxString::FromUTF8(caGetCallDialogs()->at(item)->GetBoxText()));
+	this->callBox->SetString(item, "F - " + caGetCallDialogs()->at(item)->GetTime() + " - " + caGetCallDialogs()->at(item)->GetServer());
 
 	caGetCallDialogs()->at(item)->SetFinish();
 	caGetCallDialogs()->at(item)->GetTakeoverButton()->Enable(false);
-}
-
-
-// Button Event -> Hide to Taskbar
-void MainPanel::OnHide(wxCommandEvent &WXUNUSED(event)) {
-	caLogAction("Hided main frame through window", LogLevel::LEVEL_DEBUG);
-
-	if (caGetConfig()->GetHideOnMinimize()) {
-		if (caGetTaskBarIcon()->IsAvailable()) {
-			// Log Action
-			caLogAction("Hided main frame to taskbar", LogLevel::LEVEL_DEBUG);
-
-			caGetMainFrame()->Show(false);
-		} else {
-			caLogAction("Hided main frame (Taskbar not available)", LogLevel::LEVEL_DEBUG);
-
-			caGetMainFrame()->Iconize(true);
-		}
-	}
-}
-
-
-// Check Box Event -> Write To Config
-void MainPanel::OnCheckBox(wxCommandEvent &WXUNUSED(event)) {
-	caGetConfig()->SetIsAvailable(this->available->IsChecked());
-	caGetConfig()->SetWantSound(this->sound->IsChecked());
-	caGetConfig()->SetIsSpectator(this->store->IsChecked());
-}
-
-
-// Button Event -> Reconnect
-void MainPanel::OnReconnect(wxCommandEvent &WXUNUSED(event)) {
-	// Log Action
-	caLogAction("Trying to reconnect...");
-
-	SetStatusText("Trying to reconnect");
-	SetReconnectButton(false);
-
-	caGetMainFrame()->SetTitle("CallAdmin Client");
-
-	// Start the Timer again
-	caGetApp().StartTimer();
 }
 
 
@@ -210,9 +168,42 @@ void MainPanel::OnSteamChange(int status) {
 }
 
 
+// Button Event -> Hide to Taskbar
+void MainPanel::OnHide(wxCommandEvent &WXUNUSED(event)) {
+	caLogAction("Hided main frame through window", LogLevel::LEVEL_DEBUG);
+
+	caGetMainFrame()->Iconize(true);
+}
+
+
+// Button Event -> Reconnect
+void MainPanel::OnReconnect(wxCommandEvent &WXUNUSED(event)) {
+	// Log Action
+	caLogAction("Trying to reconnect...", LogLevel::LEVEL_INFO);
+
+	SetStatusText("Trying to reconnect");
+	SetReconnectButton(false);
+
+	caGetMainFrame()->SetTitle("CallAdmin Client");
+
+	// Start the Timer again
+	caGetApp().StartTimer();
+}
+
+
+// Check Box Event -> Write To Config
+void MainPanel::OnCheckBox(wxCommandEvent &WXUNUSED(event)) {
+	caGetConfig()->SetIsAvailable(this->available->IsChecked());
+	caGetConfig()->SetWantSound(this->sound->IsChecked());
+	caGetConfig()->SetIsSpectator(this->store->IsChecked());
+}
+
+
 // Window Event -> Open Call
 void MainPanel::OnBoxClick(wxCommandEvent &WXUNUSED(event)) {
 	int selection = this->callBox->GetSelection();
 
 	caGetCallDialogs()->at(selection)->Show(true);
+	caGetCallDialogs()->at(selection)->Iconize(false);
+	caGetCallDialogs()->at(selection)->Raise();
 }

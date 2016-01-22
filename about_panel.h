@@ -35,9 +35,9 @@
 
 class AboutPanel : public wxPanel {
 private:
-	wxString currentVersion;
-	wxButton *downloadButton;
 	wxStaticText *currentText;
+	wxButton *downloadButton;
+	wxString currentVersion;
 
 public:
 	AboutPanel() : currentText(NULL), downloadButton(NULL),
@@ -46,12 +46,12 @@ public:
 	// Load controls
 	bool InitPanel();
 
+	void UpdateVersionText(wxString currentVersion, wxColor color);
+
 	// Enable the download button
 	void EnableDownload(bool enable) {
 		this->downloadButton->Enable(enable);
 	}
-
-	void UpdateVersionText(wxString currentVersion, wxColor color);
 
 protected:
 	void OnUpdate(wxCommandEvent &event);

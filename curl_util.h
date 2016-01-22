@@ -48,6 +48,9 @@ private:
 	// Optional Parameter
 	int extra;
 
+protected:
+	virtual wxThread::ExitCode Entry();
+
 public:
 	CurlThread() : callbackFunction(NULL), page(wxString()), extra(0) {}
 	~CurlThread();
@@ -63,9 +66,6 @@ public:
 	void SetExtra(int extra) {
 		this->extra = extra;
 	}
-
-protected:
-	virtual wxThread::ExitCode Entry();
 };
 
 size_t CurlWriteData(void *buffer, size_t size, size_t nmemb, void *userp);

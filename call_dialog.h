@@ -35,6 +35,173 @@
 #include "opensteam.h"
 
 class CallDialog;
+class AvatarTimer;
+
+
+// Call Dialog Class
+class CallDialog : public wxDialog {
+private:
+	// Avatars
+	bool avatarsLoaded;
+
+	// We need information about a call ;)
+	wxString callId;
+	wxString fullIP;
+	wxString serverName;
+	wxString target;
+	wxString targetId;
+	wxString client;
+	wxString clientId;
+	wxString reason;
+	wxString reportedAt;
+
+	// The panel
+	wxPanel *panel;
+
+	// Avatars
+	wxStaticBitmap *clientAvatar;
+	wxStaticBitmap *targetAvatar;
+	wxStaticText *doneText;
+
+	// Tracker button
+	wxButton *contactTrackers;
+
+	// Take Over Button
+	wxButton *takeover;
+
+	// And for the Steam API
+	CSteamID clientCId;
+	CSteamID targetCId;
+
+	// Item List
+	int id;
+	bool isHandled;
+
+public:
+	CallDialog();
+
+	// Start the call
+	bool StartCall(bool show);
+
+	void LoadAvatars();
+
+	// Mark the call as finished
+	void SetFinish();
+
+	// CURL Callback
+	static void OnChecked(wxString errorStr, wxString result, int extra);
+
+	// Privat -> Get Methods
+	bool GetAvatarsLoaded() {
+		return this->avatarsLoaded;
+	}
+
+	wxString GetTime() {
+		return this->reportedAt;
+	}
+
+	wxString GetTarget() {
+		return this->target;
+	}
+
+	wxString GetClient() {
+		return this->client;
+	}
+
+	wxString GetId() {
+		return this->callId;
+	}
+
+	wxString GetServer() {
+		return this->serverName;
+	}
+
+	wxButton *GetContactTrackersButton() {
+		return this->contactTrackers;
+	}
+
+	wxButton *GetTakeoverButton() {
+		return this->takeover;
+	}
+
+	bool IsHandled() {
+		return this->isHandled;
+	}
+
+	// Privat -> Set Methods
+	void SetAvatarsLoaded() {
+		this->avatarsLoaded = true;
+		this->panel->Layout();
+	}
+
+	void SetCallId(wxString id) {
+		this->callId = id;
+	}
+
+	void SetIP(wxString ip) {
+		this->fullIP = ip;
+	}
+
+	void SetName(wxString name) {
+		this->serverName = wxString::FromUTF8(name);
+	}
+
+	void SetTarget(wxString name) {
+		this->target = name;
+	}
+
+	void SetTargetId(wxString steamidId) {
+		this->targetId = steamidId;
+		this->targetCId = SteamThread::SteamIdtoCSteamId(steamidId);
+	}
+
+	void SetClient(wxString name) {
+		this->client = name;
+	}
+
+	void SetClientId(wxString steamidId) {
+		this->clientId = steamidId;
+		this->clientCId = SteamThread::SteamIdtoCSteamId(steamidId);
+	}
+
+	void SetReason(wxString name) {
+		this->reason = name;
+	}
+
+	void SetId(int id) {
+		this->id = id;
+	}
+
+	void SetTime(long time) {
+		this->reportedAt = wxDateTime((time_t)time).Format("%c");
+	}
+
+	void SetHandled(bool handled) {
+		this->isHandled = handled;
+	}
+
+	// Operator overloadings
+	bool operator==(CallDialog &callDialog) {
+		// A CallDialog is unique by it's time and ID
+		return (GetTime() == callDialog.GetTime() && (GetId() == callDialog.GetId()));
+	}
+
+	bool operator!=(CallDialog &callDialog) {
+		return !(operator==(callDialog));
+	}
+
+protected:
+	// Events
+	void OnConnect(wxCommandEvent &event);
+	void OnCheck(wxCommandEvent &event);
+	void OnContactClient(wxCommandEvent &event);
+	void OnContactTarget(wxCommandEvent &event);
+	void OnContactTrackers(wxCommandEvent &event);
+
+	void OnCloseWindow(wxCloseEvent &event);
+
+	wxDECLARE_EVENT_TABLE();
+};
 
 
 // Avatar Timer Class
@@ -64,195 +231,6 @@ public:
 
 protected:
 	virtual void Notify();
-};
-
-
-// Call Dialog Class
-// TODO: No vars for information
-class CallDialog : public wxDialog {
-private:
-	// Avatars
-	bool avatarsLoaded;
-
-	// We need information about a call ;)
-	wxString callId;
-	wxString fullIP;
-	wxString serverName;
-	wxString target;
-	wxString targetId;
-	wxString client;
-	wxString clientId;
-	wxString reason;
-	wxString boxText;
-	long reportedAt;
-
-	// The panel
-	wxPanel *panel;
-
-	// Avatars
-	wxStaticBitmap *clientAvatar;
-	wxStaticBitmap *targetAvatar;
-	wxStaticText *doneText;
-
-	// Tracker button
-	wxButton *contactTrackers;
-
-	// Take Over Button
-	wxButton *takeover;
-
-	// And for the Steam API
-	CSteamID clientCId;
-	CSteamID targetCId;
-
-	// Item List
-	int id;
-	bool isHandled;
-
-public:
-	CallDialog();
-
-	// Convert to community ID
-	static CSteamID SteamIdtoCSteamId(wxString steamId);
-
-	void LoadAvatars();
-
-	// Privat -> Get Methods
-	bool GetAvatarsLoaded() {
-		return this->avatarsLoaded;
-	}
-
-	long GetTime() {
-		return this->reportedAt;
-	}
-
-	wxString GetTarget() {
-		return this->target;
-	}
-
-	wxString GetClient() {
-		return this->client;
-	}
-
-	wxString GetId() {
-		return this->callId;
-	}
-
-	wxString GetServer() {
-		return this->serverName;
-	}
-
-	wxString GetBoxText() {
-		return this->boxText;
-	}
-
-	wxButton* GetContactTrackersButton() {
-		return this->contactTrackers;
-	}
-
-	wxButton* GetTakeoverButton() {
-		return this->takeover;
-	}
-
-	CSteamID* GetClientCId() {
-		return &this->clientCId;
-	}
-
-	CSteamID* GetTargetCId() {
-		return &this->targetCId;
-	}
-
-	bool IsHandled() {
-		return this->isHandled;
-	}
-
-	// Privat -> Set Methods
-	void SetAvatarsLoaded() {
-		this->avatarsLoaded = true;
-		this->panel->Layout();
-	}
-
-	void SetCallId(wxString id) {
-		this->callId = id;
-	}
-
-	void SetIP(wxString ip) {
-		this->fullIP = ip;
-	}
-
-	void SetName(wxString name) {
-		this->serverName = name;
-	}
-
-	void SetTarget(wxString name) {
-		this->target = name;
-	}
-
-	void SetTargetId(wxString steamidId) {
-		this->targetId = steamidId;
-		this->targetCId = SteamIdtoCSteamId(steamidId);
-	}
-
-	void SetClient(wxString name) {
-		this->client = name;
-	}
-
-	void SetClientId(wxString steamidId) {
-		this->clientId = steamidId;
-		this->clientCId = SteamIdtoCSteamId(steamidId);
-	}
-
-	void SetReason(wxString name) {
-		this->reason = name;
-	}
-
-	void SetId(int id) {
-		this->id = id;
-	}
-
-	void SetTime(long time) {
-		this->reportedAt = time;
-	}
-
-	void SetBoxText(wxString text) {
-		this->boxText = text;
-	}
-
-	void SetHandled(bool handled) {
-		this->isHandled = handled;
-	}
-
-	// Mark the call as finished
-	void SetFinish();
-
-	// Start the call
-	bool StartCall(bool show);
-
-	// CURL Callbacks
-	static void OnGetTrackers(wxString errorStr, wxString result, int extra);
-	static void OnChecked(wxString errorStr, wxString result, int extra);
-
-	// Operator overloadings
-	bool operator==(CallDialog &callDialog) {
-		// A CallDialog is unique by it's time and ID
-		return (GetTime() == callDialog.GetTime() && (GetId() == callDialog.GetId()));
-	}
-
-	bool operator!=(CallDialog &callDialog) {
-		return !(operator==(callDialog));
-	}
-
-protected:
-	// Events
-	void OnConnect(wxCommandEvent &event);
-	void OnCheck(wxCommandEvent &event);
-	void OnContactClient(wxCommandEvent &event);
-	void OnContactTarget(wxCommandEvent &event);
-	void OnContactTrackers(wxCommandEvent &event);
-
-	void OnCloseWindow(wxCloseEvent &event);
-	void OnMinimizeWindow(wxIconizeEvent &event);
-
-	wxDECLARE_EVENT_TABLE();
 };
 
 

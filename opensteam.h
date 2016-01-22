@@ -54,6 +54,15 @@ public:
 	SteamThread();
 	~SteamThread();
 
+	// Load Steam
+	STEAM_ERROR_TYP Load();
+
+	// Cleanup Steam
+	void Clean();
+
+	// Convert to community ID
+	static CSteamID SteamIdtoCSteamId(wxString steamId);
+
 	wxString GetUserSteamId() {
 		return this->steamid;
 	}
@@ -61,11 +70,6 @@ public:
 	bool IsConnected() {
 		return this->isConnected;
 	}
-
-	STEAM_ERROR_TYP Load();
-
-	// Cleanup Steam
-	void Clean();
 
 protected:
 	virtual wxThread::ExitCode Entry();

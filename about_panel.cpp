@@ -100,7 +100,7 @@ void AboutPanel::UpdateVersionText(wxString currentVersion, wxColor color) {
 // Button Event -> Check for Update
 void AboutPanel::OnUpdate(wxCommandEvent &WXUNUSED(event)) {
 	// Log Action
-	caLogAction("Check for a new Update");
+	caLogAction("Check for a new Update", LogLevel::LEVEL_DEBUG);
 	caGetApp().CheckUpdate();
 }
 
@@ -108,6 +108,6 @@ void AboutPanel::OnUpdate(wxCommandEvent &WXUNUSED(event)) {
 // Button Event -> Download Update
 void AboutPanel::OnDownload(wxCommandEvent &WXUNUSED(event)) {
 	// Log Action
-	caLogAction("Download new Update");
+	caLogAction("Download new Update", LogLevel::LEVEL_DEBUG);
 	caGetApp().StartUpdate();
 }

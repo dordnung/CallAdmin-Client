@@ -68,14 +68,14 @@ bool TrackerPanel::InitPanel() {
 // Update Trackers List
 void TrackerPanel::UpdateTrackerList() {
 	// Get the Trackers Page
-	caGetApp().GetPage(TrackerPanel::RefreshTrackers, caGetConfig()->GetPage() + "/trackers.php?from=20&from_type=interval&key=" + caGetConfig()->GetKey());
+	caGetApp().GetPage(TrackerPanel::RefreshTrackers, caGetConfig()->GetPage() + "/trackers.php?from=25&from_type=interval&key=" + caGetConfig()->GetKey());
 }
 
 
 // Got current trackers
 void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNUSED(extra)) {
 	// Log Action
-	caLogAction("Retrieved current trackers");
+	caLogAction("Retrieved current trackers", LogLevel::LEVEL_DEBUG);
 
 	wxString error = "";
 
@@ -125,7 +125,7 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 								wxString steamidString = node3->FirstChild()->Value();
 
 								// Build csteamid
-								CSteamID steamidTracker = CallDialog::SteamIdtoCSteamId(steamidString);
+								CSteamID steamidTracker = SteamThread::SteamIdtoCSteamId(steamidString);
 
 								// Valid Tracker ID?
 								if (steamidTracker.IsValid()) {
@@ -134,7 +134,7 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 										// Create Name Timer
 										caGetTrackerPanel()->GetNameTimers()->push_back(new NameTimer(steamidTracker));
 									} else {
-										caGetTrackerPanel()->AddTracker(steamidTracker.Render());
+										caGetTrackerPanel()->AddTracker(steamidString, steamidString);
 									}
 
 									found = true;
@@ -165,10 +165,9 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 
 	// Seems we found no tracker
 	if (error != "") {
-		caGetTrackerPanel()->AddTracker("No trackers available");
+		caGetTrackerPanel()->AddTracker("No trackers available", "");
 	} else {
-		caLogAction("Couldn't retrieve trackers! " + error, LogLevel::LEVEL_ERROR);
-		caGetTaskBarIcon()->ShowMessage("Couldn't retrieve trackers!", error, caGetTrackerPanel());
+		caGetTaskBarIcon()->ShowMessage("Couldn't retrieve trackers!", error, caGetTrackerPanel(), true);
 
 	}
 }
@@ -208,6 +207,9 @@ void NameTimer::Notify() {
 		return;
 	}
 
+	// Get steamId
+	wxString steamId = this->client.Render();
+
 	// Steam available?
 	if (caGetSteamThread()->IsConnected()) {
 		OpenSteamHelper *helper = OpenSteamHelper::GetInstance();
@@ -227,9 +229,9 @@ void NameTimer::Notify() {
 			}
 
 			// Format tracker Text
-			wxString trackerText = (wxString)helper->SteamFriends()->GetFriendPersonaName(this->client) + " - " + (wxString)this->client.Render();
+			wxString trackerText = (wxString)helper->SteamFriends()->GetFriendPersonaName(this->client) + " - " + steamId;
 
-			if (this->client.Render() != caGetSteamThread()->GetUserSteamId()) {
+			if (steamId != caGetSteamThread()->GetUserSteamId()) {
 				if (isFriend) {
 					trackerText += " - Friend";
 
@@ -244,7 +246,7 @@ void NameTimer::Notify() {
 			}
 
 			// Finally add tracker
-			caGetTrackerPanel()->AddTracker(trackerText);
+			caGetTrackerPanel()->AddTracker(trackerText, steamId);
 
 			// Delete because it's finished
 			delete this;
@@ -253,7 +255,7 @@ void NameTimer::Notify() {
 
 	// 5 seconds gone?
 	if (++this->attempts == 50) {
-		caGetTrackerPanel()->AddTracker(this->client.Render());
+		caGetTrackerPanel()->AddTracker(steamId, steamId);
 
 		// Enough, delete timer
 		delete this;

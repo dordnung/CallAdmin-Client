@@ -35,6 +35,54 @@
 #include "opensteam.h"
 
 
+class NameTimer;
+
+class TrackerPanel : public wxScrolledWindow {
+private:
+	// The running NameTimers
+	wxVector<NameTimer *> nameTimers;
+
+	// All current trackers
+	wxVector<wxString> currentTrackers;
+
+	wxListBox *trackerBox;
+
+public:
+	TrackerPanel() : trackerBox(NULL) {};
+	~TrackerPanel();
+
+	// Init Panel with controls
+	bool InitPanel();
+
+	// Update the tracker list
+	void UpdateTrackerList();
+
+	// Refresh the tracker list
+	static void RefreshTrackers(wxString errorStr, wxString result, int extra);
+
+	void AddTracker(wxString text, wxString steamid) {
+		this->trackerBox->Append(wxString::FromUTF8(text));
+
+		if (steamid != "") {
+			this->currentTrackers.push_back(steamid);
+		}
+	}
+
+	void DeleteTrackers() {
+		this->trackerBox->Clear();
+		this->currentTrackers.clear();
+	}
+
+	wxVector<NameTimer *> *GetNameTimers() {
+		return &nameTimers;
+	}
+
+	wxVector<wxString> *GetCurrentTrackers() {
+		return &currentTrackers;
+	}
+};
+
+
 // Name Timer to load names from Steam Lib
 class NameTimer : public wxTimer {
 private:
@@ -51,40 +99,6 @@ public:
 protected:
 	// Timer executed
 	virtual void Notify();
-};
-
-
-class TrackerPanel : public wxScrolledWindow {
-private:
-	// The running NameTimers
-	wxVector<NameTimer *> nameTimers;
-
-	wxListBox *trackerBox;
-
-public:
-	TrackerPanel() : trackerBox(NULL) {};
-	~TrackerPanel();
-
-	// Init Panel with controls
-	bool InitPanel();
-
-	void AddTracker(wxString text) {
-		this->trackerBox->Append(wxString::FromUTF8(text));
-	}
-
-	void DeleteTrackers() {
-		this->trackerBox->Clear();
-	}
-
-	wxVector<NameTimer *>* GetNameTimers() {
-		return &nameTimers;
-	}
-
-	// Update the tracker list
-	void UpdateTrackerList();
-
-	// Refresh the tracker list
-	static void RefreshTrackers(wxString errorStr, wxString result, int extra);
 };
 
 #endif

@@ -62,12 +62,12 @@ public:
 	void ParseConfig();
 
 protected:
-	void OnSet(wxCommandEvent &event);
 	void OnSliderChanged(wxCommandEvent &event);
 	void OnLogLevelUpdate(wxCommandEvent &event);
 	void OnSteamUpdate(wxCommandEvent &event);
 	void OnShowInTaskbarUpdate(wxCommandEvent &event);
 	void OnHideUpdate(wxCommandEvent &event);
+	void OnSet(wxCommandEvent &event);
 
 	wxDECLARE_EVENT_TABLE();
 };

@@ -24,6 +24,8 @@
 #include "opensteam.h"
 #include "calladmin-client.h"
 
+#include <wx/tokenzr.h>
+
 #ifdef __WXMSW__
 	// Memory leak detection for debugging 
 	#include <wx/msw/msvcrt.h>
@@ -60,81 +62,7 @@ SteamThread::~SteamThread() {
 }
 
 
-// Thread started
-wxThread::ExitCode SteamThread::Entry() {
-	for (; !GetThread()->TestDestroy(); wxMilliSleep(100)) {
-		if (!this->isConnected) {
-			// Load Steam
-			STEAM_ERROR_TYP steamError = Load();
-
-			// Check if steam could be loaded
-			if (steamError != STEAM_NO_ERROR) {
-				// Clean
-				Clean();
-
-				if (steamError == STEAM_ERROR) {
-					// Only if connected before
-					if (this->isConnected) {
-						// Notice changes to main panel
-						caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
-						caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Couldn't connect to Steam", LogLevel::LEVEL_ERROR);
-					}
-				} else {
-					// Disabled
-					if (this->lastError != STEAM_DISABLED) {
-						// Notice changes to main panel
-						caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 0);
-					}
-				}
-			} else {
-				// Connected :)
-				this->steamid = OpenSteamHelper::GetInstance()->SteamUser()->GetSteamID().Render();
-
-				// Notice changes to main panel
-				this->isConnected = true;
-
-				caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 2);
-				caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Connected to Steam", LogLevel::LEVEL_INFO);
-
-				// Load avatars that not loaded, yet
-				for (wxVector<CallDialog *>::iterator callDialog = caGetCallDialogs()->begin(); callDialog != caGetCallDialogs()->end(); ++callDialog) {
-					if (!(*callDialog)->GetAvatarsLoaded()) {
-						(*callDialog)->GetEventHandler()->CallAfter(&CallDialog::LoadAvatars);
-					}
-				}
-			}
-
-
-			this->lastError = steamError;
-		}
-
-		// If connected check if still logged in and Steam is still opened
-		if (this->isConnected) {
-			static unsigned int i = 0;
-
-			if (++i % 10 == 0) {
-				// Check if logged in
-				if (!OpenSteamHelper::GetInstance()->SteamAPI_IsSteamRunning()) {
-					// Notice changes to main panel
-					caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
-					caGetLogPanel()->GetEventHandler()->CallAfter(&LogPanel::AddLog, "Disconnected from Steam", LogLevel::LEVEL_INFO);
-
-					// Clean Steam
-					Clean();
-
-					continue;
-				}
-			}
-		}
-	}
-
-	// Clean on end
-	Clean();
-
-	return (wxThread::ExitCode)0;
-}
-
-
+// Load Steam
 STEAM_ERROR_TYP SteamThread::Load() {
 	if (!caGetConfig()->GetSteamEnabled()) {
 		// Don't want Steam
@@ -159,4 +87,116 @@ void SteamThread::Clean() {
 
 	// Use Steam helper
 	OpenSteamHelper::GetInstance()->SteamAPI_Shutdown();
+}
+
+
+// We need the 64bit int id
+CSteamID SteamThread::SteamIdtoCSteamId(wxString steamId) {
+	CSteamID cSteamId;
+
+	// To small
+	if (wxStrlen(steamId) < 11) {
+		return cSteamId;
+	}
+
+	// Strip the steamid
+	wxStringTokenizer tokenizer(steamId, ":");
+
+	// There should be three tokens
+	if (tokenizer.CountTokens() < 3) {
+		return cSteamId;
+	}
+
+	tokenizer.GetNextToken();
+	int server = wxAtoi(tokenizer.GetNextToken());
+	int authId = wxAtoi(tokenizer.GetNextToken());
+
+	// Wrong Format
+	if (authId == 0) {
+		return cSteamId;
+	}
+
+	uint64 uintId = (uint64)authId * 2;
+
+	// Convert to a uint64
+	uintId += 76561197960265728 + server;
+
+	cSteamId.SetFromUint64(uintId);
+
+	// Return it
+	return cSteamId;
+}
+
+
+// Thread started
+wxThread::ExitCode SteamThread::Entry() {
+	for (; !GetThread()->TestDestroy(); wxMilliSleep(100)) {
+		if (!this->isConnected) {
+			// Load Steam
+			STEAM_ERROR_TYP steamError = Load();
+
+			// Check if steam could be loaded
+			if (steamError != STEAM_NO_ERROR) {
+				// Clean
+				Clean();
+
+				if (steamError == STEAM_ERROR) {
+					// Only if connected before
+					if (this->isConnected) {
+						// Notice changes to main panel
+						caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
+						caGetApp().CallAfter(&CallAdmin::LogAction, "Couldn't connect to Steam", LogLevel::LEVEL_ERROR);
+					}
+				} else {
+					// Disabled
+					if (this->lastError != STEAM_DISABLED) {
+						// Notice changes to main panel
+						caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 0);
+					}
+				}
+			} else {
+				// Connected :)
+				this->steamid = OpenSteamHelper::GetInstance()->SteamUser()->GetSteamID().Render();
+
+				// Notice changes to main panel
+				this->isConnected = true;
+
+				caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 2);
+				caGetApp().CallAfter(&CallAdmin::LogAction, "Connected to Steam", LogLevel::LEVEL_INFO);
+
+				// Load avatars that not loaded, yet
+				for (wxVector<CallDialog *>::iterator callDialog = caGetCallDialogs()->begin(); callDialog != caGetCallDialogs()->end(); ++callDialog) {
+					if (!(*callDialog)->GetAvatarsLoaded()) {
+						(*callDialog)->GetEventHandler()->CallAfter(&CallDialog::LoadAvatars);
+					}
+				}
+			}
+
+
+			this->lastError = steamError;
+		}
+
+		// If connected check if steam is still opened
+		if (this->isConnected) {
+			static unsigned int i = 0;
+
+			if (++i % 10 == 0) {
+				if (!OpenSteamHelper::GetInstance()->SteamAPI_IsSteamRunning()) {
+					// Notice changes to main panel
+					caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
+					caGetApp().CallAfter(&CallAdmin::LogAction, "Disconnected from Steam", LogLevel::LEVEL_INFO);
+
+					// Clean Steam
+					Clean();
+
+					continue;
+				}
+			}
+		}
+	}
+
+	// Clean on end
+	Clean();
+
+	return (wxThread::ExitCode)0;
 }

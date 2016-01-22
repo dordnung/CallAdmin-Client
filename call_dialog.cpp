@@ -26,7 +26,6 @@
 
 #include "tinyxml2/tinyxml2.h"
 
-#include <wx/tokenzr.h>
 #include <wx/statline.h>
 #include <wx/tooltip.h>
 #include <wx/xrc/xmlres.h>
@@ -46,7 +45,6 @@ wxBEGIN_EVENT_TABLE(CallDialog, wxDialog)
 	EVT_BUTTON(XRCID("contactTrackersButton"), CallDialog::OnContactTrackers)
 
 	EVT_CLOSE(CallDialog::OnCloseWindow)
-	EVT_ICONIZE(CallDialog::OnMinimizeWindow)
 wxEND_EVENT_TABLE()
 
 
@@ -80,11 +78,11 @@ bool CallDialog::StartCall(bool show) {
 
 	// New Call
 	FIND_OR_FAIL(text, XRCCTRL(*this, "contactText", wxStaticText), "contactText");
-	text->SetLabel(wxString::FromUTF8(this->serverName));
+	text->SetLabel(this->serverName);
 
 	// New Call At
 	FIND_OR_FAIL(text, XRCCTRL(*this, "callAtText", wxStaticText), "callAtText");
-	text->SetLabel(text->GetLabel() + wxDateTime((time_t)GetTime()).Format("%c"));
+	text->SetLabel(text->GetLabel() + this->reportedAt);
 
 	// Handled
 	FIND_OR_FAIL(this->doneText, XRCCTRL(*this, "doneText", wxStaticText), "doneText");
@@ -145,6 +143,7 @@ bool CallDialog::StartCall(bool show) {
 
 	// Takeover button
 	FIND_OR_FAIL(this->takeover, XRCCTRL(*this, "takeoverButton", wxButton), "takeoverButton");
+	this->takeover->Enable(!this->isHandled);
 
 	// Contect trackers button
 	FIND_OR_FAIL(this->contactTrackers, XRCCTRL(*this, "contactTrackersButton", wxButton), "contactTrackersButton");
@@ -186,227 +185,10 @@ void CallDialog::SetFinish() {
 }
 
 
-// We need the 64bit int id
-CSteamID CallDialog::SteamIdtoCSteamId(wxString steamId) {
-	CSteamID cSteamId;
-
-	// To small
-	if (wxStrlen(steamId) < 11) {
-		return cSteamId;
-	}
-
-	// Strip the steamid
-	wxStringTokenizer tokenizer(steamId, ":");
-
-	// There should be three tokens
-	if (tokenizer.CountTokens() < 3) {
-		return cSteamId;
-	}
-
-	tokenizer.GetNextToken();
-	int server = wxAtoi(tokenizer.GetNextToken());
-	int authId = wxAtoi(tokenizer.GetNextToken());
-
-	// Wrong Format
-	if (authId == 0) {
-		return cSteamId;
-	}
-
-	uint64 uintId = (uint64)authId * 2;
-
-	// Convert to a uint64
-	uintId += 76561197960265728 + server;
-
-	cSteamId.SetFromUint64(uintId);
-
-	// Return it
-	return cSteamId;
-}
-
-
-// Button Event -> Connect to Server
-void CallDialog::OnConnect(wxCommandEvent &WXUNUSED(event)) {
-	// Log Action
-	caLogAction("Connect to the Server " + this->fullIP);
-
-	#if defined(__WXMSW__)
-		wxExecute("explorer steam://connect/" + this->fullIP);
-	#else
-		wxExecute("steam steam://connect/" + this->fullIP);
-	#endif
-
-	Show(false);
-}
-
-
-// Mark it as finished
-void CallDialog::OnCheck(wxCommandEvent &WXUNUSED(event)) {
-	// Log Action
-	caLogAction("Mark call " + this->callId + " as finished");
-
-	// page
-	wxString page = caGetConfig()->GetPage() + "/takeover.php?callid=" + this->callId + "&key=" + caGetConfig()->GetKey();
-
-	// Get Page
-	caGetApp().GetPage(CallDialog::OnChecked, page, this->id);
-}
-
-
-// Contact Client
-void CallDialog::OnContactClient(wxCommandEvent &WXUNUSED(event)) {
-	// Log Action
-	caLogAction("Contacted Client " + (wxString)this->clientCId.Render());
-
-	// Open Chat
-	#if defined(__WXMSW__)
-		wxExecute("explorer steam://friends/message/" + wxString() << this->clientCId.ConvertToUint64());
-	#else
-		wxExecute("steam steam://friends/message/" + wxString() << this->clientCId.ConvertToUint64());
-	#endif
-}
-
-
-// Contact Target
-void CallDialog::OnContactTarget(wxCommandEvent &WXUNUSED(event)) {
-	// Log Action
-	caLogAction("Contacted target " + (wxString)this->targetCId.Render());
-
-	// Open Chat
-	#if defined(__WXMSW__)
-		wxExecute("explorer steam://friends/message/" + wxString() << this->targetCId.ConvertToUint64());
-	#else
-		wxExecute("steam steam://friends/message/" + wxString() << this->targetCId.ConvertToUint64());
-	#endif
-}
-
-
-// Contact Trackers
-void CallDialog::OnContactTrackers(wxCommandEvent &WXUNUSED(event)) {
-	// Log Action
-	caLogAction("Contacting current Trackers");
-
-	// Are we steam connected?
-	if (caGetSteamThread()->IsConnected()) {
-		// page
-		wxString page = caGetConfig()->GetPage() + "/trackers.php?from=25&from_type=interval&key=" + caGetConfig()->GetKey();
-
-		caGetApp().GetPage(CallDialog::OnGetTrackers, page, this->id);
-
-		return;
-	}
-
-	caGetTaskBarIcon()->ShowMessage("Couldn't contact trackers!", "You're not connected to STEAM!", this);
-}
-
-
-// Contact Client
-void CallDialog::OnGetTrackers(wxString errorStr, wxString result, int x) {
-	// Log Action
-	caLogAction("Got Trackers for call dialog");
-
-	wxString error = "";
-
-	if (result != "") {
-		// Everything good :)
-		if (errorStr == "") {
-			// Proceed XML result!
-			tinyxml2::XMLDocument doc;
-			tinyxml2::XMLNode *node;
-			tinyxml2::XMLError parseError;
-
-			// Parse the xml data
-			parseError = doc.Parse(result);
-
-			// Parsing good :)?
-			if (parseError == tinyxml2::XML_SUCCESS) {
-				// Goto xml child
-				node = doc.FirstChild();
-
-				// Goto CallAdmin_Trackers
-				if (node != NULL) {
-					node = node->NextSibling();
-				}
-
-				// Found Trackers?
-				if (node != NULL) {
-					// found someone?
-					bool found = false;
-
-					// Tracker Loop
-					for (tinyxml2::XMLNode *node2 = node->FirstChild(); node2; node2 = node2->NextSibling()) {
-						// API Error?
-						if ((wxString)node2->Value() == "error") {
-							error = node2->FirstChild()->Value();
-
-							break;
-						}
-
-						// Search admin steamids
-						for (tinyxml2::XMLNode *node3 = node2->FirstChild(); node3; node3 = node3->NextSibling()) {
-							// Found steamid
-							if ((wxString)node3->Value() == "trackerID" && caGetSteamThread()->IsConnected()) {
-								wxString steamidString = node3->FirstChild()->Value();
-
-								// Build csteamid
-								CSteamID steamidTracker = caGetCallDialogs()->at(x)->SteamIdtoCSteamId(steamidString);
-
-								// Are we friends and is tracker online? :))
-								if (steamidTracker.IsValid() && OpenSteamHelper::GetInstance()->SteamFriends()->GetFriendRelationship(steamidTracker) == k_EFriendRelationshipFriend && OpenSteamHelper::GetInstance()->SteamFriends()->GetFriendPersonaState(steamidTracker) != k_EPersonaStateOffline) {
-									// Now we write a message
-									OpenSteamHelper::GetInstance()->SteamFriends()->ReplyToFriendMessage(steamidTracker, "Hey, i contact you because of the call from " + caGetCallDialogs()->at(x)->GetClient() + " about " + caGetCallDialogs()->at(x)->GetTarget());
-
-									// And we found someone :)
-									if (!found) {
-										found = true;
-
-										// So no contacting possible anymore
-										caGetCallDialogs()->at(x)->GetContactTrackersButton()->Enable(false);
-									}
-								}
-							}
-						}
-					}
-
-					// Have we found something?
-					if (found) {
-						// We are finished :)
-						return;
-					}
-
-				}
-			} else {
-				// XML ERROR
-				error = "XML ERROR: Couldn't parse the trackers API!";
-
-				// Log Action
-				caLogAction("XML Error in trackers API", LogLevel::LEVEL_ERROR);
-			}
-		} else {
-			// Curl error
-			error = errorStr;
-
-			// Log Action
-			caLogAction("CURL Error " + error, LogLevel::LEVEL_ERROR);
-		}
-	} else {
-		// Curl error
-		error = "Couldn't init. CURL connection";
-	}
-
-
-	// Seems we found no one
-	if (error == "") {
-		error = "Found no available tracker on your friendlist!";
-	}
-
-	caGetTaskBarIcon()->ShowMessage("Couldn't contact trackers!", error, caGetCallDialogs()->at(x));
-}
-
-
 // Mark checked
 void CallDialog::OnChecked(wxString errorStr, wxString result, int x) {
 	// Log Action
-	caLogAction("Marked call " + caGetCallDialogs()->at(x)->GetId() + " as finished");
+	caLogAction("Marked call " + caGetCallDialogs()->at(x)->GetId() + " as finished", LogLevel::LEVEL_INFO);
 
 	wxString error = "";
 
@@ -465,7 +247,94 @@ void CallDialog::OnChecked(wxString errorStr, wxString result, int x) {
 		error = "Invalid XML structure!";
 	}
 
-	caGetTaskBarIcon()->ShowMessage("Couldn't take over call!", error, caGetCallDialogs()->at(x));
+	caGetTaskBarIcon()->ShowMessage("Couldn't take over call!", error, caGetCallDialogs()->at(x), true);
+}
+
+
+// Button Event -> Connect to Server
+void CallDialog::OnConnect(wxCommandEvent &WXUNUSED(event)) {
+	// Log Action
+	caLogAction("Connect to the Server " + this->fullIP, LogLevel::LEVEL_INFO);
+
+	#if defined(__WXMSW__)
+		wxExecute("explorer steam://connect/" + this->fullIP);
+	#else
+		wxExecute("steam steam://connect/" + this->fullIP);
+	#endif
+
+	Show(false);
+}
+
+
+// Mark it as finished
+void CallDialog::OnCheck(wxCommandEvent &WXUNUSED(event)) {
+	// Log Action
+	caLogAction("Mark call " + this->callId + " as finished", LogLevel::LEVEL_INFO);
+
+	// page
+	wxString page = caGetConfig()->GetPage() + "/takeover.php?callid=" + this->callId + "&key=" + caGetConfig()->GetKey();
+
+	// Get Page
+	caGetApp().GetPage(CallDialog::OnChecked, page, this->id);
+}
+
+
+// Contact Client
+void CallDialog::OnContactClient(wxCommandEvent &WXUNUSED(event)) {
+	// Log Action
+	caLogAction("Contacted Client " + this->clientId, LogLevel::LEVEL_INFO);
+
+	// Open Chat
+	#if defined(__WXMSW__)
+		wxExecute("explorer steam://friends/message/" + wxString() << this->clientCId.ConvertToUint64());
+	#else
+		wxExecute("steam steam://friends/message/" + wxString() << this->clientCId.ConvertToUint64());
+	#endif
+}
+
+
+// Contact Target
+void CallDialog::OnContactTarget(wxCommandEvent &WXUNUSED(event)) {
+	// Log Action
+	caLogAction("Contacted target " + this->targetId, LogLevel::LEVEL_INFO);
+
+	// Open Chat
+	#if defined(__WXMSW__)
+		wxExecute("explorer steam://friends/message/" + wxString() << this->targetCId.ConvertToUint64());
+	#else
+		wxExecute("steam steam://friends/message/" + wxString() << this->targetCId.ConvertToUint64());
+	#endif
+}
+
+
+// Contact Trackers
+void CallDialog::OnContactTrackers(wxCommandEvent &WXUNUSED(event)) {
+	// Log Action
+	caLogAction("Contacting current Trackers", LogLevel::LEVEL_INFO);
+
+	if (!caGetSteamThread()->IsConnected()) {
+		caGetTaskBarIcon()->ShowMessage("Couldn't contact trackers!", "You're not connected to STEAM!", this, false);
+	}
+
+	if (caGetTrackerPanel()->GetCurrentTrackers()->empty()) {
+		caGetTaskBarIcon()->ShowMessage("Couldn't contact trackers!", "Found no available tracker on your friendlist!", this, false);
+	}
+
+	for (wxVector<wxString>::iterator tracker = caGetTrackerPanel()->GetCurrentTrackers()->begin(); tracker != caGetTrackerPanel()->GetCurrentTrackers()->end(); ++tracker) {
+		// Build csteamid
+		CSteamID steamidTracker = SteamThread::SteamIdtoCSteamId(*tracker);
+
+		// Are we friends and is tracker online? :))
+		OpenSteamHelper *helper = OpenSteamHelper::GetInstance();
+
+		if (steamidTracker.IsValid() && helper->SteamFriends()->GetFriendRelationship(steamidTracker) == k_EFriendRelationshipFriend && helper->SteamFriends()->GetFriendPersonaState(steamidTracker) != k_EPersonaStateOffline) {
+			// Now we write a message
+			helper->SteamFriends()->ReplyToFriendMessage(steamidTracker, "Hey, i contact you because of the call from " + this->clientId + " about " + this->targetId);
+
+			// And we found someone, so no contacting possible anymore
+			this->contactTrackers->Enable(false);
+		}
+	}
 }
 
 
@@ -473,16 +342,6 @@ void CallDialog::OnChecked(wxString errorStr, wxString result, int x) {
 void CallDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event)) {
 	Show(false);
 }
-
-
-// Window Event -> Hide Window
-void CallDialog::OnMinimizeWindow(wxIconizeEvent& WXUNUSED(event)) {
-	if (caGetConfig()->GetHideOnMinimize()) {
-		Show(false);
-	}
-}
-
-
 
 
 // Init. Timer
@@ -507,43 +366,6 @@ AvatarTimer::AvatarTimer(CallDialog *dialog, CSteamID *clientId, CSteamID *targe
 
 	if (this->targetId == NULL || !this->targetId->IsValid()) {
 		this->targetLoaded = true;
-	}
-}
-
-
-// Timer to update avatars
-void AvatarTimer::Notify() {
-	if (!caGetApp().IsRunning()) {
-		// Already ended
-		delete this;
-		return;
-	}
-
-	// Steam available?
-	if (caGetSteamThread()->IsConnected()) {
-		// Do we have information about the users?
-		// Load the images
-		if (!this->clientLoaded) {
-			if (!OpenSteamHelper::GetInstance()->SteamFriends()->RequestUserInformation(*this->clientId, false)) {
-				// Try to laod caller avatar
-				this->clientLoaded = SetAvatar(this->clientId, this->clientAvatar);
-			}
-		}
-
-		if (!this->targetLoaded) {
-			if (!OpenSteamHelper::GetInstance()->SteamFriends()->RequestUserInformation(*this->targetId, false)) {
-				// Try to laod target avatar
-				this->targetLoaded = SetAvatar(this->targetId, this->targetAvatar);
-			}
-		}
-	}
-
-	// All loaded or 10 seconds gone?
-	if (++this->attempts == 100 || (this->clientLoaded && this->targetLoaded)) {
-		this->dialog->SetAvatarsLoaded();
-
-		// Enough, stop timer
-		delete this;
 	}
 }
 
@@ -584,7 +406,7 @@ bool AvatarTimer::SetAvatar(CSteamID *id, wxStaticBitmap *map) {
 				image.Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize());
 				map->SetBitmap(wxBitmap(image));
 
-				caLogAction("Loaded Avatar of " + (wxString)id->Render());
+				caLogAction("Loaded Avatar of " + (wxString)id->Render(), LogLevel::LEVEL_INFO);
 
 				// Clean
 				delete[] rgbaBuffer;
@@ -599,4 +421,40 @@ bool AvatarTimer::SetAvatar(CSteamID *id, wxStaticBitmap *map) {
 	}
 
 	return false;
+}
+
+
+// Timer to update avatars
+void AvatarTimer::Notify() {
+	if (!caGetApp().IsRunning()) {
+		// Already ended
+		delete this;
+		return;
+	}
+
+	// Steam available?
+	if (caGetSteamThread()->IsConnected()) {
+		// Do we have information about the users?
+		if (!this->clientLoaded) {
+			if (!OpenSteamHelper::GetInstance()->SteamFriends()->RequestUserInformation(*this->clientId, false)) {
+				// Try to laod caller avatar
+				this->clientLoaded = SetAvatar(this->clientId, this->clientAvatar);
+			}
+		}
+
+		if (!this->targetLoaded) {
+			if (!OpenSteamHelper::GetInstance()->SteamFriends()->RequestUserInformation(*this->targetId, false)) {
+				// Try to laod target avatar
+				this->targetLoaded = SetAvatar(this->targetId, this->targetAvatar);
+			}
+		}
+	}
+
+	// All loaded or 10 seconds gone?
+	if (++this->attempts == 100 || (this->clientLoaded && this->targetLoaded)) {
+		this->dialog->SetAvatarsLoaded();
+
+		// Enough, stop timer
+		delete this;
+	}
 }

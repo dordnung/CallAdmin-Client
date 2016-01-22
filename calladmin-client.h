@@ -91,14 +91,40 @@ private:
 	// Still running?
 	bool isRunning;
 
+protected:
+	// Where all began :)
+	virtual bool OnInit();
+
+	// Command line arguments
+	virtual void OnInitCmdLine(wxCmdLineParser &parser);
+	virtual bool OnCmdLineParsed(wxCmdLineParser &parser);
+
 public:
 	CallAdmin();
 
 	void StartTimer();
 	void StartSteamThread();
+
 	void StartUpdate();
+	void CheckUpdate();
+
+	void CreateReconnect(wxString error);
+	void ShowError(wxString error, wxString type);
+
+	void ExitProgramm();
+
+	void OnCurlThread(CurlThreadData *data);
 
 	void GetPage(CurlCallback callbackFunction, wxString page, int extra = 0);
+	wxString GetRelativePath(wxString relativeFileOrPath);
+
+	static void OnUpdate(wxString error, wxString result, int extra);
+
+	void LogAction(wxString action, LogLevel logLevel) {
+		if (this->isRunning && this->mainFrame && this->mainFrame->GetNotebook() && this->mainFrame->GetNotebook()->GetLogPanel()) {
+			this->mainFrame->GetNotebook()->GetLogPanel()->AddLog(action, logLevel);
+		}
+	}
 
 	bool IsRunning() {
 		return this->isRunning;
@@ -128,38 +154,22 @@ public:
 		return this->avatarSize;
 	}
 
-	int GetAttempts() {
-		return this->attempts;
+	void ResetAttempts() {
+		this->attempts = 0;
+
+		// Update Main Interface
+		this->mainFrame->SetTitle("CallAdmin Client");
+		this->mainFrame->GetNotebook()->GetMainPanel()->SetStatusText("Waiting for a new report");
 	}
-
-	void SetAttempts(int attempts) {
-		this->attempts = attempts;
-	}
-
-	wxString GetRelativePath(wxString relativeFileOrPath);
-
-	void CheckUpdate();
-	void CreateReconnect(wxString error);
-	void ShowError(wxString error, wxString type);
-
-	void ExitProgramm();
-
-	void LogAction(wxString action, LogLevel logLevel = LEVEL_INFO) {
-		this->mainFrame->GetNotebook()->GetLogPanel()->AddLog(action, logLevel);
-	}
-
-	static void OnUpdate(wxString error, wxString result, int extra);
-
-	void OnCurlThread(CurlThreadData *data);
-
-protected:
-	// Where all began :)
-	virtual bool OnInit();
-
-	// Command line arguments
-	virtual void OnInitCmdLine(wxCmdLineParser &parser);
-	virtual bool OnCmdLineParsed(wxCmdLineParser &parser);
 };
+
+
+// Defined in resource.cpp
+extern void InitXmlResource();
+
+
+// Declare the app
+wxDECLARE_APP(CallAdmin);
 
 
 // For Windows: Check if other app is in fullscreen mode
@@ -190,25 +200,17 @@ inline BOOL CALLBACK CheckMaximized(HWND hwnd, LPARAM lParam) {
 
 
 inline bool isOtherInFullscreen() {
-#if defined(__WXMSW__)
-	bool otherAppInFullscreen = false;
+	#if defined(__WXMSW__)
+		bool otherAppInFullscreen = false;
 
-	EnumWindows((WNDENUMPROC)CheckMaximized, (LPARAM)&otherAppInFullscreen);
+		EnumWindows((WNDENUMPROC)CheckMaximized, (LPARAM)&otherAppInFullscreen);
 
-	// Return result
-	return otherAppInFullscreen;
-#else
-	// Not for Linux
-	return false;
-#endif
+		// Return result
+		return otherAppInFullscreen;
+	#else
+		// Not for Linux
+		return false;
+	#endif
 }
-
-
-// Declare the app
-wxDECLARE_APP(CallAdmin);
-
-
-// Defined in resource.cpp
-extern void InitXmlResource();
 
 #endif

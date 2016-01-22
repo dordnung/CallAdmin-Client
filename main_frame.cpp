@@ -34,10 +34,10 @@
 
 
 // Events for Main Frame
-BEGIN_EVENT_TABLE(MainFrame, wxFrame)
+wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_CLOSE(MainFrame::OnCloseWindow)
 	EVT_ICONIZE(MainFrame::OnMinimizeWindow)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 
 // Init Main Frame (Window)
@@ -53,14 +53,15 @@ bool MainFrame::InitFrame(bool createInTaskbar) {
 	FIND_OR_FAIL(notebook, XRCCTRL(*this, "notebook", wxNotebook), "notebook");
 
 	this->notebook = new Notebook(notebook);
+
 	if (!this->notebook->CreatePages()) {
 		return false;
 	}
 
 	caLogAction("Created Notebook and loaded pages successfully!", LogLevel::LEVEL_DEBUG);
 
-	// Start in taskbar?
-	Show(!createInTaskbar || !caGetTaskBarIcon()->IsAvailable());
+	// Start in taskbar only?
+	Show(!createInTaskbar);
 
 	// Fit Notebook
 	this->notebook->GetWindow()->Fit();
@@ -75,26 +76,25 @@ bool MainFrame::InitFrame(bool createInTaskbar) {
 }
 
 
-// Window Event -> Exit programm
+// Close Event -> Exit programm
 void MainFrame::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {
+	caLogAction("Main frame close event fired", LogLevel::LEVEL_DEBUG);
 	caGetApp().ExitProgramm();
 }
 
 
-// Window Event -> Hide Window
-void MainFrame::OnMinimizeWindow(wxIconizeEvent &WXUNUSED(event)) {
-	caLogAction("Hided main frame", LogLevel::LEVEL_DEBUG);
+// Minimize Event -> Hide Window
+void MainFrame::OnMinimizeWindow(wxIconizeEvent &event) {
+	caLogAction("Main frame minimize event fired", LogLevel::LEVEL_DEBUG);
 
 	if (caGetConfig()->GetHideOnMinimize()) {
 		if (caGetTaskBarIcon()->IsAvailable()) {
 			// Log Action
-			caLogAction("Hided main frame to taskbar", LogLevel::LEVEL_DEBUG);
+			caLogAction("Hid main frame to taskbar", LogLevel::LEVEL_DEBUG);
 
-			Show(false);
+			Show(!event.IsIconized());
 		} else {
-			caLogAction("Hided main frame (Taskbar not available)", LogLevel::LEVEL_DEBUG);
-
-			Iconize(true);
+			caLogAction("Hid main frame (Taskbar not available)", LogLevel::LEVEL_DEBUG);
 		}
 	}
 }

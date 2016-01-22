@@ -57,46 +57,51 @@ wxBEGIN_EVENT_TABLE(TaskBarIcon, wxTaskBarIcon)
 wxEND_EVENT_TABLE()
 
 
-// Constructor: Set Taskbar icon
-TaskBarIcon::TaskBarIcon() {
+// Add the icon
+void TaskBarIcon::AddIcon() {
 	SetIcon(caGetMainFrame()->GetIcon(), "CallAdmin Client");
 }
 
 
 // Show a information whether in the taskbar or as dialog if taskbar messages are not available
-void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow *parent) {
+void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow *parent, bool isError) {
+	caLogAction("[" + title + "] " + message, isError ? LogLevel::LEVEL_ERROR : LogLevel::LEVEL_INFO);
+
 	// Only if not other app is in fullscreen, otherwise it would be minimized
 	if (!isOtherInFullscreen()) {
-		#if defined(__WXMSW__) && defined(wxUSE_TASKBARICON_BALLOONS) && wxUSE_TASKBARICON_BALLOONS
+		#if defined(wxUSE_TASKBARICON_BALLOONS) && wxUSE_TASKBARICON_BALLOONS
 			if (caGetConfig()->GetShowInTaskbar()) {
 				// Show as balloon
-				ShowBalloon(title, message, 15000, wxICON_INFORMATION);
+				ShowBalloon(title, message, 10000, isError ? wxICON_ERROR : wxICON_INFORMATION);
 
 				return;
 			}
 		#endif
 
-		// No taskbar balloon available or disabled, so show as message dialog
-		wxMessageBox(message, title, wxICON_INFORMATION | wxOK, parent);
+		// No taskbar balloon available or disabled, so show as message box
+		wxMessageBox(message, title, wxOK | wxCENTRE | (isError ? wxICON_ERROR : wxICON_INFORMATION), parent);
 	}
 }
 
 
 // Restore main frame
 void TaskBarIcon::OnMenuRestore(wxCommandEvent &WXUNUSED(event)) {
-	caGetMainFrame()->Restore();
+	caLogAction("Taskbar restore event fired", LogLevel::LEVEL_DEBUG);
 	caGetMainFrame()->Show(true);
+	caGetMainFrame()->Raise();
 }
 
 
 // On exit -> Exit whole programm
 void TaskBarIcon::OnMenuExit(wxCommandEvent &WXUNUSED(event)) {
+	caLogAction("Taskbar close event fired", LogLevel::LEVEL_DEBUG);
 	caGetApp().ExitProgramm();
 }
 
 
 // Check for update
 void TaskBarIcon::OnMenuUpdate(wxCommandEvent &WXUNUSED(event)) {
+	caLogAction("Taskbar update event fired", LogLevel::LEVEL_DEBUG);
 	caGetApp().CheckUpdate();
 }
 
@@ -120,13 +125,15 @@ void TaskBarIcon::OnMenuAutoStart(wxCommandEvent &event) {
 			// Write in
 			regKey.SetValue("CallAdmin-Client", appPath);
 
-			caLogAction("Added CallAdmin to the autostart list");
+			caLogAction("Added CallAdmin to the autostart list", LogLevel::LEVEL_INFO);
 		} else {
 			// Remove it
 			regKey.DeleteValue("CallAdmin-Client");
 
-			caLogAction("Removed CallAdmin from the autostart list");
+			caLogAction("Removed CallAdmin from the autostart list", LogLevel::LEVEL_INFO);
 		}
+	} else {
+		ShowMessage("Couldn't set autostart key", "Registry key HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\ isn't available", caGetMainFrame(), true);
 	}
 }
 #endif
@@ -134,8 +141,10 @@ void TaskBarIcon::OnMenuAutoStart(wxCommandEvent &event) {
 
 // On double left click -> open main frame
 void TaskBarIcon::OnLeftButtonDClick(wxTaskBarIconEvent& WXUNUSED(event)) {
-	caGetMainFrame()->Restore();
+	caLogAction("Taskbar double click event fired", LogLevel::LEVEL_DEBUG);
 	caGetMainFrame()->Show(true);
+	caGetMainFrame()->Iconize(false);
+	caGetMainFrame()->Raise();
 }
 
 

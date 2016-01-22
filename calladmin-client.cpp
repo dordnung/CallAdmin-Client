@@ -38,7 +38,7 @@
 // Help for the CMDLine
 static const wxCmdLineEntryDesc cmdLineDesc[] =
 {
-	{ wxCMD_LINE_SWITCH, "taskbar", "taskbar", "Move GUI to taskbar on Start" },
+	{ wxCMD_LINE_SWITCH, "taskbar", "taskbar", "Move GUI to taskbar on start" },
 	{ wxCMD_LINE_NONE }
 };
 
@@ -85,7 +85,6 @@ bool CallAdmin::OnInit() {
 	// Calculate avatar size
 	int y = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
 
-	// Set Avatar Size
 	if (y < 900) {
 		// Only use small avatars
 		this->avatarSize = 128;
@@ -116,15 +115,13 @@ bool CallAdmin::OnInit() {
 		return false;
 	}
 
-	SetTopWindow(this->mainFrame);
-
 	// Create CURL Thread
 	this->curlThread = new CurlThread();
 
 	// Create Icon
 	this->taskBarIcon = new TaskBarIcon();
 
-	// Parse the config which starts everything else
+	// Parse the config panel which starts everything else
 	caGetConfigPanel()->ParseConfig();
 
 	// Check for an update
@@ -146,34 +143,15 @@ void CallAdmin::OnInitCmdLine(wxCmdLineParser &parser) {
 
 // Find -taskbar
 bool CallAdmin::OnCmdLineParsed(wxCmdLineParser &parser) {
-	this->startInTaskbar = parser.Found("taskbar");
+	this->startInTaskbar = parser.Found("taskbar") && TaskBarIcon::IsAvailable();
 
 	return true;
 }
 
 
-// Curl thread handled -> Call function
-void CallAdmin::OnCurlThread(CurlThreadData *data) {
-	if (!this->isRunning) {
-		delete data;
-
-		return;
-	}
-
-	// Get Function
-	CurlCallback function = data->GetCallbackFunction();
-
-	// Call it
-	if (function) {
-		function(data->GetError(), data->GetContent(), data->GetExtra());
-	}
-	
-	// Delete data
-	delete data;
-}
-
-
 void CallAdmin::StartTimer() {
+	LogAction("Starting the timer", LogLevel::LEVEL_DEBUG);
+
 	if (this->timer) {
 		delete this->timer;
 	}
@@ -186,6 +164,8 @@ void CallAdmin::StartTimer() {
 
 
 void CallAdmin::StartSteamThread() {
+	LogAction("Starting the steam thread", LogLevel::LEVEL_DEBUG);
+
 	if (this->steamThread) {
 		delete this->steamThread;
 	}
@@ -195,28 +175,26 @@ void CallAdmin::StartSteamThread() {
 
 
 void CallAdmin::StartUpdate() {
+	LogAction("Starting an update", LogLevel::LEVEL_DEBUG);
+
 	ExitProgramm();
 
 #if defined(__WXMSW__)
-	wxExecute(GetRelativePath("calladmin-client-updater.exe -version " + wxString(CALLADMIN_CLIENT_VERSION) + 
+	wxExecute(GetRelativePath("calladmin-client-updater.exe -version " + wxString(CALLADMIN_CLIENT_VERSION) +
 			  " -url " + wxString(CALLADMIN_UPDATE_URL) + " -executable " + wxString(CALLADMIN_UPDATE_EXE)));
 #else
-	wxExecute(GetRelativePath("calladmin-client-updater -version " + wxString(CALLADMIN_CLIENT_VERSION) + 
+	wxExecute(GetRelativePath("calladmin-client-updater -version " + wxString(CALLADMIN_CLIENT_VERSION) +
 			  " -url " + wxString(CALLADMIN_UPDATE_URL) + " -executable " + wxString(CALLADMIN_UPDATE_EXE)));
 #endif
 }
 
 
-// Get the content of a page
-void CallAdmin::GetPage(CurlCallback callbackFunction, wxString page, int extra) {
-	if (this->isRunning && !this->curlThread->GetThread()) {
-		this->curlThread->SetCallbackFunction(callbackFunction);
-		this->curlThread->SetPage(page);
-		this->curlThread->SetExtra(extra);
+// Check for a new Version
+void CallAdmin::CheckUpdate() {
+	// Log Action
+	LogAction("Checking for a new Update", LogLevel::LEVEL_DEBUG);
 
-		this->curlThread->CreateThread(wxTHREAD_DETACHED);
-		this->curlThread->GetThread()->Run();
-	}
+	GetPage(CallAdmin::OnUpdate, CALLADMIN_UPDATE_URL);
 }
 
 
@@ -233,9 +211,12 @@ void CallAdmin::CreateReconnect(wxString error) {
 	mainFrame->GetNotebook()->GetMainPanel()->SetReconnectButton(true);
 
 	// Show it
+	mainFrame->Show(true);
+	mainFrame->Iconize(false);
+
+	// And raise it
 	if (!isOtherInFullscreen()) {
-		mainFrame->Restore();
-		mainFrame->Show(true);
+		mainFrame->Raise();
 	}
 
 	// Go to first page
@@ -245,10 +226,18 @@ void CallAdmin::CreateReconnect(wxString error) {
 
 // Create an new Error Dialog
 void CallAdmin::ShowError(wxString error, wxString type) {
-	// Log Action
-	LogAction(type + " Error: " + error, LogLevel::LEVEL_ERROR);
+	// Show an error message and increase attempts
+	this->attempts++;
 
-	this->taskBarIcon->ShowMessage("An error occured", type + " Error : " + error + "\nRetry " + (wxString() << attempts) + " of " + (wxString() << config->GetMaxAttempts()), this->mainFrame);
+	// Max attempts reached?
+	if (this->attempts >= this->config->GetMaxAttempts()) {
+		// Create reconnect
+		CreateReconnect("CURL Error: " + error);
+	}
+
+	if (this->attempts <= this->config->GetMaxAttempts()) {
+		this->taskBarIcon->ShowMessage("An error occured", type + " Error : " + error + "\nRetry " + (wxString() << this->attempts) + " of " + (wxString() << this->config->GetMaxAttempts()), this->mainFrame, true);
+	}
 }
 
 
@@ -274,14 +263,14 @@ void CallAdmin::ExitProgramm() {
 	wxDELETE(this->curlThread);
 	wxDELETE(this->steamThread);
 
+	// And also the timer
+	if (this->timer) {
+		wxDELETE(this->timer);
+	}
+
 	// Then process pending events
 	if (HasPendingEvents()) {
 		ProcessPendingEvents();
-	}
-
-	// Stop the timer
-	if (this->timer) {
-		wxDELETE(this->timer);
 	}
 	
 	// Taskbar goodbye :)
@@ -290,14 +279,14 @@ void CallAdmin::ExitProgramm() {
 		this->taskBarIcon = NULL;
 	}
 
-	//  Delete call dialogs
+	// Delete call dialogs
 	for (wxVector<CallDialog *>::iterator callDialog = callDialogs.begin(); callDialog != callDialogs.end(); ++callDialog) {
 		(*callDialog)->Destroy();
 	}
 
 	callDialogs.clear();
 
-	// Destroy mainFrame
+	// Destroy main frame
 	if (this->mainFrame) {
 		// Delete notebook and main frame
 		delete this->mainFrame->GetNotebook();
@@ -308,6 +297,39 @@ void CallAdmin::ExitProgramm() {
 
 	// Delete config
 	wxDELETE(this->config);
+}
+
+
+// Curl thread handled -> Call function
+void CallAdmin::OnCurlThread(CurlThreadData *data) {
+	if (!this->isRunning) {
+		delete data;
+		return;
+	}
+
+	// Get Function
+	CurlCallback function = data->GetCallbackFunction();
+
+	// Call it
+	if (function) {
+		function(data->GetError(), data->GetContent(), data->GetExtra());
+	}
+
+	// Delete data
+	delete data;
+}
+
+
+// Get the content of a page
+void CallAdmin::GetPage(CurlCallback callbackFunction, wxString page, int extra) {
+	if (this->isRunning && !this->curlThread->GetThread()) {
+		this->curlThread->SetCallbackFunction(callbackFunction);
+		this->curlThread->SetPage(page);
+		this->curlThread->SetExtra(extra);
+
+		this->curlThread->CreateThread(wxTHREAD_DETACHED);
+		this->curlThread->GetThread()->Run();
+	}
 }
 
 
@@ -335,19 +357,10 @@ wxString CallAdmin::GetRelativePath(wxString relativeFileOrPath) {
 }
 
 
-// Check for a new Version
-void CallAdmin::CheckUpdate() {
-	// Log Action
-	LogAction("Checking for a new Update");
-
-	GetPage(CallAdmin::OnUpdate, CALLADMIN_UPDATE_URL);
-}
-
-
 // Handle Update Page
-void CallAdmin::OnUpdate(wxString error, wxString result, int WXUNUSED(x)) {
+void CallAdmin::OnUpdate(wxString error, wxString result, int WXUNUSED(extra)) {
 	// Log Action
-	caLogAction("Retrieve information about new version");
+	caLogAction("Retrieve information about the current version", LogLevel::LEVEL_DEBUG);
 
 	wxString newVersion;
 
@@ -358,18 +371,14 @@ void CallAdmin::OnUpdate(wxString error, wxString result, int WXUNUSED(x)) {
 
 			if (!result.StartsWith("{") || !result.EndsWith("}")) {
 				// Maybe an Error Page?
-				caLogAction("Update check failed: Invalid Page Content", LogLevel::LEVEL_ERROR);
-
-				return caGetTaskBarIcon()->ShowMessage("Update Check Failed", "Error: Invalid Page Content", caGetMainFrame());
+				return caGetTaskBarIcon()->ShowMessage("Update Check Failed", "Error: Invalid Page Content", caGetMainFrame(), true);
 			} else {
 				// Find version in brackets
 				newVersion = result.substr(1, result.length() - 2);
 			}
 		} else {
 			// Log Action
-			caLogAction("Update check failed: " + error, LogLevel::LEVEL_ERROR);
-
-			return caGetTaskBarIcon()->ShowMessage("Update Check Failed", "Error: " + error, caGetMainFrame());
+			return caGetTaskBarIcon()->ShowMessage("Update Check Failed", "Error: " + error, caGetMainFrame(), true);
 		}
 	}
 
@@ -377,28 +386,25 @@ void CallAdmin::OnUpdate(wxString error, wxString result, int WXUNUSED(x)) {
 	if (newVersion != "") {
 		// Check Version
 		if (newVersion != CALLADMIN_CLIENT_VERSION) {
-			// Log Action
-			caLogAction("Found a new Version: " + newVersion);
-
 			// Update About Panel
 			caGetAboutPanel()->EnableDownload(true);
 			caGetAboutPanel()->UpdateVersionText(newVersion, wxColor("red"));
 
-			// Show Main, but only if no other app is in fullscreen
+			caGetMainFrame()->Show(true);
+			caGetMainFrame()->Iconize(false);
+
+			// And raise it
 			if (!isOtherInFullscreen()) {
-				caGetMainFrame()->Restore();
-				caGetMainFrame()->Show(true);
+				caGetMainFrame()->Raise();
 			}
 
 			// Goto About
 			caGetNotebook()->GetWindow()->ChangeSelection(4);
 
-			caGetTaskBarIcon()->ShowMessage("New Version available", "New version " + newVersion + " is now available!", caGetMainFrame());
+			caGetTaskBarIcon()->ShowMessage("New Version available", "New version " + newVersion + " is now available!", caGetMainFrame(), false);
 		} else {
-			// Log Action
-			caLogAction("Version is up to date");
-
-			caGetTaskBarIcon()->ShowMessage("Up to Date", "Your CallAdmin Client is up to date", caGetMainFrame());
+			caGetTaskBarIcon()->ShowMessage("Up to Date", "Your CallAdmin Client is up to date", caGetMainFrame(), false);
 		}
 	}
 }
+

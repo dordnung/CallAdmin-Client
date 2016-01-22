@@ -439,7 +439,7 @@
 						<flag>wxALIGN_CENTER|wxTOP</flag>
 						<border>15</border>
 						<object class="wxButton" name="updateSettings">
-							<label>Update Settings</label>
+							<label>Apply Settings</label>
 							<default>1</default>
 						</object>
 					</object>

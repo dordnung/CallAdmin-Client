@@ -131,7 +131,7 @@ void ConfigPanel::OnLogLevelUpdate(wxCommandEvent &WXUNUSED(event)) {
 	caGetConfig()->SetLogLevel((LogLevel) this->logLevel->GetSelection());
 
 	// Log Action
-	caLogAction("Changed Log Level");
+	caLogAction("Changed Log Level to " + LogLevelNames[this->logLevel->GetSelection()], LogLevel::LEVEL_INFO);
 }
 
 
@@ -141,7 +141,11 @@ void ConfigPanel::OnSteamUpdate(wxCommandEvent &WXUNUSED(event)) {
 	caGetConfig()->SetSteamEnabled(this->steamEnable->GetValue());
 
 	// Log Action
-	caLogAction("Changed Steam Status");
+	if (this->steamEnable->GetValue()) {
+		caLogAction("Enabled Steam support", LogLevel::LEVEL_INFO);
+	} else {
+		caLogAction("Disabled Steam support", LogLevel::LEVEL_INFO);
+	}
 }
 
 
@@ -150,8 +154,19 @@ void ConfigPanel::OnShowInTaskbarUpdate(wxCommandEvent &WXUNUSED(event)) {
 	// Write to config file
 	caGetConfig()->SetShowInTaskbar(this->showInTaskbar->GetValue());
 
+	// Set icon if user want it
+	if (this->hideMinimized->GetValue() || this->showInTaskbar->GetValue()) {
+		caGetTaskBarIcon()->AddIcon();
+	} else {
+		caGetTaskBarIcon()->RemoveIcon();
+	}
+
 	// Log Action
-	caLogAction("Changed show in taskbar value");
+	if (this->steamEnable->GetValue()) {
+		caLogAction("Enabled show in taskbar", LogLevel::LEVEL_INFO);
+	} else {
+		caLogAction("Disabled show in taskbar", LogLevel::LEVEL_INFO);
+	}
 }
 
 
@@ -160,8 +175,19 @@ void ConfigPanel::OnHideUpdate(wxCommandEvent &WXUNUSED(event)) {
 	// Write to config file
 	caGetConfig()->SetHideOnMinimize(this->hideMinimized->GetValue());
 
+	// Set icon if user want it
+	if (this->hideMinimized->GetValue() || this->showInTaskbar->GetValue()) {
+		caGetTaskBarIcon()->AddIcon();
+	} else {
+		caGetTaskBarIcon()->RemoveIcon();
+	}
+
 	// Log Action
-	caLogAction("Changed Hide on Minimize Status");
+	if (this->steamEnable->GetValue()) {
+		caLogAction("Enabled hide on minimize", LogLevel::LEVEL_INFO);
+	} else {
+		caLogAction("Disabled hide on minimize", LogLevel::LEVEL_INFO);
+	}
 }
 
 
@@ -180,7 +206,7 @@ void ConfigPanel::OnSet(wxCommandEvent &WXUNUSED(event)) {
 	caGetMainPanel()->SetStatusText("Enable new Settings");
 
 	// Log Action
-	caLogAction("Saved the config");
+	caLogAction("Saved the config", LogLevel::LEVEL_INFO);
 
 	// Goto Main
 	caGetNotebook()->GetWindow()->ChangeSelection(0);
@@ -195,7 +221,7 @@ void ConfigPanel::ParseConfig() {
 	Config *config = caGetConfig();
 
 	// Log Action
-	caLogAction("Parse the config");
+	caLogAction("Parsing the config", LogLevel::LEVEL_INFO);
 
 	bool foundConfigError = config->ParseConfig();
 
@@ -226,23 +252,30 @@ void ConfigPanel::ParseConfig() {
 
 		caGetCallDialogs()->clear();
 
-		// Updated Main Interface
+		// Update the calls
 		caGetMainPanel()->UpdateCalls();
 
-		// Start Steam Thread again
+		// Start Steam thread again
 		caGetApp().StartSteamThread();
 
-		// Restart the Timer
+		// Restart the timer
 		caGetApp().StartTimer();
 
+		// Set icon if user want it
+		if (config->GetHideOnMinimize() || config->GetShowInTaskbar()) {
+			caGetTaskBarIcon()->AddIcon();
+		} else {
+			caGetTaskBarIcon()->RemoveIcon();
+		}
+
 		// Log Action
-		caLogAction("Loaded the config successfully");
+		caLogAction("Loaded the config successfully", LogLevel::LEVEL_INFO);
 	} else {
 		// Refresh main dialog
 		caGetMainFrame()->SetTitle("CallAdmin Client");
 		caGetMainPanel()->SetStatusText("Please configurate your settings");
 
 		// Log Action
-		caLogAction("Couldn't load/find the config");
+		caLogAction("Couldn't load/find the config", LogLevel::LEVEL_WARNING);
 	}
 }

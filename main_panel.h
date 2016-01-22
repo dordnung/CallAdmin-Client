@@ -50,8 +50,6 @@ private:
 	wxStaticText *eventText;
 	wxStaticText *steamText;
 
-	void SetSteamStatus(wxString text, wxColor color);
-
 public:
 	MainPanel();
 
@@ -60,16 +58,17 @@ public:
 
 	// Set the event text
 	void SetStatusText(wxString text);
-
-	void SetReconnectButton(bool enable = false) {
-		this->reconnectButton->Enable(enable);
-	}
+	void SetSteamStatus(wxString text, wxColor color);
 
 	// Update Call list
 	void UpdateCalls();
 
 	void SetHandled(int item);
 	void OnSteamChange(int status);
+
+	void SetReconnectButton(bool enable = false) {
+		this->reconnectButton->Enable(enable);
+	}
 
 protected:
 	// Events

@@ -70,15 +70,6 @@ wxString XMLErrorString[] =
 };
 
 
-// Run the timer
-void Timer::Run(int repeatInterval) {
-	// Log Action
-	caLogAction("Started the Timer");
-
-	Start(repeatInterval, wxTIMER_CONTINUOUS);
-}
-
-
 // Timer executed
 void Timer::OnExecute(wxTimerEvent &WXUNUSED(event)) {
 	if (!caGetApp().IsRunning()) {
@@ -132,21 +123,8 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 		// Parsing Error?
 		if (parseError != tinyxml2::XML_SUCCESS) {
 			foundError = true;
-			caGetApp().SetAttempts(caGetApp().GetAttempts() + 1);
 
-			// Log Action
-			caLogAction("Found a XML Error: " + XMLErrorString[parseError], LogLevel::LEVEL_ERROR);
-
-			// Max attempts reached?
-			if (caGetApp().GetAttempts() >= caGetConfig()->GetMaxAttempts()) {
-				// Close Dialogs and create reconnect main dialog
-				caGetApp().CreateReconnect("XML Error: " + XMLErrorString[parseError]);
-			}
-
-			if (caGetApp().GetAttempts() <= caGetConfig()->GetMaxAttempts()) {
-				// Create Parse Error
-				caGetApp().ShowError(XMLErrorString[parseError], "XML");
-			}
+			caGetApp().ShowError(XMLErrorString[parseError], "XML");
 		}
 
 		// No error so far, yeah!
@@ -182,18 +160,7 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 					// API Error?
 					if ((wxString)node2->Value() == "error") {
 						foundError = true;
-						caGetApp().SetAttempts(caGetApp().GetAttempts() + 1);
-
-						// Max attempts reached?
-						if (caGetApp().GetAttempts() >= caGetConfig()->GetMaxAttempts()) {
-							// Close Dialogs and create reconnect main dialog
-							caGetApp().CreateReconnect("API Error: " + (wxString)node2->FirstChild()->Value());
-						}
-
-						if (caGetApp().GetAttempts() <= caGetConfig()->GetMaxAttempts()) {
-							// API Errpr
-							caGetApp().ShowError(node2->FirstChild()->Value(), "API");
-						}
+						caGetApp().ShowError(node2->FirstChild()->Value(), "API");
 
 						break;
 					}
@@ -208,6 +175,7 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 
 					// Create the new CallDialog
 					CallDialog *newDialog = new CallDialog();
+					newDialog->SetId(dialog);
 
 					// Put in all needed data
 					for (tinyxml2::XMLNode *node3 = node2->FirstChild(); node3; node3 = node3->NextSibling()) {
@@ -296,39 +264,20 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 						// New call
 						foundNew = true;
 
-						// Add the new Call to the Call box
-						wxString text;
-
-						// But first we need a Time
-						wxDateTime dateTime = wxDateTime((time_t)newDialog->GetTime());
-						newDialog->SetTitle("Call At " + dateTime.Format("%c"));
-
-						text = dateTime.Format("%c") + " - " + newDialog->GetServer();
-
-						// Add the Text
-						newDialog->SetBoxText(text);
-
-						// Now START IT!
-						newDialog->SetId(dialog);
-
 						// Don't show calls on first Run
-						bool success;
-
 						if (firstRun) {
 							dialog--;
-							success = newDialog->StartCall(false);
 						} else {
-							// Log Action
-							caLogAction("We have a new Call");
-							success = newDialog->StartCall(caGetConfig()->GetIsAvailable() && !isOtherInFullscreen());
+							caLogAction("A new call received", LogLevel::LEVEL_INFO);
 						}
 
+						// Now start it
+						bool success = newDialog->StartCall(!firstRun && caGetConfig()->GetIsAvailable() && !isOtherInFullscreen());
+						
 						if (!success) {
 							newDialog->Destroy();
 							caLogAction("A call dialog couldn't be created!", LogLevel::LEVEL_ERROR);
 						} else {
-							newDialog->GetTakeoverButton()->Enable(!newDialog->IsHandled());
-
 							caGetCallDialogs()->push_back(newDialog);
 						}
 					}
@@ -339,11 +288,7 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 		// Everything is good, set attempts to zero
 		if (!foundError) {
 			// Reset attempts
-			caGetApp().SetAttempts(0);
-
-			// Updated Main Interface
-			caGetMainFrame()->SetTitle("CallAdmin Client");
-			caGetMainPanel()->SetStatusText("Waiting for a new report");
+			caGetApp().ResetAttempts();
 
 			// Update Call List
 			if (foundNew) {
@@ -365,16 +310,6 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 		}
 	} else {
 		// Something went wrong ):
-		caGetApp().SetAttempts(caGetApp().GetAttempts() + 1);
-
-		// Max attempts reached?
-		if (caGetApp().GetAttempts() >= caGetConfig()->GetMaxAttempts()) {
-			// Create reconnect main dialog
-			caGetApp().CreateReconnect("CURL Error: " + error);
-		}
-
-		if (caGetApp().GetAttempts() <= caGetConfig()->GetMaxAttempts()) {
-			caGetApp().ShowError(error, "CURL");
-		}
+		caGetApp().ShowError(error, "CURL");
 	}
 }

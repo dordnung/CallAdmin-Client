@@ -38,10 +38,10 @@
 // Taskbar Icon for Windows
 class TaskBarIcon : public wxTaskBarIcon {
 public:
-	TaskBarIcon();
+	void AddIcon();
 
 	// Show a information whether in the taskbar or as dialog if taskbar messages are not available
-	void ShowMessage(wxString title, wxString message, wxWindow *parent = NULL);
+	void ShowMessage(wxString title, wxString message, wxWindow *parent, bool isError);
 
 protected:
 	// Taskbar Events
