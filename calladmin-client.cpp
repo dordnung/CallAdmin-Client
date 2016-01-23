@@ -164,13 +164,11 @@ void CallAdmin::StartTimer() {
 
 
 void CallAdmin::StartSteamThread() {
-	LogAction("Starting the steam thread", LogLevel::LEVEL_DEBUG);
+	if (!this->steamThread) {
+		LogAction("Starting the steam thread", LogLevel::LEVEL_DEBUG);
 
-	if (this->steamThread) {
-		delete this->steamThread;
+		this->steamThread = new SteamThread();
 	}
-
-	this->steamThread = new SteamThread();
 }
 
 

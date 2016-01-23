@@ -255,7 +255,7 @@ void ConfigPanel::ParseConfig() {
 		// Update the calls
 		caGetMainPanel()->UpdateCalls();
 
-		// Start Steam thread again
+		// Start Steam thread if not started yet
 		caGetApp().StartSteamThread();
 
 		// Restart the timer

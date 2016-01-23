@@ -214,8 +214,7 @@ bool OpenSteamHelper::SteamAPI_Init() {
 	this->library = new DynamicLibrary(libraryFile);
 
 	if (!this->library->IsLoaded()) {
-		delete this->library;
-		this->library = NULL;
+		wxDELETE(this->library);
 
 		return false;
 	}
@@ -224,8 +223,7 @@ bool OpenSteamHelper::SteamAPI_Init() {
 	CreateInterfaceFn factory = (CreateInterfaceFn)this->library->GetSymbol("CreateInterface");
 
 	if (!factory) {
-		delete this->library;
-		this->library = NULL;
+		wxDELETE(this->library);
 
 		return false;
 	}
@@ -234,8 +232,7 @@ bool OpenSteamHelper::SteamAPI_Init() {
 	this->steamClient = (ISteamClient017*)factory(STEAMCLIENT_INTERFACE_VERSION_017, NULL);
 
 	if (!this->steamClient) {
-		delete this->library;
-		this->library = NULL;
+		wxDELETE(this->library);
 
 		return false;
 	}
@@ -374,8 +371,7 @@ bool OpenSteamHelper::SteamAPI_Shutdown() {
 
 	// Also free the dynamic library
 	if (this->library) {
-		delete this->library;
-		this->library = NULL;
+		wxDELETE(this->library);
 	}
 
 	return true;

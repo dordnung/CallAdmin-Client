@@ -59,7 +59,9 @@ wxEND_EVENT_TABLE()
 
 // Add the icon
 void TaskBarIcon::AddIcon() {
-	SetIcon(caGetMainFrame()->GetIcon(), "CallAdmin Client");
+	if (!IsIconInstalled()) {
+		SetIcon(caGetMainFrame()->GetIcon(), "CallAdmin Client");
+	}
 }
 
 

@@ -181,7 +181,7 @@ wxThread::ExitCode SteamThread::Entry() {
 			static unsigned int i = 0;
 
 			if (++i % 10 == 0) {
-				if (!OpenSteamHelper::GetInstance()->SteamAPI_IsSteamRunning()) {
+				if (!OpenSteamHelper::GetInstance()->SteamAPI_IsSteamRunning() || !caGetConfig()->GetSteamEnabled()) {
 					// Notice changes to main panel
 					caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
 					caGetApp().CallAfter(&CallAdmin::LogAction, "Disconnected from Steam", LogLevel::LEVEL_INFO);
