@@ -10,7 +10,7 @@
 				<flag>wxEXPAND</flag>
 				<border>0</border>
 				<object class="wxListBox" name="trackerBox">
-					<style>wxLB_SINGLE</style>
+					<style>wxLB_HSCROLL|wxLB_SINGLE</style>
 					<font>
 						<size>14</size>
 						<style>normal</style>

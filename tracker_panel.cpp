@@ -166,6 +166,10 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 	} else {
 		caGetTaskBarIcon()->ShowMessage("Couldn't retrieve trackers!", error, caGetTrackerPanel(), true);
 	}
+
+	#if !defined(__WXMSW__)
+		caGetTrackerPanel()->FitInside();
+	#endif
 }
 
 

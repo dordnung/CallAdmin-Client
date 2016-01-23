@@ -49,4 +49,8 @@ bool LogPanel::InitPanel() {
 // Add Action to the logBox
 void LogPanel::AddLog(wxString log, LogLevel logLevel) {
 	this->logBox->SetSelection(this->logBox->Append("[" + LogLevelNames[logLevel] + "] " + wxString::FromUTF8(wxNow() + " - " + log)));
+
+	#if !defined(__WXMSW__)
+		this->FitInside();
+	#endif
 }
