@@ -35,6 +35,12 @@
 #endif
 
 
+// Events for Tracker Panel
+wxBEGIN_EVENT_TABLE(TrackerPanel, wxPanel)
+	EVT_BUTTON(XRCID("updateTrackers"), TrackerPanel::OnUpdate)
+wxEND_EVENT_TABLE()
+
+
 // Clean Up
 TrackerPanel::~TrackerPanel() {
 	wxVector<NameTimer *>::iterator nameTimer = nameTimers.begin();
@@ -77,7 +83,7 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 	wxString error = "";
 
 	// First delete old ones
-	caGetTrackerPanel()->DeleteTrackers();
+	caGetTrackerPanel()->GetCurrentTrackers()->clear();
 
 	// Not empty?
 	if (result != "") {
@@ -126,15 +132,7 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 
 								// Valid Tracker ID?
 								if (steamidTracker.IsValid()) {
-									// Just add SteamId if Steam is not available
-									if (caGetSteamThread()->IsConnected()) {
-										// Create Name Timer
-										caGetTrackerPanel()->GetNameTimers()->push_back(new NameTimer(steamidTracker));
-									} else {
-										caGetTrackerPanel()->AddTracker(steamidString, steamidString);
-									}
-
-									found = true;
+									caGetTrackerPanel()->GetCurrentTrackers()->push_back(steamidString);
 								}
 							}
 						}
@@ -162,13 +160,36 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 
 	// Seems we found no tracker
 	if (error != "") {
-		caGetTrackerPanel()->AddTracker("No trackers available", "");
-	} else {
 		caGetTaskBarIcon()->ShowMessage("Couldn't retrieve trackers!", error, caGetTrackerPanel(), true);
+	}
+}
+
+
+void TrackerPanel::OnUpdate(wxCommandEvent &WXUNUSED(event)) {
+	this->trackerBox->Clear();
+
+	if (this->currentTrackers.empty()) {
+		AddTracker("No trackers available");
+	}
+
+	for (wxVector<wxString>::iterator tracker = this->currentTrackers.begin(); tracker != this->currentTrackers.end(); ++tracker) {
+		// Build csteamid
+		CSteamID steamidTracker = SteamThread::SteamIdtoCSteamId(*tracker);
+
+		// Valid Tracker ID?
+		if (steamidTracker.IsValid()) {
+			// Just add SteamId if Steam is not available
+			if (caGetSteamThread()->IsConnected()) {
+				// Create Name Timer
+				this->nameTimers.push_back(new NameTimer(steamidTracker));
+			} else {
+				AddTracker(*tracker);
+			}
+		}
 	}
 
 	#if !defined(__WXMSW__)
-		caGetTrackerPanel()->FitInside();
+		this->FitInside();
 	#endif
 }
 
@@ -246,7 +267,7 @@ void NameTimer::Notify() {
 			}
 
 			// Finally add tracker
-			caGetTrackerPanel()->AddTracker(trackerText, steamId);
+			caGetTrackerPanel()->AddTracker(trackerText);
 
 			// Delete because it's finished
 			delete this;
@@ -255,7 +276,7 @@ void NameTimer::Notify() {
 
 	// 5 seconds gone?
 	if (++this->attempts == 50) {
-		caGetTrackerPanel()->AddTracker(steamId, steamId);
+		caGetTrackerPanel()->AddTracker(steamId);
 
 		// Enough, delete timer
 		delete this;

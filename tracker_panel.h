@@ -60,17 +60,8 @@ public:
 	// Refresh the tracker list
 	static void RefreshTrackers(wxString errorStr, wxString result, int extra);
 
-	void AddTracker(wxString text, wxString steamid) {
+	void AddTracker(wxString text) {
 		this->trackerBox->Append(wxString::FromUTF8(text));
-
-		if (steamid != "") {
-			this->currentTrackers.push_back(steamid);
-		}
-	}
-
-	void DeleteTrackers() {
-		this->trackerBox->Clear();
-		this->currentTrackers.clear();
 	}
 
 	wxVector<NameTimer *> *GetNameTimers() {
@@ -80,6 +71,11 @@ public:
 	wxVector<wxString> *GetCurrentTrackers() {
 		return &currentTrackers;
 	}
+
+protected:
+	void OnUpdate(wxCommandEvent &event);
+
+	wxDECLARE_EVENT_TABLE();
 };
 
 

@@ -18,8 +18,17 @@
 						<underlined>0</underlined>
 					</font>
 					<content>
-						<item>No trackers available</item>
+						<item>Please press the update button</item>
 					</content>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALIGN_CENTER|wxALL</flag>
+				<border>5</border>
+				<object class="wxButton" name="updateTrackers">
+					<label>Update Trackers</label>
+					<default>0</default>
 				</object>
 			</object>
 		</object>

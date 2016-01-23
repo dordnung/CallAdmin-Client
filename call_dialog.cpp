@@ -316,9 +316,7 @@ void CallDialog::OnContactTrackers(wxCommandEvent &WXUNUSED(event)) {
 		caGetTaskBarIcon()->ShowMessage("Couldn't contact trackers!", "You're not connected to STEAM!", this, false);
 	}
 
-	if (caGetTrackerPanel()->GetCurrentTrackers()->empty()) {
-		caGetTaskBarIcon()->ShowMessage("Couldn't contact trackers!", "Found no available tracker on your friendlist!", this, false);
-	}
+	bool found = false;
 
 	for (wxVector<wxString>::iterator tracker = caGetTrackerPanel()->GetCurrentTrackers()->begin(); tracker != caGetTrackerPanel()->GetCurrentTrackers()->end(); ++tracker) {
 		// Build csteamid
@@ -333,7 +331,12 @@ void CallDialog::OnContactTrackers(wxCommandEvent &WXUNUSED(event)) {
 
 			// And we found someone, so no contacting possible anymore
 			this->contactTrackers->Enable(false);
+			found = true;
 		}
+	}
+
+	if (!found) {
+		caGetTaskBarIcon()->ShowMessage("Couldn't contact trackers!", "Found no available tracker on your friendlist!", this, false);
 	}
 }
 
