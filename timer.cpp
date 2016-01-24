@@ -297,14 +297,16 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 
 				// Play Sound
 				if (caGetConfig()->GetWantSound() && !firstRun && caGetConfig()->GetIsAvailable()) {
-					wxSound* soundfile = new wxSound(wave_sound_size, wave_sound);
+					wxSound sound;
+					wxString soundFile = caGetConfig()->GetSoundFile();
 
-					if (soundfile != NULL && soundfile->IsOk()) {
-						soundfile->Play(wxSOUND_ASYNC);
-
-						// Clean
-						delete soundfile;
+					if (soundFile == "") {
+						sound.Create(wave_sound_size, wave_sound);
+					} else {
+						sound.Create(soundFile);
 					}
+
+					sound.Play(wxSOUND_ASYNC);
 				}
 			}
 		}

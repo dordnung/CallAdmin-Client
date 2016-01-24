@@ -143,7 +143,7 @@
 					<object class="sizeritem">
 						<option>0</option>
 						<flag>wxALIGN_CENTER|wxRIGHT|wxTOP</flag>
-						<border>5</border>
+						<border>10</border>
 						<object class="wxButton" name="checkForUpdate">
 							<label>Check For Update</label>
 							<default>0</default>
@@ -152,7 +152,7 @@
 					<object class="sizeritem">
 						<option>0</option>
 						<flag>wxALIGN_CENTER|wxLEFT|wxTOP</flag>
-						<border>5</border>
+						<border>10</border>
 						<object class="wxButton" name="downloadUpdate">
 							<enabled>0</enabled>
 							<label>Download Update</label>

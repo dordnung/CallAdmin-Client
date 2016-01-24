@@ -33,6 +33,7 @@
 #endif
 
 #include <wx/spinctrl.h>
+#include <wx/filepicker.h>
 
 
 class ConfigPanel : public wxPanel {
@@ -47,6 +48,7 @@ private:
 	wxStaticText *attemptsSliderValue;
 	wxSlider *callsSlider;
 	wxStaticText *callsSliderValue;
+	wxFilePickerCtrl *soundFilePicker;
 	wxChoice *logLevel;
 	wxCheckBox *steamEnable;
 	wxCheckBox *showInTaskbar;
@@ -63,6 +65,8 @@ public:
 
 protected:
 	void OnSliderChanged(wxCommandEvent &event);
+	void OnSoundFileChanged(wxFileDirPickerEvent &event);
+	void OnSoundFileDefault(wxCommandEvent &event);
 	void OnLogLevelUpdate(wxCommandEvent &event);
 	void OnSteamUpdate(wxCommandEvent &event);
 	void OnShowInTaskbarUpdate(wxCommandEvent &event);

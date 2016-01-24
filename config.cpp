@@ -23,6 +23,7 @@
  */
 #include "config.h"
 #include "calladmin-client.h"
+#include <wx/file.h>
 
 #ifdef __WXMSW__
 	// Memory leak detection for debugging 
@@ -40,6 +41,7 @@ Config::Config() : wxConfig("Call Admin") {
 
 	this->page = "";
 	this->key = "";
+	this->soundFile = "";
 
 	this->logLevel = LEVEL_INFO;
 	this->steamEnabled = true;
@@ -76,6 +78,7 @@ bool Config::ParseConfig() {
 
 			Read("key", &this->key, "");
 			Read("page", &this->page, "");
+			Read("soundFile", &this->soundFile, "");
 
 			// Strip last /
 			if (this->page.find_last_of("/") == this->page.length() - 1) {
@@ -88,6 +91,10 @@ bool Config::ParseConfig() {
 	}
 
 	// Check invalid values
+	if (!IsSoundFileValid()) {
+		this->soundFile = "";
+	}
+
 	if (this->step < 5) {
 		this->step = 5;
 	}
@@ -125,4 +132,26 @@ bool Config::ParseConfig() {
 	}
 
 	return isConfigSet;
+}
+
+
+bool Config::IsSoundFileValid() {
+	if (!wxFile::Exists(this->soundFile)) {
+		return false;
+	}
+
+	wxFile soundFile(this->soundFile);
+
+	if (!soundFile.IsOpened()) {
+		return false;
+	}
+
+	char fileStart[4];
+
+	// Check if start with RIFF
+	if (soundFile.Read(&fileStart, sizeof(fileStart)) == wxInvalidOffset || !((wxString)fileStart != "RIFF")) {
+		return false;
+	}
+
+	return true;
 }

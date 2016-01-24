@@ -42,6 +42,8 @@ wxBEGIN_EVENT_TABLE(ConfigPanel, wxPanel)
 	EVT_SLIDER(XRCID("attemptsSlider"), ConfigPanel::OnSliderChanged)
 	EVT_SLIDER(XRCID("callsSlider"), ConfigPanel::OnSliderChanged)
 
+	EVT_FILEPICKER_CHANGED(XRCID("soundFile"), ConfigPanel::OnSoundFileChanged)
+	EVT_BUTTON(XRCID("soundFileDefault"), ConfigPanel::OnSoundFileDefault)
 	EVT_CHOICE(XRCID("logLevel"), ConfigPanel::OnLogLevelUpdate)
 
 	EVT_CHECKBOX(XRCID("steamEnable"), ConfigPanel::OnSteamUpdate)
@@ -99,6 +101,9 @@ bool ConfigPanel::InitPanel() {
 	FIND_OR_FAIL(this->callsSlider, XRCCTRL(*this, "callsSlider", wxSlider), "callsSlider");
 	FIND_OR_FAIL(this->callsSliderValue, XRCCTRL(*this, "callsSliderValue", wxStaticText), "callsSliderValue");
 
+	// Ask for sound file
+	FIND_OR_FAIL(this->soundFilePicker, XRCCTRL(*this, "soundFile", wxFilePickerCtrl), "soundFile");
+
 	// Ask for LogLevel
 	FIND_OR_FAIL(this->logLevel, XRCCTRL(*this, "logLevel", wxChoice), "logLevel");
 	this->logLevel->SetSelection(LogLevel::LEVEL_INFO);
@@ -122,6 +127,20 @@ void ConfigPanel::OnSliderChanged(wxCommandEvent &WXUNUSED(event)) {
 	this->timeoutSliderValue->SetLabel(wxString::Format("%02d", this->timeoutSlider->GetValue()));
 	this->attemptsSliderValue->SetLabel(wxString::Format("%02d", this->attemptsSlider->GetValue()));
 	this->callsSliderValue->SetLabel(wxString::Format("%02d", this->callsSlider->GetValue()));
+}
+
+
+// The path changed
+void ConfigPanel::OnSoundFileChanged(wxFileDirPickerEvent &event) {
+	if (caGetConfig()->SetSoundFile(event.GetPath())) {
+		this->soundFilePicker->SetPath("");
+	}
+}
+
+
+// Using default sound file
+void ConfigPanel::OnSoundFileDefault(wxCommandEvent &WXUNUSED(event)) {
+	this->soundFilePicker->SetPath("");
 }
 
 
@@ -194,12 +213,12 @@ void ConfigPanel::OnHideUpdate(wxCommandEvent &WXUNUSED(event)) {
 // Button Event -> Try to set new config
 void ConfigPanel::OnSet(wxCommandEvent &WXUNUSED(event)) {
 	// Write to new config file
-	caGetConfig()->Write("step", this->stepSlider->GetValue());
-	caGetConfig()->Write("timeout", this->timeoutSlider->GetValue());
-	caGetConfig()->Write("attempts", this->attemptsSlider->GetValue());
-	caGetConfig()->Write("lastcalls", this->callsSlider->GetValue());
-	caGetConfig()->Write("page", this->pageText->GetValue());
-	caGetConfig()->Write("key", this->keyText->GetValue());
+	caGetConfig()->SetStep(this->stepSlider->GetValue());
+	caGetConfig()->SetTimeout(this->timeoutSlider->GetValue());
+	caGetConfig()->SetMaxAttempts(this->attemptsSlider->GetValue());
+	caGetConfig()->SetNumLastCalls(this->callsSlider->GetValue());
+	caGetConfig()->SetPage(this->pageText->GetValue());
+	caGetConfig()->SetKey(this->keyText->GetValue());
 
 	// Refresh main dialog
 	caGetMainFrame()->SetTitle("CallAdmin Client");
@@ -239,6 +258,7 @@ void ConfigPanel::ParseConfig() {
 
 		this->pageText->SetValue(config->GetPage());
 		this->keyText->SetValue(config->GetKey());
+		this->soundFilePicker->SetPath(config->GetSoundFile());
 
 		this->logLevel->SetSelection((int)config->GetLogLevel());
 		this->steamEnable->SetValue(config->GetSteamEnabled());

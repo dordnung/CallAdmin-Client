@@ -59,6 +59,7 @@ private:
 
 	wxString page;
 	wxString key;
+	wxString soundFile;
 
 	LogLevel logLevel;
 	bool steamEnabled;
@@ -97,6 +98,10 @@ public:
 
 	wxString GetKey() {
 		return this->key;
+	}
+
+	wxString GetSoundFile() {
+		return this->soundFile;
 	}
 
 	LogLevel GetLogLevel() {
@@ -159,6 +164,20 @@ public:
 		Write("key", key);
 	}
 
+	bool SetSoundFile(wxString soundFile) {
+		this->soundFile = soundFile;
+
+		if (soundFile != "" && !IsSoundFileValid()) {
+			this->soundFile = "";
+
+			return false;
+		} 
+
+		Write("soundFile", soundFile);
+
+		return true;
+	}
+
 	void SetLogLevel(LogLevel logLevel) {
 		this->logLevel = logLevel;
 		Write("logLevel", (int)logLevel);
@@ -193,6 +212,9 @@ public:
 		this->isSpectator = isSpectator;
 		Write("spectate", isSpectator);
 	}
+
+protected:
+	bool IsSoundFileValid();
 };
 
 
