@@ -132,6 +132,9 @@ void ConfigPanel::OnSliderChanged(wxCommandEvent &WXUNUSED(event)) {
 
 // The path changed
 void ConfigPanel::OnSoundFileChanged(wxFileDirPickerEvent &event) {
+	// Log Action
+	caLogAction("Set sound file to " + event.GetPath(), LogLevel::LEVEL_INFO);
+
 	if (caGetConfig()->SetSoundFile(event.GetPath())) {
 		this->soundFilePicker->SetPath("");
 	}
@@ -141,6 +144,9 @@ void ConfigPanel::OnSoundFileChanged(wxFileDirPickerEvent &event) {
 // Using default sound file
 void ConfigPanel::OnSoundFileDefault(wxCommandEvent &WXUNUSED(event)) {
 	this->soundFilePicker->SetPath("");
+
+	// Log Action
+	caLogAction("Changed sound file to the default sound", LogLevel::LEVEL_INFO);
 }
 
 
