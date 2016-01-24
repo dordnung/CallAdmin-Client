@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
 	<object class="wxFrame" name="frame">
-		<style>wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxNO_BORDER | wxTAB_TRAVERSAL</style>
+		<style>wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxNO_BORDER|wxTAB_TRAVERSAL</style>
 		<title>CallAdmin Client Updater</title>
 		<centered>1</centered>
 		<icon>calladmin_client_updater.ico</icon>
 		<object class="wxPanel" name="panel">
-			<style>wxNO_BORDER | wxTAB_TRAVERSAL</style>
+			<style>wxNO_BORDER|wxTAB_TRAVERSAL</style>
 			<object class="wxBoxSizer">
 				<orient>wxVERTICAL</orient>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALL | wxEXPAND</flag>
+					<flag>wxALL|wxEXPAND</flag>
 					<border>10</border>
 					<object class="wxGauge" name="progressBar">
-						<style>wxGA_HORIZONTAL | wxGA_SMOOTH</style>
+						<style>wxGA_HORIZONTAL|wxGA_SMOOTH</style>
 						<size>-1,20</size>
 						<font>
 							<style>normal</style>
@@ -27,7 +27,7 @@
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxBOTTOM | wxLEFT | wxRIGHT</flag>
+					<flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
 					<border>20</border>
 					<object class="wxFlexGridSizer">
 						<rows>0</rows>
@@ -38,7 +38,7 @@
 						<growablerows></growablerows>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_LEFT | wxRIGHT | wxTOP</flag>
+							<flag>wxALIGN_LEFT|wxRIGHT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="downloadedSizeText">
 								<font>
@@ -53,7 +53,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_RIGHT | wxTOP</flag>
+							<flag>wxALIGN_RIGHT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="downloadedSize">
 								<font>
@@ -68,7 +68,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_LEFT | wxLEFT | wxTOP</flag>
+							<flag>wxALIGN_LEFT|wxLEFT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="downloadedSizeUnit">
 								<font>
@@ -83,7 +83,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxLEFT | wxRIGHT | wxTOP</flag>
+							<flag>wxLEFT|wxRIGHT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="downloadedSizeSeperator">
 								<font>
@@ -98,7 +98,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_RIGHT | wxTOP</flag>
+							<flag>wxALIGN_RIGHT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="downloadedSizeTotal">
 								<font>
@@ -113,7 +113,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxLEFT | wxTOP</flag>
+							<flag>wxLEFT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="downloadedSizeTotalUnit">
 								<font>
@@ -128,7 +128,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_LEFT | wxRIGHT | wxTOP</flag>
+							<flag>wxALIGN_LEFT|wxRIGHT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="speedText">
 								<font>
@@ -143,7 +143,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_RIGHT | wxTOP</flag>
+							<flag>wxALIGN_RIGHT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="speed">
 								<font>
@@ -158,7 +158,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_LEFT | wxLEFT | wxTOP</flag>
+							<flag>wxALIGN_LEFT|wxLEFT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="speedUnit">
 								<font>
@@ -173,7 +173,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxLEFT | wxTOP</flag>
+							<flag>wxLEFT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="speedUnit1">
 								<font>
@@ -188,7 +188,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_LEFT | wxTOP</flag>
+							<flag>wxALIGN_LEFT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="speedUnit2">
 								<font>
@@ -209,7 +209,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_LEFT | wxRIGHT | wxTOP</flag>
+							<flag>wxALIGN_LEFT|wxRIGHT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="elapsedTimeText">
 								<style>wxALIGN_RIGHT</style>
@@ -225,7 +225,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_RIGHT | wxTOP</flag>
+							<flag>wxALIGN_RIGHT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="elapsedTime">
 								<font>
@@ -240,7 +240,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_LEFT | wxLEFT | wxTOP</flag>
+							<flag>wxALIGN_LEFT|wxLEFT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="elapsedTimeUnit">
 								<font>
@@ -273,7 +273,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_LEFT | wxBOTTOM | wxRIGHT | wxTOP</flag>
+							<flag>wxALIGN_LEFT|wxBOTTOM|wxRIGHT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="remainingTimeText">
 								<font>
@@ -288,7 +288,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_RIGHT | wxBOTTOM | wxTOP</flag>
+							<flag>wxALIGN_RIGHT|wxBOTTOM|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="remainingTime">
 								<font>
@@ -303,7 +303,7 @@
 						</object>
 						<object class="sizeritem">
 							<option>0</option>
-							<flag>wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxTOP</flag>
+							<flag>wxALIGN_LEFT|wxBOTTOM|wxLEFT|wxTOP</flag>
 							<border>5</border>
 							<object class="wxStaticText" name="remainingTimeUnit">
 								<font>

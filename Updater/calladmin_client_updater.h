@@ -45,9 +45,28 @@ private:
 
 	UpdateFrame *updateFrame;
 
+protected:
+	// Where all began :)
+	virtual bool OnInit();
+
+	// Command line arguments
+	virtual void OnInitCmdLine(wxCmdLineParser &parser);
+	virtual bool OnCmdLineParsed(wxCmdLineParser &parser);
+
 public:
 	CallAdminUpdater() : appEnded(false), callAdminVersion(wxString()),
 		callAdminUrl(wxString()), callAdminExecutable(wxString()), updateFrame(NULL) {};
+
+	wxString GetRelativePath(wxString relativeFileOrPath);
+
+	bool CheckForUpdate();
+
+	void StartUpdate();
+	void OnUpdateFrameClosed();
+
+	void ExitProgramm();
+
+	bool OnGetVersion(wxString error, wxString result);
 
 	wxString GetCallAdminVersion() {
 		return this->callAdminVersion;
@@ -61,31 +80,13 @@ public:
 		return this->updateFrame;
 	}
 
-	wxString GetRelativePath(wxString relativeFileOrPath);
-
 	wxString GetCallAdminExecutablePath() {
-#if defined(__WXMSW__)
-		return GetRelativePath("calladmin-client.exe");
-#else
-		return GetRelativePath("calladmin-client");
-#endif
+		#if defined(__WXMSW__)
+			return GetRelativePath("calladmin-client.exe");
+		#else
+			return GetRelativePath("calladmin-client");
+		#endif
 	}
-
-	bool CheckForUpdate();
-	void StartUpdate();
-
-	void ExitProgramm();
-
-	void OnUpdateFrameClosed();
-	bool OnGetVersion(wxString error, wxString result);
-
-protected:
-	// Where all began :)
-	virtual bool OnInit();
-
-	// Command line arguments
-	virtual void OnInitCmdLine(wxCmdLineParser &parser);
-	virtual bool OnCmdLineParsed(wxCmdLineParser &parser);
 };
 
 // CURL write callback

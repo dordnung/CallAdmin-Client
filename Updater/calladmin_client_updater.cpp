@@ -120,11 +120,11 @@ wxString CallAdminUpdater::GetRelativePath(wxString relativeFileOrPath) {
 	path = path.replace(start, path.size(), "");
 
 	// Add file name
-#if defined(__WXMSW__)
-	return path + "\\" + relativeFileOrPath;
-#else
-	return path + "/" + relativeFileOrPath;
-#endif
+	#if defined(__WXMSW__)
+		return path + "\\" + relativeFileOrPath;
+	#else
+		return path + "/" + relativeFileOrPath;
+	#endif
 }
 
 
@@ -183,8 +183,6 @@ void CallAdminUpdater::StartUpdate() {
 	if (!updateFrame->ShowFrame()) {
 		ExitProgramm();
 	}
-
-	SetTopWindow(this->updateFrame);
 }
 
 

@@ -80,6 +80,9 @@ bool UpdateFrame::ShowFrame() {
 	// Show frame
 	Show(true);
 
+	// Raise
+	Raise();
+
 	// Now start the Update
 	CreateThread(wxTHREAD_DETACHED);
 	GetThread()->Run();
@@ -186,10 +189,10 @@ wxThread::ExitCode UpdateFrame::Entry() {
 			wxString executablePath = wxGetApp().GetCallAdminExecutablePath();
 
 			// Open File
-			wxFFile *newFile = new wxFFile(executablePath + ".new", "wb");
+			wxFFile newFile(executablePath + ".new", "wb");
 
-			if (!newFile->IsOpened()) {
-				error = "Couldn't create file " + newFile->GetName();
+			if (!newFile.IsOpened()) {
+				error = "Couldn't create file " + newFile.GetName();
 			} else {
 				// Configurate Curl
 				curl_easy_setopt(curl, CURLOPT_URL, wxGetApp().GetCallAdminExecutable().mb_str().data());
@@ -199,7 +202,7 @@ wxThread::ExitCode UpdateFrame::Entry() {
 				curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
 				curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
 				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteDataToFile);
-				curl_easy_setopt(curl, CURLOPT_WRITEDATA, newFile->fp());
+				curl_easy_setopt(curl, CURLOPT_WRITEDATA, newFile.fp());
 				curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, ProgressUpdated);
 				curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, curl);
 
@@ -223,10 +226,6 @@ wxThread::ExitCode UpdateFrame::Entry() {
 				// Clean Curl
 				curl_easy_cleanup(curl);
 			}
-
-			// Close File
-			newFile->Close();
-			delete newFile;
 		} else {
 			error = "Couldn't init. CURL!";
 		}

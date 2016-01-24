@@ -71,9 +71,9 @@ public:
 	void OnFinish(wxString error);
 
 protected:
-	virtual wxThread::ExitCode Entry();
-
 	void OnCloseWindow(wxCloseEvent &event);
+
+	virtual wxThread::ExitCode Entry();
 
 	wxDECLARE_EVENT_TABLE();
 };
