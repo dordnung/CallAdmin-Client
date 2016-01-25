@@ -27,7 +27,7 @@ BINARY = calladmin-client-updater
 OBJECTS += calladmin_client_updater.cpp update_frame.cpp resource.cpp
 LINK = `wx-config --libs` `curl-config --libs`
 
-CFLAGS += `wx-config --cxxflags` `curl-config --cflags` -O3 -DCURL_STATICLIB -DWX_PRECOMP -D_LINUX -DNDEBUG -D_UNICODE \
+CFLAGS += `wx-config --cxxflags` `curl-config --cflags` -O3 -DCURL_STATICLIB -DWX_PRECOMP -D__WXGTK__ -D_LINUX -DNDEBUG -D_UNICODE \
 				-Wall -Woverloaded-virtual -Os -fpermissive -fno-strict-aliasing
 
 OBJ_BIN := $(OBJECTS:%.cpp=%.o)
@@ -44,3 +44,4 @@ default: all
 
 clean: 
 	find . -type f -name '*.o' -delete
+	find . -type f -name BINARY -delete

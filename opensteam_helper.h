@@ -51,6 +51,7 @@
 	#define PATH_LENGTH MAXPATHLEN
 #elif defined(__linux__)
 	#include "POSIXLibrary.h"
+	#include <stdio.h>
 	#include <libgen.h>
 	#include <limits.h>
 

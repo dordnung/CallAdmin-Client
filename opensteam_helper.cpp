@@ -85,15 +85,15 @@ bool OpenSteamHelper::FindSteamClientLibrary(char *libraryFile, size_t size) {
 
 		RegCloseKey(phkResult);
 	}
-#elif __linux__
+#elif defined(__linux__)
 	// On linux it's located in $HOME/.steam/sdk32/steamclient.so
 	char data[PATH_LENGTH] = { 0 };
 	char *home = getenv("HOME");
-	snprintf(data, PATH_MAX, "%s/.steam/sdk32", home);
+	snprintf(data, PATH_LENGTH, "%s/.steam/sdk32", home);
 
-	char resolved;
-	if (realpath(data, &resolved)) {
-		strncpy(data, &resolved, PATH_LENGTH);
+	char resolved[PATH_LENGTH] = { 0 };
+	if (realpath(data, resolved)) {
+		strncpy(data, resolved, PATH_LENGTH);
 	}
 
 	size_t len = strlen(data);
@@ -107,7 +107,7 @@ bool OpenSteamHelper::FindSteamClientLibrary(char *libraryFile, size_t size) {
 	libraryFile[size - 1] = 0;
 
 	return true;
-#elif __APPLE__ && __MACH__
+#elif defined(__APPLE__) && defined(__MACH__)
 	// Currently not supported
 	return false;
 #endif
@@ -287,25 +287,25 @@ bool OpenSteamHelper::SteamAPI_IsSteamRunning() {
 
 		RegCloseKey(phkResult);
 	}
-#elif __linux__
+#elif defined(__linux__)
 	// On linux get the PID from $HOME/.steam/steam.pid
-	char data;
+	char data[PATH_LENGTH] = { 0 };
 	char *home = getenv("HOME");
-	snprintf(&data, PATH_MAX, "%s/.steam/steam.pid", home);
+	snprintf(data, PATH_LENGTH, "%s/.steam/steam.pid", home);
 
-	char resolved;
-	if (realpath(&data, &resolved)) {
-		strncpy(&data, &resolved, PATH_LENGTH);
+	char resolved[PATH_LENGTH] = { 0 };
+	if (realpath(data, resolved)) {
+		strncpy(data, resolved, PATH_LENGTH);
 	}
 
-	FILE *process = fopen((const char *)&data, "r");
+	FILE *process = fopen((const char *)data, "r");
 
 	if (process) {
-		signed __int32 pid = fread(&resolved, 1, 64, process);
+		uint32_t pid = fread(resolved, 1, 64, process);
 		fclose(process);
 
 		if (pid > 0) {
-			__int32 pidInt = strtol(&resolved, 0, 10);
+			uint32_t pidInt = strtol(resolved, 0, 10);
 
 			// Also send pseudo kill signal
 			if (pidInt <= 0 || kill(pidInt, 0)) {
@@ -317,7 +317,7 @@ bool OpenSteamHelper::SteamAPI_IsSteamRunning() {
 	}
 
 	return false;
-#elif __APPLE__ && __MACH__
+#elif defined(__APPLE__) && defined(__MACH__)
 	// Currently not supported
 	return false;
 #endif

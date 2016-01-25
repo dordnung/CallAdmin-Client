@@ -1,15 +1,11 @@
 # -----------------------------------------------------
-# File        makefile
-# Authors     David <popoklopsi> Ordnung, Impact
+# File        Makefile
+# Authors     David O., Impact
 # License     GPLv3
 # Web         http://popoklopsi.de, http://gugyclan.eu
 # -----------------------------------------------------
 #
-########## ATTENTION #####
-# Linux support isn't given, yet.
-# But you can use this makefile to test it
-#
-# Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
+# Copyright (C) 2013-2016 David O., Impact
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,18 +22,18 @@
 
 CPP = g++
 
-WX = /home/david/Windows/Users/witch_000/Documents/Scripting/SDKS/wxwidgets
-OPENSTEAMWORKS = /home/david/Windows/Users/witch_000/Documents/Scripting/SDKS/opensteamworks
-CURL = /home/david/Windows/Users/witch_000/Documents/Scripting/SDKS/curl
+OPENSTEAMWORKS = ../opensteamworks
 
-BINARY = calladmin_client
+BINARY = calladmin-client
 
-OBJECTS += about.cpp calladmin-client.cpp call.cpp config.cpp log.cpp main.cpp opensteam.cpp taskbar.cpp tinyxml2/tinyxml2.cpp
-INCLUDE += -I$(WX)/include -I$(WX)/lib/gcc_lib -I$(OPENSTEAMWORKS)/include -I$(CURL) -I./ -I./tinyxml2
-LINK = -L$(WX)/lib/gcc_lib -L$(CURL) $(OPENSTEAMWORKS)/libs/steamclient.a -lcurl -lwx_gtk2u_adv-2.9 -lwx_gtk2u_core-2.9 -lwx_baseu-2.9 -lwxpng-2.9 -lwxjpeg-2.9 -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgio-2.0 -lpangoft2-1.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lcairo -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgthread-2.0 -lrt -lglib-2.0 -lX11 -lXxf86vm -lSM -m32 -lrt -ldl -lm
+OBJECTS += about_panel.cpp call_dialog.cpp calladmin-client.cpp config.cpp config_panel.cpp curl_util.cpp log_panel.cpp main_frame.cpp main_panel.cpp \
+				notebook.cpp opensteam.cpp opensteam_helper.cpp resource.cpp taskbar.cpp timer.cpp tracker_panel.cpp tinyxml2/tinyxml2.cpp
 
-CFLAGS += -O3 -D__WXGTK__ -D_FILE_OFFSET_BITS=64 -DCURL_STATICLIB -DWX_PRECOMP -DSTEAMWORKS_CLIENT_INTERFACES -D_LINUX -DSI_CONVERT_ICU -DNDEBUG -D_UNICODE -DUNICODE \
-				-Wall -Wno-unused-parameter -Wno-unused-result -Wno-unknown-pragmas -Woverloaded-virtual -Wnonnull -pthread -Os -fpermissive -fno-strict-aliasing -m32
+INCLUDE += -I"$(OPENSTEAMWORKS)/Open Steamworks" -I./tinyxml2
+LINK = `wx-config --libs` `curl-config --libs` $(OPENSTEAMWORKS)/Resources/Libs/Linux32/steamclient.a -ldl
+
+CFLAGS += `wx-config --cxxflags` `curl-config --cflags` -O3 -DSTEAMWORKS_CLIENT_INTERFACES -DCURL_STATICLIB -DWX_PRECOMP -D__WXGTK__ -D_LINUX -DNDEBUG -D_UNICODE \
+				-Wall -Woverloaded-virtual -std=c++11 -Wno-unknown-pragmas -Wno-deprecated-declarations -Wno-overloaded-virtual -Os -fpermissive -fno-strict-aliasing
 
 OBJ_BIN := $(OBJECTS:%.cpp=%.o)
 
@@ -53,3 +49,4 @@ default: all
 
 clean: 
 	find . -type f -name '*.o' -delete
+	find . -type f -name '$(BINARY)' -delete

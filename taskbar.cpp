@@ -71,7 +71,7 @@ void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow *parent
 
 	// Only if not other app is in fullscreen, otherwise it would be minimized
 	if (!isOtherInFullscreen()) {
-		#if defined(wxUSE_TASKBARICON_BALLOONS) && wxUSE_TASKBARICON_BALLOONS
+		#if defined(__WXMSW__) && defined(wxUSE_TASKBARICON_BALLOONS) && wxUSE_TASKBARICON_BALLOONS
 			if (caGetConfig()->GetShowInTaskbar()) {
 				// Show as balloon
 				ShowBalloon(title, message, 10000, isError ? wxICON_ERROR : wxICON_INFORMATION);
