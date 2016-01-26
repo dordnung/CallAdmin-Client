@@ -85,10 +85,10 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 	// First delete old ones
 	caGetTrackerPanel()->GetCurrentTrackers()->clear();
 
-	// Not empty?
-	if (result != "") {
-		// Everything good :)
-		if (errorStr == "") {
+	// Everything good :)
+	if (errorStr == "") {
+		// Not empty?
+		if (result != "") {
 			// Proceed XML result!
 			tinyxml2::XMLDocument doc;
 			tinyxml2::XMLNode *node;
@@ -150,17 +150,17 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 			}
 		} else {
 			// Curl error
-			error = errorStr;
+			error = "Couldn't init. CURL connection";
 		}
 	} else {
 		// Curl error
-		error = "Couldn't init. CURL connection";
+		error = errorStr;
 	}
 
 
 	// Seems we found no tracker
 	if (error != "") {
-		caGetTaskBarIcon()->ShowMessage("Couldn't retrieve trackers!", error, caGetTrackerPanel(), true);
+		caLogAction("Couldn't retrieve trackers. Error: " + error, LogLevel::LEVEL_ERROR);
 	}
 }
 

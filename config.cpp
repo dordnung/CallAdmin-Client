@@ -47,7 +47,7 @@ Config::Config() : wxFileConfig("CallAdmin-Client", wxEmptyString, GetConfigPath
 	this->key = "";
 	this->soundFile = "";
 
-	this->logLevel = LEVEL_INFO;
+	this->logLevel = LogLevel::LEVEL_INFO;
 	this->steamEnabled = true;
 	this->showInTaskbar = false;
 	this->hideOnMinimize = false;
@@ -76,7 +76,7 @@ bool Config::ParseConfig() {
 		this->maxAttempts = ReadLong("attempts", 5l);
 		this->numLastCalls = ReadLong("lastcalls", 25l);
 
-		this->logLevel = (LogLevel)ReadLong("logLevel", LEVEL_INFO);
+		this->logLevel = (LogLevel)ReadLong("logLevel", LogLevel::LEVEL_INFO);
 		this->steamEnabled = ReadBool("steam", true);
 		this->showInTaskbar = ReadBool("showInTaskbar", false);
 		this->hideOnMinimize = ReadBool("hideonminimize", false);
