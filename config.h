@@ -33,6 +33,7 @@
 #endif
 
 #include <wx/config.h>
+#include <wx/fileconf.h>
 
 
 enum LogLevel {
@@ -49,7 +50,7 @@ static_assert(sizeof(LogLevelNames) / sizeof(wxString) == LEVEL_SIZE_OF, "Sizes 
 
 
 // Config Class
-class Config : public wxConfig {
+class Config : public wxFileConfig {
 private:
 	// Settings
 	int step;
@@ -68,6 +69,8 @@ private:
 	bool isAvailable;
 	bool wantSound;
 	bool isSpectator;
+
+	bool converted;
 
 public:
 	Config();
@@ -213,8 +216,11 @@ public:
 		Write("spectate", isSpectator);
 	}
 
-protected:
+private:
 	bool IsSoundFileValid();
+
+	wxString GetConfigPath();
+	void ConvertFromRegistry();
 };
 
 

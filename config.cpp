@@ -23,16 +23,20 @@
  */
 #include "config.h"
 #include "calladmin-client.h"
+#include <wx/utils.h>
 #include <wx/file.h>
+#include <wx/stdpaths.h>
 
 #ifdef __WXMSW__
-	// Memory leak detection for debugging 
+	#include "wx/msw/regconf.h"
+
+	 // Memory leak detection for debugging 
 	#include <wx/msw/msvcrt.h>
 #endif
 
 
 // Create Config
-Config::Config() : wxConfig("Call Admin") {
+Config::Config() : wxFileConfig("CallAdmin-Client", wxEmptyString, GetConfigPath()) {
 	// Default Settings
 	this->step = 5;
 	this->timeout = 3;
@@ -50,43 +54,44 @@ Config::Config() : wxConfig("Call Admin") {
 	this->isAvailable = true;
 	this->wantSound = true;
 	this->isSpectator = false;
+
+	this->converted = false;
 }
 
 
 // Parse Config
 bool Config::ParseConfig() {
-	bool isConfigSet = false;
+	bool isConfigSet = true;
+
+	// Maybe convert from old registry config
+	ConvertFromRegistry();
 
 	// Was parsing good?
 	if (!Exists("page") || !Exists("key")) {
 		isConfigSet = false;
 	} else {
 		// Get files out of config
-		try {
-			this->step = ReadLong("step", 5l);
-			this->timeout = ReadLong("timeout", 3l);
-			this->maxAttempts = ReadLong("attempts", 5l);
-			this->numLastCalls = ReadLong("lastcalls", 25l);
+		this->step = ReadLong("step", 5l);
+		this->timeout = ReadLong("timeout", 3l);
+		this->maxAttempts = ReadLong("attempts", 5l);
+		this->numLastCalls = ReadLong("lastcalls", 25l);
 
-			this->logLevel = (LogLevel)ReadLong("logLevel", LEVEL_INFO);
-			this->steamEnabled = ReadBool("steam", true);
-			this->showInTaskbar = ReadBool("showInTaskbar", false);
-			this->hideOnMinimize = ReadBool("hideonminimize", false);
-			this->isAvailable = ReadBool("available", true);
-			this->wantSound = ReadBool("sound", true);
-			this->isSpectator = ReadBool("spectate", false);
+		this->logLevel = (LogLevel)ReadLong("logLevel", LEVEL_INFO);
+		this->steamEnabled = ReadBool("steam", true);
+		this->showInTaskbar = ReadBool("showInTaskbar", false);
+		this->hideOnMinimize = ReadBool("hideonminimize", false);
+		this->isAvailable = ReadBool("available", true);
+		this->wantSound = ReadBool("sound", true);
+		this->isSpectator = ReadBool("spectate", false);
 
-			Read("key", &this->key, "");
-			Read("page", &this->page, "");
-			Read("soundFile", &this->soundFile, "");
+		Read("key", &this->key, "");
+		Read("page", &this->page, "");
+		Read("soundFile", &this->soundFile, "");
 
-			// Strip last /
-			if (this->page.find_last_of("/") == this->page.length() - 1) {
-				// Delete it
-				this->page.RemoveLast();
-			}
-		} catch (...) {
-			isConfigSet = false;
+		// Strip last /
+		if (this->page.find_last_of("/") == this->page.length() - 1) {
+			// Delete it
+			this->page.RemoveLast();
 		}
 	}
 
@@ -129,6 +134,8 @@ bool Config::ParseConfig() {
 
 	if (this->timeout >= step) {
 		this->timeout = step - 1;
+
+		caLogAction("Timeout can't be higher then the intervall", LogLevel::LEVEL_WARNING);
 	}
 
 	return isConfigSet;
@@ -154,4 +161,104 @@ bool Config::IsSoundFileValid() {
 	}
 
 	return true;
+}
+
+
+wxString Config::GetConfigPath() {
+	wxString fileDirectory;
+	wxFileName fileName;
+
+#ifdef __WXMSW__
+	fileDirectory = wxStandardPaths::Get().GetUserConfigDir() + "\\CallAdmin";
+	fileName = wxFileName(fileDirectory, "CallAdmin-Client", "ini");
+#else
+	// First check XDG_CONFIG_HOME var
+	if (wxGetenv("XDG_CONFIG_HOME")) {
+		fileDirectory = wxGetenv("XDG_CONFIG_HOME") + "/CallAdmin";
+	} else {
+		// Other wise use ~/.config
+		fileDirectory = wxFileName::GetHomeDir() + "/.config/CallAdmin";
+	}
+
+	fileName = wxFileName(fileDirectory, "CallAdmin-Client", "conf");
+#endif
+
+	if (!wxDirExists(fileDirectory)) {
+		// Create directory if not exists
+		wxFileName::Mkdir(fileDirectory, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+	}
+
+	return fileName.GetFullPath();
+}
+
+void Config::ConvertFromRegistry() {
+#ifdef __WXMSW__
+	if (this->converted) {
+		return;
+	}
+
+	this->converted = true;
+
+	wxRegConfig regConfig("Call Admin");
+	wxString temp;
+
+	if (regConfig.Exists("page")) {
+		regConfig.Read("page", &temp, "");
+
+		Write("page", temp);
+	} else {
+		// No config set
+		return;
+	}
+
+	if (regConfig.Exists("key")) {
+		regConfig.Read("key", &temp, "");
+
+		Write("key", temp);
+	}
+
+	if (regConfig.Exists("step")) {
+		Write("step", regConfig.ReadLong("step", 5L));
+	}
+
+	if (regConfig.Exists("timeout")) {
+		Write("timeout", regConfig.ReadLong("timeout", 3L));
+	}
+
+	if (regConfig.Exists("attempts")) {
+		Write("attempts", regConfig.ReadLong("attempts", 5L));
+	}
+
+	if (regConfig.Exists("lastcalls")) {
+		Write("lastcalls", regConfig.ReadLong("lastcalls", 25L));
+	}
+
+	if (regConfig.Exists("steam")) {
+		Write("steam", regConfig.ReadBool("steam", true));
+	}
+
+	if (regConfig.Exists("showInTaskbar")) {
+		Write("showInTaskbar", regConfig.ReadBool("showInTaskbar", false));
+	}
+
+	if (regConfig.Exists("hideonminimize")) {
+		Write("hideonminimize", regConfig.ReadBool("hideonminimize", false));
+	}
+
+	if (regConfig.Exists("available")) {
+		Write("available", regConfig.ReadBool("available", true));
+	}
+
+	if (regConfig.Exists("sound")) {
+		Write("sound", regConfig.ReadBool("sound", true));
+	}
+
+	if (regConfig.Exists("spectate")) {
+		Write("spectate", regConfig.ReadBool("spectate", false));
+	}
+
+	// Now delete it
+	regConfig.DeleteAll();
+
+#endif
 }

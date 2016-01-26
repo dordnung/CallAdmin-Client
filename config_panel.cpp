@@ -248,10 +248,10 @@ void ConfigPanel::ParseConfig() {
 	// Log Action
 	caLogAction("Parsing the config", LogLevel::LEVEL_INFO);
 
-	bool foundConfigError = config->ParseConfig();
+	bool isConfigSet = config->ParseConfig();
 
 	// Everything good?
-	if (!foundConfigError) {
+	if (isConfigSet) {
 		// Set Config Sliders
 		this->timeoutSlider->SetValue(config->GetTimeout());
 		this->stepSlider->SetValue(config->GetStep());
