@@ -12,6 +12,26 @@
 					<style>wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL</style>
 				</object>
 			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxBOTTOM|wxEXPAND</flag>
+				<border>5</border>
+				<object class="wxChoice" name="logLevel">
+					<font>
+						<size>10</size>
+						<style>normal</style>
+						<weight>normal</weight>
+						<underlined>0</underlined>
+					</font>
+					<selection>0</selection>
+					<content>
+						<item>DEBUG</item>
+						<item>INFO</item>
+						<item>WARNING</item>
+						<item>ERROR</item>
+					</content>
+				</object>
+			</object>
 		</object>
 	</object>
 </resource>

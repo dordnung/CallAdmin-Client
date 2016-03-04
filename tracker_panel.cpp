@@ -57,7 +57,7 @@ TrackerPanel::~TrackerPanel() {
 
 // Init Panel with controls
 bool TrackerPanel::InitPanel() {
-	// TrackerPanel is a ScrolledWindows, but a ScrolledWindow is also a panel
+	// TrackerPanel is a ScrolledWindow, but a ScrolledWindow is also a panel
 	if (!wxXmlResource::Get()->LoadObject(this, caGetNotebook()->GetWindow(), "trackerPanel", "wxScrolledWindow")) {
 		wxMessageBox("Error: Couldn't find XRCID trackerPanel", "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR);
 
@@ -169,28 +169,35 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 	}
 }
 
+
 void TrackerPanel::AddTracker(wxString steamId, wxString name, bool isFriend, bool isOnline) {
 	long item = this->trackerBox->InsertItem(0, "tracker");
 
 	this->trackerBox->SetItem(item, 0, steamId);
 	this->trackerBox->SetItem(item, 1, wxString::FromUTF8(name));
+
+	// UTF-8 Codes for OK and Not OK
 	this->trackerBox->SetItem(item, 2, isFriend ? wxString::FromUTF8("\xE2\x9C\x94") : wxString::FromUTF8("\xE2\x9C\x96"));
 	this->trackerBox->SetItem(item, 3, isOnline ? wxString::FromUTF8("\xE2\x9C\x94") : wxString::FromUTF8("\xE2\x9C\x96"));
 
 	// Hacky, autosize columns
-	for (int i = 0; i < 4; i++) {
-		// Get the width if autosize with content size
+	for (int i = 0; i < this->trackerBox->GetColumnCount(); i++) {
 		this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
-		int contentSize = this->trackerBox->GetColumnWidth(0);
 
-		// Get the width if autosize with header size
-		this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
-		int headerSize = this->trackerBox->GetColumnWidth(0);
+		// Only on Windows wxLIST_AUTOSIZE_USEHEADER gives the real header width
+		#if defined (__WXMSW__)
+		    // Get the width if autosize with content size
+			int contentSize = this->trackerBox->GetColumnWidth(0);
 
-		// Use content width if it is higher then the header size
-		if (contentSize > headerSize) {
-			this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
-		}
+			// Get the width if autosize with header size
+			this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
+			int headerSize = this->trackerBox->GetColumnWidth(0);
+
+			// Use content width if it is higher then the header size
+			if (contentSize > headerSize) {
+				this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
+			}
+		#endif
 	}
 }
 
@@ -217,10 +224,6 @@ void TrackerPanel::OnUpdate(wxCommandEvent &WXUNUSED(event)) {
 			}
 		}
 	}
-
-	#if !defined(__WXMSW__)
-		this->FitInside();
-	#endif
 }
 
 

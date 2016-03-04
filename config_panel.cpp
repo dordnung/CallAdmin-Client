@@ -44,7 +44,6 @@ wxBEGIN_EVENT_TABLE(ConfigPanel, wxPanel)
 
 	EVT_FILEPICKER_CHANGED(XRCID("soundFile"), ConfigPanel::OnSoundFileChanged)
 	EVT_BUTTON(XRCID("soundFileDefault"), ConfigPanel::OnSoundFileDefault)
-	EVT_CHOICE(XRCID("logLevel"), ConfigPanel::OnLogLevelUpdate)
 
 	EVT_CHECKBOX(XRCID("steamEnable"), ConfigPanel::OnSteamUpdate)
 	EVT_CHECKBOX(XRCID("showInTaskbar"), ConfigPanel::OnShowInTaskbarUpdate)
@@ -64,7 +63,6 @@ ConfigPanel::ConfigPanel() {
 	this->attemptsSliderValue = NULL;
 	this->callsSlider = NULL;
 	this->callsSliderValue = NULL;
-	this->logLevel = NULL;
 	this->steamEnable = NULL;
 	this->showInTaskbar = NULL;
 	this->hideMinimized = NULL;
@@ -104,10 +102,6 @@ bool ConfigPanel::InitPanel() {
 	// Ask for sound file
 	FIND_OR_FAIL(this->soundFilePicker, XRCCTRL(*this, "soundFile", wxFilePickerCtrl), "soundFile");
 
-	// Ask for LogLevel
-	FIND_OR_FAIL(this->logLevel, XRCCTRL(*this, "logLevel", wxChoice), "logLevel");
-	this->logLevel->SetSelection(LogLevel::LEVEL_INFO);
-
 	// Ask for Steam
 	FIND_OR_FAIL(this->steamEnable, XRCCTRL(*this, "steamEnable", wxCheckBox), "steamEnable");
 
@@ -116,6 +110,13 @@ bool ConfigPanel::InitPanel() {
 
 	// Ask for hide on mini
 	FIND_OR_FAIL(this->hideMinimized, XRCCTRL(*this, "hideMinimized", wxCheckBox), "hideMinimized");
+
+	// On Windows the config panel is to small, so increase the vertical gap to stretch it
+	#if defined(__WXMSW__)
+		if (wxGridBagSizer* gridBagSizer = dynamic_cast<wxGridBagSizer*>(this->pageText->GetContainingSizer())) {
+			gridBagSizer->SetVGap(gridBagSizer->GetVGap() * 1.5);
+		}
+	#endif
 
 	return true;
 }
@@ -135,7 +136,7 @@ void ConfigPanel::OnSoundFileChanged(wxFileDirPickerEvent &event) {
 	// Log Action
 	caLogAction("Set sound file to " + event.GetPath(), LogLevel::LEVEL_INFO);
 
-	if (caGetConfig()->SetSoundFile(event.GetPath())) {
+	if (!caGetConfig()->SetSoundFile(event.GetPath())) {
 		this->soundFilePicker->SetPath("");
 	}
 }
@@ -147,16 +148,6 @@ void ConfigPanel::OnSoundFileDefault(wxCommandEvent &WXUNUSED(event)) {
 
 	// Log Action
 	caLogAction("Changed sound file to the default sound", LogLevel::LEVEL_INFO);
-}
-
-
-// Log Level Updated -> Set Config
-void ConfigPanel::OnLogLevelUpdate(wxCommandEvent &WXUNUSED(event)) {
-	// Write to config file
-	caGetConfig()->SetLogLevel((LogLevel) this->logLevel->GetSelection());
-
-	// Log Action
-	caLogAction("Changed Log Level to " + LogLevelNames[this->logLevel->GetSelection()], LogLevel::LEVEL_INFO);
 }
 
 
@@ -225,6 +216,7 @@ void ConfigPanel::OnSet(wxCommandEvent &WXUNUSED(event)) {
 	caGetConfig()->SetNumLastCalls(this->callsSlider->GetValue());
 	caGetConfig()->SetPage(this->pageText->GetValue());
 	caGetConfig()->SetKey(this->keyText->GetValue());
+	caGetConfig()->Flush();
 
 	// Refresh main dialog
 	caGetMainFrame()->SetTitle("CallAdmin Client");
@@ -266,7 +258,6 @@ void ConfigPanel::ParseConfig() {
 		this->keyText->SetValue(config->GetKey());
 		this->soundFilePicker->SetPath(config->GetSoundFile());
 
-		this->logLevel->SetSelection((int)config->GetLogLevel());
 		this->steamEnable->SetValue(config->GetSteamEnabled());
 		this->showInTaskbar->SetValue(config->GetShowInTaskbar());
 		this->hideMinimized->SetValue(config->GetHideOnMinimize());

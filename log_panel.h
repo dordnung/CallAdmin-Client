@@ -37,16 +37,22 @@
 
 class LogPanel : public wxScrolledWindow {
 private:
+	wxChoice *logLevel;
 	wxListCtrl *logBox;
 
 public:
-	LogPanel() : logBox(NULL) {};
+	LogPanel() : logLevel(NULL), logBox(NULL) {};
 
 	// Load controls
 	bool InitPanel();
 
 	// Add Action to the logBox
 	void AddLog(wxString log, LogLevel logLevel);
+
+protected:
+	void OnLogLevelUpdate(wxCommandEvent &event);
+
+	wxDECLARE_EVENT_TABLE();
 };
 
 #endif

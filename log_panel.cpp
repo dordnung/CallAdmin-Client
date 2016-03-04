@@ -32,6 +32,12 @@
 #endif
 
 
+// Events for Log Panel
+wxBEGIN_EVENT_TABLE(LogPanel, wxScrolledWindow)
+	EVT_CHOICE(XRCID("logLevel"), LogPanel::OnLogLevelUpdate)
+wxEND_EVENT_TABLE()
+
+
 // Load controls
 bool LogPanel::InitPanel() {
 	if (!wxXmlResource::Get()->LoadObject(this, caGetNotebook()->GetWindow(), "logPanel", "wxScrolledWindow")) {
@@ -39,6 +45,10 @@ bool LogPanel::InitPanel() {
 
 		return false;
 	}
+
+	// Ask for LogLevel
+	FIND_OR_FAIL(this->logLevel, XRCCTRL(*this, "logLevel", wxChoice), "logLevel");
+	this->logLevel->SetSelection((int)caGetConfig()->GetLogLevel());
 
 	// The log box
 	FIND_OR_FAIL(this->logBox, XRCCTRL(*this, "logBox", wxListCtrl), "logBox");
@@ -60,19 +70,33 @@ void LogPanel::AddLog(wxString log, LogLevel logLevel) {
 		this->logBox->SetItem(item, 2, wxString::FromUTF8(log));
 
 		// Hacky, autosize columns
-		for (int i = 0; i < 3; i++) {
-			// Get the width if autosize with content size
+		for (int i = 0; i < this->logBox->GetColumnCount(); i++) {
 			this->logBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
-			int contentSize = this->logBox->GetColumnWidth(0);
 
-			// Get the width if autosize with header size
-			this->logBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
-			int headerSize = this->logBox->GetColumnWidth(0);
+			// Only on Windows wxLIST_AUTOSIZE_USEHEADER gives the real header width
+			#if defined (__WXMSW__)
+				// Get the width if autosize with content size
+				int contentSize = this->logBox->GetColumnWidth(0);
 
-			// Use content width if it is higher then the header size
-			if (contentSize > headerSize) {
-				this->logBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
-			}
+				// Get the width if autosize with header size
+				this->logBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
+				int headerSize = this->logBox->GetColumnWidth(0);
+
+				// Use content width if it is higher then the header size
+				if (contentSize > headerSize) {
+					this->logBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
+				}
+			#endif
 		}
 	}
+}
+
+
+// Log Level Updated -> Set Config
+void LogPanel::OnLogLevelUpdate(wxCommandEvent &WXUNUSED(event)) {
+	// Write to config file
+	caGetConfig()->SetLogLevel((LogLevel) this->logLevel->GetSelection());
+
+	// Log Action
+	caLogAction("Changed Log Level to " + LogLevelNames[this->logLevel->GetSelection()], LogLevel::LEVEL_INFO);
 }

@@ -21,14 +21,14 @@ The Updater for the Call Admin Client
 - **Use Prebuild version**
   - Download prebuild file from `http://www.xxx.com`
   
-- **Or build on your own: Build wxwidgets 3.0.2**
-  1. Download wxwidgets 3.0.2 from `https://github.com/wxWidgets/wxWidgets/releases/download/v3.0.2/wxWidgets-3.0.2.zip` and unzip
+- **Or build on your own: Build wxwidgets 3.1.0**
+  1. Download wxwidgets 3.1.0 from `https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxWidgets-3.1.0.zip` and unzip
   2. Add VS to the system PATH if not done yet:
     - For example: `C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin` 
-  3. Open command line at `wxWidgets-3.0.2/build/msw/`
+  3. Open command line at `wxWidgets-3.1.0/build/msw/`
   4. Type `vcvars32.bat` and press ENTER
   5. Type `nmake.exe -f makefile.vc SHARED=0 BUILD=release UNICODE=1` and press ENTER
-  6. Add a new system variable named `WXWIDGETS302` with the path to the wxWidgets-3.0.2 folder
+  6. Add a new system variable named `WXWIDGETS310` with the path to the wxWidgets-3.1.0 folder
   
 - **Build libcurl**
   1. Download curl from `http://curl.haxx.se/download/curl-7.46.0.zip` and unzip

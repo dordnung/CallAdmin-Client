@@ -387,43 +387,6 @@
 						<cellspan>1,1</cellspan>
 						<flag>wxALIGN_CENTER_VERTICAL</flag>
 						<border>0</border>
-						<object class="wxStaticText" name="logLevelText">
-							<font>
-								<size>10</size>
-								<style>normal</style>
-								<weight>normal</weight>
-								<underlined>0</underlined>
-							</font>
-							<label>What information should be logged: </label>
-							<wrap>-1</wrap>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<cellpos>9,1</cellpos>
-						<cellspan>1,1</cellspan>
-						<flag>wxEXPAND</flag>
-						<border>0</border>
-						<object class="wxChoice" name="logLevel">
-							<font>
-								<size>10</size>
-								<style>normal</style>
-								<weight>normal</weight>
-								<underlined>0</underlined>
-							</font>
-							<selection>1</selection>
-							<content>
-								<item>DEBUG</item>
-								<item>INFO</item>
-								<item>WARNING</item>
-								<item>ERROR</item>
-							</content>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<cellpos>10,0</cellpos>
-						<cellspan>1,1</cellspan>
-						<flag>wxALIGN_CENTER_VERTICAL</flag>
-						<border>0</border>
 						<object class="wxStaticText" name="steamEnableText">
 							<font>
 								<size>10</size>
@@ -436,7 +399,7 @@
 						</object>
 					</object>
 					<object class="sizeritem">
-						<cellpos>10,1</cellpos>
+						<cellpos>9,1</cellpos>
 						<cellspan>1,1</cellspan>
 						<flag></flag>
 						<border>0</border>
@@ -452,7 +415,7 @@
 						</object>
 					</object>
 					<object class="sizeritem">
-						<cellpos>11,0</cellpos>
+						<cellpos>10,0</cellpos>
 						<cellspan>1,1</cellspan>
 						<flag>wxALIGN_CENTER_VERTICAL</flag>
 						<border>0</border>
@@ -468,7 +431,7 @@
 						</object>
 					</object>
 					<object class="sizeritem">
-						<cellpos>11,1</cellpos>
+						<cellpos>10,1</cellpos>
 						<cellspan>1,1</cellspan>
 						<flag></flag>
 						<border>0</border>
@@ -484,7 +447,7 @@
 						</object>
 					</object>
 					<object class="sizeritem">
-						<cellpos>12,0</cellpos>
+						<cellpos>11,0</cellpos>
 						<cellspan>1,1</cellspan>
 						<flag>wxALIGN_CENTER_VERTICAL</flag>
 						<border>0</border>
@@ -500,7 +463,7 @@
 						</object>
 					</object>
 					<object class="sizeritem">
-						<cellpos>12,1</cellpos>
+						<cellpos>11,1</cellpos>
 						<cellspan>1,1</cellspan>
 						<flag></flag>
 						<border>0</border>
@@ -516,7 +479,7 @@
 						</object>
 					</object>
 					<object class="sizeritem">
-						<cellpos>13,0</cellpos>
+						<cellpos>12,0</cellpos>
 						<cellspan>1,2</cellspan>
 						<flag>wxALIGN_CENTER|wxTOP</flag>
 						<border>15</border>

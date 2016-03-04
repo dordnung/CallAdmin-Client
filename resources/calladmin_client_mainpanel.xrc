@@ -170,7 +170,7 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxTOP</flag>
+						<flag>wxALIGN_CENTER|wxBOTTOM|wxTOP</flag>
 						<border>5</border>
 						<object class="wxBoxSizer">
 							<orient>wxHORIZONTAL</orient>
@@ -208,7 +208,7 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
+						<flag>wxALIGN_CENTER|wxLEFT|wxRIGHT|wxTOP</flag>
 						<border>5</border>
 						<object class="wxBoxSizer">
 							<orient>wxHORIZONTAL</orient>
@@ -235,7 +235,7 @@
 					</object>
 					<object class="sizeritem">
 						<option>1</option>
-						<flag>wxALIGN_BOTTOM|wxEXPAND|wxTOP</flag>
+						<flag>wxEXPAND|wxTOP</flag>
 						<border>35</border>
 						<object class="wxBoxSizer">
 							<orient>wxHORIZONTAL</orient>
@@ -247,7 +247,7 @@
 									<orient>wxVERTICAL</orient>
 									<object class="sizeritem">
 										<option>0</option>
-										<flag>wxALIGN_BOTTOM|wxALIGN_RIGHT|wxALL</flag>
+										<flag>wxALIGN_RIGHT|wxALL</flag>
 										<border>5</border>
 										<object class="wxStaticText" name="copyrightTextMain">
 											<font>

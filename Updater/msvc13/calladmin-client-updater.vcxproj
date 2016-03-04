@@ -49,7 +49,7 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(WXWIDGETS302)\include;../;$(WXWIDGETS302)\lib\vc_lib\mswu;$(CURL);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIDGETS310)\include;../;$(WXWIDGETS310)\lib\vc_lib\mswu;$(CURL);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>CURL_STATICLIB;WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -62,12 +62,12 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(WXWIDGETS302)\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIDGETS310)\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>libcurl_a.lib;wxmsw30u_html.lib;wxmsw30u_xrc.lib;wxmsw30u_adv.lib;wxmsw30u_core.lib;wxbase30u_xml.lib;wxbase30u.lib;wxexpat.lib;wxpng.lib;wxjpeg.lib;wxzlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcurl_a.lib;wxmsw31u_html.lib;wxmsw31u_xrc.lib;wxmsw31u_adv.lib;wxmsw31u_core.lib;wxbase31u_xml.lib;wxbase31u.lib;wxexpat.lib;wxpng.lib;wxjpeg.lib;wxzlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(WXWIDGETS302)\lib\vc_lib;$(CURL);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(WXWIDGETS310)\lib\vc_lib;$(CURL);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -84,7 +84,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(WXWIDGETS302)\include;../;$(WXWIDGETS302)\lib\vc_lib\mswud;$(CURL);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIDGETS310)\include;../;$(WXWIDGETS310)\lib\vc_lib\mswud;$(CURL);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>CURL_STATICLIB;WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_DEBUG;_UNICODE;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -96,12 +96,12 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_DEBUG;_UNICODE;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(WXWIDGETS302)\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIDGETS310)\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>libcurl_a.lib;wxmsw30ud_html.lib;wxmsw30ud_xrc.lib;wxmsw30ud_adv.lib;wxmsw30ud_core.lib;wxbase30ud_xml.lib;wxbase30ud.lib;wxexpatd.lib;wxpngd.lib;wxjpegd.lib;wxzlibd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcurl_a.lib;wxmsw31ud_html.lib;wxmsw31ud_xrc.lib;wxmsw31ud_adv.lib;wxmsw31ud_core.lib;wxbase31ud_xml.lib;wxbase31ud.lib;wxexpatd.lib;wxpngd.lib;wxjpegd.lib;wxzlibd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(WXWIDGETS302)\lib\vc_lib;$(CURL);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(WXWIDGETS310)\lib\vc_lib;$(CURL);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>

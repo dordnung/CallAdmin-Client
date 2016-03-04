@@ -33,11 +33,18 @@
 #endif
 
 #include <wx/taskbar.h>
+#include <wx/notifmsg.h>
 
 
 // Taskbar Icon for Windows
 class TaskBarIcon : public wxTaskBarIcon {
 public:
+	#if defined(__WXMSW__)
+		TaskBarIcon() {
+			wxNotificationMessage::UseTaskBarIcon(this);
+		}
+	#endif
+
 	void AddIcon();
 
 	// Show a information whether in the taskbar or as dialog if taskbar messages are not available

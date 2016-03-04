@@ -49,7 +49,6 @@ private:
 	wxSlider *callsSlider;
 	wxStaticText *callsSliderValue;
 	wxFilePickerCtrl *soundFilePicker;
-	wxChoice *logLevel;
 	wxCheckBox *steamEnable;
 	wxCheckBox *showInTaskbar;
 	wxCheckBox *hideMinimized;
@@ -67,7 +66,6 @@ protected:
 	void OnSliderChanged(wxCommandEvent &event);
 	void OnSoundFileChanged(wxFileDirPickerEvent &event);
 	void OnSoundFileDefault(wxCommandEvent &event);
-	void OnLogLevelUpdate(wxCommandEvent &event);
 	void OnSteamUpdate(wxCommandEvent &event);
 	void OnShowInTaskbarUpdate(wxCommandEvent &event);
 	void OnHideUpdate(wxCommandEvent &event);
