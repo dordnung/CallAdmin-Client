@@ -65,7 +65,12 @@ bool TrackerPanel::InitPanel() {
 	}
 
 	// The tracker list box
-	FIND_OR_FAIL(this->trackerBox, XRCCTRL(*this, "trackerBox", wxListBox), "trackerBox");
+	FIND_OR_FAIL(this->trackerBox, XRCCTRL(*this, "trackerBox", wxListCtrl), "trackerBox");
+
+	this->trackerBox->InsertColumn(0, "SteamID");
+	this->trackerBox->InsertColumn(1, "Name");
+	this->trackerBox->InsertColumn(2, "Friend?");
+	this->trackerBox->InsertColumn(3, "Online?");
 
 	return true;
 }
@@ -164,9 +169,34 @@ void TrackerPanel::RefreshTrackers(wxString errorStr, wxString result, int WXUNU
 	}
 }
 
+void TrackerPanel::AddTracker(wxString steamId, wxString name, bool isFriend, bool isOnline) {
+	long item = this->trackerBox->InsertItem(0, "tracker");
+
+	this->trackerBox->SetItem(item, 0, steamId);
+	this->trackerBox->SetItem(item, 1, wxString::FromUTF8(name));
+	this->trackerBox->SetItem(item, 2, isFriend ? wxString::FromUTF8("\xE2\x9C\x94") : wxString::FromUTF8("\xE2\x9C\x96"));
+	this->trackerBox->SetItem(item, 3, isOnline ? wxString::FromUTF8("\xE2\x9C\x94") : wxString::FromUTF8("\xE2\x9C\x96"));
+
+	// Hacky, autosize columns
+	for (int i = 0; i < 4; i++) {
+		// Get the width if autosize with content size
+		this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
+		int contentSize = this->trackerBox->GetColumnWidth(0);
+
+		// Get the width if autosize with header size
+		this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
+		int headerSize = this->trackerBox->GetColumnWidth(0);
+
+		// Use content width if it is higher then the header size
+		if (contentSize > headerSize) {
+			this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
+		}
+	}
+}
+
 
 void TrackerPanel::OnUpdate(wxCommandEvent &WXUNUSED(event)) {
-	this->trackerBox->Clear();
+	this->trackerBox->DeleteAllItems();
 
 	if (this->currentTrackers.empty()) {
 		AddTracker("No trackers available");
@@ -249,25 +279,8 @@ void NameTimer::Notify() {
 				isOnline = true;
 			}
 
-			// Format tracker Text
-			wxString trackerText = (wxString)helper->SteamFriends()->GetFriendPersonaName(this->client) + " - " + steamId;
-
-			if (steamId != caGetSteamThread()->GetUserSteamId()) {
-				if (isFriend) {
-					trackerText += " - Friend";
-
-					if (isOnline) {
-						trackerText += " - Online";
-					} else {
-						trackerText += " - Offline";
-					}
-				}
-			} else {
-				trackerText = "Yourself: " + trackerText;
-			}
-
 			// Finally add tracker
-			caGetTrackerPanel()->AddTracker(trackerText);
+			caGetTrackerPanel()->AddTracker(steamId, helper->SteamFriends()->GetFriendPersonaName(this->client), isFriend, isOnline);
 
 			// Delete because it's finished
 			delete this;

@@ -41,7 +41,11 @@ bool LogPanel::InitPanel() {
 	}
 
 	// The log box
-	FIND_OR_FAIL(this->logBox, XRCCTRL(*this, "logBox", wxListBox), "logBox");
+	FIND_OR_FAIL(this->logBox, XRCCTRL(*this, "logBox", wxListCtrl), "logBox");
+
+	this->logBox->InsertColumn(0, "Level");
+	this->logBox->InsertColumn(1, "Time");
+	this->logBox->InsertColumn(2, "Log");
 
 	return true;
 }
@@ -49,10 +53,26 @@ bool LogPanel::InitPanel() {
 // Add Action to the logBox
 void LogPanel::AddLog(wxString log, LogLevel logLevel) {
 	if (logLevel >= caGetConfig()->GetLogLevel()) {
-		this->logBox->SetSelection(this->logBox->Append("[" + LogLevelNames[logLevel] + "] " + wxString::FromUTF8(wxNow() + " - " + log)));
+		long item = this->logBox->InsertItem(0, "log");
 
-		#if !defined(__WXMSW__)
-			this->FitInside();
-		#endif
+		this->logBox->SetItem(item, 0, LogLevelNames[logLevel]);
+		this->logBox->SetItem(item, 1, wxNow());
+		this->logBox->SetItem(item, 2, wxString::FromUTF8(log));
+
+		// Hacky, autosize columns
+		for (int i = 0; i < 3; i++) {
+			// Get the width if autosize with content size
+			this->logBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
+			int contentSize = this->logBox->GetColumnWidth(0);
+
+			// Get the width if autosize with header size
+			this->logBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
+			int headerSize = this->logBox->GetColumnWidth(0);
+
+			// Use content width if it is higher then the header size
+			if (contentSize > headerSize) {
+				this->logBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
+			}
+		}
 	}
 }

@@ -169,7 +169,7 @@
                 <object class="notebookpage" expanded="1">
                     <property name="bitmap"></property>
                     <property name="label">Main</property>
-                    <property name="select">0</property>
+                    <property name="select">1</property>
                     <object class="wxPanel" expanded="1">
                         <property name="BottomDockable">1</property>
                         <property name="LeftDockable">1</property>
@@ -383,7 +383,7 @@
                                         </object>
                                     </object>
                                     <object class="sizeritem" expanded="0">
-                                        <property name="border">35</property>
+                                        <property name="border">25</property>
                                         <property name="flag">wxALIGN_CENTER|wxBOTTOM|wxLEFT|wxRIGHT</property>
                                         <property name="proportion">0</property>
                                         <object class="wxStaticText" expanded="0">
@@ -1416,11 +1416,11 @@
                                             </object>
                                         </object>
                                     </object>
-                                    <object class="sizeritem" expanded="0">
+                                    <object class="sizeritem" expanded="1">
                                         <property name="border">5</property>
                                         <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</property>
                                         <property name="proportion">0</property>
-                                        <object class="wxBoxSizer" expanded="0">
+                                        <object class="wxBoxSizer" expanded="1">
                                             <property name="minimum_size"></property>
                                             <property name="name">mainSizerBtns</property>
                                             <property name="orient">wxHORIZONTAL</property>
@@ -1604,8 +1604,8 @@
                                         </object>
                                     </object>
                                     <object class="sizeritem" expanded="0">
-                                        <property name="border">0</property>
-                                        <property name="flag">wxALIGN_BOTTOM|wxEXPAND</property>
+                                        <property name="border">35</property>
+                                        <property name="flag">wxALIGN_BOTTOM|wxEXPAND|wxTOP</property>
                                         <property name="proportion">1</property>
                                         <object class="wxBoxSizer" expanded="0">
                                             <property name="minimum_size"></property>
@@ -1623,7 +1623,7 @@
                                                     <property name="permission">none</property>
                                                     <object class="sizeritem" expanded="0">
                                                         <property name="border">5</property>
-                                                        <property name="flag">wxALIGN_BOTTOM|wxALIGN_RIGHT|wxALL|wxBOTTOM|wxRIGHT</property>
+                                                        <property name="flag">wxALIGN_BOTTOM|wxALIGN_RIGHT|wxALL</property>
                                                         <property name="proportion">0</property>
                                                         <object class="wxStaticText" expanded="0">
                                                             <property name="BottomDockable">1</property>
@@ -1805,7 +1805,7 @@
                                     <property name="flexible_direction">wxBOTH</property>
                                     <property name="growablecols">0</property>
                                     <property name="growablerows"></property>
-                                    <property name="hgap">30</property>
+                                    <property name="hgap">40</property>
                                     <property name="minimum_size"></property>
                                     <property name="name">gridSizer</property>
                                     <property name="non_flexible_grow_mode">wxFLEX_GROWMODE_SPECIFIED</property>
@@ -1842,7 +1842,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -1928,7 +1928,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -2022,7 +2022,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -2108,7 +2108,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -2286,7 +2286,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -2348,7 +2348,7 @@
                                         <property name="flag">wxEXPAND</property>
                                         <property name="row">3</property>
                                         <property name="rowspan">1</property>
-                                        <object class="wxBoxSizer" expanded="0">
+                                        <object class="wxBoxSizer" expanded="1">
                                             <property name="minimum_size"></property>
                                             <property name="name">stepSizer</property>
                                             <property name="orient">wxHORIZONTAL</property>
@@ -2489,7 +2489,7 @@
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="floatable">1</property>
-                                                    <property name="font">,90,90,11,70,0</property>
+                                                    <property name="font">,90,90,10,70,0</property>
                                                     <property name="gripper">0</property>
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_ANY</property>
@@ -2577,7 +2577,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -2632,14 +2632,14 @@
                                             <event name="OnUpdateUI"></event>
                                         </object>
                                     </object>
-                                    <object class="gbsizeritem" expanded="0">
+                                    <object class="gbsizeritem" expanded="1">
                                         <property name="border">0</property>
                                         <property name="colspan">1</property>
                                         <property name="column">1</property>
                                         <property name="flag">wxEXPAND</property>
                                         <property name="row">4</property>
                                         <property name="rowspan">1</property>
-                                        <object class="wxBoxSizer" expanded="0">
+                                        <object class="wxBoxSizer" expanded="1">
                                             <property name="minimum_size"></property>
                                             <property name="name">timeoutSizer</property>
                                             <property name="orient">wxHORIZONTAL</property>
@@ -2780,7 +2780,7 @@
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="floatable">1</property>
-                                                    <property name="font">,90,90,11,70,0</property>
+                                                    <property name="font">,90,90,10,70,0</property>
                                                     <property name="gripper">0</property>
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_ANY</property>
@@ -2868,7 +2868,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -2923,14 +2923,14 @@
                                             <event name="OnUpdateUI"></event>
                                         </object>
                                     </object>
-                                    <object class="gbsizeritem" expanded="0">
+                                    <object class="gbsizeritem" expanded="1">
                                         <property name="border">0</property>
                                         <property name="colspan">1</property>
                                         <property name="column">1</property>
                                         <property name="flag">wxEXPAND</property>
                                         <property name="row">5</property>
                                         <property name="rowspan">1</property>
-                                        <object class="wxBoxSizer" expanded="0">
+                                        <object class="wxBoxSizer" expanded="1">
                                             <property name="minimum_size"></property>
                                             <property name="name">attemptsSizer</property>
                                             <property name="orient">wxHORIZONTAL</property>
@@ -3071,7 +3071,7 @@
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="floatable">1</property>
-                                                    <property name="font">,90,90,11,70,0</property>
+                                                    <property name="font">,90,90,10,70,0</property>
                                                     <property name="gripper">0</property>
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_ANY</property>
@@ -3159,7 +3159,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -3362,7 +3362,7 @@
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="floatable">1</property>
-                                                    <property name="font">,90,90,11,70,0</property>
+                                                    <property name="font">,90,90,10,70,0</property>
                                                     <property name="gripper">0</property>
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_ANY</property>
@@ -3534,7 +3534,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -3629,7 +3629,7 @@
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="floatable">1</property>
-                                                    <property name="font">,90,90,11,70,0</property>
+                                                    <property name="font">,90,90,10,70,0</property>
                                                     <property name="gripper">0</property>
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_ANY</property>
@@ -3811,7 +3811,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -3898,7 +3898,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -3988,7 +3988,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -4075,7 +4075,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -4165,7 +4165,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -4252,7 +4252,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -4342,7 +4342,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -4429,7 +4429,7 @@
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="floatable">1</property>
-                                            <property name="font">,90,90,11,70,0</property>
+                                            <property name="font">,90,90,10,70,0</property>
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
@@ -4640,7 +4640,7 @@
                         <property name="tooltip"></property>
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
-                        <property name="window_style">wxHSCROLL|wxVSCROLL</property>
+                        <property name="window_style"></property>
                         <event name="OnChar"></event>
                         <event name="OnEnterWindow"></event>
                         <event name="OnEraseBackground"></event>
@@ -4669,11 +4669,11 @@
                             <property name="name">trackerSizerTop</property>
                             <property name="orient">wxVERTICAL</property>
                             <property name="permission">none</property>
-                            <object class="sizeritem" expanded="0">
+                            <object class="sizeritem" expanded="1">
                                 <property name="border">0</property>
                                 <property name="flag">wxEXPAND</property>
                                 <property name="proportion">1</property>
-                                <object class="wxListBox" expanded="0">
+                                <object class="wxListCtrl" expanded="1">
                                     <property name="BottomDockable">1</property>
                                     <property name="LeftDockable">1</property>
                                     <property name="RightDockable">1</property>
@@ -4687,7 +4687,6 @@
                                     <property name="caption"></property>
                                     <property name="caption_visible">1</property>
                                     <property name="center_pane">0</property>
-                                    <property name="choices">&quot;Please press the update button&quot;</property>
                                     <property name="close_button">1</property>
                                     <property name="context_help"></property>
                                     <property name="context_menu">1</property>
@@ -4698,7 +4697,7 @@
                                     <property name="enabled">1</property>
                                     <property name="fg"></property>
                                     <property name="floatable">1</property>
-                                    <property name="font">,90,90,14,70,0</property>
+                                    <property name="font"></property>
                                     <property name="gripper">0</property>
                                     <property name="hidden">0</property>
                                     <property name="id">wxID_ANY</property>
@@ -4719,7 +4718,7 @@
                                     <property name="resize">Resizable</property>
                                     <property name="show">1</property>
                                     <property name="size"></property>
-                                    <property name="style">wxLB_HSCROLL|wxLB_SINGLE</property>
+                                    <property name="style">wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL</property>
                                     <property name="subclass"></property>
                                     <property name="toolbar_pane">0</property>
                                     <property name="tooltip"></property>
@@ -4740,8 +4739,26 @@
                                     <event name="OnLeftDClick"></event>
                                     <event name="OnLeftDown"></event>
                                     <event name="OnLeftUp"></event>
-                                    <event name="OnListBox"></event>
-                                    <event name="OnListBoxDClick"></event>
+                                    <event name="OnListBeginDrag"></event>
+                                    <event name="OnListBeginLabelEdit"></event>
+                                    <event name="OnListBeginRDrag"></event>
+                                    <event name="OnListCacheHint"></event>
+                                    <event name="OnListColBeginDrag"></event>
+                                    <event name="OnListColClick"></event>
+                                    <event name="OnListColDragging"></event>
+                                    <event name="OnListColEndDrag"></event>
+                                    <event name="OnListColRightClick"></event>
+                                    <event name="OnListDeleteAllItems"></event>
+                                    <event name="OnListDeleteItem"></event>
+                                    <event name="OnListEndLabelEdit"></event>
+                                    <event name="OnListInsertItem"></event>
+                                    <event name="OnListItemActivated"></event>
+                                    <event name="OnListItemDeselected"></event>
+                                    <event name="OnListItemFocused"></event>
+                                    <event name="OnListItemMiddleClick"></event>
+                                    <event name="OnListItemRightClick"></event>
+                                    <event name="OnListItemSelected"></event>
+                                    <event name="OnListKeyDown"></event>
                                     <event name="OnMiddleDClick"></event>
                                     <event name="OnMiddleDown"></event>
                                     <event name="OnMiddleUp"></event>
@@ -4904,7 +4921,7 @@
                         <property name="tooltip"></property>
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
-                        <property name="window_style">wxHSCROLL|wxVSCROLL</property>
+                        <property name="window_style"></property>
                         <event name="OnChar"></event>
                         <event name="OnEnterWindow"></event>
                         <event name="OnEraseBackground"></event>
@@ -4933,11 +4950,11 @@
                             <property name="name">logSizerTop</property>
                             <property name="orient">wxVERTICAL</property>
                             <property name="permission">none</property>
-                            <object class="sizeritem" expanded="0">
+                            <object class="sizeritem" expanded="1">
                                 <property name="border">0</property>
                                 <property name="flag">wxEXPAND</property>
                                 <property name="proportion">1</property>
-                                <object class="wxListBox" expanded="0">
+                                <object class="wxListCtrl" expanded="1">
                                     <property name="BottomDockable">1</property>
                                     <property name="LeftDockable">1</property>
                                     <property name="RightDockable">1</property>
@@ -4951,7 +4968,6 @@
                                     <property name="caption"></property>
                                     <property name="caption_visible">1</property>
                                     <property name="center_pane">0</property>
-                                    <property name="choices"></property>
                                     <property name="close_button">1</property>
                                     <property name="context_help"></property>
                                     <property name="context_menu">1</property>
@@ -4962,7 +4978,7 @@
                                     <property name="enabled">1</property>
                                     <property name="fg"></property>
                                     <property name="floatable">1</property>
-                                    <property name="font">,90,90,12,70,0</property>
+                                    <property name="font"></property>
                                     <property name="gripper">0</property>
                                     <property name="hidden">0</property>
                                     <property name="id">wxID_ANY</property>
@@ -4983,7 +4999,7 @@
                                     <property name="resize">Resizable</property>
                                     <property name="show">1</property>
                                     <property name="size"></property>
-                                    <property name="style">wxLB_HSCROLL|wxLB_SINGLE</property>
+                                    <property name="style">wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL</property>
                                     <property name="subclass"></property>
                                     <property name="toolbar_pane">0</property>
                                     <property name="tooltip"></property>
@@ -5004,8 +5020,26 @@
                                     <event name="OnLeftDClick"></event>
                                     <event name="OnLeftDown"></event>
                                     <event name="OnLeftUp"></event>
-                                    <event name="OnListBox"></event>
-                                    <event name="OnListBoxDClick"></event>
+                                    <event name="OnListBeginDrag"></event>
+                                    <event name="OnListBeginLabelEdit"></event>
+                                    <event name="OnListBeginRDrag"></event>
+                                    <event name="OnListCacheHint"></event>
+                                    <event name="OnListColBeginDrag"></event>
+                                    <event name="OnListColClick"></event>
+                                    <event name="OnListColDragging"></event>
+                                    <event name="OnListColEndDrag"></event>
+                                    <event name="OnListColRightClick"></event>
+                                    <event name="OnListDeleteAllItems"></event>
+                                    <event name="OnListDeleteItem"></event>
+                                    <event name="OnListEndLabelEdit"></event>
+                                    <event name="OnListInsertItem"></event>
+                                    <event name="OnListItemActivated"></event>
+                                    <event name="OnListItemDeselected"></event>
+                                    <event name="OnListItemFocused"></event>
+                                    <event name="OnListItemMiddleClick"></event>
+                                    <event name="OnListItemRightClick"></event>
+                                    <event name="OnListItemSelected"></event>
+                                    <event name="OnListKeyDown"></event>
                                     <event name="OnMiddleDClick"></event>
                                     <event name="OnMiddleDown"></event>
                                     <event name="OnMiddleUp"></event>
@@ -5027,7 +5061,7 @@
                 <object class="notebookpage" expanded="1">
                     <property name="bitmap"></property>
                     <property name="label">About</property>
-                    <property name="select">1</property>
+                    <property name="select">0</property>
                     <object class="wxPanel" expanded="1">
                         <property name="BottomDockable">1</property>
                         <property name="LeftDockable">1</property>
@@ -5793,7 +5827,7 @@
                             </object>
                             <object class="sizeritem" expanded="0">
                                 <property name="border">10</property>
-                                <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxTOP</property>
+                                <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxTOP</property>
                                 <property name="proportion">0</property>
                                 <object class="wxBoxSizer" expanded="0">
                                     <property name="minimum_size"></property>

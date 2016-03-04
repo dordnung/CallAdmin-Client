@@ -99,6 +99,7 @@ bool MainPanel::InitPanel() {
 	text->SetLabel("v" + (wxString)CALLADMIN_CLIENT_VERSION + text->GetLabel());
 
 	Layout();
+	Fit();
 
 	return true;
 }
@@ -109,6 +110,7 @@ void MainPanel::SetStatusText(wxString text) {
 	this->eventText->SetLabelText(text);
 
 	Layout();
+	Fit();
 }
 
 
@@ -118,6 +120,7 @@ void MainPanel::SetSteamStatus(wxString text, wxColor color) {
 	this->steamText->SetForegroundColour(color);
 
 	Layout();
+	Fit();
 }
 
 
@@ -142,6 +145,9 @@ void MainPanel::UpdateCalls() {
 		// Select newest call
 		this->callBox->SetSelection(item);
 	}
+
+	Layout();
+	Fit();
 }
 
 

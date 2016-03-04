@@ -32,6 +32,7 @@
 	#include <wx/wx.h>
 #endif
 
+#include <wx/listctrl.h>
 #include "opensteam.h"
 
 
@@ -45,7 +46,7 @@ private:
 	// All current trackers
 	wxVector<wxString> currentTrackers;
 
-	wxListBox *trackerBox;
+	wxListCtrl *trackerBox;
 
 public:
 	TrackerPanel() : trackerBox(NULL) {};
@@ -60,9 +61,7 @@ public:
 	// Refresh the tracker list
 	static void RefreshTrackers(wxString errorStr, wxString result, int extra);
 
-	void AddTracker(wxString text) {
-		this->trackerBox->Append(wxString::FromUTF8(text));
-	}
+	void AddTracker(wxString steamId, wxString name = "", bool isFriend = false, bool isOnline = false);
 
 	wxVector<NameTimer *> *GetNameTimers() {
 		return &nameTimers;

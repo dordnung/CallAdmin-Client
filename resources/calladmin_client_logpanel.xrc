@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
 	<object class="wxScrolledWindow" name="logPanel">
-		<style>wxHSCROLL|wxVSCROLL</style>
 		<scrollrate>15,15</scrollrate>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
@@ -9,15 +8,8 @@
 				<option>1</option>
 				<flag>wxEXPAND</flag>
 				<border>0</border>
-				<object class="wxListBox" name="logBox">
-					<style>wxLB_HSCROLL|wxLB_SINGLE</style>
-					<font>
-						<size>12</size>
-						<style>normal</style>
-						<weight>normal</weight>
-						<underlined>0</underlined>
-					</font>
-					<content />
+				<object class="wxListCtrl" name="logBox">
+					<style>wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL</style>
 				</object>
 			</object>
 		</object>

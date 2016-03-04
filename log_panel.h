@@ -33,10 +33,11 @@
 #endif
 
 #include "config.h"
+#include <wx/listctrl.h>
 
 class LogPanel : public wxScrolledWindow {
 private:
-	wxListBox *logBox;
+	wxListCtrl *logBox;
 
 public:
 	LogPanel() : logBox(NULL) {};

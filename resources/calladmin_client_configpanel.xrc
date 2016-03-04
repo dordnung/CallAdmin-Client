@@ -10,7 +10,7 @@
 				<border>10</border>
 				<object class="wxGridBagSizer">
 					<vgap>4</vgap>
-					<hgap>30</hgap>
+					<hgap>40</hgap>
 					<growablecols>0</growablecols>
 					<growablerows></growablerows>
 					<object class="sizeritem">
@@ -20,7 +20,7 @@
 						<border>7</border>
 						<object class="wxStaticText" name="callAdminUrlText">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -37,7 +37,7 @@
 						<object class="wxTextCtrl" name="callAdminUrl">
 							<size>300,-1</size>
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -53,7 +53,7 @@
 						<border>0</border>
 						<object class="wxStaticText" name="accessKeyText">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -69,7 +69,7 @@
 						<border>0</border>
 						<object class="wxTextCtrl" name="accessKey">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -94,7 +94,7 @@
 						<border>0</border>
 						<object class="wxStaticText" name="stepSliderText">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -133,7 +133,7 @@
 								<object class="wxStaticText" name="stepSliderValue">
 									<style>wxALIGN_CENTRE</style>
 									<font>
-										<size>11</size>
+										<size>10</size>
 										<style>normal</style>
 										<weight>normal</weight>
 										<underlined>0</underlined>
@@ -151,7 +151,7 @@
 						<border>0</border>
 						<object class="wxStaticText" name="timeoutSliderText">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -190,7 +190,7 @@
 								<object class="wxStaticText" name="timeoutSliderValue">
 									<style>wxALIGN_CENTRE</style>
 									<font>
-										<size>11</size>
+										<size>10</size>
 										<style>normal</style>
 										<weight>normal</weight>
 										<underlined>0</underlined>
@@ -208,7 +208,7 @@
 						<border>0</border>
 						<object class="wxStaticText" name="attemptsSliderText">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -247,7 +247,7 @@
 								<object class="wxStaticText" name="attemptsSliderValue">
 									<style>wxALIGN_CENTRE</style>
 									<font>
-										<size>11</size>
+										<size>10</size>
 										<style>normal</style>
 										<weight>normal</weight>
 										<underlined>0</underlined>
@@ -265,7 +265,7 @@
 						<border>0</border>
 						<object class="wxStaticText" name="callsSliderText">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -304,7 +304,7 @@
 								<object class="wxStaticText" name="callsSliderValue">
 									<style>wxALIGN_CENTRE</style>
 									<font>
-										<size>11</size>
+										<size>10</size>
 										<style>normal</style>
 										<weight>normal</weight>
 										<underlined>0</underlined>
@@ -331,7 +331,7 @@
 						<border>0</border>
 						<object class="wxStaticText" name="soundFileText">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -357,7 +357,7 @@
 									<wildcard>*.wav</wildcard>
 									<style>wxFLP_DEFAULT_STYLE</style>
 									<font>
-										<size>11</size>
+										<size>10</size>
 										<style>normal</style>
 										<weight>normal</weight>
 										<underlined>0</underlined>
@@ -389,7 +389,7 @@
 						<border>0</border>
 						<object class="wxStaticText" name="logLevelText">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -405,7 +405,7 @@
 						<border>0</border>
 						<object class="wxChoice" name="logLevel">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -426,7 +426,7 @@
 						<border>0</border>
 						<object class="wxStaticText" name="steamEnableText">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -442,7 +442,7 @@
 						<border>0</border>
 						<object class="wxCheckBox" name="steamEnable">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -458,7 +458,7 @@
 						<border>0</border>
 						<object class="wxStaticText" name="showInTaskbarText">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -474,7 +474,7 @@
 						<border>0</border>
 						<object class="wxCheckBox" name="showInTaskbar">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -490,7 +490,7 @@
 						<border>0</border>
 						<object class="wxStaticText" name="hideMinimizedText">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -506,7 +506,7 @@
 						<border>0</border>
 						<object class="wxCheckBox" name="hideMinimized">
 							<font>
-								<size>11</size>
+								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>

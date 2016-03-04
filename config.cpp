@@ -174,7 +174,7 @@ wxString Config::GetConfigPath() {
 #else
 	// First check XDG_CONFIG_HOME var
 	if (wxGetenv("XDG_CONFIG_HOME")) {
-		fileDirectory = wxGetenv("XDG_CONFIG_HOME") + "/CallAdmin";
+		fileDirectory = (wxString)wxGetenv("XDG_CONFIG_HOME") + "/CallAdmin";
 	} else {
 		// Other wise use ~/.config
 		fileDirectory = wxFileName::GetHomeDir() + "/.config/CallAdmin";

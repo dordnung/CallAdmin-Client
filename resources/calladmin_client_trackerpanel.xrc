@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
 	<object class="wxScrolledWindow" name="trackerPanel">
-		<style>wxHSCROLL|wxVSCROLL</style>
 		<scrollrate>15,15</scrollrate>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
@@ -9,17 +8,8 @@
 				<option>1</option>
 				<flag>wxEXPAND</flag>
 				<border>0</border>
-				<object class="wxListBox" name="trackerBox">
-					<style>wxLB_HSCROLL|wxLB_SINGLE</style>
-					<font>
-						<size>14</size>
-						<style>normal</style>
-						<weight>normal</weight>
-						<underlined>0</underlined>
-					</font>
-					<content>
-						<item>Please press the update button</item>
-					</content>
+				<object class="wxListCtrl" name="trackerBox">
+					<style>wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL</style>
 				</object>
 			</object>
 			<object class="sizeritem">
