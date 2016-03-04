@@ -81,7 +81,9 @@ void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow *parent
 		}
 
 		// No taskbar balloon available or disabled, so show as message box
-		wxMessageBox(message, title, wxOK | wxCENTRE | (isError ? wxICON_ERROR : wxICON_INFORMATION), parent);
+		if (!wasShown) {
+			wxMessageBox(message, title, wxOK | wxCENTRE | (isError ? wxICON_ERROR : wxICON_INFORMATION), parent);
+		}
 	}
 }
 
