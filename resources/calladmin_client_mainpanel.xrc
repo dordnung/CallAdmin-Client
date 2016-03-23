@@ -223,11 +223,20 @@
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxALIGN_CENTER|wxLEFT|wxTOP</flag>
+								<flag>wxALIGN_CENTER|wxTOP</flag>
 								<border>5</border>
 								<object class="wxButton" name="reconnectButton">
 									<enabled>0</enabled>
 									<label>Reconnect</label>
+									<default>0</default>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER|wxLEFT|wxTOP</flag>
+								<border>5</border>
+								<object class="wxButton" name="exit">
+									<label>Exit</label>
 									<default>0</default>
 								</object>
 							</object>

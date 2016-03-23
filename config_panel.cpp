@@ -47,7 +47,8 @@ wxBEGIN_EVENT_TABLE(ConfigPanel, wxPanel)
 
 	EVT_CHECKBOX(XRCID("steamEnable"), ConfigPanel::OnSteamUpdate)
 	EVT_CHECKBOX(XRCID("showInTaskbar"), ConfigPanel::OnShowInTaskbarUpdate)
-	EVT_CHECKBOX(XRCID("hideMinimized"), ConfigPanel::OnHideUpdate)
+	EVT_CHECKBOX(XRCID("hideMinimize"), ConfigPanel::OnHideUpdate)
+	EVT_CHECKBOX(XRCID("hideExit"), ConfigPanel::OnHideUpdate)
 wxEND_EVENT_TABLE()
 
 
@@ -65,7 +66,8 @@ ConfigPanel::ConfigPanel() {
 	this->callsSliderValue = NULL;
 	this->steamEnable = NULL;
 	this->showInTaskbar = NULL;
-	this->hideMinimized = NULL;
+	this->hideMinimize = NULL;
+	this->hideExit = NULL;
 }
 
 
@@ -108,8 +110,11 @@ bool ConfigPanel::InitPanel() {
 	// Ask for Show in taskbar
 	FIND_OR_FAIL(this->showInTaskbar, XRCCTRL(*this, "showInTaskbar", wxCheckBox), "showInTaskbar");
 
-	// Ask for hide on mini
-	FIND_OR_FAIL(this->hideMinimized, XRCCTRL(*this, "hideMinimized", wxCheckBox), "hideMinimized");
+	// Ask for hide on minimize
+	FIND_OR_FAIL(this->hideMinimize, XRCCTRL(*this, "hideMinimize", wxCheckBox), "hideMinimize");
+
+	// Ask for hide on exit
+	FIND_OR_FAIL(this->hideExit, XRCCTRL(*this, "hideExit", wxCheckBox), "hideExit");
 
 	// On Windows the config panel is to small, so increase the vertical gap to stretch it
 	#if defined(__WXMSW__)
@@ -171,14 +176,14 @@ void ConfigPanel::OnShowInTaskbarUpdate(wxCommandEvent &WXUNUSED(event)) {
 	caGetConfig()->SetShowInTaskbar(this->showInTaskbar->GetValue());
 
 	// Set icon if user want it
-	if (this->hideMinimized->GetValue() || this->showInTaskbar->GetValue()) {
+	if (this->hideMinimize->GetValue() || this->hideExit->GetValue() || this->showInTaskbar->GetValue()) {
 		caGetTaskBarIcon()->AddIcon();
 	} else {
 		caGetTaskBarIcon()->RemoveIcon();
 	}
 
 	// Log Action
-	if (this->steamEnable->GetValue()) {
+	if (this->showInTaskbar->GetValue()) {
 		caLogAction("Enabled show in taskbar", LogLevel::LEVEL_INFO);
 	} else {
 		caLogAction("Disabled show in taskbar", LogLevel::LEVEL_INFO);
@@ -186,23 +191,24 @@ void ConfigPanel::OnShowInTaskbarUpdate(wxCommandEvent &WXUNUSED(event)) {
 }
 
 
-// Hide On Minimize Updated -> Set Config
+// Hide On Minimize / Exit Updated -> Set Config
 void ConfigPanel::OnHideUpdate(wxCommandEvent &WXUNUSED(event)) {
 	// Write to config file
-	caGetConfig()->SetHideOnMinimize(this->hideMinimized->GetValue());
+	caGetConfig()->SetHideOnMinimize(this->hideMinimize->GetValue());
+	caGetConfig()->SetHideOnExit(this->hideExit->GetValue());
 
 	// Set icon if user want it
-	if (this->hideMinimized->GetValue() || this->showInTaskbar->GetValue()) {
+	if (this->hideMinimize->GetValue() || this->hideExit->GetValue() || this->showInTaskbar->GetValue()) {
 		caGetTaskBarIcon()->AddIcon();
 	} else {
 		caGetTaskBarIcon()->RemoveIcon();
 	}
 
 	// Log Action
-	if (this->steamEnable->GetValue()) {
-		caLogAction("Enabled hide on minimize", LogLevel::LEVEL_INFO);
+	if (this->hideMinimize->GetValue() || this->hideExit->GetValue()) {
+		caLogAction("Enabled hide on minimize / exit", LogLevel::LEVEL_INFO);
 	} else {
-		caLogAction("Disabled hide on minimize", LogLevel::LEVEL_INFO);
+		caLogAction("Disabled hide on minimize / exit", LogLevel::LEVEL_INFO);
 	}
 }
 
@@ -260,7 +266,8 @@ void ConfigPanel::ParseConfig() {
 
 		this->steamEnable->SetValue(config->GetSteamEnabled());
 		this->showInTaskbar->SetValue(config->GetShowInTaskbar());
-		this->hideMinimized->SetValue(config->GetHideOnMinimize());
+		this->hideMinimize->SetValue(config->GetHideOnMinimize());
+		this->hideExit->SetValue(config->GetHideOnExit());
 
 		// Calls are unimportant
 		for (wxVector<CallDialog *>::iterator callDialog = caGetCallDialogs()->begin(); callDialog != caGetCallDialogs()->end(); ++callDialog) {
@@ -279,7 +286,7 @@ void ConfigPanel::ParseConfig() {
 		caGetApp().StartTimer();
 
 		// Set icon if user want it
-		if (config->GetHideOnMinimize() || config->GetShowInTaskbar()) {
+		if (config->GetHideOnMinimize() || config->GetHideOnExit() || config->GetShowInTaskbar()) {
 			caGetTaskBarIcon()->AddIcon();
 		} else {
 			caGetTaskBarIcon()->RemoveIcon();

@@ -79,7 +79,19 @@ bool MainFrame::InitFrame(bool createInTaskbar) {
 // Close Event -> Exit programm
 void MainFrame::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {
 	caLogAction("Main frame close event fired", LogLevel::LEVEL_DEBUG);
-	caGetApp().ExitProgramm();
+
+	if (caGetConfig()->GetHideOnExit()) {
+		if (caGetTaskBarIcon()->IsAvailable()) {
+			// Log Action
+			caLogAction("hid main frame to taskbar", LogLevel::LEVEL_DEBUG);
+
+			Show(false);
+		} else {
+			caLogAction("hid main frame, but Taskbar is not available", LogLevel::LEVEL_ERROR);
+		}
+	} else {
+		caGetApp().ExitProgramm();
+	}
 }
 
 
@@ -90,11 +102,11 @@ void MainFrame::OnMinimizeWindow(wxIconizeEvent &event) {
 	if (caGetConfig()->GetHideOnMinimize()) {
 		if (caGetTaskBarIcon()->IsAvailable()) {
 			// Log Action
-			caLogAction("Hid main frame to taskbar", LogLevel::LEVEL_DEBUG);
+			caLogAction("hid main frame to taskbar", LogLevel::LEVEL_DEBUG);
 
 			Show(!event.IsIconized());
 		} else {
-			caLogAction("Hid main frame (Taskbar not available)", LogLevel::LEVEL_DEBUG);
+			caLogAction("hid main frame, but Taskbar is not available", LogLevel::LEVEL_ERROR);
 		}
 	}
 }

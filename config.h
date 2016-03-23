@@ -66,6 +66,7 @@ private:
 	bool steamEnabled;
 	bool showInTaskbar;
 	bool hideOnMinimize;
+	bool hideOnExit;
 	bool isAvailable;
 	bool wantSound;
 	bool isSpectator;
@@ -121,6 +122,10 @@ public:
 
 	bool GetHideOnMinimize() {
 		return this->hideOnMinimize;
+	}
+
+	bool GetHideOnExit() {
+		return this->hideOnExit;
 	}
 
 	bool GetIsAvailable() {
@@ -199,6 +204,11 @@ public:
 	void SetHideOnMinimize(bool hideOnMinimize) {
 		this->hideOnMinimize = hideOnMinimize;
 		Write("hideonminimize", hideOnMinimize);
+	}
+
+	void SetHideOnExit(bool hideOnExit) {
+		this->hideOnExit = hideOnExit;
+		Write("hideonexit", hideOnExit);
 	}
 
 	void SetIsAvailable(bool isAvailable) {

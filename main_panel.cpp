@@ -36,6 +36,7 @@
 wxBEGIN_EVENT_TABLE(MainPanel, wxPanel)
 	EVT_BUTTON(XRCID("hide"), MainPanel::OnHide)
 	EVT_BUTTON(XRCID("reconnectButton"), MainPanel::OnReconnect)
+	EVT_BUTTON(XRCID("exit"), MainPanel::OnExit)
 
 	EVT_CHECKBOX(XRCID("available"), MainPanel::OnCheckBox)
 	EVT_CHECKBOX(XRCID("sound"), MainPanel::OnCheckBox)
@@ -212,4 +213,10 @@ void MainPanel::OnBoxClick(wxCommandEvent &WXUNUSED(event)) {
 	caGetCallDialogs()->at(selection)->Show(true);
 	caGetCallDialogs()->at(selection)->Iconize(false);
 	caGetCallDialogs()->at(selection)->Raise();
+}
+
+
+// Button Event -> Exit CallAdmin
+void MainPanel::OnExit(wxCommandEvent &WXUNUSED(event)) {
+	wxGetApp().ExitProgramm();
 }

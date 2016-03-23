@@ -451,14 +451,14 @@
 						<cellspan>1,1</cellspan>
 						<flag>wxALIGN_CENTER_VERTICAL</flag>
 						<border>0</border>
-						<object class="wxStaticText" name="hideMinimizedText">
+						<object class="wxStaticText" name="hideText">
 							<font>
 								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
 							</font>
-							<label>Hide window to taskbar on minimize: </label>
+							<label>Hide window to taskbar on minimize and / or exit: </label>
 							<wrap>-1</wrap>
 						</object>
 					</object>
@@ -467,15 +467,38 @@
 						<cellspan>1,1</cellspan>
 						<flag></flag>
 						<border>0</border>
-						<object class="wxCheckBox" name="hideMinimized">
-							<font>
-								<size>10</size>
-								<style>normal</style>
-								<weight>normal</weight>
-								<underlined>0</underlined>
-							</font>
-							<label>Hide on Minimize</label>
-							<checked>0</checked>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxRIGHT</flag>
+								<border>5</border>
+								<object class="wxCheckBox" name="hideMinimize">
+									<font>
+										<size>10</size>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+									</font>
+									<label>Hide on Minimize</label>
+									<checked>0</checked>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxLEFT</flag>
+								<border>5</border>
+								<object class="wxCheckBox" name="hideExit">
+									<font>
+										<size>10</size>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+									</font>
+									<label>Hide on Exit</label>
+									<checked>0</checked>
+								</object>
+							</object>
 						</object>
 					</object>
 					<object class="sizeritem">

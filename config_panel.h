@@ -51,7 +51,8 @@ private:
 	wxFilePickerCtrl *soundFilePicker;
 	wxCheckBox *steamEnable;
 	wxCheckBox *showInTaskbar;
-	wxCheckBox *hideMinimized;
+	wxCheckBox *hideMinimize;
+	wxCheckBox *hideExit;
 
 public:
 	ConfigPanel();
