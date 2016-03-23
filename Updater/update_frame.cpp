@@ -77,8 +77,13 @@ bool UpdateFrame::ShowFrame() {
 	// Remaining Time
 	FIND_OR_FAIL(this->remainingTime, XRCCTRL(*this->panel, "remainingTime", wxStaticText), "remainingTime");
 
-	// Show frame
+	// Show the frame
 	Show(true);
+	
+	// Fit and center window
+	Layout();
+	Fit();
+	Center();
 
 	// Raise
 	Raise();
@@ -125,11 +130,13 @@ void UpdateFrame::OnFinish(wxString error) {
 		if (wxFileExists(executablePath) && wxFileExists(executablePath + ".new")) {
 			wxRenameFile(executablePath, executablePath + ".old");
 			wxRenameFile(executablePath + ".new", executablePath);
-		}
 
-		wxMessageBox("Update finished successfully", "Update finished", wxOK | wxCENTRE | wxICON_INFORMATION, this);
+			wxMessageBox("Update finished successfully", "Update finished", wxOK | wxCENTRE | wxICON_INFORMATION, this);
+		} else {
+			wxMessageBox("Coudn't find CallAdmin Executable:\n" + executablePath, "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this);
+		}
 	} else {
-		wxMessageBox("Couldn't download update\n" + error, "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this);
+		wxMessageBox("Couldn't download update:\n" + error, "Error on Update", wxOK | wxCENTRE | wxICON_ERROR, this);
 	}
 
 	// Fit Window
@@ -209,7 +216,7 @@ wxThread::ExitCode UpdateFrame::Entry() {
 				// Perform Curl
 				CURLcode res = curl_easy_perform(curl);
 
-				// Everything good :)
+				// Everything is good :)
 				if (res == CURLE_OK) {
 					// Status should be 200
 					long responseCode;
@@ -255,7 +262,7 @@ size_t WriteDataToFile(void *data, size_t size, size_t nmemb, FILE *file) {
 int ProgressUpdated(void *curlPointer, double dlTotal, double dlNow, double WXUNUSED(ulTotal), double WXUNUSED(ulNow)) {
 	static int numUpdates = 0;
 
-	// Update only every 50 times
+	// Update display only every 50 times to prevent lags
 	if (++numUpdates % 50 == 0) {
 		// Get curl
 		CURL *curl = (CURL *)curlPointer;
