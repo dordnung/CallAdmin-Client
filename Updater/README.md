@@ -31,13 +31,13 @@ The Updater for the Call Admin Client
   6. Add a new system variable named `WXWIDGETS310` with the path to the wxWidgets-3.1.0 folder
   
 - **Build libcurl**
-  1. Download curl from `http://curl.haxx.se/download/curl-7.46.0.zip` and unzip
+  1. Download curl from `http://curl.haxx.se/download/curl-7.48.0.zip` and unzip
   2. Add VS to the system PATH if not done yet:
-    - For example: `C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin` 
-  3. Open command line at `curl-7.46.0/winbuild`
+    - For example: `C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin` 
+  3. Open command line at `curl-7.48.0/winbuild`
   4. Type `vcvars32.bat` and press ENTER
-  5. Type `nmake /f Makefile.vc mode=static VC=12 MACHINE=x86` and press ENTER
-  6. Move the `libcurl_a.lib` and the `include` folder from `curl-7.46.0/builds/libcurl-XXX` to some folder
+  5. Type `nmake /f Makefile.vc mode=static VC=14 MACHINE=x86` and press ENTER
+  6. Move the `libcurl_a.lib` and the `include` folder from `curl-7.48.0/builds/libcurl-XXX` to some folder
   7. Add a new system variable named `CURL` with the path to the .lib and the include folder
 
 - **Build calladmin-client-updater**
