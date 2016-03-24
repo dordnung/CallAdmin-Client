@@ -42,7 +42,7 @@ wxBEGIN_EVENT_TABLE(MainPanel, wxPanel)
 	EVT_CHECKBOX(XRCID("sound"), MainPanel::OnCheckBox)
 	EVT_CHECKBOX(XRCID("store"), MainPanel::OnCheckBox)
 
-	EVT_LISTBOX_DCLICK(XRCID("callBox"), MainPanel::OnBoxClick)
+	EVT_LIST_ITEM_ACTIVATED(XRCID("callBox"), MainPanel::OnBoxClick)
 wxEND_EVENT_TABLE()
 
 
@@ -69,8 +69,9 @@ bool MainPanel::InitPanel() {
 		return false;
 	}
 
-	// Box for all Calls
-	FIND_OR_FAIL(this->callBox, XRCCTRL(*this, "callBox", wxListBox), "callBox");
+	// Box for all Calls and autosize finished column
+	FIND_OR_FAIL(this->callBox, XRCCTRL(*this, "callBox", wxListCtrl), "callBox");
+	this->callBox->SetColumnWidth(0, wxLIST_AUTOSIZE);
 
 	// Steam Text
 	FIND_OR_FAIL(this->steamText, XRCCTRL(*this, "steamText", wxStaticText), "steamText");
@@ -130,21 +131,12 @@ void MainPanel::UpdateCalls() {
 	int item = -1;
 
 	// First clear calls
-	this->callBox->Clear();
+	this->callBox->DeleteAllItems();
 
 	for (wxVector<CallDialog *>::iterator callDialog = caGetCallDialogs()->begin(); callDialog != caGetCallDialogs()->end(); ++callDialog) {
 		CallDialog *currentDialog = *callDialog;
 
-		if (currentDialog->IsHandled()) {
-			item = this->callBox->Append(wxString::FromUTF8("\xE2\x9C\x94") + " " + currentDialog->GetTime() + " - " + currentDialog->GetServer());
-		} else {
-			item = this->callBox->Append(wxString::FromUTF8("\xE2\x9C\x96") + " " + currentDialog->GetTime() + " - " + currentDialog->GetServer());
-		}
-	}
-
-	if (item > -1) {
-		// Select newest call
-		this->callBox->SetSelection(item);
+		AppendCall(currentDialog->IsHandled(), currentDialog->GetTime(), currentDialog->GetServer());
 	}
 
 	Layout();
@@ -152,9 +144,41 @@ void MainPanel::UpdateCalls() {
 }
 
 
+// Append call to the callbox
+void MainPanel::AppendCall(bool finished, wxString time, wxString server) {
+	long item = this->callBox->InsertItem(0, "call");
+
+	this->callBox->SetItem(item, 0, finished ? wxString::FromUTF8("\xE2\x9C\x94") : wxString::FromUTF8("\xE2\x9C\x96"));
+	this->callBox->SetItem(item, 1, time);
+	this->callBox->SetItem(item, 2, wxString::FromUTF8(server));
+
+	// Hacky, autosize columns
+	for (int i = 0; i < this->callBox->GetColumnCount(); i++) {
+		this->callBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
+
+		// Only on Windows wxLIST_AUTOSIZE_USEHEADER gives the real header width
+#if defined (__WXMSW__)
+		// Get the width if autosize with content size
+		int contentSize = this->callBox->GetColumnWidth(0);
+
+		// Get the width if autosize with header size
+		this->callBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
+		int headerSize = this->callBox->GetColumnWidth(0);
+
+		// Use content width if it is higher then the header size
+		if (contentSize > headerSize) {
+			this->callBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
+		}
+#endif
+	}
+
+	this->callBox->SetItemState(item, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+}
+
+
 // The call is now handled
 void MainPanel::SetHandled(int item) {
-	this->callBox->SetString(item, wxString::FromUTF8("\xE2\x9C\x94") + " " + caGetCallDialogs()->at(item)->GetTime() + " - " + caGetCallDialogs()->at(item)->GetServer());
+	this->callBox->SetItem(item, 0, wxString::FromUTF8("\xE2\x9C\x94"));
 
 	caGetCallDialogs()->at(item)->SetFinish();
 	caGetCallDialogs()->at(item)->GetTakeoverButton()->Enable(false);
@@ -207,8 +231,8 @@ void MainPanel::OnCheckBox(wxCommandEvent &WXUNUSED(event)) {
 
 
 // Window Event -> Open Call
-void MainPanel::OnBoxClick(wxCommandEvent &WXUNUSED(event)) {
-	int selection = this->callBox->GetSelection();
+void MainPanel::OnBoxClick(wxListEvent &event) {
+	int selection = event.GetIndex();
 
 	caGetCallDialogs()->at(selection)->Show(true);
 	caGetCallDialogs()->at(selection)->Iconize(false);

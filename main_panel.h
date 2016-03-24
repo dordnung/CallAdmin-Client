@@ -32,7 +32,7 @@
 	#include <wx/wx.h>
 #endif
 
-#include <wx/listbox.h>
+#include <wx/listctrl.h>
 #include <wx/statline.h>
 
 
@@ -45,7 +45,7 @@ private:
 
 	wxButton *reconnectButton;
 
-	wxListBox *callBox;
+	wxListCtrl *callBox;
 
 	wxStaticText *eventText;
 	wxStaticText *steamText;
@@ -63,6 +63,9 @@ public:
 	// Update Call list
 	void UpdateCalls();
 
+	// Append call to the callbox
+	void AppendCall(bool finished, wxString time, wxString server);
+
 	void SetHandled(int item);
 	void OnSteamChange(int status);
 
@@ -76,7 +79,7 @@ protected:
 	void OnReconnect(wxCommandEvent &event);
 	void OnExit(wxCommandEvent &event);
 	void OnCheckBox(wxCommandEvent &event);
-	void OnBoxClick(wxCommandEvent &event);
+	void OnBoxClick(wxListEvent &event);
 
 	wxDECLARE_EVENT_TABLE();
 };

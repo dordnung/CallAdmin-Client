@@ -16,27 +16,37 @@
 				<border>5</border>
 				<object class="wxStaticBoxSizer">
 					<orient>wxHORIZONTAL</orient>
-					<label>Latest Calls</label>
+					<label>List of Calls</label>
 					<object class="sizeritem">
 						<option>1</option>
 						<flag>wxEXPAND</flag>
 						<border>0</border>
-						<object class="wxListBox" name="callBox">
-							<style>wxLB_HSCROLL|wxLB_SINGLE</style>
+						<minsize>10,10</minsize>
+						<object class="wxListCtrl" name="callBox">
+							<style>wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL</style>
 							<font>
 								<size>9</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
 							</font>
-							<content />
+							<object class="listcol">
+								<align>wxLIST_FORMAT_CENTRE</align>
+								<text>F</text>
+							</object>
+							<object class="listcol">
+								<text>Time</text>
+							</object>
+							<object class="listcol">
+								<text>Server</text>
+							</object>
 						</object>
 					</object>
 				</object>
 			</object>
 			<object class="sizeritem">
 				<cellpos>0,3</cellpos>
-				<cellspan>1,4</cellspan>
+				<cellspan>1,2</cellspan>
 				<flag>wxEXPAND</flag>
 				<border>0</border>
 				<object class="wxBoxSizer">
@@ -53,7 +63,7 @@
 						<border>25</border>
 						<object class="wxStaticText" name="mainText">
 							<font>
-								<size>30</size>
+								<size>25</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -65,7 +75,7 @@
 					<object class="spacer">
 						<option>0</option>
 						<flag>wxTOP</flag>
-						<border>20</border>
+						<border>25</border>
 						<size>0,0</size>
 					</object>
 					<object class="sizeritem">
@@ -98,7 +108,7 @@
 						<object class="wxStaticText" name="steamText">
 							<fg>#ff0000</fg>
 							<font>
-								<size>16</size>
+								<size>14</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -145,7 +155,7 @@
 						<object class="wxStaticText" name="eventText">
 							<fg>#0000ff</fg>
 							<font>
-								<size>16</size>
+								<size>14</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -171,7 +181,7 @@
 					<object class="sizeritem">
 						<option>0</option>
 						<flag>wxALIGN_CENTER|wxBOTTOM|wxTOP</flag>
-						<border>5</border>
+						<border>7</border>
 						<object class="wxBoxSizer">
 							<orient>wxHORIZONTAL</orient>
 							<object class="sizeritem">

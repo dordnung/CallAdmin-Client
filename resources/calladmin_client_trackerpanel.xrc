@@ -10,6 +10,22 @@
 				<border>0</border>
 				<object class="wxListCtrl" name="trackerBox">
 					<style>wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL</style>
+					<object class="listcol">
+						<text>SteamId</text>
+					</object>
+					<object class="listcol">
+						<text>Name</text>
+					</object>
+					<object class="listcol">
+						<text>Friend</text>
+					</object>
+					<object class="listcol">
+						<text>Online</text>
+					</object>
+					<object class="listitem">
+						<col>0</col>
+						<text>Press the Update Button</text>
+					</object>
 				</object>
 			</object>
 			<object class="sizeritem">

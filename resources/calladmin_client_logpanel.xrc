@@ -10,6 +10,15 @@
 				<border>0</border>
 				<object class="wxListCtrl" name="logBox">
 					<style>wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL</style>
+					<object class="listcol">
+						<text>Level</text>
+					</object>
+					<object class="listcol">
+						<text>Time</text>
+					</object>
+					<object class="listcol">
+						<text>Log</text>
+					</object>
 				</object>
 			</object>
 			<object class="sizeritem">

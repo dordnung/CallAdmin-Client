@@ -53,10 +53,6 @@ bool LogPanel::InitPanel() {
 	// The log box
 	FIND_OR_FAIL(this->logBox, XRCCTRL(*this, "logBox", wxListCtrl), "logBox");
 
-	this->logBox->InsertColumn(0, "Level");
-	this->logBox->InsertColumn(1, "Time");
-	this->logBox->InsertColumn(2, "Log");
-
 	return true;
 }
 

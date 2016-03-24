@@ -64,13 +64,9 @@ bool TrackerPanel::InitPanel() {
 		return false;
 	}
 
-	// The tracker list box
+	// The tracker list box and autosize update notfication
 	FIND_OR_FAIL(this->trackerBox, XRCCTRL(*this, "trackerBox", wxListCtrl), "trackerBox");
-
-	this->trackerBox->InsertColumn(0, "SteamID");
-	this->trackerBox->InsertColumn(1, "Name");
-	this->trackerBox->InsertColumn(2, "Friend?");
-	this->trackerBox->InsertColumn(3, "Online?");
+	this->trackerBox->SetColumnWidth(0, wxLIST_AUTOSIZE);
 
 	return true;
 }
@@ -176,9 +172,11 @@ void TrackerPanel::AddTracker(wxString steamId, wxString name, bool isFriend, bo
 	this->trackerBox->SetItem(item, 0, steamId);
 	this->trackerBox->SetItem(item, 1, wxString::FromUTF8(name));
 
-	// UTF-8 Codes for OK and Not OK
-	this->trackerBox->SetItem(item, 2, isFriend ? wxString::FromUTF8("\xE2\x9C\x94") : wxString::FromUTF8("\xE2\x9C\x96"));
-	this->trackerBox->SetItem(item, 3, isOnline ? wxString::FromUTF8("\xE2\x9C\x94") : wxString::FromUTF8("\xE2\x9C\x96"));
+	// UTF-8 Codes for OK and Not OK (Only for valid names)
+	if (name != "") {
+		this->trackerBox->SetItem(item, 2, isFriend ? wxString::FromUTF8("\xE2\x9C\x94") : wxString::FromUTF8("\xE2\x9C\x96"));
+		this->trackerBox->SetItem(item, 3, isOnline ? wxString::FromUTF8("\xE2\x9C\x94") : wxString::FromUTF8("\xE2\x9C\x96"));
+	}
 
 	// Hacky, autosize columns
 	for (int i = 0; i < this->trackerBox->GetColumnCount(); i++) {
