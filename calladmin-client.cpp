@@ -90,8 +90,6 @@ bool CallAdmin::OnInit() {
 		this->avatarSize = 128;
 	} else if (y < 700) {
 		this->avatarSize = 96;
-	} else if (y < 600) {
-		this->avatarSize = 64;
 	}
 
 	// Init XML Resources
@@ -242,6 +240,11 @@ void CallAdmin::ShowError(wxString error, wxString type) {
 // Close Taskbar Icon and destroy all dialogs
 void CallAdmin::ExitProgramm() {
 	this->isRunning = false;
+
+	// Save config
+	if (this->config) {
+		this->config->Flush();
+	}
 
 	// Hide all windows
 	if (this->mainFrame) {

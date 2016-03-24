@@ -53,7 +53,7 @@ private:
 	wxString client;
 	wxString clientId;
 	wxString reason;
-	wxString reportedAt;
+	wxDateTime reportedAt;
 
 	// The panel
 	wxPanel *panel;
@@ -61,7 +61,6 @@ private:
 	// Avatars
 	wxStaticBitmap *clientAvatar;
 	wxStaticBitmap *targetAvatar;
-	wxStaticText *doneText;
 
 	// Tracker button
 	wxButton *contactTrackers;
@@ -97,7 +96,7 @@ public:
 	}
 
 	wxString GetTime() {
-		return this->reportedAt;
+		return this->reportedAt.Format("%Y-%m-%d %H:%M:%S");
 	}
 
 	wxString GetTarget() {
@@ -173,7 +172,7 @@ public:
 	}
 
 	void SetTime(long time) {
-		this->reportedAt = wxDateTime((time_t)time).Format("%c");
+		this->reportedAt = wxDateTime((time_t)time);
 	}
 
 	void SetHandled(bool handled) {

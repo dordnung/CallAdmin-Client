@@ -12,10 +12,10 @@
 				<object class="sizeritem">
 					<option>0</option>
 					<flag>wxALIGN_CENTER|wxTOP</flag>
-					<border>20</border>
+					<border>10</border>
 					<object class="wxStaticText" name="contactText">
 						<font>
-							<size>16</size>
+							<size>14</size>
 							<style>normal</style>
 							<weight>normal</weight>
 							<underlined>0</underlined>
@@ -30,7 +30,7 @@
 					<border>0</border>
 					<object class="wxStaticText" name="callAtText">
 						<font>
-							<size>16</size>
+							<size>11</size>
 							<style>normal</style>
 							<weight>normal</weight>
 							<underlined>0</underlined>
@@ -41,23 +41,7 @@
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER|wxBOTTOM</flag>
-					<border>20</border>
-					<object class="wxStaticText" name="doneText">
-						<fg>#ff0000</fg>
-						<font>
-							<size>16</size>
-							<style>normal</style>
-							<weight>normal</weight>
-							<underlined>0</underlined>
-						</font>
-						<label></label>
-						<wrap>-1</wrap>
-					</object>
-				</object>
-				<object class="sizeritem">
-					<option>0</option>
-					<flag>wxALL|wxEXPAND</flag>
+					<flag>wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
 					<border>5</border>
 					<object class="wxStaticLine" name="staticline">
 						<style>wxLI_HORIZONTAL</style>
@@ -65,14 +49,29 @@
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER|wxALL</flag>
+					<flag>wxBOTTOM|wxLEFT</flag>
+					<border>5</border>
+					<object class="wxStaticText" name="reporter">
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+						</font>
+						<label>Reporter</label>
+						<wrap>-1</wrap>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALIGN_CENTER|wxBOTTOM|wxLEFT|wxRIGHT</flag>
 					<border>10</border>
 					<object class="wxBoxSizer">
 						<orient>wxHORIZONTAL</orient>
 						<object class="sizeritem">
 							<option>0</option>
 							<flag>wxALIGN_CENTER|wxALL</flag>
-							<border>10</border>
+							<border>5</border>
 							<object class="wxStaticBitmap" name="clientAvatar">
 								<bitmap>calladmin_avatar.bmp</bitmap>
 							</object>
@@ -80,7 +79,7 @@
 						<object class="sizeritem">
 							<option>0</option>
 							<flag>wxALIGN_CENTER|wxALL</flag>
-							<border>10</border>
+							<border>5</border>
 							<object class="wxBoxSizer">
 								<orient>wxVERTICAL</orient>
 								<object class="sizeritem">
@@ -89,7 +88,7 @@
 									<border>10</border>
 									<object class="wxStaticText" name="clientName">
 										<font>
-											<size>16</size>
+											<size>14</size>
 											<style>normal</style>
 											<weight>normal</weight>
 											<underlined>0</underlined>
@@ -117,7 +116,7 @@
 										<style>wxTE_CENTRE|wxTE_READONLY</style>
 										<size>220,-1</size>
 										<font>
-											<size>14</size>
+											<size>13</size>
 											<style>normal</style>
 											<weight>normal</weight>
 											<underlined>0</underlined>
@@ -131,31 +130,31 @@
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxEXPAND | wxALL</flag>
-					<border>10</border>
+					<flag>wxEXPAND|wxTOP|wxRIGHT|wxLEFT</flag>
+					<border>5</border>
 					<object class="wxStaticLine" name="staticline2">
 						<style>wxLI_HORIZONTAL</style>
 					</object>
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER|wxALL</flag>
-					<border>10</border>
-					<object class="wxStaticText" name="reasonPreText">
+					<flag>wxLEFT</flag>
+					<border>5</border>
+					<object class="wxStaticText" name="reason">
 						<font>
-							<size>14</size>
+							<size>8</size>
 							<style>normal</style>
 							<weight>normal</weight>
 							<underlined>0</underlined>
 						</font>
-						<label>▼ reported because of reason: ▼</label>
+						<label>Reason</label>
 						<wrap>-1</wrap>
 					</object>
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER</flag>
-					<border>5</border>
+					<flag>wxALIGN_CENTER|wxBOTTOM|wxRIGHT|wxLEFT</flag>
+					<border>15</border>
 					<object class="wxStaticText" name="reasonText">
 						<font>
 							<size>14</size>
@@ -169,22 +168,37 @@
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxEXPAND | wxALL</flag>
-					<border>10</border>
+					<flag>wxEXPAND|wxRIGHT|wxLEFT</flag>
+					<border>5</border>
 					<object class="wxStaticLine" name="staticline3">
 						<style>wxLI_HORIZONTAL</style>
 					</object>
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxALIGN_CENTER|wxALL</flag>
+					<flag>wxBOTTOM|wxLEFT</flag>
+					<border>5</border>
+					<object class="wxStaticText" name="target">
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+						</font>
+						<label>Target</label>
+						<wrap>-1</wrap>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALIGN_CENTER|wxBOTTOM|wxLEFT|wxRIGHT</flag>
 					<border>10</border>
 					<object class="wxBoxSizer">
 						<orient>wxHORIZONTAL</orient>
 						<object class="sizeritem">
 							<option>0</option>
 							<flag>wxALIGN_CENTER|wxALL</flag>
-							<border>10</border>
+							<border>5</border>
 							<object class="wxStaticBitmap" name="targetAvatar">
 								<bitmap>calladmin_avatar.bmp</bitmap>
 							</object>
@@ -192,7 +206,7 @@
 						<object class="sizeritem">
 							<option>0</option>
 							<flag>wxALIGN_CENTER|wxALL</flag>
-							<border>10</border>
+							<border>5</border>
 							<object class="wxBoxSizer">
 								<orient>wxVERTICAL</orient>
 								<object class="sizeritem">
@@ -201,7 +215,7 @@
 									<border>10</border>
 									<object class="wxStaticText" name="targetName">
 										<font>
-											<size>16</size>
+											<size>14</size>
 											<style>normal</style>
 											<weight>normal</weight>
 											<underlined>0</underlined>
@@ -229,7 +243,7 @@
 										<style>wxTE_CENTRE|wxTE_READONLY</style>
 										<size>220,-1</size>
 										<font>
-											<size>14</size>
+											<size>13</size>
 											<style>normal</style>
 											<weight>normal</weight>
 											<underlined>0</underlined>
@@ -243,7 +257,7 @@
 				</object>
 				<object class="sizeritem">
 					<option>0</option>
-					<flag>wxEXPAND | wxALL</flag>
+					<flag>wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
 					<border>5</border>
 					<object class="wxStaticLine" name="staticline4">
 						<style>wxLI_HORIZONTAL</style>

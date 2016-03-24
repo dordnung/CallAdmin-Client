@@ -104,9 +104,6 @@ void Timer::OnExecute(wxTimerEvent &WXUNUSED(event)) {
 
 // Got call list page
 void Timer::OnNotice(wxString error, wxString result, int firstRun) {
-	// Update trackers
-	caGetTrackerPanel()->UpdateTrackerList();
-
 	// Valid result?
 	if (result != "" && error == "") {
 		// Everything good :)

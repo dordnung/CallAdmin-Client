@@ -53,7 +53,6 @@ CallDialog::CallDialog() {
 	this->avatarsLoaded = false;
 	this->clientAvatar = NULL;
 	this->targetAvatar = NULL;
-	this->doneText = NULL;
 	this->id = 0;
 	this->isHandled = false;
 	this->takeover = NULL;
@@ -69,6 +68,13 @@ bool CallDialog::StartCall(bool show) {
 		return false;
 	}
 
+	// Set title to Finished or not finished
+	if (!this->isHandled) {
+		this->SetTitle("Unfinished " + wxString::FromUTF8("\xE2\x9C\x96"));
+	} else {
+		this->SetTitle("Finished " + wxString::FromUTF8("\xE2\x9C\x94"));
+	}
+
 	// Text helper
 	wxStaticText *text;
 	wxTextCtrl *textCtrl;
@@ -82,18 +88,7 @@ bool CallDialog::StartCall(bool show) {
 
 	// New Call At
 	FIND_OR_FAIL(text, XRCCTRL(*this, "callAtText", wxStaticText), "callAtText");
-	text->SetLabel(text->GetLabel() + this->reportedAt);
-
-	// Handled
-	FIND_OR_FAIL(this->doneText, XRCCTRL(*this, "doneText", wxStaticText), "doneText");
-
-	if (!this->isHandled) {
-		this->doneText->SetLabel("Unfinished");
-		this->doneText->SetForegroundColour(wxColor("red"));
-	} else {
-		this->doneText->SetLabel("Finished");
-		this->doneText->SetForegroundColour(wxColour(34, 139, 34));
-	}
+	text->SetLabel(text->GetLabel() + this->reportedAt.Format("%c"));
 
 	// Client Avatar
 	FIND_OR_FAIL(this->clientAvatar, XRCCTRL(*this, "clientAvatar", wxStaticBitmap), "clientAvatar");
@@ -148,7 +143,15 @@ bool CallDialog::StartCall(bool show) {
 	// Contect trackers button
 	FIND_OR_FAIL(this->contactTrackers, XRCCTRL(*this, "contactTrackersButton", wxButton), "contactTrackersButton");
 
-	// Load avatars
+	// Resize default avatars depending on the screen height
+	wxImage clientAvatarImage = this->clientAvatar->GetBitmap().ConvertToImage();
+	wxImage targetAvatarImage = this->targetAvatar->GetBitmap().ConvertToImage();
+	clientAvatarImage.Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize());
+	targetAvatarImage.Rescale(caGetApp().GetAvatarSize(), caGetApp().GetAvatarSize());
+	clientAvatar->SetBitmap(wxBitmap(clientAvatarImage));
+	targetAvatar->SetBitmap(wxBitmap(targetAvatarImage));
+
+	// Load avatars from Steam
 	LoadAvatars();
 
 	// Fit panel
@@ -178,10 +181,7 @@ void CallDialog::LoadAvatars() {
 
 
 void CallDialog::SetFinish() {
-	this->doneText->SetLabelText("Finished");
-	this->doneText->SetForegroundColour(wxColour(34, 139, 34));
-
-	this->panel->Layout();
+	this->SetTitle("Finished " + wxString::FromUTF8("\xE2\x9C\x94"));
 }
 
 
@@ -314,29 +314,29 @@ void CallDialog::OnContactTrackers(wxCommandEvent &WXUNUSED(event)) {
 
 	if (!caGetSteamThread()->IsConnected()) {
 		caGetTaskBarIcon()->ShowMessage("Couldn't contact trackers!", "You're not connected to STEAM!", this, false);
-	}
+	} else {
+		bool found = false;
 
-	bool found = false;
+		for (wxVector<wxString>::iterator tracker = caGetTrackerPanel()->GetCurrentTrackers()->begin(); tracker != caGetTrackerPanel()->GetCurrentTrackers()->end(); ++tracker) {
+			// Build csteamid
+			CSteamID steamidTracker = SteamThread::SteamIdtoCSteamId(*tracker);
 
-	for (wxVector<wxString>::iterator tracker = caGetTrackerPanel()->GetCurrentTrackers()->begin(); tracker != caGetTrackerPanel()->GetCurrentTrackers()->end(); ++tracker) {
-		// Build csteamid
-		CSteamID steamidTracker = SteamThread::SteamIdtoCSteamId(*tracker);
+			// Are we friends and is tracker online? :))
+			OpenSteamHelper *helper = OpenSteamHelper::GetInstance();
 
-		// Are we friends and is tracker online? :))
-		OpenSteamHelper *helper = OpenSteamHelper::GetInstance();
+			if (steamidTracker.IsValid() && helper->SteamFriends()->GetFriendRelationship(steamidTracker) == k_EFriendRelationshipFriend && helper->SteamFriends()->GetFriendPersonaState(steamidTracker) != k_EPersonaStateOffline) {
+				// Now we write a message
+				helper->SteamFriends()->ReplyToFriendMessage(steamidTracker, "Hey, i contact you because of the call from " + this->clientId + " about " + this->targetId);
 
-		if (steamidTracker.IsValid() && helper->SteamFriends()->GetFriendRelationship(steamidTracker) == k_EFriendRelationshipFriend && helper->SteamFriends()->GetFriendPersonaState(steamidTracker) != k_EPersonaStateOffline) {
-			// Now we write a message
-			helper->SteamFriends()->ReplyToFriendMessage(steamidTracker, "Hey, i contact you because of the call from " + this->clientId + " about " + this->targetId);
-
-			// And we found someone, so no contacting possible anymore
-			this->contactTrackers->Enable(false);
-			found = true;
+				// And we found someone, so no contacting possible anymore
+				this->contactTrackers->Enable(false);
+				found = true;
+			}
 		}
-	}
 
-	if (!found) {
-		caGetTaskBarIcon()->ShowMessage("Couldn't contact trackers!", "Found no available tracker on your friendlist!", this, false);
+		if (!found) {
+			caGetTaskBarIcon()->ShowMessage("Couldn't contact trackers!", "Found no available tracker on your friendlist!", this, false);
+		}
 	}
 }
 

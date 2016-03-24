@@ -136,9 +136,9 @@ void MainPanel::UpdateCalls() {
 		CallDialog *currentDialog = *callDialog;
 
 		if (currentDialog->IsHandled()) {
-			item = this->callBox->Append("F - " + currentDialog->GetTime() + " - " + currentDialog->GetServer());
+			item = this->callBox->Append(wxString::FromUTF8("\xE2\x9C\x94") + " " + currentDialog->GetTime() + " - " + currentDialog->GetServer());
 		} else {
-			item = this->callBox->Append("U - " + currentDialog->GetTime() + " - " + currentDialog->GetServer());
+			item = this->callBox->Append(wxString::FromUTF8("\xE2\x9C\x96") + " " + currentDialog->GetTime() + " - " + currentDialog->GetServer());
 		}
 	}
 
@@ -154,7 +154,7 @@ void MainPanel::UpdateCalls() {
 
 // The call is now handled
 void MainPanel::SetHandled(int item) {
-	this->callBox->SetString(item, "F - " + caGetCallDialogs()->at(item)->GetTime() + " - " + caGetCallDialogs()->at(item)->GetServer());
+	this->callBox->SetString(item, wxString::FromUTF8("\xE2\x9C\x94") + " " + caGetCallDialogs()->at(item)->GetTime() + " - " + caGetCallDialogs()->at(item)->GetServer());
 
 	caGetCallDialogs()->at(item)->SetFinish();
 	caGetCallDialogs()->at(item)->GetTakeoverButton()->Enable(false);

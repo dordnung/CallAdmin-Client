@@ -144,11 +144,16 @@ void ConfigPanel::OnSoundFileChanged(wxFileDirPickerEvent &event) {
 	if (!caGetConfig()->SetSoundFile(event.GetPath())) {
 		this->soundFilePicker->SetPath("");
 	}
+
+	caGetConfig()->Flush();
 }
 
 
 // Using default sound file
 void ConfigPanel::OnSoundFileDefault(wxCommandEvent &WXUNUSED(event)) {
+	caGetConfig()->SetSoundFile("");
+	caGetConfig()->Flush();
+
 	this->soundFilePicker->SetPath("");
 
 	// Log Action
@@ -160,6 +165,7 @@ void ConfigPanel::OnSoundFileDefault(wxCommandEvent &WXUNUSED(event)) {
 void ConfigPanel::OnSteamUpdate(wxCommandEvent &WXUNUSED(event)) {
 	// Write to config file
 	caGetConfig()->SetSteamEnabled(this->steamEnable->GetValue());
+	caGetConfig()->Flush();
 
 	// Log Action
 	if (this->steamEnable->GetValue()) {
@@ -174,6 +180,7 @@ void ConfigPanel::OnSteamUpdate(wxCommandEvent &WXUNUSED(event)) {
 void ConfigPanel::OnShowInTaskbarUpdate(wxCommandEvent &WXUNUSED(event)) {
 	// Write to config file
 	caGetConfig()->SetShowInTaskbar(this->showInTaskbar->GetValue());
+	caGetConfig()->Flush();
 
 	// Set icon if user want it
 	if (this->hideMinimize->GetValue() || this->hideExit->GetValue() || this->showInTaskbar->GetValue()) {
@@ -196,6 +203,7 @@ void ConfigPanel::OnHideUpdate(wxCommandEvent &WXUNUSED(event)) {
 	// Write to config file
 	caGetConfig()->SetHideOnMinimize(this->hideMinimize->GetValue());
 	caGetConfig()->SetHideOnExit(this->hideExit->GetValue());
+	caGetConfig()->Flush();
 
 	// Set icon if user want it
 	if (this->hideMinimize->GetValue() || this->hideExit->GetValue() || this->showInTaskbar->GetValue()) {
