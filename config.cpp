@@ -51,6 +51,7 @@ Config::Config() : wxFileConfig("CallAdmin-Client", wxEmptyString, GetConfigPath
 	this->steamEnabled = true;
 	this->showInTaskbar = false;
 	this->hideOnMinimize = false;
+	this->hideOnExit = false;
 	this->isAvailable = true;
 	this->wantSound = true;
 	this->isSpectator = false;
@@ -80,6 +81,7 @@ bool Config::ParseConfig() {
 		this->steamEnabled = ReadBool("steam", true);
 		this->showInTaskbar = ReadBool("showInTaskbar", false);
 		this->hideOnMinimize = ReadBool("hideonminimize", false);
+		this->hideOnExit = ReadBool("hideonexit", false);
 		this->isAvailable = ReadBool("available", true);
 		this->wantSound = ReadBool("sound", true);
 		this->isSpectator = ReadBool("spectate", false);

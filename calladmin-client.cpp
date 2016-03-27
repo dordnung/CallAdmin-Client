@@ -241,11 +241,6 @@ void CallAdmin::ShowError(wxString error, wxString type) {
 void CallAdmin::ExitProgramm() {
 	this->isRunning = false;
 
-	// Save config
-	if (this->config) {
-		this->config->Flush();
-	}
-
 	// Hide all windows
 	if (this->mainFrame) {
 		this->mainFrame->Show(false);

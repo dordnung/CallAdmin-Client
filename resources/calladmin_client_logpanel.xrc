@@ -23,22 +23,39 @@
 			</object>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxBOTTOM|wxEXPAND</flag>
-				<border>5</border>
-				<object class="wxChoice" name="logLevel">
-					<font>
-						<size>10</size>
-						<style>normal</style>
-						<weight>normal</weight>
-						<underlined>0</underlined>
-					</font>
-					<selection>0</selection>
-					<content>
-						<item>DEBUG</item>
-						<item>INFO</item>
-						<item>WARNING</item>
-						<item>ERROR</item>
-					</content>
+				<flag>wxEXPAND|wxTOP|wxBOTTOM</flag>
+				<border>3</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="logLevelText">
+							<label>Log Level:</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxALIGN_CENTER_VERTICAL</flag>
+						<border>0</border>
+						<object class="wxChoice" name="logLevel">
+							<font>
+								<size>10</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
+							<selection>0</selection>
+							<content>
+								<item>DEBUG</item>
+								<item>INFO</item>
+								<item>WARNING</item>
+								<item>ERROR</item>
+							</content>
+						</object>
+					</object>
 				</object>
 			</object>
 		</object>
