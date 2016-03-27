@@ -36,19 +36,21 @@
 bool Notebook::CreatePages() {
 	// Create the panels
 	this->mainPanel = new MainPanel();
+	this->callPanel = new CallPanel();
 	this->configPanel = new ConfigPanel();
 	this->trackerPanel = new TrackerPanel();
 	this->logPanel = new LogPanel();
 	this->aboutPanel = new AboutPanel();
 
 	// Init panels
-	if (!(this->mainPanel->InitPanel() && this->configPanel->InitPanel() &&
+	if (!(this->mainPanel->InitPanel() && this->callPanel->InitPanel() && this->configPanel->InitPanel() &&
 		this->trackerPanel->InitPanel() && this->logPanel->InitPanel() && this->aboutPanel->InitPanel())) {
 		return false;
 	}
 
 	// Now add the pages
 	this->window->AddPage(this->mainPanel, "Main", true);
+	this->window->AddPage(this->callPanel, "Calls");
 	this->window->AddPage(this->configPanel, "Settings");
 	this->window->AddPage(this->trackerPanel, "Trackers");
 	this->window->AddPage(this->logPanel, "Logging");
@@ -59,6 +61,7 @@ bool Notebook::CreatePages() {
 
 Notebook::~Notebook() {
 	this->mainPanel->Destroy();
+	this->callPanel->Destroy();
 	this->configPanel->Destroy();
 	this->trackerPanel->Destroy();
 	this->logPanel->Destroy();

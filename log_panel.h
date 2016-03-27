@@ -50,6 +50,7 @@ public:
 	void AddLog(wxString log, LogLevel logLevel);
 
 protected:
+	void OnSelectOrFocus(wxListEvent &event);
 	void OnLogLevelUpdate(wxCommandEvent &event);
 
 	wxDECLARE_EVENT_TABLE();

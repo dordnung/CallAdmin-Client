@@ -1,9 +1,9 @@
-#ifndef MAIN_PANEL_H
-#define MAIN_PANEL_H
+#ifndef CALL_PANEL_H
+#define CALL_PANEL_H
 
 /**
  * -----------------------------------------------------
- * File        main_panel.h
+ * File        call_panel.h
  * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
@@ -32,43 +32,29 @@
 	#include <wx/wx.h>
 #endif
 
+#include "config.h"
 #include <wx/listctrl.h>
 
-
-// Main Panel Class
-class MainPanel : public wxPanel {
+class CallPanel : public wxScrolledWindow {
 private:
-	wxCheckBox *store;
-	wxCheckBox *available;
-	wxCheckBox *sound;
-
-	wxButton *reconnectButton;
-
-	wxStaticText *eventText;
-	wxStaticText *steamText;
+	wxListCtrl *callBox;
 
 public:
-	MainPanel();
+	CallPanel() : callBox(NULL) {};
 
-	// Load the controls
+	// Load controls
 	bool InitPanel();
 
-	// Set the event text
-	void SetStatusText(wxString text);
-	void SetSteamStatus(wxString text, wxColor color);
+	// Update Call list
+	void UpdateCalls();
 
-	void OnSteamChange(int status);
+	// Append call to the callbox
+	void AppendCall(bool finished, wxString time, wxString server);
 
-	void SetReconnectButton(bool enable = false) {
-		this->reconnectButton->Enable(enable);
-	}
+	void SetHandled(int item);
 
 protected:
-	// Events
-	void OnHide(wxCommandEvent &event);
-	void OnReconnect(wxCommandEvent &event);
-	void OnExit(wxCommandEvent &event);
-	void OnCheckBox(wxCommandEvent &event);
+	void OnBoxClick(wxListEvent &event);
 
 	wxDECLARE_EVENT_TABLE();
 };

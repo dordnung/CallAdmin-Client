@@ -37,6 +37,8 @@
 
 // Events for Tracker Panel
 wxBEGIN_EVENT_TABLE(TrackerPanel, wxPanel)
+	EVT_LIST_ITEM_SELECTED(XRCID("trackerBox"), TrackerPanel::OnSelectOrFocus)
+	EVT_LIST_ITEM_FOCUSED(XRCID("trackerBox"), TrackerPanel::OnSelectOrFocus)
 	EVT_BUTTON(XRCID("updateTrackers"), TrackerPanel::OnUpdate)
 wxEND_EVENT_TABLE()
 
@@ -197,6 +199,12 @@ void TrackerPanel::AddTracker(wxString steamId, wxString name, bool isFriend, bo
 			}
 		#endif
 	}
+}
+
+
+void TrackerPanel::OnSelectOrFocus(wxListEvent &event) {
+	// Prevent focusing and selecting of items
+	this->trackerBox->SetItemState(event.GetIndex(), 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 }
 
 

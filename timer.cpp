@@ -244,7 +244,7 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 
 								// Check if handled state changed
 								if (newDialog->IsHandled() && !(*callDialog)->IsHandled()) {
-									caGetMainPanel()->SetHandled(index);
+									caGetCallPanel()->SetHandled(index);
 								}
 
 								// That's enough
@@ -290,7 +290,7 @@ void Timer::OnNotice(wxString error, wxString result, int firstRun) {
 			// Update Call List
 			if (foundNew) {
 				// Update call list
-				caGetMainPanel()->UpdateCalls();
+				caGetCallPanel()->UpdateCalls();
 
 				// Play Sound
 				if (caGetConfig()->GetWantSound() && !firstRun && caGetConfig()->GetIsAvailable()) {

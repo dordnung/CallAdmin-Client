@@ -35,6 +35,7 @@
 #include <wx/notebook.h>
 
 #include "main_panel.h"
+#include "call_panel.h"
 #include "config_panel.h"
 #include "tracker_panel.h"
 #include "log_panel.h"
@@ -48,13 +49,14 @@ class Notebook {
 private:
 	wxNotebook *window;
 	MainPanel *mainPanel;
+	CallPanel *callPanel;
 	ConfigPanel *configPanel;
 	TrackerPanel *trackerPanel;
 	LogPanel *logPanel;
 	AboutPanel *aboutPanel;
 
 public:
-	explicit Notebook(wxNotebook *window) : window(window), mainPanel(NULL), configPanel(NULL),
+	explicit Notebook(wxNotebook *window) : window(window), mainPanel(NULL), callPanel(NULL), configPanel(NULL),
 		trackerPanel(NULL), logPanel(NULL), aboutPanel(NULL) {};
 	~Notebook();
 
@@ -69,6 +71,10 @@ public:
 	// Panel accessors
 	MainPanel* GetMainPanel() {
 		return this->mainPanel;
+	}
+
+	CallPanel* GetCallPanel() {
+		return this->callPanel;
 	}
 
 	ConfigPanel* GetConfigPanel() {

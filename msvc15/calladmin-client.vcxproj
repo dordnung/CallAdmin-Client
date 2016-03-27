@@ -123,6 +123,7 @@
     <ClCompile Include="..\calladmin-client.cpp" />
     <ClCompile Include="..\about_panel.cpp" />
     <ClCompile Include="..\call_dialog.cpp" />
+    <ClCompile Include="..\call_panel.cpp" />
     <ClCompile Include="..\config.cpp" />
     <ClCompile Include="..\config_panel.cpp" />
     <ClCompile Include="..\curl_util.cpp" />
@@ -142,6 +143,7 @@
     <ClInclude Include="..\calladmin-client.h" />
     <ClInclude Include="..\about_panel.h" />
     <ClInclude Include="..\call_dialog.h" />
+    <ClInclude Include="..\call_panel.h" />
     <ClInclude Include="..\config.h" />
     <ClInclude Include="..\config_panel.h" />
     <ClInclude Include="..\curl_util.h" />

@@ -59,6 +59,7 @@
 #define caGetMainFrame caGetApp().GetMainFrame
 #define caGetNotebook caGetMainFrame()->GetNotebook
 #define caGetMainPanel caGetNotebook()->GetMainPanel
+#define caGetCallPanel caGetNotebook()->GetCallPanel
 #define caGetConfigPanel caGetNotebook()->GetConfigPanel
 #define caGetTrackerPanel caGetNotebook()->GetTrackerPanel
 #define caGetLogPanel caGetNotebook()->GetLogPanel

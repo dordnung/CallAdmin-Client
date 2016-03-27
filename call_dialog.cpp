@@ -225,7 +225,7 @@ void CallDialog::OnChecked(wxString errorStr, wxString result, int x) {
 
 					// Success?
 					if ((wxString)node->Value() == "success") {
-						caGetMainPanel()->SetHandled(x);
+						caGetCallPanel()->SetHandled(x);
 
 						return;
 					}

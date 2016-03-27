@@ -285,7 +285,7 @@ void ConfigPanel::ParseConfig() {
 		caGetCallDialogs()->clear();
 
 		// Update the calls
-		caGetMainPanel()->UpdateCalls();
+		caGetCallPanel()->UpdateCalls();
 
 		// Start Steam thread if not started yet
 		caGetApp().StartSteamThread();

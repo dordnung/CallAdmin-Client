@@ -34,6 +34,8 @@
 
 // Events for Log Panel
 wxBEGIN_EVENT_TABLE(LogPanel, wxScrolledWindow)
+	EVT_LIST_ITEM_SELECTED(XRCID("logBox"), LogPanel::OnSelectOrFocus)
+	EVT_LIST_ITEM_FOCUSED(XRCID("logBox"), LogPanel::OnSelectOrFocus)
 	EVT_CHOICE(XRCID("logLevel"), LogPanel::OnLogLevelUpdate)
 wxEND_EVENT_TABLE()
 
@@ -85,6 +87,12 @@ void LogPanel::AddLog(wxString log, LogLevel logLevel) {
 			#endif
 		}
 	}
+}
+
+
+void LogPanel::OnSelectOrFocus(wxListEvent &event) {
+	// Prevent focusing and selecting of items
+	this->logBox->SetItemState(event.GetIndex(), 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 }
 
 

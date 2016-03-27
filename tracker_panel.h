@@ -72,6 +72,7 @@ public:
 	}
 
 protected:
+	void OnSelectOrFocus(wxListEvent &event);
 	void OnUpdate(wxCommandEvent &event);
 
 	wxDECLARE_EVENT_TABLE();

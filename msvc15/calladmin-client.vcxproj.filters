@@ -52,6 +52,9 @@
     <ClCompile Include="..\opensteam_helper.cpp">
       <Filter>Steam</Filter>
     </ClCompile>
+    <ClCompile Include="..\call_panel.cpp">
+      <Filter>Panel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\tinyxml2\tinyxml2.h">
@@ -104,6 +107,9 @@
     </ClInclude>
     <ClInclude Include="..\opensteam_helper.h">
       <Filter>Steam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\call_panel.h">
+      <Filter>Panel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
