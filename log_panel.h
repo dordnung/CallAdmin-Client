@@ -33,18 +33,36 @@
 #endif
 
 #include "config.h"
+#include "panel.h"
 #include <wx/listctrl.h>
 
-class LogPanel : public wxScrolledWindow {
+#define LOG_PANEL_PAGE 4
+#define LOG_PANEL_LABEL "Logging"
+
+
+class LogPanel : public Panel, public wxScrolledWindow {
 private:
 	wxChoice *logLevel;
 	wxListCtrl *logBox;
+	wxVector<int> columnHeaderWidths;
 
 public:
 	LogPanel() : logLevel(NULL), logBox(NULL) {};
 
 	// Load controls
 	bool InitPanel();
+
+	int GetPage() {
+		return LOG_PANEL_PAGE;
+	}
+
+	wxString GetLabel() {
+		return LOG_PANEL_LABEL;
+	}
+
+	wxPanel *GetPanel() {
+		return this;
+	}
 
 	// Add Action to the logBox
 	void AddLog(wxString log, LogLevel logLevel);

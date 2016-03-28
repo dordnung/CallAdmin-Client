@@ -32,8 +32,13 @@
 	#include <wx/wx.h>
 #endif
 
+#include "panel.h"
 
-class AboutPanel : public wxPanel {
+#define ABOUT_PANEL_PAGE 5
+#define ABOUT_PANEL_LABEL "About"
+
+
+class AboutPanel : public Panel, public wxPanel {
 private:
 	wxStaticText *currentText;
 	wxButton *downloadButton;
@@ -45,6 +50,18 @@ public:
 
 	// Load controls
 	bool InitPanel();
+
+	int GetPage() {
+		return ABOUT_PANEL_PAGE;
+	}
+
+	wxString GetLabel() {
+		return ABOUT_PANEL_LABEL;
+	}
+
+	wxPanel *GetPanel() {
+		return this;
+	}
 
 	void UpdateVersionText(wxString currentVersion, wxColor color);
 

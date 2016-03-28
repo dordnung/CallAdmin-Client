@@ -111,6 +111,9 @@
     <ClInclude Include="..\call_panel.h">
       <Filter>Panel</Filter>
     </ClInclude>
+    <ClInclude Include="..\panel.h">
+      <Filter>Panel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TinyXML2">

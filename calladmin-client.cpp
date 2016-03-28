@@ -203,8 +203,8 @@ void CallAdmin::CreateReconnect(wxString error) {
 	this->timer->Stop();
 
 	mainFrame->SetTitle("Error: Couldn't Connect");
-	mainFrame->GetNotebook()->GetMainPanel()->SetStatusText("Error: Please reconnect manually");
-	mainFrame->GetNotebook()->GetMainPanel()->SetReconnectButton(true);
+	mainFrame->GetNotebook()->GetPanel<MainPanel *>(MAIN_PANEL_PAGE)->SetStatusText("Error: Please reconnect manually");
+	mainFrame->GetNotebook()->GetPanel<MainPanel *>(MAIN_PANEL_PAGE)->SetReconnectButton(true);
 
 	// Show it
 	mainFrame->Show(true);
@@ -395,7 +395,7 @@ void CallAdmin::OnUpdate(wxString error, wxString result, int WXUNUSED(extra)) {
 			}
 
 			// Goto About
-			caGetNotebook()->GetWindow()->ChangeSelection(4);
+			caGetNotebook()->GetWindow()->ChangeSelection(ABOUT_PANEL_PAGE);
 
 			caGetTaskBarIcon()->ShowMessage("New Version available", "New version " + newVersion + " is now available!", caGetMainFrame(), false);
 		} else {

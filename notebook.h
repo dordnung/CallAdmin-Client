@@ -33,13 +33,7 @@
 #endif
 
 #include <wx/notebook.h>
-
-#include "main_panel.h"
-#include "call_panel.h"
-#include "config_panel.h"
-#include "tracker_panel.h"
-#include "log_panel.h"
-#include "about_panel.h"
+#include "panel.h"
 
 
 /**
@@ -48,17 +42,16 @@
 class Notebook {
 private:
 	wxNotebook *window;
-	MainPanel *mainPanel;
-	CallPanel *callPanel;
-	ConfigPanel *configPanel;
-	TrackerPanel *trackerPanel;
-	LogPanel *logPanel;
-	AboutPanel *aboutPanel;
+	wxVector<Panel *> panels;
 
 public:
-	explicit Notebook(wxNotebook *window) : window(window), mainPanel(NULL), callPanel(NULL), configPanel(NULL),
-		trackerPanel(NULL), logPanel(NULL), aboutPanel(NULL) {};
+	explicit Notebook(wxNotebook *window) : window(window) {};
 	~Notebook();
+
+	// Adds a page to the notebook
+	void AddPage(Panel *panel) {
+		this->panels.push_back(panel);
+	}
 
 	// Create the pages of the notebook
 	bool CreatePages();
@@ -68,29 +61,9 @@ public:
 		return this->window;
 	}
 
-	// Panel accessors
-	MainPanel* GetMainPanel() {
-		return this->mainPanel;
-	}
-
-	CallPanel* GetCallPanel() {
-		return this->callPanel;
-	}
-
-	ConfigPanel* GetConfigPanel() {
-		return this->configPanel;
-	}
-
-	TrackerPanel* GetTrackerPanel() {
-		return this->trackerPanel;
-	}
-
-	LogPanel* GetLogPanel() {
-		return this->logPanel;
-	}
-
-	AboutPanel* GetAboutPanel() {
-		return this->aboutPanel;
+	template<typename T>
+	T GetPanel(size_t page) {
+		return static_cast<T>(panels.at(page));
 	}
 };
 

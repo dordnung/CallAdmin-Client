@@ -33,10 +33,14 @@
 #endif
 
 #include <wx/listctrl.h>
+#include "panel.h"
+
+#define MAIN_PANEL_PAGE 0
+#define MAIN_PANEL_LABEL "Main"
 
 
 // Main Panel Class
-class MainPanel : public wxPanel {
+class MainPanel : public Panel, public wxPanel {
 private:
 	wxCheckBox *store;
 	wxCheckBox *available;
@@ -52,6 +56,18 @@ public:
 
 	// Load the controls
 	bool InitPanel();
+
+	int GetPage() {
+		return MAIN_PANEL_PAGE;
+	}
+
+	wxString GetLabel() {
+		return MAIN_PANEL_LABEL;
+	}
+
+	wxPanel *GetPanel() {
+		return this;
+	}
 
 	// Set the event text
 	void SetStatusText(wxString text);

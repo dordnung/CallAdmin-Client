@@ -34,9 +34,13 @@
 
 #include <wx/spinctrl.h>
 #include <wx/filepicker.h>
+#include "panel.h"
+
+#define CONFIG_PANEL_PAGE 2
+#define CONFIG_PANEL_LABEL "Settings"
 
 
-class ConfigPanel : public wxPanel {
+class ConfigPanel : public Panel, public wxPanel {
 private:
 	wxTextCtrl *pageText;
 	wxTextCtrl *keyText;
@@ -59,6 +63,18 @@ public:
 
 	// Load controls
 	bool InitPanel();
+
+	int GetPage() {
+		return CONFIG_PANEL_PAGE;
+	}
+
+	wxString GetLabel() {
+		return CONFIG_PANEL_LABEL;
+	}
+
+	wxPanel *GetPanel() {
+		return this;
+	}
 
 	// Parse the config, set the panel values and restart progress
 	void ParseConfig();

@@ -68,6 +68,18 @@ bool TrackerPanel::InitPanel() {
 
 	// The tracker list box and autosize update notfication
 	FIND_OR_FAIL(this->trackerBox, XRCCTRL(*this, "trackerBox", wxListCtrl), "trackerBox");
+
+	// Headers are static, so get the width of the headers
+	// Only on Windows wxLIST_AUTOSIZE_USEHEADER gives the real header width
+#if defined (__WXMSW__)
+	for (int i = 0; i < this->trackerBox->GetColumnCount(); i++) {
+		// Get the width if autosize with header size
+		this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
+		this->columnHeaderWidths.push_back(this->trackerBox->GetColumnWidth(i));
+#endif
+	}
+
+	// First column has always a content at start
 	this->trackerBox->SetColumnWidth(0, wxLIST_AUTOSIZE);
 
 	return true;
@@ -186,16 +198,13 @@ void TrackerPanel::AddTracker(wxString steamId, wxString name, bool isFriend, bo
 
 		// Only on Windows wxLIST_AUTOSIZE_USEHEADER gives the real header width
 		#if defined (__WXMSW__)
-		    // Get the width if autosize with content size
-			int contentSize = this->trackerBox->GetColumnWidth(0);
+		    // Get the width if autosize with content size and with header size
+			int contentSize = this->trackerBox->GetColumnWidth(i);
+			int headerSize = this->columnHeaderWidths.at(i);
 
-			// Get the width if autosize with header size
-			this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
-			int headerSize = this->trackerBox->GetColumnWidth(0);
-
-			// Use content width if it is higher then the header size
-			if (contentSize > headerSize) {
-				this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
+			// Use header width if it is higher then the content width
+			if (contentSize < headerSize) {
+				this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
 			}
 		#endif
 	}

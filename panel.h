@@ -1,6 +1,9 @@
+#ifndef PANEL_H
+#define PANEL_H
+
 /**
  * -----------------------------------------------------
- * File        notebook.cpp
+ * File        panel.h
  * Authors     David O., Impact
  * License     GPLv3
  * Web         http://popoklopsi.de, http://gugyclan.eu
@@ -21,37 +24,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-#include "notebook.h"
-#include "calladmin-client.h"
+#pragma once
 
-#include <wx/xrc/xmlres.h>
+#include <wx/wxprec.h>
 
-#ifdef __WXMSW__
-	// Memory leak detection for debugging 
-	#include <wx/msw/msvcrt.h>
+#ifndef WX_PRECOMP
+#include <wx/wx.h>
 #endif
 
 
-// Loads the pages of the notebook
-bool Notebook::CreatePages() {
-	// Init panels
-	for (wxVector<Panel *>::iterator panel = this->panels.begin(); panel != this->panels.end(); ++panel) {
-		if (!(*panel)->InitPanel()) {
-			return false;
-		}
-	}
+class Panel {
+public:
+	// Functions that every panel needs
+	virtual bool InitPanel() = 0;
+	virtual int GetPage() = 0;
+	virtual wxString GetLabel() = 0;
+	virtual wxPanel *GetPanel() = 0;
+};
 
-	// Add pages
-	for (wxVector<Panel *>::iterator panel = this->panels.begin(); panel != this->panels.end(); ++panel) {
-		this->window->InsertPage((*panel)->GetPage(), (*panel)->GetPanel(), (*panel)->GetLabel());
-	}
 
-	// Go to first page
-	this->window->ChangeSelection(0);
-
-	return true;
-}
-
-Notebook::~Notebook() {
-	this->window->Destroy();
-}
+#endif

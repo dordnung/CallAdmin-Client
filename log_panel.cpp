@@ -55,6 +55,16 @@ bool LogPanel::InitPanel() {
 	// The log box
 	FIND_OR_FAIL(this->logBox, XRCCTRL(*this, "logBox", wxListCtrl), "logBox");
 
+	// Headers are static, so get the width of the headers
+	// Only on Windows wxLIST_AUTOSIZE_USEHEADER gives the real header width
+#if defined (__WXMSW__)
+	for (int i = 0; i < this->logBox->GetColumnCount(); i++) {
+		// Get the width if autosize with header size
+		this->logBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
+		this->columnHeaderWidths.push_back(this->logBox->GetColumnWidth(i));
+#endif
+	}
+
 	return true;
 }
 
@@ -72,19 +82,16 @@ void LogPanel::AddLog(wxString log, LogLevel logLevel) {
 			this->logBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
 
 			// Only on Windows wxLIST_AUTOSIZE_USEHEADER gives the real header width
-			#if defined (__WXMSW__)
-				// Get the width if autosize with content size
-				int contentSize = this->logBox->GetColumnWidth(0);
+#if defined (__WXMSW__)
+			// Get the width if autosize with content size and with header size
+			int contentSize = this->logBox->GetColumnWidth(i);
+			int headerSize = this->columnHeaderWidths.at(i);
 
-				// Get the width if autosize with header size
+			// Use header width if it is higher then the content width
+			if (contentSize < headerSize) {
 				this->logBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
-				int headerSize = this->logBox->GetColumnWidth(0);
-
-				// Use content width if it is higher then the header size
-				if (contentSize > headerSize) {
-					this->logBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
-				}
-			#endif
+			}
+#endif
 		}
 	}
 }

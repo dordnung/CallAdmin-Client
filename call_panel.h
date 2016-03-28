@@ -33,17 +33,35 @@
 #endif
 
 #include "config.h"
+#include "panel.h"
 #include <wx/listctrl.h>
 
-class CallPanel : public wxScrolledWindow {
+#define CALL_PANEL_PAGE 1
+#define CALL_PANEL_LABEL "Calls"
+
+
+class CallPanel : public Panel, public wxScrolledWindow {
 private:
 	wxListCtrl *callBox;
+	wxVector<int> columnHeaderWidths;
 
 public:
 	CallPanel() : callBox(NULL) {};
 
 	// Load controls
 	bool InitPanel();
+
+	int GetPage() {
+		return CALL_PANEL_PAGE;
+	}
+
+	wxString GetLabel() {
+		return CALL_PANEL_LABEL;
+	}
+
+	wxPanel *GetPanel() {
+		return this;
+	}
 
 	// Update Call list
 	void UpdateCalls();

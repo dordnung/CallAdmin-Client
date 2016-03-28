@@ -48,7 +48,16 @@ bool CallPanel::InitPanel() {
 
 	// Box for all Calls and autosize finished column
 	FIND_OR_FAIL(this->callBox, XRCCTRL(*this, "callBox", wxListCtrl), "callBox");
-	this->callBox->SetColumnWidth(0, wxLIST_AUTOSIZE);
+
+	// Headers are static, so get the width of the headers
+	// Only on Windows wxLIST_AUTOSIZE_USEHEADER gives the real header width
+#if defined (__WXMSW__)
+	for (int i = 0; i < this->callBox->GetColumnCount(); i++) {
+		// Get the width if autosize with header size
+		this->callBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
+		this->columnHeaderWidths.push_back(this->callBox->GetColumnWidth(i));
+#endif
+	}
 
 	return true;
 }
@@ -81,16 +90,13 @@ void CallPanel::AppendCall(bool finished, wxString time, wxString server) {
 
 		// Only on Windows wxLIST_AUTOSIZE_USEHEADER gives the real header width
 #if defined (__WXMSW__)
-		// Get the width if autosize with content size
-		int contentSize = this->callBox->GetColumnWidth(0);
+		// Get the width if autosize with content size and with header size
+		int contentSize = this->callBox->GetColumnWidth(i);
+		int headerSize = this->columnHeaderWidths.at(i);
 
-		// Get the width if autosize with header size
-		this->callBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
-		int headerSize = this->callBox->GetColumnWidth(0);
-
-		// Use content width if it is higher then the header size
-		if (contentSize > headerSize) {
-			this->callBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
+		// Use header width if it is higher then the content width
+		if (contentSize < headerSize) {
+			this->callBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
 		}
 #endif
 	}

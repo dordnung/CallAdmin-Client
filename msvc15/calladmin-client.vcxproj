@@ -153,6 +153,7 @@
     <ClInclude Include="..\notebook.h" />
     <ClInclude Include="..\opensteam.h" />
     <ClInclude Include="..\opensteam_helper.h" />
+    <ClInclude Include="..\panel.h" />
     <ClInclude Include="..\sound.h" />
     <ClInclude Include="..\taskbar.h" />
     <ClInclude Include="..\timer.h" />

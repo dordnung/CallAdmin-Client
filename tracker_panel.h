@@ -34,17 +34,22 @@
 
 #include <wx/listctrl.h>
 #include "opensteam.h"
+#include "panel.h"
+
+#define TRACKER_PANEL_PAGE 3
+#define TRACKER_PANEL_LABEL "Trackers"
 
 
 class NameTimer;
 
-class TrackerPanel : public wxScrolledWindow {
+class TrackerPanel : public Panel, public wxScrolledWindow {
 private:
 	// The running NameTimers
 	wxVector<NameTimer *> nameTimers;
 
 	// All current trackers
 	wxVector<wxString> currentTrackers;
+	wxVector<int> columnHeaderWidths;
 
 	wxListCtrl *trackerBox;
 
@@ -54,6 +59,18 @@ public:
 
 	// Init Panel with controls
 	bool InitPanel();
+
+	int GetPage() {
+		return TRACKER_PANEL_PAGE;
+	}
+
+	wxString GetLabel() {
+		return TRACKER_PANEL_LABEL;
+	}
+
+	wxPanel *GetPanel() {
+		return this;
+	}
 
 	// Update the tracker list
 	void UpdateTrackerList();

@@ -40,6 +40,13 @@
 #include "call_dialog.h"
 #include "curl_util.h"
 
+#include "main_panel.h"
+#include "call_panel.h"
+#include "config_panel.h"
+#include "tracker_panel.h"
+#include "log_panel.h"
+#include "about_panel.h"
+
 
 // Version, update URL and update exe
 #define CALLADMIN_CLIENT_VERSION "0.47B"
@@ -58,12 +65,12 @@
 
 #define caGetMainFrame caGetApp().GetMainFrame
 #define caGetNotebook caGetMainFrame()->GetNotebook
-#define caGetMainPanel caGetNotebook()->GetMainPanel
-#define caGetCallPanel caGetNotebook()->GetCallPanel
-#define caGetConfigPanel caGetNotebook()->GetConfigPanel
-#define caGetTrackerPanel caGetNotebook()->GetTrackerPanel
-#define caGetLogPanel caGetNotebook()->GetLogPanel
-#define caGetAboutPanel caGetNotebook()->GetAboutPanel
+#define caGetMainPanel() caGetNotebook()->GetPanel<MainPanel *>(MAIN_PANEL_PAGE)
+#define caGetCallPanel() caGetNotebook()->GetPanel<CallPanel *>(CALL_PANEL_PAGE)
+#define caGetConfigPanel() caGetNotebook()->GetPanel<ConfigPanel *>(CONFIG_PANEL_PAGE)
+#define caGetTrackerPanel() caGetNotebook()->GetPanel<TrackerPanel *>(TRACKER_PANEL_PAGE)
+#define caGetLogPanel() caGetNotebook()->GetPanel<LogPanel *>(LOG_PANEL_PAGE)
+#define caGetAboutPanel() caGetNotebook()->GetPanel<AboutPanel *>(ABOUT_PANEL_PAGE)
 
 #define FIND_OR_FAIL(var, ptr, str) var = ptr; if (var == NULL) {\
 	wxMessageBox("Error: Couldn't find XRCID " str, "Error on creating CallAdmin", wxOK | wxCENTRE | wxICON_ERROR); \
@@ -122,8 +129,8 @@ public:
 	static void OnUpdate(wxString error, wxString result, int extra);
 
 	void LogAction(wxString action, LogLevel logLevel) {
-		if (this->isRunning && this->mainFrame && this->mainFrame->GetNotebook() && this->mainFrame->GetNotebook()->GetLogPanel()) {
-			this->mainFrame->GetNotebook()->GetLogPanel()->AddLog(action, logLevel);
+		if (this->isRunning && this->mainFrame && this->mainFrame->GetNotebook() && this->mainFrame->GetNotebook()->GetPanel<LogPanel *>(LOG_PANEL_PAGE)) {
+			this->mainFrame->GetNotebook()->GetPanel<LogPanel *>(LOG_PANEL_PAGE)->AddLog(action, logLevel);
 		}
 	}
 
@@ -160,7 +167,7 @@ public:
 
 		// Update Main Interface
 		this->mainFrame->SetTitle("CallAdmin Client");
-		this->mainFrame->GetNotebook()->GetMainPanel()->SetStatusText("Waiting for a new report");
+		this->mainFrame->GetNotebook()->GetPanel<MainPanel *>(MAIN_PANEL_PAGE)->SetStatusText("Waiting for a new report");
 	}
 };
 
