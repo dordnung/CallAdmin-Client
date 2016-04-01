@@ -215,8 +215,8 @@ void CallAdmin::CreateReconnect(wxString error) {
 		mainFrame->Raise();
 	}
 
-	// Go to first page
-	mainFrame->GetNotebook()->GetWindow()->ChangeSelection(0);
+	// Go to main page
+	mainFrame->GetNotebook()->GetWindow()->ChangeSelection(MAIN_PANEL_PAGE);
 }
 
 

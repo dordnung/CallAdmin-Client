@@ -240,7 +240,7 @@ void ConfigPanel::OnSet(wxCommandEvent &WXUNUSED(event)) {
 	caLogAction("Saved the config", LogLevel::LEVEL_INFO);
 
 	// Goto Main
-	caGetNotebook()->GetWindow()->ChangeSelection(0);
+	caGetNotebook()->GetWindow()->ChangeSelection(MAIN_PANEL_PAGE);
 
 	// Parse again
 	ParseConfig();

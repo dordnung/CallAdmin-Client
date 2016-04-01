@@ -42,8 +42,9 @@ bool Notebook::CreatePages() {
 	}
 
 	// Add pages
-	for (wxVector<Panel *>::iterator panel = this->panels.begin(); panel != this->panels.end(); ++panel) {
-		this->window->InsertPage((*panel)->GetPage(), (*panel)->GetPanel(), (*panel)->GetLabel());
+	for (wxVector<Panel *>::iterator panelIt = this->panels.begin(); panelIt != this->panels.end(); ++panelIt) {
+		Panel *panel = *panelIt;
+		this->window->InsertPage(panel->GetPage(), panel->GetPanel(), panel->GetLabel());
 	}
 
 	// Go to first page
