@@ -141,8 +141,8 @@ wxThread::ExitCode SteamThread::Entry() {
 				Clean();
 
 				if (steamError == STEAM_ERROR) {
-					// Only if connected before
-					if (this->isConnected) {
+					// Only if connected before or was disabled before
+					if (this->isConnected || this->lastError == STEAM_DISABLED) {
 						// Notice changes to main panel
 						caGetMainPanel()->GetEventHandler()->CallAfter(&MainPanel::OnSteamChange, 1);
 						caGetApp().CallAfter(&CallAdmin::LogAction, "Couldn't connect to Steam", LogLevel::LEVEL_ERROR);
