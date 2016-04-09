@@ -102,13 +102,13 @@ void UpdateFrame::OnUpdate(UpdateInfo updateInfo) {
 	this->progressBar->SetValue((updateInfo.downloadedSize / updateInfo.totalSize) * 100);
 
 	// Update download info
-	double speed = (updateInfo.downloadedSize / 1024) / updateInfo.currentTime;
+	double speedf = (updateInfo.downloadedSize / 1024) / updateInfo.currentTime;
 
 	this->downloadedSize->SetLabelText(wxString::Format("%.0f", updateInfo.downloadedSize / 1024));
 	this->downloadedSizeTotal->SetLabelText(wxString::Format("%.0f", updateInfo.totalSize / 1024));
-	this->speed->SetLabelText(wxString::Format("%.0f", speed));
+	this->speed->SetLabelText(wxString::Format("%.0f", speedf));
 	this->elapsedTime->SetLabelText(wxString::Format("%.2f", updateInfo.currentTime));
-	this->remainingTime->SetLabelText(wxString::Format("%.2f", ((updateInfo.totalSize - updateInfo.downloadedSize) / 1024) / speed));
+	this->remainingTime->SetLabelText(wxString::Format("%.2f", ((updateInfo.totalSize - updateInfo.downloadedSize) / 1024) / speedf));
 
 	this->sizerTop->Layout();
 	this->sizerTop->Fit(this);
