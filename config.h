@@ -64,9 +64,9 @@ private:
 
 	LogLevel logLevel;
 	bool steamEnabled;
-	bool showInTaskbar;
+	bool showAsNotification;
 	bool hideOnMinimize;
-	bool hideOnExit;
+	bool minimizeOnExit;
 	bool isAvailable;
 	bool wantSound;
 	bool isSpectator;
@@ -78,6 +78,9 @@ public:
 
 	// Parse the config
 	bool ParseConfig();
+
+	// Path to the config folder
+	static wxString GetConfigDir();
 
 	// Config accessors
 	int GetStep() {
@@ -116,16 +119,16 @@ public:
 		return this->steamEnabled;
 	}
 
-	bool GetShowInTaskbar() {
-		return this->showInTaskbar;
+	bool GetShowAsNotification() {
+		return this->showAsNotification;
 	}
 
 	bool GetHideOnMinimize() {
 		return this->hideOnMinimize;
 	}
 
-	bool GetHideOnExit() {
-		return this->hideOnExit;
+	bool GetMinimizeOnExit() {
+		return this->minimizeOnExit;
 	}
 
 	bool GetIsAvailable() {
@@ -196,9 +199,9 @@ public:
 		Write("steam", steamEnabled);
 	}
 
-	void SetShowInTaskbar(bool showInTaskbar) {
-		this->showInTaskbar = showInTaskbar;
-		Write("showInTaskbar", showInTaskbar);
+	void SetShowAsNotification(bool showAsNotification) {
+		this->showAsNotification = showAsNotification;
+		Write("showasnotification", showAsNotification);
 	}
 
 	void SetHideOnMinimize(bool hideOnMinimize) {
@@ -206,9 +209,9 @@ public:
 		Write("hideonminimize", hideOnMinimize);
 	}
 
-	void SetHideOnExit(bool hideOnExit) {
-		this->hideOnExit = hideOnExit;
-		Write("hideonexit", hideOnExit);
+	void SetMinimizeOnExit(bool minimizeOnExit) {
+		this->minimizeOnExit = minimizeOnExit;
+		Write("minimizeonexit", minimizeOnExit);
 	}
 
 	void SetIsAvailable(bool isAvailable) {
@@ -229,7 +232,7 @@ public:
 private:
 	bool IsSoundFileValid();
 
-	wxString GetConfigPath();
+	wxString GetConfigFile();
 	void ConvertFromRegistry();
 };
 

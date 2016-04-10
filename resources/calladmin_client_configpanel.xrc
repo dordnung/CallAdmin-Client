@@ -419,14 +419,14 @@
 						<cellspan>1,1</cellspan>
 						<flag>wxALIGN_CENTER_VERTICAL</flag>
 						<border>0</border>
-						<object class="wxStaticText" name="showInTaskbarText">
+						<object class="wxStaticText" name="showAsNotificationText">
 							<font>
 								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
 							</font>
-							<label>Show messages in the Taskbar instead in a window: </label>
+							<label>Show messages as a notification instead in a window: </label>
 							<wrap>-1</wrap>
 						</object>
 					</object>
@@ -435,14 +435,14 @@
 						<cellspan>1,1</cellspan>
 						<flag></flag>
 						<border>0</border>
-						<object class="wxCheckBox" name="showInTaskbar">
+						<object class="wxCheckBox" name="showAsNotification">
 							<font>
 								<size>10</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
 							</font>
-							<label>Show messages in Taskbar</label>
+							<label>Show messages as notification</label>
 							<checked>0</checked>
 						</object>
 					</object>
@@ -488,14 +488,14 @@
 								<option>0</option>
 								<flag>wxLEFT</flag>
 								<border>5</border>
-								<object class="wxCheckBox" name="hideExit">
+								<object class="wxCheckBox" name="minimizeExit">
 									<font>
 										<size>10</size>
 										<style>normal</style>
 										<weight>normal</weight>
 										<underlined>0</underlined>
 									</font>
-									<label>Hide on Exit</label>
+									<label>Minimize on Exit</label>
 									<checked>0</checked>
 								</object>
 							</object>

@@ -58,9 +58,10 @@ private:
 	// The panel
 	wxPanel *panel;
 
-	// Avatars
+	// Avatars with Timer
 	wxStaticBitmap *clientAvatar;
 	wxStaticBitmap *targetAvatar;
+	AvatarTimer *avatarTimer;
 
 	// Tracker button
 	wxButton *contactTrackers;
@@ -78,6 +79,7 @@ private:
 
 public:
 	CallDialog();
+	~CallDialog();
 
 	// Start the call
 	bool StartCall(bool show);

@@ -74,7 +74,7 @@ bool CallAdmin::OnInit() {
 	}
 
 	// Check duplicate
-	static wxSingleInstanceChecker checkInstance("CallAdmin Client - " + wxGetUserId());
+	static wxSingleInstanceChecker checkInstance("CallAdmin Client - " + wxGetUserId(), Config::GetConfigDir());
 
 	if (checkInstance.IsAnotherRunning()) {
 		wxMessageBox("CallAdmin Client is already running.", "CallAdmin Client", wxOK | wxCENTRE | wxICON_EXCLAMATION);

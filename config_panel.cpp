@@ -46,9 +46,9 @@ wxBEGIN_EVENT_TABLE(ConfigPanel, wxPanel)
 	EVT_BUTTON(XRCID("soundFileDefault"), ConfigPanel::OnSoundFileDefault)
 
 	EVT_CHECKBOX(XRCID("steamEnable"), ConfigPanel::OnSteamUpdate)
-	EVT_CHECKBOX(XRCID("showInTaskbar"), ConfigPanel::OnShowInTaskbarUpdate)
+	EVT_CHECKBOX(XRCID("showAsNotification"), ConfigPanel::OnShowAsNotificationUpdate)
 	EVT_CHECKBOX(XRCID("hideMinimize"), ConfigPanel::OnHideUpdate)
-	EVT_CHECKBOX(XRCID("hideExit"), ConfigPanel::OnHideUpdate)
+	EVT_CHECKBOX(XRCID("minimizeExit"), ConfigPanel::OnHideUpdate)
 wxEND_EVENT_TABLE()
 
 
@@ -65,9 +65,9 @@ ConfigPanel::ConfigPanel() {
 	this->callsSlider = NULL;
 	this->callsSliderValue = NULL;
 	this->steamEnable = NULL;
-	this->showInTaskbar = NULL;
+	this->showAsNotification = NULL;
 	this->hideMinimize = NULL;
-	this->hideExit = NULL;
+	this->minimizeExit = NULL;
 }
 
 
@@ -108,13 +108,13 @@ bool ConfigPanel::InitPanel() {
 	FIND_OR_FAIL(this->steamEnable, XRCCTRL(*this, "steamEnable", wxCheckBox), "steamEnable");
 
 	// Ask for Show in taskbar
-	FIND_OR_FAIL(this->showInTaskbar, XRCCTRL(*this, "showInTaskbar", wxCheckBox), "showInTaskbar");
+	FIND_OR_FAIL(this->showAsNotification, XRCCTRL(*this, "showAsNotification", wxCheckBox), "showAsNotification");
 
 	// Ask for hide on minimize
 	FIND_OR_FAIL(this->hideMinimize, XRCCTRL(*this, "hideMinimize", wxCheckBox), "hideMinimize");
 
 	// Ask for hide on exit
-	FIND_OR_FAIL(this->hideExit, XRCCTRL(*this, "hideExit", wxCheckBox), "hideExit");
+	FIND_OR_FAIL(this->minimizeExit, XRCCTRL(*this, "minimizeExit", wxCheckBox), "minimizeExit");
 
 	// On Windows the config panel is to small, so increase the vertical gap to stretch it
 	#if defined(__WXMSW__)
@@ -177,23 +177,23 @@ void ConfigPanel::OnSteamUpdate(wxCommandEvent &WXUNUSED(event)) {
 
 
 // Show in Taskbar Updated -> Set Config
-void ConfigPanel::OnShowInTaskbarUpdate(wxCommandEvent &WXUNUSED(event)) {
+void ConfigPanel::OnShowAsNotificationUpdate(wxCommandEvent &WXUNUSED(event)) {
 	// Write to config file
-	caGetConfig()->SetShowInTaskbar(this->showInTaskbar->GetValue());
+	caGetConfig()->SetShowAsNotification(this->showAsNotification->GetValue());
 	caGetConfig()->Flush();
 
 	// Set icon if user want it
-	if (this->hideMinimize->GetValue() || this->hideExit->GetValue() || this->showInTaskbar->GetValue()) {
+	if (this->hideMinimize->GetValue() || this->showAsNotification->GetValue()) {
 		caGetTaskBarIcon()->AddIcon();
 	} else {
 		caGetTaskBarIcon()->RemoveIcon();
 	}
 
 	// Log Action
-	if (this->showInTaskbar->GetValue()) {
-		caLogAction("Enabled show in taskbar", LogLevel::LEVEL_INFO);
+	if (this->showAsNotification->GetValue()) {
+		caLogAction("Enabled show as notification", LogLevel::LEVEL_INFO);
 	} else {
-		caLogAction("Disabled show in taskbar", LogLevel::LEVEL_INFO);
+		caLogAction("Disabled show as notification", LogLevel::LEVEL_INFO);
 	}
 }
 
@@ -202,21 +202,21 @@ void ConfigPanel::OnShowInTaskbarUpdate(wxCommandEvent &WXUNUSED(event)) {
 void ConfigPanel::OnHideUpdate(wxCommandEvent &WXUNUSED(event)) {
 	// Write to config file
 	caGetConfig()->SetHideOnMinimize(this->hideMinimize->GetValue());
-	caGetConfig()->SetHideOnExit(this->hideExit->GetValue());
+	caGetConfig()->SetMinimizeOnExit(this->minimizeExit->GetValue());
 	caGetConfig()->Flush();
 
 	// Set icon if user want it
-	if (this->hideMinimize->GetValue() || this->hideExit->GetValue() || this->showInTaskbar->GetValue()) {
+	if (this->hideMinimize->GetValue() || this->showAsNotification->GetValue()) {
 		caGetTaskBarIcon()->AddIcon();
 	} else {
 		caGetTaskBarIcon()->RemoveIcon();
 	}
 
 	// Log Action
-	if (this->hideMinimize->GetValue() || this->hideExit->GetValue()) {
-		caLogAction("Enabled hide on minimize / exit", LogLevel::LEVEL_INFO);
+	if (this->hideMinimize->GetValue() || this->minimizeExit->GetValue()) {
+		caLogAction("Enabled hide on minimize / minimize on exit", LogLevel::LEVEL_INFO);
 	} else {
-		caLogAction("Disabled hide on minimize / exit", LogLevel::LEVEL_INFO);
+		caLogAction("Disabled hide on minimize / minimize on exit", LogLevel::LEVEL_INFO);
 	}
 }
 
@@ -273,9 +273,9 @@ void ConfigPanel::ParseConfig() {
 		this->soundFilePicker->SetPath(config->GetSoundFile());
 
 		this->steamEnable->SetValue(config->GetSteamEnabled());
-		this->showInTaskbar->SetValue(config->GetShowInTaskbar());
+		this->showAsNotification->SetValue(config->GetShowAsNotification());
 		this->hideMinimize->SetValue(config->GetHideOnMinimize());
-		this->hideExit->SetValue(config->GetHideOnExit());
+		this->minimizeExit->SetValue(config->GetMinimizeOnExit());
 
 		// Calls are unimportant
 		for (wxVector<CallDialog *>::iterator callDialog = caGetCallDialogs()->begin(); callDialog != caGetCallDialogs()->end(); ++callDialog) {
@@ -294,7 +294,7 @@ void ConfigPanel::ParseConfig() {
 		caGetApp().StartTimer();
 
 		// Set icon if user want it
-		if (config->GetHideOnMinimize() || config->GetHideOnExit() || config->GetShowInTaskbar()) {
+		if (config->GetHideOnMinimize() || config->GetShowAsNotification()) {
 			caGetTaskBarIcon()->AddIcon();
 		} else {
 			caGetTaskBarIcon()->RemoveIcon();

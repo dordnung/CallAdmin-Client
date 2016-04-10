@@ -36,7 +36,7 @@
 
 
 // Create Config
-Config::Config() : wxFileConfig("CallAdmin-Client", wxEmptyString, GetConfigPath()) {
+Config::Config() : wxFileConfig("CallAdmin-Client", wxEmptyString, GetConfigFile()) {
 	// Default Settings
 	this->step = 5;
 	this->timeout = 3;
@@ -49,9 +49,9 @@ Config::Config() : wxFileConfig("CallAdmin-Client", wxEmptyString, GetConfigPath
 
 	this->logLevel = LogLevel::LEVEL_INFO;
 	this->steamEnabled = true;
-	this->showInTaskbar = false;
+	this->showAsNotification = true;
 	this->hideOnMinimize = false;
-	this->hideOnExit = false;
+	this->minimizeOnExit = false;
 	this->isAvailable = true;
 	this->wantSound = true;
 	this->isSpectator = false;
@@ -79,9 +79,9 @@ bool Config::ParseConfig() {
 
 		this->logLevel = (LogLevel)ReadLong("logLevel", LogLevel::LEVEL_INFO);
 		this->steamEnabled = ReadBool("steam", true);
-		this->showInTaskbar = ReadBool("showInTaskbar", false);
+		this->showAsNotification = ReadBool("showasnotification", true);
 		this->hideOnMinimize = ReadBool("hideonminimize", false);
-		this->hideOnExit = ReadBool("hideonexit", false);
+		this->minimizeOnExit = ReadBool("minimizeonexit", false);
 		this->isAvailable = ReadBool("available", true);
 		this->wantSound = ReadBool("sound", true);
 		this->isSpectator = ReadBool("spectate", false);
@@ -166,13 +166,11 @@ bool Config::IsSoundFileValid() {
 }
 
 
-wxString Config::GetConfigPath() {
+wxString Config::GetConfigDir() {
 	wxString fileDirectory;
-	wxFileName fileName;
 
 #ifdef __WXMSW__
 	fileDirectory = wxStandardPaths::Get().GetUserConfigDir() + "\\CallAdmin";
-	fileName = wxFileName(fileDirectory, "CallAdmin-Client", "ini");
 #else
 	// First check XDG_CONFIG_HOME var
 	if (wxGetenv("XDG_CONFIG_HOME")) {
@@ -181,8 +179,6 @@ wxString Config::GetConfigPath() {
 		// Other wise use ~/.config
 		fileDirectory = wxFileName::GetHomeDir() + "/.config/CallAdmin";
 	}
-
-	fileName = wxFileName(fileDirectory, "CallAdmin-Client", "conf");
 #endif
 
 	if (!wxDirExists(fileDirectory)) {
@@ -190,8 +186,23 @@ wxString Config::GetConfigPath() {
 		wxFileName::Mkdir(fileDirectory, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 	}
 
+	return fileDirectory;
+}
+
+
+wxString Config::GetConfigFile() {
+	wxString fileDirectory = GetConfigDir();
+	wxFileName fileName;
+
+#ifdef __WXMSW__
+	fileName = wxFileName(fileDirectory, "CallAdmin-Client", "ini");
+#else
+	fileName = wxFileName(fileDirectory, "CallAdmin-Client", "conf");
+#endif
+	
 	return fileName.GetFullPath();
 }
+
 
 void Config::ConvertFromRegistry() {
 #ifdef __WXMSW__
@@ -237,10 +248,6 @@ void Config::ConvertFromRegistry() {
 
 	if (regConfig.Exists("steam")) {
 		Write("steam", regConfig.ReadBool("steam", true));
-	}
-
-	if (regConfig.Exists("showInTaskbar")) {
-		Write("showInTaskbar", regConfig.ReadBool("showInTaskbar", false));
 	}
 
 	if (regConfig.Exists("hideonminimize")) {

@@ -53,12 +53,20 @@ CallDialog::CallDialog() {
 	this->avatarsLoaded = false;
 	this->clientAvatar = NULL;
 	this->targetAvatar = NULL;
+	this->avatarTimer = NULL;
 	this->id = 0;
 	this->isHandled = false;
 	this->takeover = NULL;
 	this->contactTrackers = NULL;
 }
 
+
+CallDialog::~CallDialog() {
+	if (this->avatarTimer) {
+		this->avatarTimer->Stop();
+		wxDELETE(this->avatarTimer);
+	}
+}
 
 // Start the Call
 bool CallDialog::StartCall(bool show) {
@@ -173,9 +181,14 @@ bool CallDialog::StartCall(bool show) {
 
 void CallDialog::LoadAvatars() {
 	if (!this->avatarsLoaded && caGetApp().IsRunning()) {
+		if (this->avatarTimer) {
+			this->avatarTimer->Stop();
+			wxDELETE(this->avatarTimer);
+		}
+
 		// Start the Timer (It will be killed by itself)
-		AvatarTimer *timer = new AvatarTimer(this, &this->clientCId, &this->targetCId, this->clientAvatar, this->targetAvatar);
-		timer->Start(100, wxTIMER_CONTINUOUS);
+		this->avatarTimer = new AvatarTimer(this, &this->clientCId, &this->targetCId, this->clientAvatar, this->targetAvatar);
+		this->avatarTimer->Start(100, wxTIMER_CONTINUOUS);
 	}
 }
 

@@ -26,7 +26,7 @@ OPENSTEAMWORKS = ../opensteamworks
 
 BINARY = calladmin-client
 
-OBJECTS += about_panel.cpp call_dialog.cpp calladmin-client.cpp config.cpp config_panel.cpp curl_util.cpp log_panel.cpp main_frame.cpp main_panel.cpp \
+OBJECTS += about_panel.cpp call_dialog.cpp call_panel.cpp calladmin-client.cpp config.cpp config_panel.cpp curl_util.cpp log_panel.cpp main_frame.cpp main_panel.cpp \
 				notebook.cpp opensteam.cpp opensteam_helper.cpp resource.cpp taskbar.cpp timer.cpp tracker_panel.cpp tinyxml2/tinyxml2.cpp
 
 INCLUDE += -I"$(OPENSTEAMWORKS)/Open Steamworks" -I./tinyxml2

@@ -54,9 +54,9 @@ private:
 	wxStaticText *callsSliderValue;
 	wxFilePickerCtrl *soundFilePicker;
 	wxCheckBox *steamEnable;
-	wxCheckBox *showInTaskbar;
+	wxCheckBox *showAsNotification;
 	wxCheckBox *hideMinimize;
-	wxCheckBox *hideExit;
+	wxCheckBox *minimizeExit;
 
 public:
 	ConfigPanel();
@@ -84,7 +84,7 @@ protected:
 	void OnSoundFileChanged(wxFileDirPickerEvent &event);
 	void OnSoundFileDefault(wxCommandEvent &event);
 	void OnSteamUpdate(wxCommandEvent &event);
-	void OnShowInTaskbarUpdate(wxCommandEvent &event);
+	void OnShowAsNotificationUpdate(wxCommandEvent &event);
 	void OnHideUpdate(wxCommandEvent &event);
 	void OnSet(wxCommandEvent &event);
 

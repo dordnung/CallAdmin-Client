@@ -76,8 +76,8 @@ bool TrackerPanel::InitPanel() {
 		// Get the width if autosize with header size
 		this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
 		this->columnHeaderWidths.push_back(this->trackerBox->GetColumnWidth(i));
-#endif
 	}
+#endif
 
 	// First column has always a content at start
 	this->trackerBox->SetColumnWidth(0, wxLIST_AUTOSIZE);
@@ -213,7 +213,9 @@ void TrackerPanel::AddTracker(wxString steamId, wxString name, bool isFriend, bo
 
 void TrackerPanel::OnSelectOrFocus(wxListEvent &event) {
 	// Prevent focusing and selecting of items
-	this->trackerBox->SetItemState(event.GetIndex(), 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+	if (this->trackerBox) {
+		this->trackerBox->SetItemState(event.GetIndex(), 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+	}
 }
 
 

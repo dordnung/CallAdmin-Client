@@ -62,8 +62,8 @@ bool LogPanel::InitPanel() {
 		// Get the width if autosize with header size
 		this->logBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
 		this->columnHeaderWidths.push_back(this->logBox->GetColumnWidth(i));
-#endif
 	}
+#endif
 
 	return true;
 }
@@ -99,7 +99,9 @@ void LogPanel::AddLog(wxString log, LogLevel logLevel) {
 
 void LogPanel::OnSelectOrFocus(wxListEvent &event) {
 	// Prevent focusing and selecting of items
-	this->logBox->SetItemState(event.GetIndex(), 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+	if (this->logBox) {
+		this->logBox->SetItemState(event.GetIndex(), 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+	}
 }
 
 

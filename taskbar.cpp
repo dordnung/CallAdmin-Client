@@ -73,10 +73,10 @@ void TaskBarIcon::ShowMessage(wxString title, wxString message, wxWindow *parent
 	if (!isOtherInFullscreen()) {
 		bool wasShown = false;
 
-		wxNotificationMessage notificationMessage(title, message, parent, isError ? wxICON_ERROR : wxICON_INFORMATION);
-
 		// Use notification or just use a window?
-		if (caGetConfig()->GetShowInTaskbar()) {
+		if (caGetConfig()->GetShowAsNotification()) {
+			wxNotificationMessage notificationMessage(title, message, parent, isError ? wxICON_ERROR : wxICON_INFORMATION);
+
 			wasShown = notificationMessage.Show();
 		}
 

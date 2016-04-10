@@ -56,8 +56,8 @@ bool CallPanel::InitPanel() {
 		// Get the width if autosize with header size
 		this->callBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
 		this->columnHeaderWidths.push_back(this->callBox->GetColumnWidth(i));
-#endif
 	}
+#endif
 
 	return true;
 }

@@ -1680,7 +1680,7 @@
                     <property name="bitmap"></property>
                     <property name="label">Settings</property>
                     <property name="select">0</property>
-                    <object class="wxPanel" expanded="0">
+                    <object class="wxPanel" expanded="1">
                         <property name="BottomDockable">1</property>
                         <property name="LeftDockable">1</property>
                         <property name="RightDockable">1</property>
@@ -1754,16 +1754,16 @@
                         <event name="OnSetFocus"></event>
                         <event name="OnSize"></event>
                         <event name="OnUpdateUI"></event>
-                        <object class="wxBoxSizer" expanded="0">
+                        <object class="wxBoxSizer" expanded="1">
                             <property name="minimum_size"></property>
                             <property name="name">configOuterSizer</property>
                             <property name="orient">wxVERTICAL</property>
                             <property name="permission">none</property>
-                            <object class="sizeritem" expanded="0">
+                            <object class="sizeritem" expanded="1">
                                 <property name="border">10</property>
                                 <property name="flag">wxALL</property>
                                 <property name="proportion">1</property>
-                                <object class="wxGridBagSizer" expanded="0">
+                                <object class="wxGridBagSizer" expanded="1">
                                     <property name="empty_cell_size"></property>
                                     <property name="flexible_direction">wxBOTH</property>
                                     <property name="growablecols">0</property>
@@ -3955,7 +3955,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">Show messages in the Taskbar instead in a window: </property>
+                                            <property name="label">Show messages as a notification instead in a window: </property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>
@@ -3963,7 +3963,7 @@
                                             <property name="minimize_button">0</property>
                                             <property name="minimum_size"></property>
                                             <property name="moveable">1</property>
-                                            <property name="name">showInTaskbarText</property>
+                                            <property name="name">showAsNotificationText</property>
                                             <property name="pane_border">1</property>
                                             <property name="pane_position"></property>
                                             <property name="pane_size"></property>
@@ -4027,7 +4027,7 @@
                                             <property name="caption"></property>
                                             <property name="caption_visible">1</property>
                                             <property name="center_pane">0</property>
-                                            <property name="checked">0</property>
+                                            <property name="checked">1</property>
                                             <property name="close_button">1</property>
                                             <property name="context_help"></property>
                                             <property name="context_menu">1</property>
@@ -4042,7 +4042,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">Show messages in Taskbar</property>
+                                            <property name="label">Show messages as notification</property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>
@@ -4050,7 +4050,7 @@
                                             <property name="minimize_button">0</property>
                                             <property name="minimum_size"></property>
                                             <property name="moveable">1</property>
-                                            <property name="name">showInTaskbar</property>
+                                            <property name="name">showAsNotification</property>
                                             <property name="pane_border">1</property>
                                             <property name="pane_position"></property>
                                             <property name="pane_size"></property>
@@ -4183,14 +4183,14 @@
                                             <event name="OnUpdateUI"></event>
                                         </object>
                                     </object>
-                                    <object class="gbsizeritem" expanded="0">
+                                    <object class="gbsizeritem" expanded="1">
                                         <property name="border">0</property>
                                         <property name="colspan">1</property>
                                         <property name="column">1</property>
                                         <property name="flag"></property>
                                         <property name="row">11</property>
                                         <property name="rowspan">1</property>
-                                        <object class="wxBoxSizer" expanded="0">
+                                        <object class="wxBoxSizer" expanded="1">
                                             <property name="minimum_size"></property>
                                             <property name="name">hideSizer</property>
                                             <property name="orient">wxHORIZONTAL</property>
@@ -4316,7 +4316,7 @@
                                                     <property name="gripper">0</property>
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_ANY</property>
-                                                    <property name="label">Hide on Exit</property>
+                                                    <property name="label">Minimize on Exit</property>
                                                     <property name="max_size"></property>
                                                     <property name="maximize_button">0</property>
                                                     <property name="maximum_size"></property>
@@ -4324,7 +4324,7 @@
                                                     <property name="minimize_button">0</property>
                                                     <property name="minimum_size"></property>
                                                     <property name="moveable">1</property>
-                                                    <property name="name">hideExit</property>
+                                                    <property name="name">minimizeExit</property>
                                                     <property name="pane_border">1</property>
                                                     <property name="pane_position"></property>
                                                     <property name="pane_size"></property>
