@@ -81,7 +81,6 @@ public:
 
 protected:
 	// Events
-	void OnHide(wxCommandEvent &event);
 	void OnReconnect(wxCommandEvent &event);
 	void OnExit(wxCommandEvent &event);
 	void OnCheckBox(wxCommandEvent &event);

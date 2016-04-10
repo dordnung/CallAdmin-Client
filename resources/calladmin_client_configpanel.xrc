@@ -443,7 +443,7 @@
 								<underlined>0</underlined>
 							</font>
 							<label>Show messages as notification</label>
-							<checked>0</checked>
+							<checked>1</checked>
 						</object>
 					</object>
 					<object class="sizeritem">

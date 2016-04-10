@@ -180,7 +180,9 @@ bool CallDialog::StartCall(bool show) {
 
 
 void CallDialog::LoadAvatars() {
-	if (!this->avatarsLoaded && caGetApp().IsRunning()) {
+	// Only load if not loaded yet, app is still running and app is connected to steam
+	if (!this->avatarsLoaded && caGetApp().IsRunning() && caGetSteamThread()->IsConnected()) {
+		// Maybe a timer already run -> stop and delete it
 		if (this->avatarTimer) {
 			this->avatarTimer->Stop();
 			wxDELETE(this->avatarTimer);
@@ -199,12 +201,8 @@ void CallDialog::SetFinish() {
 
 
 void CallDialog::SetAvatarsLoaded(bool successfull) {
-	if (this->avatarTimer) {
-		this->avatarTimer->Stop();
-		wxDELETE(this->avatarTimer);
-	}
-
-	this->avatarsLoaded = true;
+	this->avatarTimer = NULL;
+	this->avatarsLoaded = successfull;
 
 	if (successfull) {
 		this->panel->Layout();
@@ -484,7 +482,7 @@ void AvatarTimer::Notify() {
 
 	// All loaded or 10 seconds gone?
 	if (++this->attempts == 100 || (this->clientLoaded && this->targetLoaded)) {
-		this->dialog->SetAvatarsLoaded(true);
+		this->dialog->SetAvatarsLoaded(this->clientLoaded || this->targetLoaded);
 
 		// Enough, stop timer
 		delete this;

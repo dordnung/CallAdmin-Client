@@ -34,7 +34,6 @@
 
 // Events for main panel
 wxBEGIN_EVENT_TABLE(MainPanel, wxPanel)
-	EVT_BUTTON(XRCID("hide"), MainPanel::OnHide)
 	EVT_BUTTON(XRCID("reconnectButton"), MainPanel::OnReconnect)
 	EVT_BUTTON(XRCID("exit"), MainPanel::OnExit)
 
@@ -127,14 +126,6 @@ void MainPanel::OnSteamChange(int status) {
 			SetSteamStatus("Steam is running", wxColour(34, 139, 34));
 		}
 	}
-}
-
-
-// Button Event -> Hide to Taskbar
-void MainPanel::OnHide(wxCommandEvent &WXUNUSED(event)) {
-	caLogAction("Hided main frame through window", LogLevel::LEVEL_DEBUG);
-
-	caGetMainFrame()->Iconize(true);
 }
 
 

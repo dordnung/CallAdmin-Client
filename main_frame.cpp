@@ -90,8 +90,8 @@ void MainFrame::OnCloseWindow(wxCloseEvent &WXUNUSED(event)) {
 
 	if (caGetConfig()->GetMinimizeOnExit()) {
 		// Call minimize function
-		wxIconizeEvent evt = wxIconizeEvent();
-		OnMinimizeWindow(evt);
+		wxIconizeEvent dummyEvent;
+		OnMinimizeWindow(dummyEvent);
 	} else {
 		caGetApp().ExitProgramm();
 	}
