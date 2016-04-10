@@ -89,6 +89,8 @@ public:
 	// Mark the call as finished
 	void SetFinish();
 
+	void SetAvatarsLoaded(bool successfull);
+
 	// CURL Callback
 	static void OnChecked(wxString errorStr, wxString result, int extra);
 
@@ -130,11 +132,6 @@ public:
 	}
 
 	// Privat -> Set Methods
-	void SetAvatarsLoaded() {
-		this->avatarsLoaded = true;
-		this->panel->Layout();
-	}
-
 	void SetCallId(wxString id) {
 		this->callId = id;
 	}

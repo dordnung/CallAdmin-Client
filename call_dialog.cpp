@@ -198,6 +198,20 @@ void CallDialog::SetFinish() {
 }
 
 
+void CallDialog::SetAvatarsLoaded(bool successfull) {
+	if (this->avatarTimer) {
+		this->avatarTimer->Stop();
+		wxDELETE(this->avatarTimer);
+	}
+
+	this->avatarsLoaded = true;
+
+	if (successfull) {
+		this->panel->Layout();
+	}
+}
+
+
 // Mark checked
 void CallDialog::OnChecked(wxString errorStr, wxString result, int x) {
 	// Log Action
@@ -443,6 +457,8 @@ bool AvatarTimer::SetAvatar(CSteamID *id, wxStaticBitmap *map) {
 // Timer to update avatars
 void AvatarTimer::Notify() {
 	if (!caGetApp().IsRunning()) {
+		this->dialog->SetAvatarsLoaded(false);
+
 		// Already ended
 		delete this;
 		return;
@@ -468,7 +484,7 @@ void AvatarTimer::Notify() {
 
 	// All loaded or 10 seconds gone?
 	if (++this->attempts == 100 || (this->clientLoaded && this->targetLoaded)) {
-		this->dialog->SetAvatarsLoaded();
+		this->dialog->SetAvatarsLoaded(true);
 
 		// Enough, stop timer
 		delete this;
