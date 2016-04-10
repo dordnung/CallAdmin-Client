@@ -111,5 +111,7 @@ void MainFrame::OnMinimizeWindow(wxIconizeEvent &event) {
 		} else {
 			caLogAction("hid main frame, but Taskbar is not available", LogLevel::LEVEL_ERROR);
 		}
+	} else {
+		Iconize(event.IsIconized());
 	}
 }
