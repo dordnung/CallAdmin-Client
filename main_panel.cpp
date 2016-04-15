@@ -96,12 +96,6 @@ bool MainPanel::InitPanel() {
 	FIND_OR_FAIL(text, XRCCTRL(*this, "copyrightTextMain", wxStaticText), "copyrightTextMain");
 	text->SetLabel("v" + (wxString)CALLADMIN_CLIENT_VERSION + text->GetLabel());
 
-	// Remember default header size of the columns
-	for (int i = 0; i < this->callBox->GetColumnCount(); i++) {
-		// Add default width to the width list
-		this->columnHeaderWidths.push_back(this->callBox->GetColumnWidth(i));
-	}
-
 	Layout();
 	Fit();
 
@@ -119,20 +113,6 @@ void MainPanel::UpdateCalls() {
 
 		AppendCall(currentDialog->IsHandled(), currentDialog->GetTime(), currentDialog->GetServer());
 	}
-
-	// Autosize columns
-	if (this->callBox->GetItemCount() > 0) {
-		// Use content width for time and server if there is some content
-		this->callBox->SetColumnWidth(MainPanelColumns::MainPanelColumn_Time, wxLIST_AUTOSIZE);
-		this->callBox->SetColumnWidth(MainPanelColumns::MainPanelColumn_Server, wxLIST_AUTOSIZE);
-	} else {
-		// Use header width for time and server if there is no content
-		this->callBox->SetColumnWidth(MainPanelColumns::MainPanelColumn_Time, this->columnHeaderWidths.at(MainPanelColumns::MainPanelColumn_Time));
-		this->callBox->SetColumnWidth(MainPanelColumns::MainPanelColumn_Server, this->columnHeaderWidths.at(MainPanelColumns::MainPanelColumn_Server));
-	}
-
-	// Static size for finished column
-	this->callBox->SetColumnWidth(MainPanelColumns::MainPanelColumn_Finished, this->columnHeaderWidths.at(MainPanelColumns::MainPanelColumn_Finished));
 }
 
 

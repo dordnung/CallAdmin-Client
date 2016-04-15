@@ -17,25 +17,31 @@
 						<border>0</border>
 						<object class="wxListCtrl" name="callBox">
 							<style>wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL</style>
+							<font>
+								<size>8</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+							</font>
 							<object class="listcol">
 								<text>Time</text>
-								<width>100</width>
+								<width>115</width>
 							</object>
 							<object class="listcol">
 								<text>Server</text>
-								<width>150</width>
+								<width>200</width>
 							</object>
 							<object class="listcol">
 								<align>wxLIST_FORMAT_CENTRE</align>
-								<text>Finished</text>
-								<width>60</width>
+								<text>F</text>
+								<width>25</width>
 							</object>
 						</object>
 					</object>
 				</object>
 			</object>
 			<object class="sizeritem">
-				<option>1</option>
+				<option>0</option>
 				<flag>wxEXPAND</flag>
 				<border>0</border>
 				<object class="wxBoxSizer">
@@ -48,11 +54,11 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER|wxBOTTOM|wxLEFT|wxRIGHT</flag>
-						<border>25</border>
+						<flag>wxALIGN_CENTER|wxLEFT|wxRIGHT</flag>
+						<border>50</border>
 						<object class="wxStaticText" name="mainText">
 							<font>
-								<size>25</size>
+								<size>20</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -64,7 +70,7 @@
 					<object class="spacer">
 						<option>0</option>
 						<flag>wxTOP</flag>
-						<border>25</border>
+						<border>50</border>
 						<size>0,0</size>
 					</object>
 					<object class="sizeritem">
@@ -97,7 +103,7 @@
 						<object class="wxStaticText" name="steamText">
 							<fg>#ff0000</fg>
 							<font>
-								<size>16</size>
+								<size>14</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -144,7 +150,7 @@
 						<object class="wxStaticText" name="eventText">
 							<fg>#0000ff</fg>
 							<font>
-								<size>16</size>
+								<size>14</size>
 								<style>normal</style>
 								<weight>normal</weight>
 								<underlined>0</underlined>
@@ -164,7 +170,7 @@
 					<object class="spacer">
 						<option>0</option>
 						<flag>wxBOTTOM</flag>
-						<border>55</border>
+						<border>45</border>
 						<size>0,0</size>
 					</object>
 					<object class="sizeritem">
@@ -179,7 +185,7 @@
 								<border>5</border>
 								<object class="wxCheckBox" name="available">
 									<tooltip>You will receive no more calls when you uncheck this.</tooltip>
-									<label>I&apos;m available</label>
+									<label>Available</label>
 									<checked>0</checked>
 								</object>
 							</object>
@@ -189,7 +195,7 @@
 								<border>5</border>
 								<object class="wxCheckBox" name="sound">
 									<tooltip>You will hear a notification sound on an incoming call.</tooltip>
-									<label>Sound on call</label>
+									<label>Sound</label>
 									<checked>0</checked>
 								</object>
 							</object>
@@ -199,7 +205,7 @@
 								<border>5</border>
 								<object class="wxCheckBox" name="store">
 									<tooltip>You will only receive calls but you will not be stored in the trackers database</tooltip>
-									<label>Spectate only</label>
+									<label>Spectating</label>
 									<checked>0</checked>
 								</object>
 							</object>

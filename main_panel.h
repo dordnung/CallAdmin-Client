@@ -59,9 +59,6 @@ private:
 	wxStaticText *eventText;
 	wxStaticText *steamText;
 
-	// Default column header widths
-	wxVector<int> columnHeaderWidths;
-
 public:
 	MainPanel();
 
