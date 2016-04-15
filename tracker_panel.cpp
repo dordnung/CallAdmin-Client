@@ -69,18 +69,14 @@ bool TrackerPanel::InitPanel() {
 	// The tracker list box and autosize update notfication
 	FIND_OR_FAIL(this->trackerBox, XRCCTRL(*this, "trackerBox", wxListCtrl), "trackerBox");
 
-	// Headers are static, so get the width of the headers
-	// Only on Windows wxLIST_AUTOSIZE_USEHEADER gives the real header width
-#if defined (__WXMSW__)
+	// Headers are static, so get the standard width of the headers
 	for (int i = 0; i < this->trackerBox->GetColumnCount(); i++) {
-		// Get the width if autosize with header size
-		this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
+		// Add default width to the width list
 		this->columnHeaderWidths.push_back(this->trackerBox->GetColumnWidth(i));
 	}
-#endif
 
-	// First column has always a content at start
-	this->trackerBox->SetColumnWidth(0, wxLIST_AUTOSIZE);
+	// Autosize at start
+	this->AutoWidthColumns();
 
 	return true;
 }
@@ -192,22 +188,42 @@ void TrackerPanel::AddTracker(wxString steamId, wxString name, bool isFriend, bo
 		this->trackerBox->SetItem(item, 3, isOnline ? wxString::FromUTF8("\xE2\x9C\x94") : wxString::FromUTF8("\xE2\x9C\x96"));
 	}
 
-	// Hacky, autosize columns
-	for (int i = 0; i < this->trackerBox->GetColumnCount(); i++) {
-		this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
+	// autosize columns
+	this->AutoWidthColumns();
+}
 
-		// Only on Windows wxLIST_AUTOSIZE_USEHEADER gives the real header width
-		#if defined (__WXMSW__)
-		    // Get the width if autosize with content size and with header size
-			int contentSize = this->trackerBox->GetColumnWidth(i);
-			int headerSize = this->columnHeaderWidths.at(i);
+
+void TrackerPanel::AutoWidthColumns() {
+	// The steam id column always has data which is greather then the header width
+	this->trackerBox->SetColumnWidth(TrackerPanelColumns::TrackerPanelColumn_SteamId, wxLIST_AUTOSIZE);
+
+	// Set friend and online column always to the header width
+	this->trackerBox->SetColumnWidth(TrackerPanelColumns::TrackerPanelColumn_Friend, this->columnHeaderWidths.at(2));
+	this->trackerBox->SetColumnWidth(TrackerPanelColumns::TrackerPanelColumn_Online, this->columnHeaderWidths.at(3));
+
+	// For name column: Set width to content width or header width
+	// Check only if name column is not empty
+	int headerSize = this->columnHeaderWidths.at(TrackerPanelColumns::TrackerPanelColumn_Name);
+
+	for (int i = 0; i < this->trackerBox->GetItemCount(); i++) {
+		if (this->trackerBox->GetItemText(i, TrackerPanelColumns::TrackerPanelColumn_Name) != "") {
+			// Found an entry with valid content -> so check witch width is greater
+			this->trackerBox->SetColumnWidth(TrackerPanelColumns::TrackerPanelColumn_Name, wxLIST_AUTOSIZE);
+
+			// Get the width if autosize with content size
+			int contentSize = this->trackerBox->GetColumnWidth(TrackerPanelColumns::TrackerPanelColumn_Name);
 
 			// Use header width if it is higher then the content width
 			if (contentSize < headerSize) {
-				this->trackerBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
+				break;
 			}
-		#endif
+
+			return;
+		}
 	}
+
+	// No content found -> Set to header width
+	this->trackerBox->SetColumnWidth(TrackerPanelColumns::TrackerPanelColumn_Name, headerSize);
 }
 
 

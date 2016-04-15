@@ -40,9 +40,17 @@
 #define CALL_PANEL_LABEL "Calls"
 
 
+enum CallPanelColumns {
+	CallPanelColumn_Time,
+	CallPanelColumn_Server,
+	CallPanelColumn_Finished
+};
+
 class CallPanel : public Panel, public wxScrolledWindow {
 private:
 	wxListCtrl *callBox;
+
+	// Default column header widths
 	wxVector<int> columnHeaderWidths;
 
 public:

@@ -42,6 +42,13 @@
 
 class NameTimer;
 
+enum TrackerPanelColumns {
+	TrackerPanelColumn_SteamId,
+	TrackerPanelColumn_Name,
+	TrackerPanelColumn_Friend,
+	TrackerPanelColumn_Online,
+};
+
 class TrackerPanel : public Panel, public wxScrolledWindow {
 private:
 	// The running NameTimers
@@ -49,6 +56,8 @@ private:
 
 	// All current trackers
 	wxVector<wxString> currentTrackers;
+
+	// Default column header widths
 	wxVector<int> columnHeaderWidths;
 
 	wxListCtrl *trackerBox;
@@ -89,6 +98,7 @@ public:
 	}
 
 protected:
+	void AutoWidthColumns();
 	void OnSelectOrFocus(wxListEvent &event);
 	void OnUpdate(wxCommandEvent &event);
 

@@ -15,12 +15,17 @@
 					</object>
 					<object class="listcol">
 						<text>Name</text>
+						<width>50</width>
 					</object>
 					<object class="listcol">
+						<align>wxLIST_FORMAT_CENTRE</align>
 						<text>Friend</text>
+						<width>50</width>
 					</object>
 					<object class="listcol">
+						<align>wxLIST_FORMAT_CENTRE</align>
 						<text>Online</text>
+						<width>50</width>
 					</object>
 					<object class="listitem">
 						<col>0</col>

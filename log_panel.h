@@ -40,11 +40,16 @@
 #define LOG_PANEL_LABEL "Logging"
 
 
+enum LogPanelColumns {
+	LogPanelColumn_Level,
+	LogPanelColumn_Time,
+	LogPanelColumn_Log
+};
+
 class LogPanel : public Panel, public wxScrolledWindow {
 private:
 	wxChoice *logLevel;
 	wxListCtrl *logBox;
-	wxVector<int> columnHeaderWidths;
 
 public:
 	LogPanel() : logLevel(NULL), logBox(NULL) {};

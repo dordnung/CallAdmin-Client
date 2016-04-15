@@ -12,12 +12,15 @@
 					<style>wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL</style>
 					<object class="listcol">
 						<text>Level</text>
+						<width>70</width>
 					</object>
 					<object class="listcol">
 						<text>Time</text>
+						<width>150</width>
 					</object>
 					<object class="listcol">
 						<text>Log</text>
+						<width>250</width>
 					</object>
 				</object>
 			</object>

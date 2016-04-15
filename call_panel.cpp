@@ -49,15 +49,11 @@ bool CallPanel::InitPanel() {
 	// Box for all Calls and autosize finished column
 	FIND_OR_FAIL(this->callBox, XRCCTRL(*this, "callBox", wxListCtrl), "callBox");
 
-	// Headers are static, so get the width of the headers
-	// Only on Windows wxLIST_AUTOSIZE_USEHEADER gives the real header width
-#if defined (__WXMSW__)
+	// Remember default header size of the columns
 	for (int i = 0; i < this->callBox->GetColumnCount(); i++) {
-		// Get the width if autosize with header size
-		this->callBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
+		// Add default width to the width list
 		this->columnHeaderWidths.push_back(this->callBox->GetColumnWidth(i));
 	}
-#endif
 
 	return true;
 }
@@ -73,6 +69,21 @@ void CallPanel::UpdateCalls() {
 
 		AppendCall(currentDialog->IsHandled(), currentDialog->GetTime(), currentDialog->GetServer());
 	}
+
+	// Autosize columns
+	if (this->callBox->GetItemCount() > 0) {
+		// Use content width for time and server if there is some content
+		this->callBox->SetColumnWidth(CallPanelColumns::CallPanelColumn_Time, wxLIST_AUTOSIZE);
+		this->callBox->SetColumnWidth(CallPanelColumns::CallPanelColumn_Server, wxLIST_AUTOSIZE);
+	}
+	else {
+		// Use header width for time and server if there is no content
+		this->callBox->SetColumnWidth(CallPanelColumns::CallPanelColumn_Time, this->columnHeaderWidths.at(CallPanelColumns::CallPanelColumn_Time));
+		this->callBox->SetColumnWidth(CallPanelColumns::CallPanelColumn_Server, this->columnHeaderWidths.at(CallPanelColumns::CallPanelColumn_Server));
+	}
+
+	// Static size for finished column
+	this->callBox->SetColumnWidth(CallPanelColumns::CallPanelColumn_Finished, this->columnHeaderWidths.at(CallPanelColumns::CallPanelColumn_Finished));
 }
 
 
@@ -80,26 +91,9 @@ void CallPanel::UpdateCalls() {
 void CallPanel::AppendCall(bool finished, wxString time, wxString server) {
 	long item = this->callBox->InsertItem(0, "call");
 
-	this->callBox->SetItem(item, 0, finished ? wxString::FromUTF8("\xE2\x9C\x94") : wxString::FromUTF8("\xE2\x9C\x96"));
-	this->callBox->SetItem(item, 1, time);
-	this->callBox->SetItem(item, 2, wxString::FromUTF8(server));
-
-	// Hacky, autosize columns
-	for (int i = 0; i < this->callBox->GetColumnCount(); i++) {
-		this->callBox->SetColumnWidth(i, wxLIST_AUTOSIZE);
-
-		// Only on Windows wxLIST_AUTOSIZE_USEHEADER gives the real header width
-#if defined (__WXMSW__)
-		// Get the width if autosize with content size and with header size
-		int contentSize = this->callBox->GetColumnWidth(i);
-		int headerSize = this->columnHeaderWidths.at(i);
-
-		// Use header width if it is higher then the content width
-		if (contentSize < headerSize) {
-			this->callBox->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
-		}
-#endif
-	}
+	this->callBox->SetItem(item, CallPanelColumns::CallPanelColumn_Time, time);
+	this->callBox->SetItem(item, CallPanelColumns::CallPanelColumn_Server, wxString::FromUTF8(server));
+	this->callBox->SetItem(item, CallPanelColumns::CallPanelColumn_Finished, finished ? wxString::FromUTF8("\xE2\x9C\x94") : wxString::FromUTF8("\xE2\x9C\x96"));
 
 	this->callBox->SetItemState(item, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 }
