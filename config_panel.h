@@ -36,7 +36,7 @@
 #include <wx/filepicker.h>
 #include "panel.h"
 
-#define CONFIG_PANEL_PAGE 2
+#define CONFIG_PANEL_PAGE 1
 #define CONFIG_PANEL_LABEL "Settings"
 
 

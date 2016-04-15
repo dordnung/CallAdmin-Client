@@ -39,9 +39,17 @@
 #define MAIN_PANEL_LABEL "Main"
 
 
+enum MainPanelColumns {
+	MainPanelColumn_Time,
+	MainPanelColumn_Server,
+	MainPanelColumn_Finished
+};
+
 // Main Panel Class
 class MainPanel : public Panel, public wxPanel {
 private:
+	wxListCtrl *callBox;
+
 	wxCheckBox *store;
 	wxCheckBox *available;
 	wxCheckBox *sound;
@@ -50,6 +58,9 @@ private:
 
 	wxStaticText *eventText;
 	wxStaticText *steamText;
+
+	// Default column header widths
+	wxVector<int> columnHeaderWidths;
 
 public:
 	MainPanel();
@@ -69,6 +80,14 @@ public:
 		return this;
 	}
 
+	// Update Call list
+	void UpdateCalls();
+
+	// Append call to the callbox
+	void AppendCall(bool finished, wxString time, wxString server);
+
+	void SetHandled(int item);
+
 	// Set the event text
 	void SetStatusText(wxString text);
 	void SetSteamStatus(wxString text, wxColor color);
@@ -81,6 +100,7 @@ public:
 
 protected:
 	// Events
+	void OnBoxClick(wxListEvent &event);
 	void OnReconnect(wxCommandEvent &event);
 	void OnExit(wxCommandEvent &event);
 	void OnCheckBox(wxCommandEvent &event);

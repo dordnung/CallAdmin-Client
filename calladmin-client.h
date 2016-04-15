@@ -41,7 +41,6 @@
 #include "curl_util.h"
 
 #include "main_panel.h"
-#include "call_panel.h"
 #include "config_panel.h"
 #include "tracker_panel.h"
 #include "log_panel.h"
@@ -66,7 +65,6 @@
 #define caGetMainFrame caGetApp().GetMainFrame
 #define caGetNotebook caGetMainFrame()->GetNotebook
 #define caGetMainPanel() caGetNotebook()->GetPanel<MainPanel *>(MAIN_PANEL_PAGE)
-#define caGetCallPanel() caGetNotebook()->GetPanel<CallPanel *>(CALL_PANEL_PAGE)
 #define caGetConfigPanel() caGetNotebook()->GetPanel<ConfigPanel *>(CONFIG_PANEL_PAGE)
 #define caGetTrackerPanel() caGetNotebook()->GetPanel<TrackerPanel *>(TRACKER_PANEL_PAGE)
 #define caGetLogPanel() caGetNotebook()->GetPanel<LogPanel *>(LOG_PANEL_PAGE)

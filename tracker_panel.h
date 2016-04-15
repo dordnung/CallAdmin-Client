@@ -36,7 +36,7 @@
 #include "opensteam.h"
 #include "panel.h"
 
-#define TRACKER_PANEL_PAGE 3
+#define TRACKER_PANEL_PAGE 2
 #define TRACKER_PANEL_LABEL "Trackers"
 
 

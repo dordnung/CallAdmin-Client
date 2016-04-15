@@ -56,7 +56,6 @@ bool MainFrame::InitFrame(bool createInTaskbar) {
 
 	// Add the pages
 	this->notebook->AddPage(new MainPanel());
-	this->notebook->AddPage(new CallPanel());
 	this->notebook->AddPage(new ConfigPanel());
 	this->notebook->AddPage(new TrackerPanel());
 	this->notebook->AddPage(new LogPanel());

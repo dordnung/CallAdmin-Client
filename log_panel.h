@@ -36,7 +36,7 @@
 #include "panel.h"
 #include <wx/listctrl.h>
 
-#define LOG_PANEL_PAGE 4
+#define LOG_PANEL_PAGE 3
 #define LOG_PANEL_LABEL "Logging"
 
 

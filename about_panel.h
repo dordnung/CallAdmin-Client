@@ -34,7 +34,7 @@
 
 #include "panel.h"
 
-#define ABOUT_PANEL_PAGE 5
+#define ABOUT_PANEL_PAGE 4
 #define ABOUT_PANEL_LABEL "About"
 
 
