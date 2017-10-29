@@ -1,15 +1,15 @@
 # -----------------------------------------------------
 # File        makefile
-# Authors     David <popoklopsi> Ordnung, Impact
+# Authors     David Ordnung, Impact
 # License     GPLv3
-# Web         http://popoklopsi.de, http://gugyclan.eu
+# Web         http://dordnung.de, http://gugyclan.eu
 # -----------------------------------------------------
 #
 ########## ATTENTION #####
 # Linux support isn't given, yet.
 # But you can use this makefile to test it
 #
-# Copyright (C) 2013 David <popoklopsi> Ordnung, Impact
+# Copyright (C) 2013 David Ordnung, Impact
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
