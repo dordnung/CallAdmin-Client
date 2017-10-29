@@ -1,12 +1,12 @@
 /**
  * -----------------------------------------------------
  * File        calladmin_client_updater.rc
- * Authors     David O., Impact
+ * Authors     David Ordnung, Impact
  * License     GPLv3
- * Web         http://popoklopsi.de, http://gugyclan.eu
+ * Web         http://dordnung.de, http://gugyclan.eu
  * -----------------------------------------------------
- * 
- * Copyright (C) 2013-2016 David O., Impact
+ *
+ * Copyright (C) 2013-2017 David Ordnung, Impact
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ BEGIN
 			VALUE "FileDescription", "Call Admin Client Updater"
 			VALUE "FileVersion", "0.1"
 			VALUE "InternalName", "Call Admin Client Updater"
-			VALUE "LegalCopyright", "Copyright (c) 2013-2016, David O., Impact"
+			VALUE "LegalCopyright", "Copyright (c) 2013-2014, David Ordnung, Impact"
 			VALUE "OriginalFilename", "calladmin-client-updater.exe"
 			VALUE "ProductName", "Call Admin Client Updater"
 			VALUE "ProductVersion", "0.1"

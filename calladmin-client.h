@@ -4,12 +4,12 @@
 /**
  * -----------------------------------------------------
  * File        calladmin-client.h
- * Authors     David O., Impact
+ * Authors     David Ordnung, Impact
  * License     GPLv3
- * Web         http://popoklopsi.de, http://gugyclan.eu
+ * Web         http://dordnung.de, http://gugyclan.eu
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2016 David O., Impact
+ * Copyright (C) 2013-2017 David Ordnung, Impact
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +49,8 @@
 
 // Version, update URL and update exe
 #define CALLADMIN_CLIENT_VERSION "0.47B"
-#define CALLADMIN_UPDATE_URL "http://popoklopsi.de/calladmin/version.txt"
-#define CALLADMIN_UPDATE_EXE "http://popoklopsi.de/calladmin/calladmin-client.exe"
+#define CALLADMIN_UPDATE_URL "http://dordnung.de/sourcemod/calladmin/version.txt"
+#define CALLADMIN_UPDATE_EXE "http://dordnung.de/sourcemod/calladmin/calladmin-client.exe"
 
 // Helpers
 #define caGetApp wxGetApp

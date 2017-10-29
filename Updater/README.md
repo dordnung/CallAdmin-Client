@@ -13,7 +13,7 @@ The Updater for the Call Admin Client
     - Install wxWidgets with [this guide](https://wiki.wxwidgets.org/Compiling_and_getting_started) (But use option: `--disable-shared`), if wxWidgets 3.0 is not available on your system (There is no support for wxWidgets 2)
 
 - **Build calladmin-client-updater**
-  1. `wget https://github.com/popoklopsi/CallAdmin-Client/archive/master.zip && unzip CallAdmin-Client-master.zip`
+  1. `wget https://github.com/dordnung/CallAdmin-Client/archive/master.zip && unzip CallAdmin-Client-master.zip`
   2. `cd CallAdmin-Client-master/Updater`
   3. `make`
 
@@ -41,6 +41,6 @@ The Updater for the Call Admin Client
   7. Add a new system variable named `CURL` with the path to the .lib and the include folder
 
 - **Build calladmin-client-updater**
-  1. Download CallAdmin Client from `https://github.com/popoklopsi/CallAdmin-Client/archive/master.zip` and unzip
+  1. Download CallAdmin Client from `https://github.com/dordnung/CallAdmin-Client/archive/master.zip` and unzip
   2. Open `CallAdmin-Client-master/Updater/msvc13/calladmin-client-updater.sln` 
   3. Build the project.
