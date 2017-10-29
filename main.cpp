@@ -276,7 +276,7 @@ void MainDialog::createWindow(bool taskbar)
 
 
 	// Author + Version Text
-	text = new wxStaticText(panel, wxID_ANY, "v" + version + "  (c) Popoklopsi and Impact");
+	text = new wxStaticText(panel, wxID_ANY, "v" + version + "  (c) David Ordnung and Impact");
 
 	text->SetFont(wxFont(8, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 

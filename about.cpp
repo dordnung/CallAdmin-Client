@@ -90,7 +90,7 @@ AboutPanel::AboutPanel(wxNotebook* note) : wxPanel(note, wxID_ANY)
 
 
 	// By
-	text = new wxStaticText(this, wxID_ANY, "Copyright (C) Popoklopsi and Impact 2013");
+	text = new wxStaticText(this, wxID_ANY, "Copyright (C) David Ordnung and Impact 2013");
 
 	text->SetFont(wxFont(13, FONT_FAMILY, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
