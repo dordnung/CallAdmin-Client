@@ -64,6 +64,7 @@ ConfigPanel::ConfigPanel() {
 	this->attemptsSliderValue = NULL;
 	this->callsSlider = NULL;
 	this->callsSliderValue = NULL;
+	this->soundFilePicker = NULL;
 	this->steamEnable = NULL;
 	this->showAsNotification = NULL;
 	this->hideMinimize = NULL;
